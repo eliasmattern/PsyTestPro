@@ -43,13 +43,16 @@ def moodscales(subject, block):
     rows = []
     filename = os.path.join("./lib", "MoodscaleSlider.csv")
     outdir = "./Logs/Moodscale_Results/" + u'%s_%s_moodscales.csv' % (subject, block)
-
+    headers = []
     # get all rows except for the header
-    with open(filename, 'r') as csvfile:
+    with open(filename, 'r', encoding="utf8") as csvfile:
         datareader = csv.reader(csvfile)
         row_count = 0
         for row in datareader:
-            if row_count > 0:
+            if row_count == 0:
+                for header in row:
+                    headers.append(header)
+            if row_count > 1:
                rows.append(row)
             row_count += 1
 
@@ -96,6 +99,7 @@ def moodscales(subject, block):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                    return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if button_rect.collidepoint(mouse_pos):
@@ -113,7 +117,7 @@ def moodscales(subject, block):
         with open(outdir, 'a', newline='') as csvfile:
             writer = csv.writer(csvfile)
             if not csv_exists:
-                writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'SubjectID', 'Block', 'entspannt', "körperlich wohl", "stimmung", "motivation", "Koffein"])
+                writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'SubjectID', 'Block', *headers])
             # Get the current date and time
             current_date = time.strftime("%Y-%m-%d")
             current_time = time.strftime("%H:%M:%S")

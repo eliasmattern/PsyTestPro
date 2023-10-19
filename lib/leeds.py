@@ -43,6 +43,7 @@ def leeds(subject, block):
     keyboard_rows = []
     slider_rows = []
     questions = []
+    headers = []
     keyboard_filename = os.path.join("./lib", "LeedsKeyboard.csv")
     slider_filename = os.path.join("./lib", "LeedsSlider.csv")
     outdir = "./Logs/Leeds/" + u'%s_%s_leeds.csv' % (subject, block)
@@ -52,7 +53,10 @@ def leeds(subject, block):
         datareader = csv.reader(csvfile)
         row_count = 0
         for row in datareader:
-            if row_count > 0:
+            if row_count == 0:
+                for header in row:
+                    headers.append(header)
+            if row_count > 1:
                keyboard_rows.append(row)
                questions.append(row[1])
             row_count += 1
@@ -121,7 +125,7 @@ def leeds(subject, block):
             window.blit(button_surface, button_rect)
 
             # update screen
-            pygame.display.flip()
+            pygame.display.update()
             # Process events
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -160,11 +164,14 @@ def leeds(subject, block):
                         is_input2_active = False
             
     # get all rows except for the header
-    with open(slider_filename, 'r') as csvfile:
+    with open(slider_filename, 'r', encoding="utf8") as csvfile:
         datareader = csv.reader(csvfile)
         row_count = 0
         for row in datareader:
-            if row_count > 0:
+            if row_count == 0:
+                for header in row:
+                    headers.append(header)
+            if row_count > 1:
                slider_rows.append(row)
                questions.append(row[1])
             row_count += 1
@@ -223,7 +230,7 @@ def leeds(subject, block):
             window.blit(right_surface, (right_pos, screen_height / 2 - line_spacing))
 
             # update screen
-            slider.draw()
+            pygame_widgets.update(pygame.event.get())
             pygame.display.flip()
 
             # Process events
@@ -249,7 +256,7 @@ def leeds(subject, block):
         with open(outdir, 'a', newline='') as csvfile:
             writer = csv.writer(csvfile)
             if not csv_exists:
-                writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'SubjectID', 'Block', 'Wie lange hast du gebraucht, um einzuschlafen?', 'Wie oft bist du erwacht?', 'Wie lange bist du insgesamt wach gelegen (ohne Einschafzeit)?', 'Wie lange hast du geschlafen?', 'Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?', "Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?", "Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?", "Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?", "Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?", "Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?", "Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?", "Wie fühltest du dich beim Aufwachen?", "Wie fühlst du dich JETZT?", "Wie würdest du deinen Schlaf insgesamt beurteilen?"])
+                writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'SubjectID', 'Block', *headers])
             # Get the current date and time
             current_date = time.strftime("%Y-%m-%d")
             current_time = time.strftime("%H:%M:%S")
