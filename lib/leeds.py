@@ -125,7 +125,7 @@ def leeds(subject, block):
             window.blit(button_surface, button_rect)
 
             # update screen
-            pygame.display.update()
+            pygame.display.flip()
             # Process events
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -230,7 +230,7 @@ def leeds(subject, block):
             window.blit(right_surface, (right_pos, screen_height / 2 - line_spacing))
 
             # update screen
-            pygame_widgets.update(pygame.event.get())
+            slider.draw()
             pygame.display.flip()
 
             # Process events
@@ -248,6 +248,14 @@ def leeds(subject, block):
                         running = False
                         # update screen
                         slider = Slider(window, percent_screen_width * 20, round(screen_height / 2), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
+                slider.listen(event)
+                # Calculate slider position
+                if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    relative_x = max(min(mouse_x - slider.getX(), slider.getWidth()), 0)
+                    normalized_x = relative_x / slider.getWidth()
+                    new_value = int(normalized_x * (slider.max - slider.min) + slider.min)
+                    slider.setValue(new_value)
 
     # save if user filled out at least one 1 question
     if len(keyboard_data) > 0:    
