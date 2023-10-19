@@ -16,3 +16,4 @@ parts/
 sdist/
 var/
 wheels/
+Logs/
