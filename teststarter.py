@@ -15,6 +15,7 @@ import time as pythonTime
 from lib import GoNoGo_Real, GoNoGo_Real_Hab, start_real_nback, pvt, pvt_hab, saliva, waking_eeg, text_screen, start_hab_nback, leeds, moodscales
 from ctypes import windll
 import webbrowser
+import subprocess
 
 def create_schedule_display(schedule, participant_info):
     
@@ -166,6 +167,8 @@ def create_schedule_display(schedule, participant_info):
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                     match eventName:
                         case "welcome":
+                            #process = subprocess.Popen("py ./lib/wakingEeg.py")
+                            #process.communicate()
                             text_screen("Willkommen zur Studie", "Vielen Dank fürs Mitmachen")
                         case "good_morn":
                             text_screen("Guten Morgen", "")
