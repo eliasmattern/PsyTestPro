@@ -231,10 +231,6 @@ def create_schedule_display(schedule, participant_info):
                     schedule["n-back_hab"]["state"] = "done"
                 sorted_schedule = []
 
-        # get the handle to the taskbar
-        h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
-        # hide the taskbar
-        windll.user32.ShowWindow(h, 9)
         pygame.quit()
 
     def is_valid_datetime_format(datetime_str):
@@ -293,10 +289,6 @@ def create_schedule_display(schedule, participant_info):
 
         # If the user clicked 'Yes', then close the program
         if response == True:
-            # get the handle to the taskbar
-            h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
-            # hide the taskbar
-            windll.user32.ShowWindow(h, 9)
             pygame.quit()
             quit()
 
@@ -368,10 +360,6 @@ def create_schedule_display(schedule, participant_info):
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # get the handle to the taskbar
-                h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
-                # hide the taskbar
-                windll.user32.ShowWindow(h, 9)
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -442,7 +430,11 @@ def create_schedule_display(schedule, participant_info):
                     elif event.key == pygame.K_BACKSPACE:
                         newtime_input_values[newtime_active_row] = newtime_input_values[newtime_active_row][:-1]
                     else:
-                        newtime_input_values[newtime_active_row] += event.unicode
+                        if newtime_active_row in newtime_input_values:
+                            newtime_input_values[newtime_active_row] += event.unicode
+                        else: 
+                            newtime_input_values[newtime_active_row] = event.unicode
+
             
 
         screen.fill(black) # Fill the screen with the black color
@@ -633,10 +625,6 @@ class Teststarter:
         pygame.init()
         self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h
         self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN)
-        # get the handle to the taskbar
-        h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
-        # hide the taskbar
-        windll.user32.ShowWindow(h, 0)
         pygame.display.set_caption("Teststarter")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 24)
@@ -657,10 +645,6 @@ class Teststarter:
             pygame.display.flip()
             self.clock.tick(60)
 
-        # get the handle to the taskbar
-        h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
-        # hide the taskbar
-        windll.user32.ShowWindow(h, 9)
         pygame.quit()
         sys.exit()
         
