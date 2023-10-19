@@ -1,5 +1,0 @@
-Participant ID: 1
-Experiment: se
-Time of Day: morn
-Week No: 1
-Start Time: 12:21
