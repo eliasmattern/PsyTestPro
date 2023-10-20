@@ -140,29 +140,27 @@ class Teststarter:
             self.input_boxes.append(input_box)
             y += spacing
 
-        submit_button = Button(x - 75, y + 60, 150, 40, "Submit", self.save_details)
+        exit_button = Button(x - 75, y + 60, 100, 40, "Exit", self.exit)
+        submit_button = Button(x + 75, y + 60, 100, 40, "Submit", self.save_details)
+        self.input_boxes.append(exit_button)
         self.input_boxes.append(submit_button)
         
     
     def handle_events(self):
         def get_input_index():
             index = 0 
-            for input_box in self.input_boxes[:-1]:
+            for input_box in self.input_boxes[:-2]:
                 index += 1
                 if input_box.is_selected:
                     self.input_boxes[index -1].is_selected = False
                     break
-            if index < len(self.input_boxes[:-1]):
+            if index < len(self.input_boxes[:-2]):
                 return index
             else:
                 return 0
         for event in pygame.event.get():
-            if event.type == QUIT:
-                self.is_running = False
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    self.is_running = False
-                elif event.key == K_TAB:
+            if event.type == KEYDOWN:
+                if event.key == K_TAB:
                     index = get_input_index()
                     self.input_boxes[index].is_selected = True
             for box in self.input_boxes:
@@ -175,6 +173,9 @@ class Teststarter:
     def draw(self):
         for box in self.input_boxes:
             box.draw(self.screen)
+    
+    def exit(self):
+        self.is_running = False
 
     def save_details(self):
         participant_id = self.input_boxes[0].text
