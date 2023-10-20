@@ -10,9 +10,9 @@ import time as pythonTime
 from lib import GoNoGo_Real, GoNoGo_Real_Hab, start_real_nback, pvt, pvt_hab, saliva, waking_eeg, text_screen, start_hab_nback, leeds, moodscales
 import webbrowser
 import subprocess
+from .create_time_picker import create_time_picker
 
 def create_schedule_display(schedule, participant_info, teststarter, isHab = False):
-    print(isHab)
     # Open the pygame window at front of all windows open on screen
     os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
@@ -139,7 +139,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             if edit_button_x + edit_button_width > mouse[0] > edit_button_x and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
                 if click[0] == 1:
-                    create_schedule_display(schedule, participant_info)  # Call create_schedule_display() when the button is clicked
+                    create_schedule_display(schedule, participant_info, teststarter)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
 
@@ -368,7 +368,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             newtime_input_active = False
                         elif newtime_input_box_rect.collidepoint(mouse_pos) and not isHab:
                             newtime_active_row = row
-                            newtime_input_values[row] = schedule[list(schedule)[row-1]]["datetime"].split(" ")[1]
+                            newtime_input_values[row] = ""
                             active_column = "newtime"  # Set the active column
                             newtimedate_input_active = False
                             newtime_input_active = True
@@ -376,6 +376,14 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             todo_input_active = False
                             newdate_active_row = None
                             newdate_input_active = False
+                            current_time = schedule[list(schedule)[row-1]]["datetime"].split(" ")[1]
+                            splitted_time = current_time.split(":")
+                            time_picker = create_time_picker(splitted_time[0], splitted_time[1])
+                            formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ":" + str(time_picker.time()[1]).rjust(2, '0') +":00"
+                            if newtime_active_row in newtime_input_values:
+                                newtime_input_values[newtime_active_row] += formatted_time
+                            else: 
+                                newtime_input_values[newtime_active_row] = formatted_time
 
 
             elif event.type == pygame.KEYDOWN:
@@ -385,19 +393,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     elif event.key == pygame.K_BACKSPACE:
                         newdate_input_values[newdate_active_row] = newdate_input_values[newdate_active_row][:-1]
                     else:
-                        newdate_input_values[newdate_active_row] += event.unicode
-                if newtime_active_row is not None and newtime_input_active:
-                    if event.key == pygame.K_RETURN:
-                        newtime_active_row += 1
-                    elif event.key == pygame.K_BACKSPACE:
-                        newtime_input_values[newtime_active_row] = newtime_input_values[newtime_active_row][:-1]
-                    else:
-                        if newtime_active_row in newtime_input_values:
-                            newtime_input_values[newtime_active_row] += event.unicode
-                        else: 
-                            newtime_input_values[newtime_active_row] = event.unicode
-
-            
+                        newdate_input_values[newdate_active_row] += event.unicode            
 
         screen.fill(black) # Fill the screen with the black color
         
@@ -519,7 +515,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
 
             # Render the cursor
-            if (active_column == "newdate" and newdate_active_row == row) or (active_column == "newtime" and newtime_active_row == row):
+            if (active_column == "newdate" and newdate_active_row == row):
                 cursor_x = 0
                 cursor_y = 0
                 cursor_height = 0
@@ -530,12 +526,6 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     cursor_y = newdate_input_box_rect.top + 5
                     cursor_height = 14
                     input_text_surface = newdate_input_text_surface
-                elif active_column == "newtime":
-                    cursor_x = newtime_input_box_rect.left + newtime_input_text_surface.get_width() + 5
-                    cursor_y = newtime_input_box_rect.top + 5
-                    cursor_height = 14
-                    input_text_surface = newtime_input_text_surface
-
 
                 pygame.draw.line(screen, cursor_color, (cursor_x, cursor_y), (cursor_x, cursor_y + cursor_height), cursor_width)
 
