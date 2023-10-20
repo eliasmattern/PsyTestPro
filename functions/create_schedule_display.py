@@ -235,41 +235,6 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         pattern = r"^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$"
         return re.match(pattern, datetime_str) is not None
 
-
-    
-    def button_save_changes():
-        global newtimedate_input_values, newtimedate_active_row
-
-        if newtimedate_input_values:
-            for row, value in newtimedate_input_values.items():
-                if is_valid_datetime_format(value):
-                    # Update the corresponding entry in the schedule dictionary
-                    schedule_entry = list(schedule.items())[row - 1]  # Get the (task, datetime) tuple at the row index
-                    task_name = schedule_entry[0]
-                    schedule[task_name] = value  # Update the datetime value in the schedule dictionary
-
-            # Clear the input values and active row for the newtimedate column
-            newtimedate_input_values.clear()
-            newtimedate_active_row = None
-
-        if todo_input_values:
-            for row, value in todo_input_values.items():
-                if value:
-                    # Perform any additional validation on the todo input, if needed
-                    # (e.g., check if value is "ToDo", "Skip", etc.)
-
-                    # Update the corresponding entry in the schedule dictionary
-                    schedule_entry = list(schedule.items())[row - 1]  # Get the (task, datetime) tuple at the row index
-                    task_name = schedule_entry[0]
-                    schedule[task_name] = value  # Update the "ToDo/Skip" value in the schedule dictionary
-
-            # Clear the input values and active row for the todo column
-            todo_input_values.clear()
-            todo_active_row = None
-
-        # Call the button_back() function to go back to the main view
-        button_back()
-
     def change_night():
         time = str(participant_info["start_time"]).split(" ")[1]
         splittedTime = time.split(":")
