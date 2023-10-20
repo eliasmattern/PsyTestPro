@@ -12,6 +12,7 @@ import tkinter as tk
 from tkinter import messagebox
 import re
 import time as pythonTime
+from classes import InputBox, Button
 from lib import GoNoGo_Real, GoNoGo_Real_Hab, start_real_nback, pvt, pvt_hab, saliva, waking_eeg, text_screen, start_hab_nback, leeds, moodscales
 from ctypes import windll
 import webbrowser
@@ -605,24 +606,6 @@ def create_schedule_display(schedule, participant_info):
 
 #######################################################################
 
-class Button:
-    def __init__(self, x, y, width, height, label, action):
-        self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.color = pygame.Color("gray")
-        self.label = pygame.font.SysFont("Arial", 24).render(label, True, pygame.Color("black"))
-        self.action = action
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
-            self.action()
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-        label_width, label_height = self.label.get_size()
-        label_x = self.rect.x + (self.rect.width - label_width) // 2
-        label_y = self.rect.y + (self.rect.height - label_height) // 2
-        screen.blit(self.label, (label_x, label_y))
-
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
         pygame.init()
@@ -830,53 +813,5 @@ class Teststarter:
         
         self.input_boxes = []
 
-
-class InputBox:
-    def __init__(self, x, y, width, height, label, initial_text=""):
-        self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.color = pygame.Color("gray")
-        self.active_color = pygame.Color("gray")
-        self.text_color = pygame.Color("black")
-        self.label_color = pygame.Color("gray")
-        self.active_text_color = pygame.Color("black")
-        self.text = initial_text
-        self.font = pygame.font.SysFont("Arial", 24)
-        self.label = self.font.render(label, True, self.label_color)
-        self.is_selected = False
-        self.cursor_visible = False
-        self.cursor_timer = 0
-
-    def handle_event(self, event):
-        if event.type == MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.is_selected = True
-            else:
-                self.is_selected = False
-        elif event.type == KEYDOWN:
-            if self.is_selected:
-                if event.key == K_BACKSPACE:
-                    self.text = self.text[:-1]
-                elif event.key == K_TAB:
-                    pass
-                else:
-                    self.text += event.unicode
-                self.cursor_visible = True
-                self.cursor_timer = pygame.time.get_ticks() + 500
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
-        text_surface = self.font.render(self.text, True, self.active_text_color if self.is_selected else self.text_color)
-        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
-        screen.blit(self.label, (self.rect.x - self.label.get_width() - 10, self.rect.y + 5))
-        if self.is_selected:
-            pygame.draw.line(screen, pygame.Color("black"), (self.rect.x + text_surface.get_width() + 5, self.rect.y + 5),
-                             (self.rect.x + text_surface.get_width() + 5, self.rect.y + self.rect.height - 5))
-        if self.cursor_visible:
-            if pygame.time.get_ticks() >= self.cursor_timer:
-                self.cursor_visible = False
-            else:
-                pygame.draw.line(screen, pygame.Color("black"),
-                                 (self.rect.x + text_surface.get_width() + 5, self.rect.y + 5),
-                                 (self.rect.x + text_surface.get_width() + 5, self.rect.y + self.rect.height - 5))
 
 Teststarter()
