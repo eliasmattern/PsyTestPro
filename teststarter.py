@@ -25,7 +25,7 @@ class Teststarter:
         self.input_boxes = []
         self.buttons = []
         self.language_config = LanguageConfiguration()
-        self.translateService = TranslateService(language_config)
+        self.translateService = TranslateService(self.language_config)
         self.lang = self.load_config_lang()
         self.id = id
         self.experiment = experiment
