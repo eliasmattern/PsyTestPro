@@ -1,0 +1,10 @@
+{
+    "teststarter": "Teststarter",
+    "exit": "Verlassen",
+    "submit": "Senden",
+    "participantId": "Teilnehmer ID:",
+    "experiment": "Experiment:",
+    "timeOfDay": "Tageszeit (morn/eve):",
+    "weekNumber": "Wochennumer:",
+    "startTime": "Zeit (24-Stunden Format):"
+}

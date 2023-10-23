@@ -1,0 +1,12 @@
+{
+    "teststarter": "teststarter",
+    "exit": "Exit",
+    "submit": "Submit",
+    "participantId": "Participant ID:",
+    "experiment": "Experiment:",
+    "timeOfDay": "Time of Day (morn/eve):",
+    "weekNumber": "Week Number:",
+    "startTime": "Start Time (24-hour format):",
+    "german": "Deutsch",
+    "english": "English"
+}

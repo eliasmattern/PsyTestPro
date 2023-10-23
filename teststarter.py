@@ -11,6 +11,7 @@ from classes import InputBox, Button
 from functions import create_schedule_display
 from ctypes import windll
 import re
+from services import TranslateService
 
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
@@ -18,9 +19,13 @@ class Teststarter:
         self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h
         self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN)
         pygame.display.set_caption("Teststarter")
+        self.lang = "en"
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 24)
         self.input_boxes = []
+        self.buttons = []
+        self.translateService = TranslateService()
+        self.avilable_languages = ["en", "de"]
         self.id = id
         self.experiment = experiment
         self.time_of_day = time_of_day
@@ -31,6 +36,7 @@ class Teststarter:
         self.start_time = None
 
         while self.is_running:
+            self.update_text()
             self.handle_events()
             self.clear_screen()
             self.draw()
@@ -136,31 +142,45 @@ class Teststarter:
             create_schedule_display(edited_schedule, participant_info, Teststarter)
             
     def create_input_boxes(self):
-        labels = ["Participant ID:", "Experiment (se/sr/hab):", "Time of Day (morn/eve):", "Week Number (1/2):", "Start Time (24-hour format):"]
+        labels = ["participantId", "experiment", "timeOfDay", "weekNumber", "startTime"]
+        inforomation = ["", "(se, sr, hab)", "", "", ""]
         initial_text = [self.id, self.experiment, self.time_of_day, self.week_number, self.time]
         x = self.width // 2
         y = self.height // 2 - 100
         spacing = 60
-        for label, text in zip(labels, initial_text):
-            input_box = InputBox(x, y, 400, 40, label, text)
+        for label, text, info in zip(labels, initial_text, inforomation):
+            input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
             self.input_boxes.append(input_box)
             y += spacing
 
-        exit_button = Button(x - 75, y + 60, 100, 40, "Exit", self.exit)
-        submit_button = Button(x + 75, y + 60, 100, 40, "Submit", self.save_details)
-        self.input_boxes.append(exit_button)
-        self.input_boxes.append(submit_button)
-        
+        exit_button = Button(x - 75, y + 60, 100, 40, "exit", self.exit, self.translateService)
+        submit_button = Button(x + 75, y + 60, 100, 40, "submit", self.save_details, self.translateService)
+        english_button = Button(self.width-250, 100, 100, 40, "english", lambda: self.change_language("en"), self.translateService)
+        german_button = Button(self.width-100, 100, 100, 40, "german", lambda: self.change_language("de"), self.translateService)
+
+        self.buttons.append(english_button)
+        self.buttons.append(german_button)
+        self.buttons.append(exit_button)
+        self.buttons.append(submit_button)
     
+    def change_language(self, lang):
+        self.translateService.set_language(lang)
+
+    def update_text(self):
+        for box in self.input_boxes:
+            box.update_text()
+        for button in self.buttons:
+            button.update_text()
+
     def handle_events(self):
         def get_input_index():
             index = 0 
-            for input_box in self.input_boxes[:-2]:
+            for input_box in self.input_boxes:
                 index += 1
                 if input_box.is_selected:
                     self.input_boxes[index -1].is_selected = False
                     break
-            if index < len(self.input_boxes[:-2]):
+            if index < len(self.input_boxes):
                 return index
             else:
                 return 0
@@ -171,6 +191,8 @@ class Teststarter:
                     self.input_boxes[index].is_selected = True
             for box in self.input_boxes:
                 box.handle_event(event)
+            for button in self.buttons:
+                button.handle_event(event)
 
 
     def clear_screen(self):
@@ -186,6 +208,7 @@ class Teststarter:
             is_start_time_valid = self.is_valid_time_format(self.input_boxes[4].text)
 
             if is_id_valid and is_experiment_valid and is_time_of_day_valid and is_week_no_valid and is_start_time_valid:
+                self.translateService.set_language("de")
                 return True
             else:
                 return False
@@ -194,12 +217,17 @@ class Teststarter:
             box.draw(self.screen)
         is_input_valid = validate_inputs()
 
+        for button in self.buttons:
+            button.draw(self.screen)
+
         if is_input_valid:
-            self.input_boxes[-1].set_active(True)
-            self.input_boxes[-1].set_color("gray")
+            self.buttons[3].set_active(True)
+            self.buttons[3].set_color("gray")
         else:
-            self.input_boxes[-1].set_active(False)
-            self.input_boxes[-1].set_color((100, 100, 100))
+            self.buttons[3].set_active(False)
+            self.buttons[3].set_color((100, 100, 100))
+        
+        
    
     def exit(self):
         self.is_running = False

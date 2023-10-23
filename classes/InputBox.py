@@ -2,7 +2,8 @@ import pygame
 from pygame.locals import *
 
 class InputBox:
-    def __init__(self, x, y, width, height, label, initial_text=""):
+    def __init__(self, x, y, width, height, translation_key, translat_service, info="", initial_text=""):
+        self.translate_service = translat_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color("gray")
         self.active_color = pygame.Color("gray")
@@ -11,7 +12,9 @@ class InputBox:
         self.active_text_color = pygame.Color("black")
         self.text = initial_text
         self.font = pygame.font.SysFont("Arial", 24)
-        self.label = self.font.render(label, True, self.label_color)
+        self.translation_key = translation_key
+        self.info = info
+        self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
         self.is_selected = False
         self.cursor_visible = False
         self.cursor_timer = 0
@@ -32,6 +35,9 @@ class InputBox:
                     self.text += event.unicode
                 self.cursor_visible = True
                 self.cursor_timer = pygame.time.get_ticks() + 500
+    
+    def update_text(self):
+        self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
