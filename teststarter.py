@@ -25,7 +25,8 @@ class Teststarter:
         self.input_boxes = []
         self.buttons = []
         self.translateService = TranslateService()
-        self.avilable_languages = ["en", "de"]
+        self.language_config = self.LanguageConfiguration()
+        self.lang = self.load_config_lang()
         self.id = id
         self.experiment = experiment
         self.time_of_day = time_of_day
@@ -50,7 +51,30 @@ class Teststarter:
         # This pattern strictly matches DD/MM/YYYY HH:MM:SS
         pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"
         return re.match(pattern, datetime_str) is not None
+
+    class LanguageConfiguration:
+        def __init__(self):
+            self.lang = "en"
+            self.config_file = "language_config.csv"
         
+        def read_language_config(self):
+            with open(self.config_file, 'r') as file:
+                reader = csv.reader(file)
+                next(reader, None)  # skip the headers
+                for row in reader:
+                    for i, value in enumerate(row):
+                        self.lang = value
+    
+        def update_language_config(self, new_language):
+            with open(self.config_file, 'w') as file:
+                writer = csv.writer(file)
+                writer.writerow(["language"])
+                writer.writerow([new_language])
+                
+        
+        def get_language(self):
+            return self.lang
+
     class TestBatteryConfiguration:
         def __init__(self, start_time):
             self.start_time = start_time
@@ -163,8 +187,16 @@ class Teststarter:
         self.buttons.append(exit_button)
         self.buttons.append(submit_button)
     
+    def load_config_lang(self):
+        self.language_config.read_language_config()
+        language = self.language_config.get_language()
+        if len(language) > 0:
+            self.translateService.set_language(language) 
+            self.lang = language
+
     def change_language(self, lang):
         self.translateService.set_language(lang)
+        self.language_config.update_language_config(lang)
 
     def update_text(self):
         for box in self.input_boxes:
@@ -208,7 +240,6 @@ class Teststarter:
             is_start_time_valid = self.is_valid_time_format(self.input_boxes[4].text)
 
             if is_id_valid and is_experiment_valid and is_time_of_day_valid and is_week_no_valid and is_start_time_valid:
-                self.translateService.set_language("de")
                 return True
             else:
                 return False
