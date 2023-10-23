@@ -11,6 +11,7 @@ from lib import GoNoGo_Real, GoNoGo_Real_Hab, start_real_nback, pvt, pvt_hab, sa
 import webbrowser
 import subprocess
 from .create_time_picker import create_time_picker
+from .create_date_picker import create_date_picker
 from services import TranslateService, LanguageConfiguration
 
 schedule_page = 0
@@ -401,6 +402,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             todo_input_active = False
                             newtime_active_row = None
                             newtime_input_active = False
+                            date = create_date_picker()
+                            newdate_input_values[newdate_active_row] = date
                         elif newtime_input_box_rect.collidepoint(mouse_pos) and not isHab:
                             newtime_active_row = row
                             newtime_input_values[row] = ""
@@ -416,19 +419,9 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             time_picker = create_time_picker(splitted_time[0], splitted_time[1], translate_service)
                             formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ":" + str(time_picker.time()[1]).rjust(2, '0') +":00"
                             if newtime_active_row in newtime_input_values:
-                                newtime_input_values[newtime_active_row] += formatted_time
+                                newtime_input_values[newtime_active_row] = formatted_time
                             else: 
                                 newtime_input_values[newtime_active_row] = formatted_time
-
-
-            elif event.type == pygame.KEYDOWN:
-                if newdate_active_row is not None and newdate_input_active:
-                    if event.key == pygame.K_RETURN:
-                        newdate_active_row += 1
-                    elif event.key == pygame.K_BACKSPACE:
-                        newdate_input_values[newdate_active_row] = newdate_input_values[newdate_active_row][:-1]
-                    else:
-                        newdate_input_values[newdate_active_row] += event.unicode            
 
         screen.fill(black) # Fill the screen with the black color
         
