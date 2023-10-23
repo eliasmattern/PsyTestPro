@@ -1,1 +1,2 @@
 from .TranslateService import TranslateService
+from .LanguageConfiguration import LanguageConfiguration

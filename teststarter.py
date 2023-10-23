@@ -11,7 +11,7 @@ from classes import InputBox, Button
 from functions import create_schedule_display
 from ctypes import windll
 import re
-from services import TranslateService
+from services import TranslateService, LanguageConfiguration
 
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
@@ -24,8 +24,8 @@ class Teststarter:
         self.font = pygame.font.SysFont("Arial", 24)
         self.input_boxes = []
         self.buttons = []
-        self.translateService = TranslateService()
-        self.language_config = self.LanguageConfiguration()
+        self.language_config = LanguageConfiguration()
+        self.translateService = TranslateService(language_config)
         self.lang = self.load_config_lang()
         self.id = id
         self.experiment = experiment
@@ -52,28 +52,6 @@ class Teststarter:
         pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"
         return re.match(pattern, datetime_str) is not None
 
-    class LanguageConfiguration:
-        def __init__(self):
-            self.lang = "en"
-            self.config_file = "language_config.csv"
-        
-        def read_language_config(self):
-            with open(self.config_file, 'r') as file:
-                reader = csv.reader(file)
-                next(reader, None)  # skip the headers
-                for row in reader:
-                    for i, value in enumerate(row):
-                        self.lang = value
-    
-        def update_language_config(self, new_language):
-            with open(self.config_file, 'w') as file:
-                writer = csv.writer(file)
-                writer.writerow(["language"])
-                writer.writerow([new_language])
-                
-        
-        def get_language(self):
-            return self.lang
 
     class TestBatteryConfiguration:
         def __init__(self, start_time):

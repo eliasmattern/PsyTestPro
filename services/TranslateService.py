@@ -1,10 +1,14 @@
 import json
 
 class TranslateService:
-    def __init__(self):
+    def __init__(self, language_config):
         self.current_language = "en"
+        language_config.read_language_config()
+        language = self.language_config.get_language()
+        if len(language) > 0:
+            self.current_language = language
         self.translations = {}
-        self.load_language("en")
+        self.load_language(self.current_language)
 
     def load_language(self, language):
         try:
