@@ -11,8 +11,13 @@ from lib import GoNoGo_Real, GoNoGo_Real_Hab, start_real_nback, pvt, pvt_hab, sa
 import webbrowser
 import subprocess
 from .create_time_picker import create_time_picker
+from services import TranslateService, LanguageConfiguration
 
 def create_schedule_display(schedule, participant_info, teststarter, isHab = False):
+
+    language_config = LanguageConfiguration()
+    translate_service = TranslateService(language_config)
+
     # Open the pygame window at front of all windows open on screen
     os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
@@ -122,7 +127,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             # Display the message on screen
             if isHab or not next_event: 
                 font = pygame.font.Font(None, 35)
-                text = font.render("Alle Aufgaben erledigt", True, light_grey)
+                text = font.render(translate_service.get_translation("allTasksCompleted"), True, light_grey)
             else: 
                 font = pygame.font.Font(None, 35)
                 text = font.render(countdown + event_message, True, light_grey)
@@ -241,13 +246,17 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         formattedTime = splittedTime[0] + ":" + splittedTime[1]
         teststarter(participant_info["participant_id"], participant_info["experiment"], participant_info["time_of_day"], participant_info["week_no"], formattedTime)
     
+    def change_language(translateService, language_config, lang):
+        translateService.set_language(lang)
+        language_config.update_language_config(lang)
+
     def button_quit_teststarter():
         # Create a root window and hide it
         root = tk.Tk()
         root.withdraw()
 
         # Show a messagebox asking for confirmation
-        response = messagebox.askyesno("Confirm Exit", "Are you sure you want to quit Teststarter?")
+        response = messagebox.askyesno(translate_service.get_translation("confirmExit"), translate_service.get_translation("confirmExitText"))
 
         # If the user clicked 'Yes', then close the program
         if response == True:
@@ -263,7 +272,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         root.withdraw()
 
         # Show a messagebox asking for confirmation
-        response = messagebox.askyesno("Help", "You will be redirected to GitHub?")
+        response = messagebox.askyesno(translate_service.get_translation("help"), translate_service.get_translation("helpText"))
 
         # If the user clicked 'Yes', then open browser
         if response == True:
@@ -378,7 +387,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             newdate_input_active = False
                             current_time = schedule[list(schedule)[row-1]]["datetime"].split(" ")[1]
                             splitted_time = current_time.split(":")
-                            time_picker = create_time_picker(splitted_time[0], splitted_time[1])
+                            time_picker = create_time_picker(splitted_time[0], splitted_time[1], translate_service)
                             formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ":" + str(time_picker.time()[1]).rjust(2, '0') +":00"
                             if newtime_active_row in newtime_input_values:
                                 newtime_input_values[newtime_active_row] += formatted_time
@@ -398,23 +407,25 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         screen.fill(black) # Fill the screen with the black color
         
         # This invokes the function draw_button
-        draw_button(screen, "Run Teststarter", 50 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_back)
-        draw_button(screen, "Change / Edit Night", 50 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, change_night)
-        draw_button(screen, "Quit Teststarter", 50 * width_scale_factor, 300 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_quit_teststarter)
-        draw_button(screen, "Help", 50 * width_scale_factor, 400 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_help)
+        draw_button(screen, translate_service.get_translation("runTeststarter"), 50 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_back)
+        draw_button(screen, translate_service.get_translation("changNight"), 50 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, change_night)
+        draw_button(screen, translate_service.get_translation("quit"), 50 * width_scale_factor, 300 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_quit_teststarter)
+        draw_button(screen, translate_service.get_translation("help"), 50 * width_scale_factor, 400 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_help)
+        draw_button(screen, translate_service.get_translation("english"), 50 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "en"))
+        draw_button(screen, translate_service.get_translation("german"), 180 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "de"))
 
         # Display column headers with adjusted font size
         font = pygame.font.Font(None, int(20 * width_scale_factor)) # Create font object for header
-        text_surface = font.render(' Task', True, light_grey) # Render the text 'Task' with the font and color light_grey
+        text_surface = font.render(' ' + translate_service.get_translation("task"), True, light_grey) # Render the text 'Task' with the font and color light_grey
         screen.blit(text_surface, (column_start_x, cellPadding)) # Blit the text surface to the screen at the specified position
         if not isHab:
-            text_surface = font.render(' Date', True, light_grey) # Render the text 'Time'
+            text_surface = font.render(' ' + translate_service.get_translation("date"), True, light_grey) # Render the text 'Time'
             screen.blit(text_surface, (column_start_x + column_width, cellPadding)) # Blit the text surface to the screen
-            text_surface = font.render(' Time', True, light_grey) # Render the text 'Time'
+            text_surface = font.render(' ' + translate_service.get_translation("time"), True, light_grey) # Render the text 'Time'
             screen.blit(text_surface, (column_start_x + (2 * column_width), cellPadding)) # Blit the text surface to the screen
         #text_surface = font.render('New Date and Time', True, light_grey) # Render the text 'New Date and Time'
         #screen.blit(text_surface, (column_start_x + (3 * column_width), cellPadding)) # Blit the text surface to the screen
-        text_surface = font.render(' Skip/Done/ToDo', True, light_grey)  # Render the text 'Skip/newtimedate'
+        text_surface = font.render(' ' + translate_service.get_translation("skipDoneTodo"), True, light_grey)  # Render the text 'Skip/newtimedate'
         screen.blit(text_surface, (column_start_x + (todo_row_multiplicator * column_width), cellPadding))  # Adjusted blitting position
 
         # Display each task with adjusted font size
@@ -500,7 +511,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             todo_color = {"todo": light_grey, "skip": (240, 230, 140), "done": (0, 179, 113)}
             if row in todo_input_values:
                 todo_input_value = todo_input_values[row]
-                todo_input_text_surface = todo_input_box_font.render(todo_input_value, True, todo_color[todo_input_value.lower()])
+                todo_input_text_surface = todo_input_box_font.render(translate_service.get_translation(todo_input_value), True, todo_color[todo_input_value.lower()])
 
                 if todo_input_value.lower() == "todo" or todo_input_value.lower() == "done" or todo_input_value.lower() == "skip":
                     schedule[list(schedule)[row-1]]["state"] = todo_input_value.lower()
@@ -511,7 +522,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 todo_input_text_surface = todo_input_box_font.render(todo_input_text, True, todo_color[todo_input_values[row].lower()])
                 screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
             elif todo_active_row != row:
-                todo_input_text_surface = todo_input_box_font.render(state, True, todo_color[schedule[list(schedule)[row-1]]["state"].lower()])
+                todo_input_text_surface = todo_input_box_font.render(translate_service.get_translation(state), True, todo_color[schedule[list(schedule)[row-1]]["state"].lower()])
                 screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
 
             # Render the cursor

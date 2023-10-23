@@ -6,5 +6,21 @@
     "experiment": "Experiment:",
     "timeOfDay": "Tageszeit (morn/eve):",
     "weekNumber": "Wochennumer:",
-    "startTime": "Zeit (24-Stunden Format):"
+    "startTime": "Zeit (24-Stunden Format):",
+    "saveTime": "Zeit speichern",
+    "runTeststarter": "Teststarter starten",
+    "changNight": "Nacht ändern / editieren",
+    "quit": "Teststarter beenden", 
+    "help": "Hilfe",
+    "task": "Aufgabe",
+    "date": "Datum",
+    "time": "Zeit",
+    "todo": "ToDo",
+    "skip": "Überspringen",
+    "done": "Fertig",
+    "skipDoneTodo": "ToDo/Überspringen\n /Feritg",
+    "confirmExit": "Beenden bestätigen",
+    "confirmExitText": "Sind Sie sicher, dass Sie den Teststarter beenden wollen?",
+    "helpText": "Sie werden zu GitHub weitergeleitet",
+    "allTasksCompleted": "Alle Aufgaben erledigt"
 }

@@ -8,5 +8,21 @@
     "weekNumber": "Week Number:",
     "startTime": "Start Time (24-hour format):",
     "german": "Deutsch",
-    "english": "English"
+    "english": "English",
+    "saveTime": "Save Time",
+    "runTeststarter": "Run Teststarter",
+    "changNight": "Change / Edit Night",
+    "quit": "Quit Teststarter", 
+    "help": "Help",
+    "task": "Task",
+    "date": "Date",
+    "time": "Time",
+    "todo": "ToDo",
+    "skip": "Skip",
+    "done": "Done",
+    "skipDoneTodo": "Todo/Skip/Done",
+    "confirmExit": "Confirm Exit",
+    "confirmExitText": "Are you sure you want to quit Teststarter?",
+    "helpText": "You will be redirected to GitHub",
+    "allTasksCompleted": "All tasks completed"
 }
