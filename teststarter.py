@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from classes import InputBox, Button
 from functions import create_schedule_display
 from ctypes import windll
+import re
 
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
@@ -38,6 +39,11 @@ class Teststarter:
 
         pygame.quit()
         sys.exit()
+    
+    def is_valid_time_format(slef, datetime_str):
+        # This pattern strictly matches DD/MM/YYYY HH:MM:SS
+        pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"
+        return re.match(pattern, datetime_str) is not None
         
     class TestBatteryConfiguration:
         def __init__(self, start_time):
@@ -170,10 +176,31 @@ class Teststarter:
     def clear_screen(self):
         self.screen.fill((0, 0, 0))
 
+    
     def draw(self):
+        def validate_inputs():
+            is_id_valid = len(self.input_boxes[0].text) != 0
+            is_experiment_valid = True # Implement experiments
+            is_time_of_day_valid = self.input_boxes[2].text == "morn" or self.input_boxes[2].text == "eve"
+            is_week_no_valid = self.input_boxes[3].text.isnumeric()
+            is_start_time_valid = self.is_valid_time_format(self.input_boxes[4].text)
+
+            if is_id_valid and is_experiment_valid and is_time_of_day_valid and is_week_no_valid and is_start_time_valid:
+                return True
+            else:
+                return False
+            
         for box in self.input_boxes:
             box.draw(self.screen)
-    
+        is_input_valid = validate_inputs()
+
+        if is_input_valid:
+            self.input_boxes[-1].set_active(True)
+            self.input_boxes[-1].set_color("gray")
+        else:
+            self.input_boxes[-1].set_active(False)
+            self.input_boxes[-1].set_color((100, 100, 100))
+   
     def exit(self):
         self.is_running = False
 
