@@ -4,7 +4,7 @@
     "submit": "Submit",
     "participantId": "Participant ID:",
     "experiment": "Experiment:",
-    "timeOfDay": "Time of Day (morn/eve):",
+    "timeOfDay": "Time of Day (morn/eve/full):",
     "weekNumber": "Week Number:",
     "startTime": "Start Time (24-hour format):",
     "german": "Deutsch",
@@ -30,5 +30,8 @@
     "timeOfDayError": "Invalid time of day\n",
     "weekNoError": "Week number must be numeric\n",
     "startTimeError": "Start time must be in the format hh:mm\n",
-    "experimentNotFound": "Experiment in combinatin with time of day not found\n"
+    "experimentNotFound": "Experiment in combinatin with time of day not found\n",
+    "back": "Back",
+    "configureExperiment": "Create Experiment",
+    "experimentName": "Experiment name"
 }

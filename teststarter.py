@@ -8,7 +8,7 @@ from pygame.locals import *
 import csv
 from datetime import datetime, timedelta
 from classes import InputBox, Button
-from functions import create_schedule_display
+from functions import create_schedule_display, create_experiment_config_display
 from ctypes import windll
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
@@ -76,11 +76,13 @@ class Teststarter:
         submit_button = Button(x + 75, y + 60, 100, 40, "submit", self.save_details, self.translateService)
         english_button = Button(self.width-250, 100, 100, 40, "english", lambda: self.change_language("en"), self.translateService)
         german_button = Button(self.width-100, 100, 100, 40, "german", lambda: self.change_language("de"), self.translateService)
+        create_experiment_button = Button(self.width-175, 150, 250, 40, "configureExperiment", lambda: create_experiment_config_display(Teststarter, self.translateService), self.translateService)
 
         self.buttons.append(english_button)
         self.buttons.append(german_button)
         self.buttons.append(exit_button)
         self.buttons.append(submit_button)
+        self.buttons.append(create_experiment_button)
     
     def load_config_lang(self):
         self.language_config.read_language_config()
@@ -131,7 +133,7 @@ class Teststarter:
         def validate_inputs(experiments):
             is_id_valid = len(self.input_boxes[0].text) != 0
             is_experiment_valid = self.input_boxes[1].text in experiments
-            is_time_of_day_valid = self.input_boxes[2].text == "morn" or self.input_boxes[2].text == "eve"
+            is_time_of_day_valid = self.input_boxes[2].text == "morn" or self.input_boxes[2].text == "eve" or self.input_boxes[2].text == "full"
             is_week_no_valid = self.input_boxes[3].text.isnumeric()
             is_start_time_valid = self.is_valid_time_format(self.input_boxes[4].text)
 
@@ -141,7 +143,7 @@ class Teststarter:
                 validation_checks = [
                     (lambda text: len(text) != 0, "idError"),
                     (lambda text: text in experiments, "experimentError"),
-                    (lambda text: text in ["morn", "eve"], "timeOfDayError"),
+                    (lambda text: text in ["morn", "eve", "full"], "timeOfDayError"),
                     (lambda text: text.isnumeric(), "weekNoError"),
                     (self.is_valid_time_format, "startTimeError")
                 ]
@@ -154,8 +156,6 @@ class Teststarter:
                         self.errors.append(error_translation)
                     elif is_valid and error_translation in self.errors:
                         self.errors.remove(error_translation)
-
-                
 
             if is_id_valid and is_experiment_valid and is_time_of_day_valid and is_week_no_valid and is_start_time_valid:
                 return True
