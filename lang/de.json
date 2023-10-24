@@ -22,5 +22,11 @@
     "confirmExit": "Beenden bestätigen",
     "confirmExitText": "Sind Sie sicher, dass Sie den Teststarter beenden wollen?",
     "helpText": "Sie werden zu GitHub weitergeleitet",
-    "allTasksCompleted": "Alle Aufgaben erledigt"
+    "allTasksCompleted": "Alle Aufgaben erledigt",
+    "idError": "ID ist ein Plichtfeld\n",
+    "experimentError": "Kein experiment mit diesem Name gefunden\n",
+    "timeOfDayError": "Ungültige Tageszeit\n",
+    "weekNoError": "Die Wochennummer muss numerisch sein\n",
+    "startTimeError": "Startzeit muss im Format hh:mm sein\n",
+    "experimentNotFound": "Experiment in Kombination mit Tageszeit nicht gefunden\n"
 }

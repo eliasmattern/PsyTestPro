@@ -17,7 +17,6 @@ from services import TranslateService, LanguageConfiguration
 schedule_page = 0
 
 def create_schedule_display(schedule, participant_info, teststarter, isHab = False):
-
     language_config = LanguageConfiguration()
     translate_service = TranslateService(language_config)
 
@@ -246,6 +245,9 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         return re.match(pattern, datetime_str) is not None
 
     def change_night():
+        global schedule_page
+        schedule_page = 0
+
         time = str(participant_info["start_time"]).split(" ")[1]
         splittedTime = time.split(":")
         formattedTime = splittedTime[0] + ":" + splittedTime[1]

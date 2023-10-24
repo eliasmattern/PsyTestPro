@@ -1,0 +1,334 @@
+{
+    "eve_eve_variable": {
+        "tasks": {
+            "welcome": {
+                "time": "00:00",
+                "state": "todo"
+            },
+            "saliva1": {
+                "time": "00:20",
+                "state": "todo"
+            },
+            "eeg_fitting": {
+                "time": "00:26",
+                "state": "todo"
+            },
+            "waking_eeg1": {
+                "time": "01:26",
+                "state": "todo"
+            },
+            "saliva2": {
+                "time": "01:32",
+                "state": "todo"
+            },
+            "mood1": {
+                "time": "01:38",
+                "state": "todo"
+            },
+            "wof1": {
+                "time": "01:43",
+                "state": "todo"
+            },
+            "dinner": {
+                "time": "01:55",
+                "state": "todo"
+            },
+            "saliva3": {
+                "time": "02:23",
+                "state": "todo"
+            },
+            "gonogo1": {
+                "time": "02:29",
+                "state": "todo"
+            },
+            "breaktime1": {
+                "time": "02:32",
+                "state": "todo"
+            },
+            "pvt1": {
+                "time": "02:39",
+                "state": "todo"
+            },
+            "capsule": {
+                "time": "02:51",
+                "state": "todo"
+            },
+            "breaktime2": {
+                "time": "02:56",
+                "state": "todo"
+            },
+            "saliva4": {
+                "time": "03:11",
+                "state": "todo"
+            },
+            "breaktime3": {
+                "time": "03:17",
+                "state": "todo"
+            },
+            "waking_eeg2": {
+                "time": "03:27",
+                "state": "todo"
+            },
+            "mood2": {
+                "time": "03:33",
+                "state": "todo"
+            },
+            "wof2": {
+                "time": "03:38",
+                "state": "todo"
+            },
+            "breaktime4": {
+                "time": "03:50",
+                "state": "todo"
+            },
+            "gonogo2": {
+                "time": "03:55",
+                "state": "todo"
+            },
+            "saliva5": {
+                "time": "03:58",
+                "state": "todo"
+            },
+            "pvt2": {
+                "time": "04:04",
+                "state": "todo"
+            },
+            "sleep_diary_expe": {
+                "time": "04:16",
+                "state": "todo"
+            },
+            "breaktime5": {
+                "time": "04:26",
+                "state": "todo"
+            },
+            "nback1": {
+                "time": "04:38",
+                "state": "todo"
+            },
+            "saliva6": {
+                "time": "04:48",
+                "state": "todo"
+            },
+            "pvt3": {
+                "time": "04:54",
+                "state": "todo"
+            },
+            "breaktime6": {
+                "time": "05:06",
+                "state": "todo"
+            },
+            "waking_eeg3": {
+                "time": "05:13",
+                "state": "todo"
+            },
+            "bed_prep": {
+                "time": "05:19",
+                "state": "todo"
+            },
+            "saliva7": {
+                "time": "05:34",
+                "state": "todo"
+            },
+            "teethbrushing": {
+                "time": "05:40",
+                "state": "todo"
+            },
+            "in_bed": {
+                "time": "05:45",
+                "state": "todo"
+            }
+        }
+    },
+    "morn_se_variable": {
+        "tasks": {
+            "good_morn": {
+                "time": "00:00",
+                "state": "todo"
+            },
+            "morn_sleep_diary": {
+                "time": "00:10",
+                "state": "todo"
+            },
+            "leeds": {
+                "time": "00:15",
+                "state": "todo"
+            },
+            "saliva8_morn": {
+                "time": "00:20",
+                "state": "todo"
+            },
+            "break1_morn": {
+                "time": "00:26",
+                "state": "todo"
+            },
+            "waking_eeg4_morn": {
+                "time": "00:46",
+                "state": "todo"
+            },
+            "pvt4_morn": {
+                "time": "00:52",
+                "state": "todo"
+            },
+            "saliva9_morn": {
+                "time": "01:04",
+                "state": "todo"
+            },
+            "teethbrushing": {
+                "time": "01:10",
+                "state": "todo"
+            },
+            "mood3_morn": {
+                "time": "01:15",
+                "state": "todo"
+            },
+            "wof3_morn": {
+                "time": "01:20",
+                "state": "todo"
+            },
+            "task_payment": {
+                "time": "01:32",
+                "state": "todo"
+            },
+            "gonogo3_morn": {
+                "time": "01:37",
+                "state": "todo"
+            },
+            "nback2_morn": {
+                "time": "01:40",
+                "state": "todo"
+            },
+            "eeg_removal": {
+                "time": "01:50",
+                "state": "todo"
+            },
+            "goodbye": {
+                "time": "02:00",
+                "state": "todo"
+            }
+        }
+    },
+    "morn_sr_variable": {
+        "tasks": {
+            "good_morn": {
+                "time": "00:00",
+                "state": "todo"
+            },
+            "morn_sleep_diary": {
+                "time": "00:10",
+                "state": "todo"
+            },
+            "leeds": {
+                "time": "00:15",
+                "state": "todo"
+            },
+            "saliva8_morn": {
+                "time": "00:20",
+                "state": "todo"
+            },
+            "breakfast_morn": {
+                "time": "00:26",
+                "state": "todo"
+            },
+            "waking_eeg4_morn": {
+                "time": "00:46",
+                "state": "todo"
+            },
+            "pvt4_morn": {
+                "time": "00:52",
+                "state": "todo"
+            },
+            "saliva9_morn": {
+                "time": "01:04",
+                "state": "todo"
+            },
+            "mood3_morn": {
+                "time": "01:10",
+                "state": "todo"
+            },
+            "wof3_morn": {
+                "time": "01:15",
+                "state": "todo"
+            },
+            "break1_morn": {
+                "time": "01:27",
+                "state": "todo"
+            },
+            "gonogo3_morn": {
+                "time": "01:32",
+                "state": "todo"
+            },
+            "nback2_morn": {
+                "time": "01:35",
+                "state": "todo"
+            },
+            "break2_morn": {
+                "time": "01:45",
+                "state": "todo"
+            },
+            "saliva10_morn": {
+                "time": "02:00",
+                "state": "todo"
+            },
+            "break4_morn": {
+                "time": "02:06",
+                "state": "todo"
+            },
+            "waking_eeg5_morn": {
+                "time": "02:11",
+                "state": "todo"
+            },
+            "pvt5_morn": {
+                "time": "02:17",
+                "state": "todo"
+            },
+            "saliva11_morn": {
+                "time": "02:29",
+                "state": "todo"
+            },
+            "teethbrushing": {
+                "time": "02:35",
+                "state": "todo"
+            },
+            "mood4_morn": {
+                "time": "02:40",
+                "state": "todo"
+            },
+            "wof4_morn": {
+                "time": "02:45",
+                "state": "todo"
+            },
+            "task_payment": {
+                "time": "02:57",
+                "state": "todo"
+            },
+            "gonogo4_morn": {
+                "time": "03:02",
+                "state": "todo"
+            },
+            "eeg_removal": {
+                "time": "03:05",
+                "state": "todo"
+            },
+            "goodbye": {
+                "time": "03:30",
+                "state": "todo"
+            }
+        }
+    },
+    "hab_variable": {
+        "tasks": {
+            "pvt_hab": {
+                "time": "00:00",
+                "state": "todo"
+            },
+            "gonogo_hab": {
+                "time": "00:00",
+                "state": "todo"
+            },
+            "n-back_hab": {
+                "time": "00:00",
+                "state": "todo"
+            }
+        }
+    }
+}

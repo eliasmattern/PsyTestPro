@@ -1,2 +1,3 @@
 from .TranslateService import TranslateService
 from .LanguageConfiguration import LanguageConfiguration
+from .configuration import TeststarterConfig

@@ -24,5 +24,11 @@
     "confirmExit": "Confirm Exit",
     "confirmExitText": "Are you sure you want to quit Teststarter?",
     "helpText": "You will be redirected to GitHub",
-    "allTasksCompleted": "All tasks completed"
+    "allTasksCompleted": "All tasks completed",
+    "idError": "ID is a mandatory field\n",
+    "experimentError": "No experiment with this name found\n",
+    "timeOfDayError": "Invalid time of day\n",
+    "weekNoError": "Week number must be numeric\n",
+    "startTimeError": "Start time must be in the format hh:mm\n",
+    "experimentNotFound": "Experiment in combinatin with time of day not found\n"
 }

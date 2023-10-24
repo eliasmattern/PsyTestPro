@@ -11,7 +11,7 @@ from classes import InputBox, Button
 from functions import create_schedule_display
 from ctypes import windll
 import re
-from services import TranslateService, LanguageConfiguration
+from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
@@ -19,11 +19,14 @@ class Teststarter:
         self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h
         self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN)
         pygame.display.set_caption("Teststarter")
+        self.teststarterConfig = TeststarterConfig()
+        self.teststarterConfig.load_experiments()
         self.lang = "en"
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 24)
         self.input_boxes = []
         self.buttons = []
+        self.errors = []
         self.language_config = LanguageConfiguration()
         self.translateService = TranslateService(self.language_config)
         self.lang = self.load_config_lang()
@@ -52,100 +55,14 @@ class Teststarter:
         pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"
         return re.match(pattern, datetime_str) is not None
 
-
-    class TestBatteryConfiguration:
-        def __init__(self, start_time):
-            self.start_time = start_time
-            self.config_data = {}
-
-        def read_config_file(self, file_name):
-            with open(file_name, 'r') as file:
-                reader = csv.reader(file)
-                header = next(reader)
-                for row in reader:
-                    for i, value in enumerate(row):
-                        key = header[i]
-                        if key not in self.config_data:
-                            self.config_data[key] = []
-                        self.config_data[key].append(value)
-
-        def hab_night(self, participant_info):
-            global schedule
-            isHab = True
-            schedule = {}
-            exp_eve_times = self.config_data['hab']
-            exp_eve_variables = self.config_data['hab_variable']
-            for i, time_delta in enumerate(exp_eve_times):
-                exp_variable = exp_eve_variables[i]
-                if time_delta:
-                    activation_time = self.start_time + timedelta(hours=int(time_delta.split(':')[0]), minutes=int(time_delta.split(':')[1]))
-                    #schedule[exp_variable] = str(activation_time)
-                    schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
-            edited_schedule = {}
-            for key, value in schedule.items():
-                edited_schedule.update({key: {"datetime": value, "state": "todo"}})
-            schedule = edited_schedule
-            print("hab = ", edited_schedule)
-            create_schedule_display(schedule, participant_info, Teststarter, isHab)
-
-        def experiment_evening(self, participant_info):
-            global schedule
-            isHab = False
-            schedule = {}
-            exp_eve_times = self.config_data['exp_eve']
-            exp_eve_variables = self.config_data['exp_eve_variable']
-            for i, time_delta in enumerate(exp_eve_times):
-                exp_variable = exp_eve_variables[i]
-                if time_delta:
-                    activation_time = self.start_time + timedelta(hours=int(time_delta.split(':')[0]), minutes=int(time_delta.split(':')[1]))
-                    #schedule[exp_variable] = str(activation_time)
-                    schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
-            edited_schedule = {}
-            for key, value in schedule.items():
-                edited_schedule.update({key: {"datetime": value, "state": "todo"}})
-            schedule = edited_schedule
-            print("ee = ", edited_schedule)
-            create_schedule_display(schedule, participant_info, Teststarter)
-            
-        def sleep_extension_morning(self, participant_info):
-            global schedule
-            isHab = False
-            schedule = {}
-            morn_se_times = self.config_data['morn_se']
-            morn_se_variables = self.config_data['morn_se_variable']
-            for i, time_delta in enumerate(morn_se_times):
-                morn_variable = morn_se_variables[i]
-                if time_delta:
-                    activation_time = self.start_time + timedelta(hours=int(time_delta.split(':')[0]), minutes=int(time_delta.split(':')[1]))
-                    schedule[morn_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S') #str(activation_time)
-            edited_schedule = {}
-            for key, value in schedule.items():
-                edited_schedule.update({key: {"datetime": value, "state": "todo"}})
-            schedule = edited_schedule
-            print("sem = ", schedule)
-            create_schedule_display(schedule, participant_info, Teststarter)
-            
-        def sleep_restriction_morning(self, participant_info):
-            global schedule
-            isHab = False
-            schedule = {}
-            morn_sr_times = self.config_data['morn_sr']
-            morn_sr_variables = self.config_data['morn_sr_variable']
-            for i, time_delta in enumerate(morn_sr_times):
-                morn_variable = morn_sr_variables[i]
-                if time_delta:
-                    activation_time = self.start_time + timedelta(hours=int(time_delta.split(':')[0]), minutes=int(time_delta.split(':')[1]))
-                    schedule[morn_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S') #str(activation_time)
-            edited_schedule = {}
-            for key, value in schedule.items():
-                edited_schedule.update({key: {"datetime": value, "state": "todo"}})
-            schedule = edited_schedule
-            print("srm = ", schedule)
-            create_schedule_display(edited_schedule, participant_info, Teststarter)
-            
     def create_input_boxes(self):
         labels = ["participantId", "experiment", "timeOfDay", "weekNumber", "startTime"]
-        inforomation = ["", "(se, sr, hab)", "", "", ""]
+        experiments_string = ""
+        for experiment in self.teststarterConfig.experiments:
+            experiments_string = experiments_string + experiment + ", "
+        if "," in experiments_string:
+            experiments_string = experiments_string[:-2]
+        inforomation = ["", "(" + experiments_string + ")", "", "", ""]
         initial_text = [self.id, self.experiment, self.time_of_day, self.week_number, self.time]
         x = self.width // 2
         y = self.height // 2 - 100
@@ -173,6 +90,7 @@ class Teststarter:
             self.lang = language
 
     def change_language(self, lang):
+        self.errors.clear()
         self.translateService.set_language(lang)
         self.language_config.update_language_config(lang)
 
@@ -210,12 +128,34 @@ class Teststarter:
 
     
     def draw(self):
-        def validate_inputs():
+        def validate_inputs(experiments):
             is_id_valid = len(self.input_boxes[0].text) != 0
-            is_experiment_valid = True # Implement experiments
+            is_experiment_valid = self.input_boxes[1].text in experiments
             is_time_of_day_valid = self.input_boxes[2].text == "morn" or self.input_boxes[2].text == "eve"
             is_week_no_valid = self.input_boxes[3].text.isnumeric()
             is_start_time_valid = self.is_valid_time_format(self.input_boxes[4].text)
+
+            # Define validation checks and corresponding error messages
+
+            if self.input_boxes[0].text and self.input_boxes[1].text and self.input_boxes[2].text and self.input_boxes[3].text and self.input_boxes[4].text:
+                validation_checks = [
+                    (lambda text: len(text) != 0, "idError"),
+                    (lambda text: text in experiments, "experimentError"),
+                    (lambda text: text in ["morn", "eve"], "timeOfDayError"),
+                    (lambda text: text.isnumeric(), "weekNoError"),
+                    (self.is_valid_time_format, "startTimeError")
+                ]
+
+                for validation_check, error_key in validation_checks:
+                    is_valid = validation_check(self.input_boxes[validation_checks.index((validation_check, error_key))].text)
+
+                    error_translation = self.translateService.get_translation(error_key)
+                    if not is_valid and error_translation not in self.errors:
+                        self.errors.append(error_translation)
+                    elif is_valid and error_translation in self.errors:
+                        self.errors.remove(error_translation)
+
+                
 
             if is_id_valid and is_experiment_valid and is_time_of_day_valid and is_week_no_valid and is_start_time_valid:
                 return True
@@ -224,7 +164,7 @@ class Teststarter:
             
         for box in self.input_boxes:
             box.draw(self.screen)
-        is_input_valid = validate_inputs()
+        is_input_valid = validate_inputs(self.teststarterConfig.experiments)
 
         for button in self.buttons:
             button.draw(self.screen)
@@ -236,10 +176,65 @@ class Teststarter:
             self.buttons[3].set_active(False)
             self.buttons[3].set_color((100, 100, 100))
         
+        if self.teststarterConfig.error_msg == "":
+            for item in self.errors:
+                if self.translateService.get_translation("experimentNotFound") in item:
+                    self.errors.remove(item)
+        else:
+            is_in_errors = False
+            for item in self.errors:
+                if self.translateService.get_translation("experimentNotFound") in item:
+                    is_in_errors = True
+            if not is_in_errors:
+                self.errors.append(self.translateService.get_translation("experimentNotFound"))
+
+
+        if len(self.errors) > 0:
+            error_msg = ""
+
+            for error in self.errors:
+                error_msg = error_msg + error
+            x = self.width // 2
+            y = self.height // 2
+            font = pygame.font.Font(None, 24) 
+            text_surface = font.render(' ' + error_msg, True, pygame.Color("gray")) 
+            self.screen.blit(text_surface, (x-150, y + 400)) 
+        
         
    
     def exit(self):
         self.is_running = False
+        
+    def start_experiment(self, start_time, participant_info):
+        global schedule
+        isHab = self.teststarterConfig.current_experiment == "hab"
+        schedule = {}
+        current_tasks = self.teststarterConfig.current_tasks
+        print(self.teststarterConfig.error_msg)
+        if len(self.teststarterConfig.error_msg) > 0:
+            return
+        tasks = [] 
+        times = [] 
+        states = {}
+
+        for task, details in current_tasks.items():
+            tasks.append(task)
+            times.append(details['time'])
+            states[task] = details['state']
+
+        for i, time_delta in enumerate(times):
+            exp_variable = tasks[i]
+            if time_delta:
+                activation_time = start_time + timedelta(hours=int(time_delta.split(':')[0]), minutes=int(time_delta.split(':')[1]))
+                #schedule[exp_variable] = str(activation_time)
+                schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
+        edited_schedule = {}
+        for key, value in schedule.items():
+            edited_schedule.update({key: {"datetime": value, "state": states[key]}})
+        schedule = edited_schedule
+        print("ee = ", edited_schedule)
+        create_schedule_display(schedule, participant_info, Teststarter)
+        self.input_boxes = []
 
     def save_details(self):
         participant_id = self.input_boxes[0].text
@@ -258,26 +253,11 @@ class Teststarter:
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, "%H:%M").time())
 
         participant_info={"participant_id": participant_id, "experiment": experiment, "time_of_day": time_of_day, "week_no": week_no, "start_time": start_time}
+    
+        self.teststarterConfig.load_experiment_tasks(experiment, time_of_day)
+        self.start_experiment(start_time, participant_info)
+       
 
-        if experiment == "hab":
-            config = self.TestBatteryConfiguration(start_time)
-            config.read_config_file('configuration.csv')
-            config.hab_night(participant_info) 
-        elif time_of_day == "eve":
-            config = self.TestBatteryConfiguration(start_time)
-            config.read_config_file('configuration.csv')
-            config.experiment_evening(participant_info)
-        elif time_of_day == "morn" and experiment == "se":
-            config = self.TestBatteryConfiguration(start_time)
-            config.read_config_file('configuration.csv')
-            config.sleep_extension_morning(participant_info)
-        elif time_of_day == "morn" and experiment == "sr":
-            config = self.TestBatteryConfiguration(start_time)
-            config.read_config_file('configuration.csv')
-            config.sleep_restriction_morning(participant_info)
-             
-        
-        self.input_boxes = []
 
 
 Teststarter()
