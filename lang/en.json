@@ -40,5 +40,13 @@
     "deleteExperimentMsg": "Do you want to delete this experiment? \n Experiment: ",
     "delete": "Delete",
     "deleteMultipleExperimentMsg": "This experiment has different tasks for different times of day!\nDo you want to delete them all? ",
-    "createMultipleExperiments": "Create Multiple Experiments"
+    "createMultipleExperiments": "Create Multiple Experiments",
+    "createMultipleTasks": "Create Multiple Tasks",
+    "createTask": "Add task",
+    "taskName": "Name:",
+    "timeForTask": "Time relative to start time:",
+    "command": "Command (shell):",
+    "title": "Title (Use \"\\n\" to create new line (press return)):",
+    "description": "Decrioption (Use \"\\n\" to create new line (press return)):",
+    "textScreen": "Inforomation Screen"
 }

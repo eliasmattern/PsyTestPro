@@ -38,5 +38,13 @@
     "deleteExperimentMsg": "Möchten Sie dieses experiment löschen?\nExperiment: ",
     "delete": "Löschen",
     "deleteMultipleExperimentMsg": "Dieses Experiment hat unterschiedliche Aufgaben für unterschiedliche Tageszeiten!\nWollen Sie alle löschen? ",
-    "createMultipleExperiments": "Mehrere Experimente erstellen"    
+    "createMultipleExperiments": "Mehrere Experimente erstellen",
+    "createMultipleTasks": "Mehrere Aufgaben erstellen",
+    "createTask": "Aufgabe hinzufügen",
+    "taskName": "Name:",
+    "timeForTask": "Zeit relativ zur Startzeit:",
+    "command": "Kommando (shell):",
+    "title": "Titel (Benutze \"\\n\" für eine neue Zeile (drücke enter)):",
+    "description": "Beschreibung (Benutze \"\\n\" für eine neue Zeile (drücke enter)):",
+    "textScreen": "Informationsbildschirm"
 }

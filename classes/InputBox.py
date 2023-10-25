@@ -2,8 +2,8 @@ import pygame
 from pygame.locals import *
 
 class InputBox:
-    def __init__(self, x, y, width, height, translation_key, translat_service, info="", initial_text="", allow_new_line = False):
-        self.translate_service = translat_service
+    def __init__(self, x, y, width, height, translation_key, translate_service, info="", initial_text="", allow_new_line = False):
+        self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color("gray")
         self.active_color = pygame.Color("gray")

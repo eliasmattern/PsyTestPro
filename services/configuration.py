@@ -56,3 +56,35 @@ class TeststarterConfig:
         with open('json/taskConfig.json', 'w') as file:
             json.dump(original_tasks, file, indent=4)
 
+    def get_experiment_and_time_of_day(self):
+        with open('json/taskConfig.json', 'r') as file:
+            data = json.load(file)
+        variable_names = data.keys()
+        result = {}
+        for variable in variable_names:
+            splitted_variable = variable.split("_")
+            result[variable] = {"experiment": splitted_variable[1], "time_of_day": splitted_variable[0]}
+
+        return result
+        
+    def save_task(self, variable, name, time, type, value):
+        # Load the JSON data from a file
+        with open('json/taskConfig.json', 'r') as file:
+            json_data = json.load(file)
+
+        # Function to add a new task to a specific object
+        def add_task_to_object(json_data, object_name, task_name, time, type, value):
+            new_task = {
+                "time": time,
+                "state": "todo",
+                "type": type,
+                "value": value
+            }
+            json_data[object_name]["tasks"][task_name] = new_task
+
+        # Example usage
+        add_task_to_object(json_data, variable, name, time, type, value)
+
+        # Save the updated JSON data back to the file
+        with open('json/taskConfig.json', 'w') as file:
+            json.dump(json_data, file, indent=4)
