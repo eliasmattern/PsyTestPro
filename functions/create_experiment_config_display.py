@@ -10,6 +10,7 @@ from tkinter import messagebox
 from services import TeststarterConfig
 
 selected_multiple = False
+page = 0
 
 def backToTeststarter(teststarter):
     teststarter()
@@ -291,34 +292,50 @@ def delete_experiment_config_display(teststarter, translate_service):
     # Setting the window caption
     pygame.display.set_caption('Delete Experiment')
 
-    buttons = []
-
     teststarter_config.load_experiments()
-    
-    experiments = teststarter_config.experiments
+    experiments = teststarter_config.experiments    
+    splitted_experiments = [experiments[i:i+5] for i in range(0, len(experiments), 5)]
 
-    spacing = 0
-    width, height =pygame.display.Info().current_w, pygame.display.Info().current_h
+    global page
+    page = 0
 
-    x = width // 2
-    y = height // 2 - 150
-
-    for experiment in experiments:
-        exp_button = Button(x, y + 60 + spacing, 400, 40, experiment, lambda exp = experiment: delete_experiment(teststarter, translate_service, exp))
-        buttons.append(exp_button)
-        spacing += 60
-    back_button = Button(x, y + spacing + 100, 100, 40, "back", lambda: back(teststarter, translate_service), translate_service)
-    buttons.append(back_button)
-
+    def page_update(increment): 
+        global page
+        if increment:
+            page = (page + 1) % len(splitted_experiments)
+        else:
+            page = (page - 1) if page > 0 else len(splitted_experiments) - 1
 
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            for button in buttons:
-                button.handle_event(event)
         screen.fill(black) # Fill the screen with the black color
+
+        buttons = []
+    
+        spacing = 0
+        width, height =pygame.display.Info().current_w, pygame.display.Info().current_h
+
+        x = width // 2
+        y = height // 2 - 150
+
+        for experiment in splitted_experiments[page]:
+            exp_button = Button(x, y + 60 + spacing, 400, 40, experiment, lambda exp = experiment: delete_experiment(teststarter, translate_service, exp))
+            buttons.append(exp_button)
+            spacing += 60
+
+        spacing = 5 * 60
+        spacing += 60
+        back_button = Button(x, y + spacing + 100, 100, 40, "back", lambda: back(teststarter, translate_service), translate_service)
+        buttons.append(back_button)
+
+        if len(splitted_experiments) > 1:
+            page_font = pygame.font.Font(None, int(24 * width_scale_factor)) 
+            page_text_surface = page_font.render(str(page + 1) + "/" + str(len(splitted_experiments)), True, light_grey)
+            page_rect = page_text_surface.get_rect()
+            screen.blit(page_text_surface, (x - page_rect.width // 2, y + 100 + spacing - 60))
+            previous_page_button = Button(x-40, y + 100 + spacing - 60 , 25, 25, "<", lambda: page_update(False))
+            next_page_back_button = Button(x+40, y + 100 + spacing - 60, 25, 25, ">", lambda: page_update(True))
+            buttons.append(previous_page_button)
+            buttons.append(next_page_back_button)
         
         # This invokes the function draw_button
 
@@ -327,7 +344,7 @@ def delete_experiment_config_display(teststarter, translate_service):
         x = width // 2
         y = height // 2 - 150
         font = pygame.font.Font(None, int(30 * width_scale_factor)) # Create font object for header
-        text_surface = font.render(translate_service.get_translation("configureExperiment"), True, light_grey) # Render the text 'Task' with the font and color light_grey
+        text_surface = font.render(translate_service.get_translation("deleteExperiment"), True, light_grey) # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
         screen.blit(text_surface, (x - text_rect.width // 2, y))
 
@@ -335,6 +352,12 @@ def delete_experiment_config_display(teststarter, translate_service):
             button.draw(screen)
 
         pygame.display.flip()  # Flip the display to update the screen
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            for button in buttons:
+                button.handle_event(event)
 
 def experiment_config_display(teststarter, translate_service, create_continously = False):
     # Open the pygame window at front of all windows open on screen
