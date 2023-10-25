@@ -7,6 +7,7 @@ import json
 from services import TeststarterConfig
 import tkinter as tk
 from tkinter import messagebox
+from services import TeststarterConfig
 
 selected_multiple = False
 
@@ -22,28 +23,9 @@ def back(teststarter, translate_service):
 
 def save_experiment(teststarter, experiment_name, experiment_time_of_day, translate_service):
     global selected_multiple
-    with open('json/experimentConfig.json', 'r') as file:
-        original_experiments = json.load(file)
-
-        if not experiment_name in original_experiments:
-            # Add a new value to the array
-            original_experiments.append(experiment_name)
-
-    # Save the updated array back to the file
-    with open('json/experimentConfig.json', 'w') as file:
-        json.dump(original_experiments, file)
-
-    # Load the original JSON from the file
-    with open('json/taskConfig.json', 'r') as file:
-        original_tasks = json.load(file)
-
-    if not experiment_time_of_day + "_" + experiment_name + "_variable" in original_tasks:
-        # Add a new variable with an empty task object
-        original_tasks[experiment_time_of_day + "_" + experiment_name + "_variable"] = {"tasks": {}}
-
-    # Save the updated JSON back to the file
-    with open('json/taskConfig.json', 'w') as file:
-        json.dump(original_tasks, file, indent=4)
+    
+    teststarter_config = TeststarterConfig()
+    teststarter_config.save_experiment(experiment_name, experiment_time_of_day)
 
     if selected_multiple:
         create_experiment_config_display(teststarter, translate_service, selected_multiple)
@@ -88,7 +70,6 @@ def delete_experiment(teststarter, translate_service, experiment_name):
                     json.dump(original_experiments, file)
                 for key in exp_keys:
                     del original_tasks[key]
-
             
             else:
                 times_said_yes = 0

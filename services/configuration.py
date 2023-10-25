@@ -32,3 +32,27 @@ class TeststarterConfig:
         except FileNotFoundError:
             raise Exception(f"File Error: ./json/taskConfig.json not found")
 
+    def save_experiment(self, experiment_name, experiment_time_of_day):
+        with open('json/experimentConfig.json', 'r') as file:
+            original_experiments = json.load(file)
+
+            if not experiment_name in original_experiments:
+                # Add a new value to the array
+                original_experiments.append(experiment_name)
+
+        # Save the updated array back to the file
+        with open('json/experimentConfig.json', 'w') as file:
+            json.dump(original_experiments, file)
+
+        # Load the original JSON from the file
+        with open('json/taskConfig.json', 'r') as file:
+            original_tasks = json.load(file)
+
+        if not experiment_time_of_day + "_" + experiment_name + "_variable" in original_tasks:
+            # Add a new variable with an empty task object
+            original_tasks[experiment_time_of_day + "_" + experiment_name + "_variable"] = {"tasks": {}}
+
+        # Save the updated JSON back to the file
+        with open('json/taskConfig.json', 'w') as file:
+            json.dump(original_tasks, file, indent=4)
+
