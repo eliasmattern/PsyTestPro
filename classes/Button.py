@@ -2,12 +2,14 @@ import pygame
 from pygame.locals import *
 
 class Button:
-    def __init__(self, x, y, width, height, translation_key, action, translate_service, color = "gray"):
+    def __init__(self, x, y, width, height, translation_key, action, translate_service = None, color = "gray"):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color(color)
         self.translation_key = translation_key
-        self.label = pygame.font.SysFont("Arial", 24).render(self.translate_service.get_translation(self.translation_key), True, pygame.Color("black"))
+        self.label = pygame.font.SysFont("Arial", 24).render(self.translate_service.get_translation(self.translation_key) if translate_service 
+                                                             else self.translation_key,
+                                                              True, pygame.Color("black"))
         self.action = action
         self.is_active = True
 
@@ -20,7 +22,9 @@ class Button:
         self.is_active = active
 
     def update_text(self):
-        self.label = pygame.font.SysFont("Arial", 24).render(self.translate_service.get_translation(self.translation_key), True, pygame.Color("black"))
+        self.label = pygame.font.SysFont("Arial", 24).render(self.translate_service.get_translation(self.translation_key) if self.translate_service 
+                                                             else self.translation_key, 
+                                                             True, pygame.Color("black"))
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)

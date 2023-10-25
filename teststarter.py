@@ -8,7 +8,7 @@ from pygame.locals import *
 import csv
 from datetime import datetime, timedelta
 from classes import InputBox, Button
-from functions import create_schedule_display, create_experiment_config_display
+from functions import create_schedule_display, experiment_config_display
 from ctypes import windll
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
@@ -76,7 +76,7 @@ class Teststarter:
         submit_button = Button(x + 75, y + 60, 100, 40, "submit", self.save_details, self.translateService)
         english_button = Button(self.width-250, 100, 100, 40, "english", lambda: self.change_language("en"), self.translateService)
         german_button = Button(self.width-100, 100, 100, 40, "german", lambda: self.change_language("de"), self.translateService)
-        create_experiment_button = Button(self.width-175, 150, 250, 40, "configureExperiment", lambda: create_experiment_config_display(Teststarter, self.translateService), self.translateService)
+        create_experiment_button = Button(self.width-175, 150, 250, 40, "configureExperiment", lambda: experiment_config_display(Teststarter, self.translateService), self.translateService)
 
         self.buttons.append(english_button)
         self.buttons.append(german_button)
