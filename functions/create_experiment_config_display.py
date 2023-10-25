@@ -8,13 +8,20 @@ from services import TeststarterConfig
 import tkinter as tk
 from tkinter import messagebox
 
+selected_multiple = False
+
 def backToTeststarter(teststarter):
     teststarter()
+    global selected_multiple
+    selected_multiple = False
 
 def back(teststarter, translate_service):
     experiment_config_display(teststarter, translate_service)
+    global selected_multiple
+    selected_multiple = False
 
-def save_experiment(teststarter, experiment_name, experiment_time_of_day):
+def save_experiment(teststarter, experiment_name, experiment_time_of_day, translate_service):
+    global selected_multiple
     with open('json/experimentConfig.json', 'r') as file:
         original_experiments = json.load(file)
 
@@ -38,7 +45,10 @@ def save_experiment(teststarter, experiment_name, experiment_time_of_day):
     with open('json/taskConfig.json', 'w') as file:
         json.dump(original_tasks, file, indent=4)
 
-    backToTeststarter(teststarter)
+    if selected_multiple:
+        create_experiment_config_display(teststarter, translate_service, selected_multiple)
+    else:    
+        backToTeststarter(teststarter)
     
 def delete_experiment(teststarter, translate_service, experiment_name):
 
@@ -128,11 +138,11 @@ def delete_experiment(teststarter, translate_service, experiment_name):
             json.dump(original_tasks, file, indent=4)
         # Destroy the root window
         root.destroy()
-        backToTeststarter(teststarter)
+        delete_experiment_config_display(teststarter, translate_service)
     else:
         root.destroy()
 
-def create_input_boxes(teststarter, translate_service):
+def create_input_boxes(teststarter, translate_service, selected_multiple):
     input_boxes = []
     buttons = []
     labels = ["experimentName", "timeOfDay"]
@@ -146,8 +156,8 @@ def create_input_boxes(teststarter, translate_service):
         y += spacing
 
     exit_button = Button(x - 75, y + 60, 100, 40, "back", lambda: back(teststarter, translate_service), translate_service)
-    submit_button = Button(x + 75, y + 60, 100, 40, "submit", lambda: save_experiment(teststarter, input_boxes[0].text, input_boxes[1].text), translate_service)
-
+    submit_button = Button(x + 75, y + 60, 100, 40, "submit", lambda: save_experiment(teststarter, input_boxes[0].text, input_boxes[1].text, translate_service), translate_service)
+   
     buttons.append(exit_button)
     buttons.append(submit_button)
     return input_boxes, buttons
@@ -191,7 +201,10 @@ def create_experiment_config_display(teststarter, translate_service, create_cont
     # Setting the window caption
     pygame.display.set_caption('Create Experiment')
 
-    input_boxes, buttons = create_input_boxes(teststarter, translate_service)
+    global selected_multiple
+    selected_multiple = create_continously
+
+    input_boxes, buttons = create_input_boxes(teststarter, translate_service, selected_multiple)
 
     def get_input_index():
             index = 0 
@@ -204,6 +217,18 @@ def create_experiment_config_display(teststarter, translate_service, create_cont
                 return index
             else:
                 return 0
+    width, height =pygame.display.Info().current_w, pygame.display.Info().current_h
+    x = width // 2
+    y = height // 2 - 150
+
+    question_font = pygame.font.Font(None, int(24 * width_scale_factor)) # Create font object for header
+    option_text_rendered = question_font.render(translate_service.get_translation("createMultipleExperiments"), True, light_grey)
+    option_text_rect = option_text_rendered.get_rect(left=x + 180, top=y + 240 )
+    tick_box_rect = pygame.Rect(x + 170 - 30 , y + 240 , 20 * width_scale_factor, 20 * height_scale_factor)
+
+    font = pygame.font.Font(None, int(30 * width_scale_factor)) # Create font object for header
+    text_surface = font.render(translate_service.get_translation("createExperiment"), True, light_grey) # Render the text 'Task' with the font and color light_grey
+    text_rect = text_surface.get_rect()
 
     while True:
         for event in pygame.event.get():
@@ -214,21 +239,18 @@ def create_experiment_config_display(teststarter, translate_service, create_cont
                 if event.key == K_TAB:
                     index = get_input_index()
                     input_boxes[index].is_selected = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # If the left mouse button clicked
+                    mouse_pos = pygame.mouse.get_pos() # Store the position of the curser when the mouse was clicked to a variable mouse_pos
+                    if tick_box_rect.collidepoint(mouse_pos): # If the cursor position has collided with the start timer button
+                        selected_multiple = not selected_multiple
             for box in input_boxes:
                 box.handle_event(event)
             for button in buttons:
                 button.handle_event(event)
         screen.fill(black) # Fill the screen with the black color
         
-        # This invokes the function draw_button
-
-        # Display column headers with adjusted font size
-        width, height =pygame.display.Info().current_w, pygame.display.Info().current_h
-        x = width // 2
-        y = height // 2 - 150
-        font = pygame.font.Font(None, int(30 * width_scale_factor)) # Create font object for header
-        text_surface = font.render(translate_service.get_translation("createExperiment"), True, light_grey) # Render the text 'Task' with the font and color light_grey
-        text_rect = text_surface.get_rect()
+        screen.blit(option_text_rendered, option_text_rect)
         screen.blit(text_surface, (x - text_rect.width // 2, y))
         
         if validate_inputs(input_boxes):
@@ -243,6 +265,19 @@ def create_experiment_config_display(teststarter, translate_service, create_cont
 
         for button in buttons:
             button.draw(screen)
+        
+        # draw the tick box rectangle on the window surface
+        pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
+        # if the selected_multiple variable is equal to the option currently being processed in the loop
+        if selected_multiple:
+            # create a list of points that define the shape of the tick mark
+            tick_mark_points = [
+                (x + 180 - 25* height_scale_factor , y + 240  + 10* height_scale_factor ),
+                (x + 180 - 20* height_scale_factor , y + 240  + 15* height_scale_factor ),
+                (x + 180 - 15* height_scale_factor , y + 240  + 5 * width_scale_factor )
+            ]
+            # draw lines connecting the points defined above (draw the tick)
+            pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
 
         pygame.display.flip()  # Flip the display to update the screen
 

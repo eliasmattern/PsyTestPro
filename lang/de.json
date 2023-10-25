@@ -36,6 +36,6 @@
     "experimentName": "Experiment Name",
     "deleteExperimentMsg": "Möchten Sie dieses experiment löschen?\nExperiment: ",
     "delete": "Löschen",
-    "deleteMultipleExperimentMsg": "Dieses Experiment hat unterschiedliche Aufgaben für unterschiedliche Tageszeiten!\nWollen Sie alle löschen? "
-
+    "deleteMultipleExperimentMsg": "Dieses Experiment hat unterschiedliche Aufgaben für unterschiedliche Tageszeiten!\nWollen Sie alle löschen? ",
+    "createMultipleExperiments": "Mehrere Experimente erstellen"    
 }
