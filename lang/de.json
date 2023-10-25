@@ -5,6 +5,7 @@
     "participantId": "Teilnehmer ID:",
     "experiment": "Experiment:",
     "timeOfDay": "Tageszeit (morn/eve/full):",
+    "timeOfDayShort": "Tageszeit",
     "weekNumber": "Wochennumer:",
     "startTime": "Zeit (24-Stunden Format):",
     "saveTime": "Zeit speichern",

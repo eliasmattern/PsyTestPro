@@ -5,6 +5,7 @@
     "participantId": "Participant ID:",
     "experiment": "Experiment:",
     "timeOfDay": "Time of Day (morn/eve/full):",
+    "timeOfDayShort": "Time of Day",
     "weekNumber": "Week Number:",
     "startTime": "Start Time (24-hour format):",
     "german": "Deutsch",

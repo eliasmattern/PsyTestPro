@@ -435,16 +435,16 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         draw_button(screen, translate_service.get_translation("english"), 50 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "en"))
         draw_button(screen, translate_service.get_translation("german"), 180 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "de"))
         
-
-        draw_button(screen, "<", column_start_x + 1.5 * column_width, 775 * height_scale_factor, 10 * width_scale_factor, 10 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, False))
-        draw_button(screen, ">", column_start_x + 2.5 * column_width, 775 * height_scale_factor, 10 * width_scale_factor, 10 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, True))
+        font = pygame.font.Font(None, int(20 * width_scale_factor)) # Create font object for header
+        if len(splitted_schedule) > 1:
+            page_number_surface = font.render(str(schedule_page + 1) + "/" + str(len(splitted_schedule)) , True, light_grey)
+            screen.blit(page_number_surface, (column_start_x + 2 * column_width, 775 * height_scale_factor))
+            draw_button(screen, "<", column_start_x + 1.5 * column_width, 775 * height_scale_factor, 10 * width_scale_factor, 10 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, False))
+            draw_button(screen, ">", column_start_x + 2.5 * column_width, 775 * height_scale_factor, 10 * width_scale_factor, 10 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, True))
 
         # Display column headers with adjusted font size
-        font = pygame.font.Font(None, int(20 * width_scale_factor)) # Create font object for header
         text_surface = font.render(' ' + translate_service.get_translation("task"), True, light_grey) # Render the text 'Task' with the font and color light_grey
         screen.blit(text_surface, (column_start_x, cellPadding)) # Blit the text surface to the screen at the specified position
-        page_number_surface = font.render(str(schedule_page + 1) + "/" + str(len(splitted_schedule)) , True, light_grey)
-        screen.blit(page_number_surface, (column_start_x + 2 * column_width, 775 * height_scale_factor))
         if not isHab:
             text_surface = font.render(' ' + translate_service.get_translation("date"), True, light_grey) # Render the text 'Time'
             screen.blit(text_surface, (column_start_x + column_width, cellPadding)) # Blit the text surface to the screen

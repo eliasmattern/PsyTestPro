@@ -83,7 +83,7 @@ def delete_experiment(teststarter, translate_service, experiment_name):
                     # Show a messagebox asking for confirmation
                     response = messagebox.askyesno(translate_service.get_translation("delete"), 
                                                    translate_service.get_translation("deleteExperimentMsg") + exp_name + " " 
-                                                   + translate_service.get_translation("timeOfDay") + ": " + time_of_day)
+                                                   + translate_service.get_translation("timeOfDayShort") + ": " + time_of_day)
         
                     # If the user clicked 'Yes', then open browser
                     if response == True:
@@ -205,7 +205,7 @@ def create_experiment_config_display(teststarter, translate_service, create_cont
     question_font = pygame.font.Font(None, int(24 * width_scale_factor)) # Create font object for header
     option_text_rendered = question_font.render(translate_service.get_translation("createMultipleExperiments"), True, light_grey)
     option_text_rect = option_text_rendered.get_rect(left=x + 180, top=y + 240 )
-    tick_box_rect = pygame.Rect(x + 170 - 30 , y + 240 , 20 * width_scale_factor, 20 * height_scale_factor)
+    tick_box_rect = pygame.Rect(x + 170 - 20 * height_scale_factor , y + 240 , 20 * width_scale_factor, 20 * height_scale_factor)
 
     font = pygame.font.Font(None, int(30 * width_scale_factor)) # Create font object for header
     text_surface = font.render(translate_service.get_translation("createExperiment"), True, light_grey) # Render the text 'Task' with the font and color light_grey
