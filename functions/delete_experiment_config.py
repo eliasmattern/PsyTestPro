@@ -159,6 +159,10 @@ class DeleteExperimentConfig:
 
         teststarter_config.load_experiments()
         experiments = teststarter_config.experiments
+        
+        if "hab" in experiments:
+            experiments.remove("hab")
+
         splitted_experiments = [
             experiments[i : i + 5] for i in range(0, len(experiments), 5)
         ]

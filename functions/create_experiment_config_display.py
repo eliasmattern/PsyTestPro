@@ -12,20 +12,13 @@ from .task_config import TaskConfig
 from .delete_experiment_config import DeleteExperimentConfig
 from .create_experiment_config import CreateExperimentConfig
 
-selected_multiple = False
-page = 0
-
 
 def backToTeststarter(teststarter):
     teststarter()
-    global selected_multiple
-    selected_multiple = False
 
 
 def back(teststarter, translate_service):
     experiment_config_display(teststarter, translate_service)
-    global selected_multiple
-    selected_multiple = False
 
 
 def experiment_config_display(teststarter, translate_service, create_continously=False):
