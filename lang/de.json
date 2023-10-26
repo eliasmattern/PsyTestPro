@@ -35,7 +35,8 @@
     "createExperiment": "Experiment erstellen",
     "deleteExperiment": "Experiment löschen",
     "experimentName": "Experiment Name",
-    "deleteExperimentMsg": "Möchten Sie dieses experiment löschen?\nExperiment: ",
+    "deleteExperimentMsg": "Möchten Sie dieses Experiment löschen?\nExperiment: ",
+    "deleteTaskMsg": "Möchten Sie diese Aufgabe löschen?\nAufgabe: ",
     "delete": "Löschen",
     "deleteMultipleExperimentMsg": "Dieses Experiment hat unterschiedliche Aufgaben für unterschiedliche Tageszeiten!\nWollen Sie alle löschen? ",
     "createMultipleExperiments": "Mehrere Experimente erstellen",
@@ -47,5 +48,8 @@
     "title": "Titel (Benutze \"\\n\" für eine neue Zeile (drücke enter)):",
     "description": "Beschreibung (Benutze \"\\n\" für eine neue Zeile (drücke enter)):",
     "textScreen": "Informationsbildschirm",
-    "preview": "Vorschau"
+    "preview": "Vorschau",
+    "chooseExperiment": "Wählen Sie ein Experiment",
+    "deleteTask": "Aufgabe löschen",
+    "deleteTaskFrom": "Aufgabe löschen von:"
 }

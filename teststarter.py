@@ -205,6 +205,9 @@ class Teststarter:
    
     def exit(self):
         self.is_running = False
+
+    def custom_sort(self, item):
+        return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
         
     def start_experiment(self, start_time, participant_info):
         global schedule
@@ -214,14 +217,18 @@ class Teststarter:
         print(self.teststarterConfig.error_msg)
         if len(self.teststarterConfig.error_msg) > 0:
             return
-        tasks = [] 
-        times = [] 
+        tasks = []
+        types = {}
+        values = {}
+        times = []
         states = {}
 
         for task, details in current_tasks.items():
             tasks.append(task)
             times.append(details['time'])
             states[task] = details['state']
+            types[task] = details['type'] if 'type' in details else ""
+            values[task] = details['value'] if 'value' in details else ""
 
         for i, time_delta in enumerate(times):
             exp_variable = tasks[i]
@@ -231,8 +238,8 @@ class Teststarter:
                 schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
         edited_schedule = {}
         for key, value in schedule.items():
-            edited_schedule.update({key: {"datetime": value, "state": states[key]}})
-        schedule = edited_schedule
+            edited_schedule.update({key: {"datetime": value, "state": states[key], "type": types[key], "value": values[key]}})
+        schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         print("ee = ", edited_schedule)
         create_schedule_display(schedule, participant_info, Teststarter)
         self.input_boxes = []

@@ -2,16 +2,11 @@ import pygame
 import sys
 import os
 from pygame.locals import *
-from classes import InputBox, Button, TimeInput
-import json
-from services import TeststarterConfig
-import tkinter as tk
-from tkinter import messagebox
-from services import TeststarterConfig
+from classes import Button
 from .task_config import TaskConfig
 from .delete_experiment_config import DeleteExperimentConfig
 from .create_experiment_config import CreateExperimentConfig
-
+from .delete_task_config import DeleteTaskConfig
 
 def backToTeststarter(teststarter):
     teststarter()
@@ -55,7 +50,8 @@ def experiment_config_display(teststarter, translate_service, create_continously
 
     create_experiment_config = CreateExperimentConfig()
     delete_experiment_config = DeleteExperimentConfig()
-    taskConfig = TaskConfig()
+    task_config = TaskConfig()
+    delte_task_config = DeleteTaskConfig()
 
     buttons = []
     spacing = 0
@@ -66,7 +62,7 @@ def experiment_config_display(teststarter, translate_service, create_continously
 
     back_button = Button(
         x,
-        y + 240,
+        y + 300,
         100,
         40,
         "back",
@@ -103,7 +99,17 @@ def experiment_config_display(teststarter, translate_service, create_continously
         400,
         40,
         "createTask",
-        lambda: taskConfig.add_task_config_display(teststarter, translate_service),
+        lambda: task_config.add_task_config_display(teststarter, translate_service),
+        translate_service,
+    )
+    spacing += 60
+    delete_task_button = Button(
+        x,
+        y + 60 + spacing,
+        400,
+        40,
+        "deleteTask",
+        lambda: delte_task_config.delete_task_config_display(translate_service),
         translate_service,
     )
 
@@ -111,6 +117,7 @@ def experiment_config_display(teststarter, translate_service, create_continously
     buttons.append(create_experiment_button)
     buttons.append(delete_button)
     buttons.append(create_task_button)
+    buttons.append(delete_task_button)
 
     while True:
         for event in pygame.event.get():

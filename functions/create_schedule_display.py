@@ -223,7 +223,14 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                         case "goodbye":
                             text_screen("Vielen Dank fürs Mitmachen. Tschüss!", "")
                         case _:
-                            text_screen(eventName, "Task not found.")
+                            if schedule[upcoming_event]["type"] == "text":
+                                title = schedule[upcoming_event]["value"]["title"]
+                                description = schedule[upcoming_event]["value"]["description"]
+                                text_screen(title, description)
+                            elif schedule[upcoming_event]["type"] == "command":
+                                command = schedule[upcoming_event]["value"]
+                                process = subprocess.Popen(command)
+                                process.communicate()
                     schedule[upcoming_event]["state"]= "done"
             elif len(sorted_schedule) > 0:
                 if schedule["pvt_hab"]["state"] == "todo":

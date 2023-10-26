@@ -66,7 +66,22 @@ class TeststarterConfig:
             result[variable] = {"experiment": splitted_variable[1], "time_of_day": splitted_variable[0]}
 
         return result
-        
+
+    def load_tasks_of_experiment(self, experiment):
+        with open('json/taskConfig.json', 'r') as file:
+            data = json.load(file)
+        tasks = list(data[experiment]["tasks"].keys())
+
+        return tasks
+    
+    def delete_task(self, experiment, task):
+        with open('json/taskConfig.json', 'r') as file:
+            data = json.load(file)
+        del data[experiment]["tasks"][task]
+        # Save the updated array back to the file
+        with open('json/taskConfig.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
     def save_task(self, variable, name, time, type, value):
         # Load the JSON data from a file
         with open('json/taskConfig.json', 'r') as file:
