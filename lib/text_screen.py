@@ -1,7 +1,8 @@
 import pygame
 
 def text_screen(title, description):
-
+    title = title.replace(r'\n', '\n')
+    description = description.replace(r'\n', '\n')
     # Initialize Pygame
     pygame.init()
 
@@ -35,7 +36,7 @@ def text_screen(title, description):
     # Calculate the position of each text
     text_x = screen_width // 2
     line_spacing = 40
-    text_y = (screen_height // 2) - 50
+    text_y = (screen_height // 3) - 50
 
     # Render and position the text
     title_surface = title_font.render(title, True, font_color)
@@ -47,7 +48,7 @@ def text_screen(title, description):
     description_surface = font.render(description, True, font_color)
     description_rect = description_surface.get_rect(center=(text_x, text_y))
     text_surfaces.append(description_surface)
-    text_rects.append(description_rect)
+    text_rects.append((text_x, text_y))
     text_y += line_spacing
 
     info = 'Bitte drücken Sie "ESC" um zurückzukehren'

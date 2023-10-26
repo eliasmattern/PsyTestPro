@@ -27,9 +27,23 @@ class InputBox:
             else:
                 self.is_selected = False
         elif event.type == KEYDOWN:
+            mods = pygame.key.get_mods()
             if self.is_selected:
                 if event.key == K_RETURN and self.allow_new_line:
                     self.text += " \\n "
+                elif mods & KMOD_CTRL:  # Check if Ctrl is pressed
+                    if event.key == K_v:
+                        clipboard_content = pygame.scrap.get(pygame.SCRAP_TEXT)
+                        if clipboard_content is not None:
+                            try:
+                                decoded_content = clipboard_content.decode('utf-8')
+                                cleaned_content = decoded_content.replace('\x00', '')
+                                self.text += cleaned_content
+                            except UnicodeDecodeError:
+                                print("Error: Unable to decode clipboard content.")
+                        else:
+                            print("Error: Unable to retrieve clipboard content.")
+
                 elif event.key == K_RETURN:
                     pass
                 elif event.key == K_BACKSPACE:

@@ -46,5 +46,6 @@
     "command": "Kommando (shell):",
     "title": "Titel (Benutze \"\\n\" für eine neue Zeile (drücke enter)):",
     "description": "Beschreibung (Benutze \"\\n\" für eine neue Zeile (drücke enter)):",
-    "textScreen": "Informationsbildschirm"
+    "textScreen": "Informationsbildschirm",
+    "preview": "Vorschau"
 }

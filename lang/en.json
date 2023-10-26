@@ -48,5 +48,6 @@
     "command": "Command (shell):",
     "title": "Title (Use \"\\n\" to create new line (press return)):",
     "description": "Decrioption (Use \"\\n\" to create new line (press return)):",
-    "textScreen": "Inforomation Screen"
+    "textScreen": "Inforomation Screen",
+    "preview": "Preview"
 }

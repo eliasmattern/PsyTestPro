@@ -4,7 +4,8 @@ from pygame.locals import *
 from classes import InputBox, Button, TimeInput
 from services import TeststarterConfig
 from services import TeststarterConfig
-
+from lib import text_screen
+import subprocess
 
 class TaskConfig:
     def __init__(self):
@@ -36,6 +37,13 @@ class TaskConfig:
                 is_valid = False
 
         return is_valid
+    
+    def preview(self, command, command_inputs, text_screen_inputs):
+        if command:
+            process = subprocess.Popen(command_inputs[0].text)
+            process.communicate()
+        else:
+            text_screen(text_screen_inputs[0].text, text_screen_inputs[1].text)
 
     def save_task(
         self,
@@ -133,17 +141,17 @@ class TaskConfig:
         y = height // 2 - 100 + 3 * spacing
         for label in command_labels:
             input_box = InputBox(
-                x, y, 400, 40, label, translate_service, allow_new_line=False
+                x, y, 400.1, 40, label, translate_service, allow_new_line=False
             )
             command_inputs.append(input_box)
             y += spacing
         y += spacing
 
         exit_button = Button(
-            x - 75, y + 60, 100, 40, "back", self.backToAddTask, translate_service
+            x - 150, y + 60, 100, 40, "back", self.backToAddTask, translate_service
         )
         submit_button = Button(
-            x + 75,
+            x + 150,
             y + 60,
             100,
             40,
@@ -165,9 +173,20 @@ class TaskConfig:
             translate_service,
         )
 
+        preview_button = Button(
+            x,
+            y + 60,
+            100,
+            40,
+            "preview",
+            lambda: self.preview(command, command_inputs, text_screen_inputs),
+            translate_service,
+        )
+
         buttons.append(time_input)
         buttons.append(exit_button)
         buttons.append(submit_button)
+        buttons.append(preview_button)
 
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
@@ -179,10 +198,10 @@ class TaskConfig:
         option_text_rendered = question_font.render(
             translate_service.get_translation("createMultipleTasks"), True, light_grey
         )
-        option_text_rect = option_text_rendered.get_rect(left=x + 180, top=y + 360)
+        option_text_rect = option_text_rendered.get_rect(left=x + 285, top=y + 420)
         tick_box_rect = pygame.Rect(
-            x + 170 - 20 * height_scale_factor,
-            y + 360,
+            x + 260 - 20 * height_scale_factor,
+            y + 420,
             20 * width_scale_factor,
             20 * height_scale_factor,
         )
@@ -270,9 +289,14 @@ class TaskConfig:
             ):
                 buttons[2].set_active(True)
                 buttons[2].set_color("gray")
+                buttons[3].set_active(True)
+                buttons[3].set_color("gray")
             else:
                 buttons[2].set_active(False)
                 buttons[2].set_color((100, 100, 100))
+                buttons[3].set_active(False)
+                buttons[3].set_color((100, 100, 100))
+
 
             for box in input_boxes:
                 box.draw(screen)
@@ -295,16 +319,16 @@ class TaskConfig:
                 # create a list of points that define the shape of the tick mark
                 tick_mark_points = [
                     (
-                        x + 180 - 25 * height_scale_factor,
-                        y + 360 + 10 * height_scale_factor,
+                        x + 275 - 25 * height_scale_factor,
+                        y + 420 + 10 * height_scale_factor,
                     ),
                     (
-                        x + 180 - 20 * height_scale_factor,
-                        y + 360 + 15 * height_scale_factor,
+                        x + 275 - 20 * height_scale_factor,
+                        y + 420 + 15 * height_scale_factor,
                     ),
                     (
-                        x + 180 - 15 * height_scale_factor,
-                        y + 360 + 5 * width_scale_factor,
+                        x + 275 - 15 * height_scale_factor,
+                        y + 420 + 5 * width_scale_factor,
                     ),
                 ]
                 # draw lines connecting the points defined above (draw the tick)
