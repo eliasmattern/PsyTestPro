@@ -75,6 +75,7 @@ class TaskConfig:
                 time_of_day,
             )
         else:
+            self.adding = False
             self.add_task_config_display(teststarter, translate_service)
 
     def add_task(
