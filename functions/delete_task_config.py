@@ -119,22 +119,22 @@ class DeleteTaskConfig():
 
             x = width // 2
             y = height // 2 - 150
-
-            for task in splitted_tasks[self.page]:
-                exp_button = Button(
-                    x,
-                    y + 60 + spacing,
-                    400,
-                    40,
-                    task,
-                    lambda t=task: self.delete_task_from_config(
-                        translate_service,
-                        full_experiment_name,
-                        t
-                    ),
-                )
-                buttons.append(exp_button)
-                spacing += 60
+            if len(splitted_tasks) > 0:
+                for task in splitted_tasks[self.page]:
+                    exp_button = Button(
+                        x,
+                        y + 60 + spacing,
+                        400,
+                        40,
+                        task,
+                        lambda t=task: self.delete_task_from_config(
+                            translate_service,
+                            full_experiment_name,
+                            t
+                        ),
+                    )
+                    buttons.append(exp_button)
+                    spacing += 60
 
             spacing = 5 * 60
             spacing += 60

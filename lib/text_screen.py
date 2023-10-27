@@ -48,7 +48,7 @@ def text_screen(title, description):
     description_surface = font.render(description, True, font_color)
     description_rect = description_surface.get_rect(center=(text_x, text_y))
     text_surfaces.append(description_surface)
-    text_rects.append((text_x, text_y))
+    text_rects.append((text_x - description_rect.width // 2, text_y))
     text_y += line_spacing
 
     info = 'Bitte drücken Sie "ESC" um zurückzukehren'

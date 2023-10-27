@@ -98,6 +98,7 @@ class DeleteExperimentConfig:
                             json.dump(original_experiments, file)
 
             else:
+                print(exp_keys)
                 del original_tasks[exp_keys[0]]
                 with open("json/experimentConfig.json", "r") as file:
                     original_experiments = json.load(file)

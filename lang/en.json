@@ -31,7 +31,7 @@
     "timeOfDayError": "Invalid time of day\n",
     "weekNoError": "Week number must be numeric\n",
     "startTimeError": "Start time must be in the format hh:mm\n",
-    "experimentNotFound": "Experiment in combinatin with time of day not found\n",
+    "experimentNotFound": "Experiment in combination with time of day not found\n",
     "back": "Back",
     "configureExperiment": "Configure Experiment",
     "createExperiment": "Create Experiment",
@@ -53,5 +53,12 @@
     "preview": "Preview",
     "chooseExperiment": "Choose an experiment",
     "deleteTask": "Delete task",
-    "deleteTaskFrom": "Delete task from:"
+    "deleteTaskFrom": "Delete task from:",
+    "importExperiments": "Import Experiments",
+    "exportExperiments": "Export Experiments",
+    "selectFile": "Select A File",
+    "exportSuccessfully": "Export was successful",
+    "exportFailed": "Export failed",
+    "importSuccessfully": "Experiments were imported successfully",
+    "importFailed": "Import failed. Allowed file formats: CSV"
 }

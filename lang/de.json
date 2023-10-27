@@ -51,5 +51,12 @@
     "preview": "Vorschau",
     "chooseExperiment": "Wählen Sie ein Experiment",
     "deleteTask": "Aufgabe löschen",
-    "deleteTaskFrom": "Aufgabe löschen von:"
+    "deleteTaskFrom": "Aufgabe löschen von:",
+    "importExperiments": "Experimente importieren",
+    "exportExperiments": "Experimente exportieren",
+    "selectFile": "Datei auswählen",
+    "exportSuccessfully": "Export war efolgreich",
+    "exportFailed": "Export ist fehlgeschlagen",
+    "importSuccessfully": "Experimente wurden erfolgreich importiert",
+    "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: CSV"
 }

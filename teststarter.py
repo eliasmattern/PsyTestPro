@@ -8,7 +8,7 @@ from pygame.locals import *
 import csv
 from datetime import datetime, timedelta
 from classes import InputBox, Button
-from functions import create_schedule_display, experiment_config_display
+from functions import create_schedule_display, ExperimentConfigDisplay
 from ctypes import windll
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
@@ -36,6 +36,7 @@ class Teststarter:
         self.time_of_day = time_of_day
         self.week_number = week_number
         self.time = time
+        self.experiment_config_display = ExperimentConfigDisplay(self.translateService)
         self.create_input_boxes()
         self.is_running = True
         self.start_time = None
@@ -72,12 +73,12 @@ class Teststarter:
             input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
             self.input_boxes.append(input_box)
             y += spacing
-
+        
         exit_button = Button(x - 75, y + 60, 100, 40, "exit", self.exit, self.translateService)
         submit_button = Button(x + 75, y + 60, 100, 40, "submit", self.save_details, self.translateService)
         english_button = Button(self.width-250, 100, 100, 40, "english", lambda: self.change_language("en"), self.translateService)
         german_button = Button(self.width-100, 100, 100, 40, "german", lambda: self.change_language("de"), self.translateService)
-        create_experiment_button = Button(self.width-175, 150, 250, 40, "configureExperiment", lambda: experiment_config_display(Teststarter, self.translateService), self.translateService)
+        create_experiment_button = Button(self.width-175, 150, 250, 40, "configureExperiment", lambda: self.experiment_config_display.display(Teststarter), self.translateService)
 
         self.buttons.append(english_button)
         self.buttons.append(german_button)
