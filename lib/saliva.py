@@ -268,12 +268,13 @@ def saliva(subject, week_number, kss_number):
                             hour = splitted_time[0]
                             minute = splitted_time[1]
                             second = splitted_time[2]
-
+                            
+                            csv_exists = os.path.isfile(output_filename)
                             # Open the CSV file
                             with open(output_filename, 'a', newline='') as csvfile:
                                 writer = csv.writer(csvfile)
                                 # Write the header row if this is the first kss (kss number 1) of the night
-                                if int(kss_number) == 1:
+                                if not csv_exists:
                                     writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'Subject ID', 'Block', 'KSS Number', 'KSS Result'])
                                 # Write the output to the csv
                                 writer.writerow([day , month, year, hour, minute, second, subject, week_number_str, kss_number, kss_result])
