@@ -163,7 +163,19 @@ class Teststarter:
                 return True
             else:
                 return False
-            
+        
+        y = self.height // 2 - 200
+        x = self.width // 2
+
+        font = pygame.font.Font(
+                None, int(64)
+            )  # Create font object for header
+        text_surface = font.render(
+            self.translateService.get_translation("teststarter"), True, "gray"
+        )  
+        text_rect = text_surface.get_rect()
+        self.screen.blit(text_surface, (x - text_rect.width // 2, y))
+
         for box in self.input_boxes:
             box.draw(self.screen)
         is_input_valid = validate_inputs(self.teststarterConfig.experiments)

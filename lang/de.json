@@ -19,7 +19,7 @@
     "todo": "ToDo",
     "skip": "Überspringen",
     "done": "Fertig",
-    "skipDoneTodo": "ToDo/Überspringen\n /Feritg",
+    "skipDoneTodo": "ToDo/Überspr./Feritg",
     "confirmExit": "Beenden bestätigen",
     "confirmExitText": "Sind Sie sicher, dass Sie den Teststarter beenden wollen?",
     "helpText": "Sie werden zu GitHub weitergeleitet",
