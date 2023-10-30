@@ -209,10 +209,10 @@ class Teststarter:
             for error in self.errors:
                 error_msg = error_msg + error
             x = self.width // 2
-            y = self.height // 2
+            y = self.height - 75
             font = pygame.font.Font(None, 24) 
             text_surface = font.render(' ' + error_msg, True, pygame.Color("gray")) 
-            self.screen.blit(text_surface, (x-150, y + 400)) 
+            self.screen.blit(text_surface, (x- text_surface.get_rect().width // 2, y)) 
         
         
    
