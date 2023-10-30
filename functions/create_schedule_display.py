@@ -154,7 +154,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
 
             # Draw the text on the button
             small_text = pygame.font.Font(None, 20)
-            text_surf, text_rect = text_objects("Edit Teststarter", small_text)
+            text_surf, text_rect = text_objects(translate_service.get_translation("editTeststarter"), small_text)
             text_rect.center = ((edit_button_x + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
             screen.blit(text_surf, text_rect)
 
@@ -458,8 +458,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         if len(splitted_schedule) > 1:
             page_number_surface = font.render(str(schedule_page + 1) + "/" + str(len(splitted_schedule)) , True, light_grey)
             screen.blit(page_number_surface, (column_start_x + 2 * column_width, 775 * height_scale_factor))
-            draw_button(screen, "<", column_start_x + 1.5 * column_width, 775 * height_scale_factor, 10 * width_scale_factor, 10 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, False))
-            draw_button(screen, ">", column_start_x + 2.5 * column_width, 775 * height_scale_factor, 10 * width_scale_factor, 10 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, True))
+            draw_button(screen, "<", column_start_x + 1.5 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, False))
+            draw_button(screen, ">", column_start_x + 2.4 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, True))
 
         # Display column headers with adjusted font size
         text_surface = font.render(' ' + translate_service.get_translation("task"), True, light_grey) # Render the text 'Task' with the font and color light_grey

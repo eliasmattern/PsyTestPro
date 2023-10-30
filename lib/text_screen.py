@@ -1,7 +1,9 @@
 import pygame
 
 def text_screen(title, description):
+    title = title.replace(r' \n ', '\n')
     title = title.replace(r'\n', '\n')
+    description = description.replace(r' \n ', '\n')
     description = description.replace(r'\n', '\n')
     # Initialize Pygame
     pygame.init()

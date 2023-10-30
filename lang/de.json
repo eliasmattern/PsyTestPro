@@ -59,5 +59,6 @@
     "exportFailed": "Export ist fehlgeschlagen",
     "importSuccessfully": "Experimente wurden erfolgreich importiert",
     "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: CSV",
-    "commandFailedToExecute": "Befehl konnte nicht ausgeführt werden"
+    "commandFailedToExecute": "Befehl konnte nicht ausgeführt werden",
+    "editTeststarter": "Teststarter bearbeiten"
 }
