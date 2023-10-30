@@ -190,7 +190,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                         case "saliva_morn" | "saliva":
                             # kss = wie viele mal
                             salivaNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                            saliva(participant_info["participant_id"], participant_info["week_no"], salivaNumber)
+                            saliva(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], salivaNumber)
                         case "teethbrushing":
                             text_screen("Zähneputzen", "Sie können jetzt Ihre Zähne in Ihrem Zimmer putzen.")
                         case "mood_morn" | "mood":
