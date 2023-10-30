@@ -202,7 +202,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                         case "gonogo_morn" | "gonogo":
                             # block = week number number = gonogo number
                             gonogo_number = ''.join([i for i in upcoming_event if i.isdigit()])
-                            GoNoGo_Real(participant_info["participant_id"], participant_info["week_no"], gonogo_number)
+                            GoNoGo_Real(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], gonogo_number)
                         case "nback_morn" | "nback":
                             # study night se sr
                             start_real_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
@@ -237,7 +237,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     pvt_hab(participant_info["participant_id"], participant_info["week_no"], 1)
                     schedule["pvt_hab"]["state"] = "done"
                 if schedule["gonogo_hab"]["state"] == "todo":
-                    GoNoGo_Real_Hab(participant_info["participant_id"], participant_info["week_no"], 1)
+                    GoNoGo_Real_Hab(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], 1)
                     schedule["gonogo_hab"]["state"] = "done"
                 if schedule["n-back_hab"]["state"] == "todo":
                     start_hab_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])

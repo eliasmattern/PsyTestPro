@@ -9,7 +9,7 @@ import sys
 import time
 
 # Function to perform the gonogo
-def GoNoGo_Real(subject,block,number):
+def GoNoGo_Real(subject, experiment,block,number):
 
     # Initialize Pygame
     pygame.init()
@@ -40,8 +40,9 @@ def GoNoGo_Real(subject,block,number):
         os.makedirs(title_dir) # create a new directory (folder) called GoNoGo_Results (title_dir)              
     
     # Function to write data to a CSV file
-    def write_data(subject, block, number, data):
-        filename = os.path.join(title_dir, f"{subject}_{block}_{number}.csv")
+    def write_data(subject, experiment, block, number, data):
+        date = datetime.datetime.now()
+        filename = os.path.join(title_dir, f"GonogoHab_{subject}_{experiment}_{block}_{number}_{date.day}_{date.month}_{date.year}.csv")
         with open(filename, 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(data)
@@ -52,7 +53,7 @@ def GoNoGo_Real(subject,block,number):
                  'Response Time', 'Response', 'Feedback']
 
     # Write the headers to the CSV file
-    write_data(str(subject), str(block), str(number),D_HEADERS)
+    write_data(str(subject), str(experiment), str(block), str(number),D_HEADERS)
     
     # Set screen dimensions
     screen_width, screen_height = pygame.display.Info().current_w, pygame.display.Info().current_h
@@ -150,7 +151,7 @@ def GoNoGo_Real(subject,block,number):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:  # If there is a spacebar press
                         spacebar_press_time = pygame.time.get_ticks()
-                        response_time = spacebar_press_time - stimulus_onset_time
+                        response_time = (spacebar_press_time - stimulus_onset_time) / 1000
                         response = 'GO'  # Log the response as "GO"
                         if trial_type[trial] == 'GO': # If the trial type is 'GO'... 
                             feedback = 'correct'  # log response as correct
@@ -190,7 +191,7 @@ def GoNoGo_Real(subject,block,number):
             response,
             feedback            
         ]
-        write_data(str(subject), str(block), str(number), data)
+        write_data(str(subject), str(experiment), str(block), str(number), data)
 
         # Clear the screen
         screen.fill(BACKGROUND_COLOR)
