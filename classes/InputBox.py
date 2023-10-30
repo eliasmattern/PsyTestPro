@@ -62,7 +62,7 @@ class InputBox:
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
         input_text = self.text
         text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color)
-        while text_surface.get_rect().width > self.rect.width:
+        while text_surface.get_rect().width > self.rect.width -10:
             input_text = input_text[1:]
             text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color)
 

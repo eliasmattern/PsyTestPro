@@ -148,7 +148,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             if edit_button_x + edit_button_width > mouse[0] > edit_button_x and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
                 if click[0] == 1:
-                    create_schedule_display(schedule, participant_info, teststarter)  # Call create_schedule_display() when the button is clicked
+                    create_schedule_display(schedule, participant_info, teststarter, isHab)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
 
@@ -242,6 +242,18 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 if schedule["n-back_hab"]["state"] == "todo":
                     start_hab_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
                     schedule["n-back_hab"]["state"] = "done"
+                for task in schedule.items():
+                    if schedule[task[0]]['state'] == "todo":
+                        if schedule[task[0]]["type"] == "text":
+                            title = schedule[task[0]]["value"]["title"]
+                            description = schedule[task[0]]["value"]["description"]
+                            text_screen(title, description)
+                            schedule[task[0]]['state'] = "done"
+                        elif schedule[task[0]]["type"] == "command":
+                            command = schedule[task[0]]["value"]
+                            process = subprocess.Popen(command)
+                            process.communicate()
+                            schedule[task[0]]['state'] = "done"
                 sorted_schedule = []
 
         pygame.quit()

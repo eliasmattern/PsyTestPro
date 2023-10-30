@@ -227,7 +227,6 @@ class Teststarter:
         isHab = self.teststarterConfig.current_experiment == "hab"
         schedule = {}
         current_tasks = self.teststarterConfig.current_tasks
-        print(self.teststarterConfig.error_msg)
         if len(self.teststarterConfig.error_msg) > 0:
             return
         tasks = []
@@ -254,7 +253,7 @@ class Teststarter:
             edited_schedule.update({key: {"datetime": value, "state": states[key], "type": types[key], "value": values[key]}})
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         print("ee = ", edited_schedule)
-        create_schedule_display(schedule, participant_info, Teststarter)
+        create_schedule_display(schedule, participant_info, Teststarter, isHab)
         self.input_boxes = []
 
     def save_details(self):

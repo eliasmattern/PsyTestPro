@@ -83,6 +83,9 @@ class TeststarterConfig:
             json.dump(data, file, indent=4)
 
     def save_task(self, variable, name, time, type, value):
+        if variable == "hab_variable_variable":
+            variable = "hab_variable"
+
         # Load the JSON data from a file
         with open('json/taskConfig.json', 'r') as file:
             json_data = json.load(file)
