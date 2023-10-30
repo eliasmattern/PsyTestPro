@@ -68,6 +68,9 @@ class TeststarterConfig:
         return result
 
     def load_tasks_of_experiment(self, experiment):
+        if experiment == "hab_variable_variable":
+            experiment = "hab_variable"
+
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
         tasks = list(data[experiment]["tasks"].keys())
@@ -75,6 +78,9 @@ class TeststarterConfig:
         return tasks
     
     def delete_task(self, experiment, task):
+        if experiment == "hab_variable_variable":
+            experiment = "hab_variable"
+            
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
         del data[experiment]["tasks"][task]
