@@ -140,7 +140,7 @@ def practice_nback(subject, experiment, week, study_night, current_block, num_ba
         os.makedirs(title_dir)   
 
     # Output file name
-    output_filename = f"NBackPractice_{subject_str}_{week_str}_{experiment}_{study_night_str}_{TITLE}.csv"
+    output_filename = f"{TITLE}_{subject_str}_{week_str}_{experiment}_{study_night_str}.csv"
 
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
@@ -533,7 +533,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
         os.makedirs(title_dir)   
 
     # Output file name
-    output_filename = f"NBack{subject_str}_{week_str}_{experiment}_{study_night_str}_{TITLE}.csv"
+    output_filename = f"{TITLE}_{subject_str}_{week_str}_{experiment}_{study_night_str}.csv"
 
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
