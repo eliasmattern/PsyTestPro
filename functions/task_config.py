@@ -13,6 +13,7 @@ class TaskConfig:
         self.adding = True
         self.selected_multiple = False
         self.page = 0
+        self.error = ""
 
     def backToConfig(self):
         self.running = False
@@ -38,10 +39,15 @@ class TaskConfig:
 
         return is_valid
     
-    def preview(self, command, command_inputs, text_screen_inputs):
+    def preview(self, translate_service,command, command_inputs, text_screen_inputs):
         if command:
-            process = subprocess.Popen(command_inputs[0].text)
-            process.communicate()
+            try: 
+                process = subprocess.Popen(command_inputs[0].text)
+                process.communicate()
+                self.error = ""
+            except Exception as e:
+                print(e)
+                self.error = translate_service.get_translation("commandFailedToExecute")
         else:
             text_screen(text_screen_inputs[0].text, text_screen_inputs[1].text)
 
@@ -173,14 +179,14 @@ class TaskConfig:
             ),
             translate_service,
         )
-
+        error_y = y + 60
         preview_button = Button(
             x,
             y + 60,
             100,
             40,
             "preview",
-            lambda: self.preview(command, command_inputs, text_screen_inputs),
+            lambda: self.preview(translate_service, command, command_inputs, text_screen_inputs),
             translate_service,
         )
 
@@ -381,6 +387,17 @@ class TaskConfig:
                     screen, light_grey, False, command_tick_mark_points, 2
                 )
 
+            if self.error:
+                error_font = pygame.font.Font(None, int(24 * width_scale_factor))
+                error_text_surface = error_font.render(
+                    self.error,
+                    True,
+                    light_grey,
+                )
+                error_rect = error_text_surface.get_rect()
+                screen.blit(
+                    error_text_surface,
+                    (x - error_rect.width // 2, error_y + spacing))
             pygame.display.flip()  # Flip the display to update the screen
 
     def split_dict(self, input_dict, chunk_size):

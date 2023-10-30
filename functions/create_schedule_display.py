@@ -485,6 +485,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             state = info["state"]
             # Replace underscores with spaces in the task name
             task_name = task.replace('_', ' ')
+            task_name = ' ' + task_name
 
             # Format the task and datetime strings
             task_text = font.render(task_name, True, light_grey) # Render the task name text

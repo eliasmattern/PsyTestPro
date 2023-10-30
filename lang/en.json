@@ -60,5 +60,6 @@
     "exportSuccessfully": "Export was successful",
     "exportFailed": "Export failed",
     "importSuccessfully": "Experiments were imported successfully",
-    "importFailed": "Import failed. Allowed file formats: CSV"
+    "importFailed": "Import failed. Allowed file formats: CSV",
+    "commandFailedToExecute": "Command failed to execute"
 }
