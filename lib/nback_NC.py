@@ -74,7 +74,7 @@ def generate_nback_sequence(num_trials, num_back):
 
 
 #########################################################################################
-def practice_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition):
+def practice_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition):
     # Initialise variables is going to be problematic when creating a loop later! putting it above the definition didnt' help.
     #num_back = 2
     #num_back_addition = None
@@ -140,7 +140,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
         os.makedirs(title_dir)   
 
     # Output file name
-    output_filename = f"{subject_str}_{week_str}_{study_night_str}_{TITLE}.csv"
+    output_filename = f"NBackPractice_{subject_str}_{week_str}_{experiment}_{study_night_str}_{TITLE}.csv"
 
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
@@ -461,8 +461,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
                                 elif event.key in [pygame.K_a, pygame.K_l]:
                                     key_pressed = True
                                     #current_trial = 0
-                                    real_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
-                    
+                                    return
                     # Clear the screen for the next block
                     screen.fill(black)
                     pygame.display.flip()
@@ -473,7 +472,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
 
 ############################################################################################
 
-def real_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition):
+def real_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition):
 
     # Always open the pygame window at front of all windows open on screen
     os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
@@ -534,7 +533,7 @@ def real_nback(subject, week, study_night, current_block, num_back, num_back_add
         os.makedirs(title_dir)   
 
     # Output file name
-    output_filename = f"{subject_str}_{week_str}_{study_night_str}_{TITLE}.csv"
+    output_filename = f"NBack{subject_str}_{week_str}_{experiment}_{study_night_str}_{TITLE}.csv"
 
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
@@ -851,11 +850,13 @@ def real_nback(subject, week, study_night, current_block, num_back, num_back_add
                     
 
 #########################################################################################
-def start_real_nback(subject, week, study_night):
+def start_real_nback(subject, experiment, week, study_night):
     current_block = 1
     num_back = 2
     num_back_addition = None
     num_back_performance_addition = 0
-    practice_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+    practice_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+    real_nback(subject, experiment ,week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+
 #########################################################################################
                     

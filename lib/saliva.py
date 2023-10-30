@@ -3,7 +3,7 @@ import os
 import time
 import csv
 
-def saliva(subject, week_number, kss_number):
+def saliva(subject, experiment,week_number, kss_number):
     # Open the pygame window at front of all windows open on screen
     os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
@@ -33,7 +33,7 @@ def saliva(subject, week_number, kss_number):
         os.makedirs(title_dir)    
         
     # Store output file name in variable output_filename
-    output_filename = f"{subject_str}_{week_number_str}.csv"
+    output_filename = f"KSS_{subject_str}_{experiment}_{week_number_str}.csv"
     
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
@@ -275,7 +275,7 @@ def saliva(subject, week_number, kss_number):
                                 writer = csv.writer(csvfile)
                                 # Write the header row if this is the first kss (kss number 1) of the night
                                 if not csv_exists:
-                                    writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'Subject ID', 'Block', 'KSS Number', 'KSS Result'])
+                                    writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'Subject ID', 'Block', 'KSS Number', 'müdigkeit'])
                                 # Write the output to the csv
                                 writer.writerow([day , month, year, hour, minute, second, subject, week_number_str, kss_number, kss_result])
                             kss_completed = True # Flag that the kss has now been completed
