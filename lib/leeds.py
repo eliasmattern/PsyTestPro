@@ -206,7 +206,7 @@ def leeds(subject, block):
 
         right_text = row[3]
         right_surface = font.render(right_text, True, font_color)
-        # rener continue buttion
+        # render continue buttion
         button_surface = font.render("  " + row[4] + "  ", True, (0,0,0))
         button_rect = button_surface.get_rect(center=(percent_screen_width * 50,
                             screen_height /100 * 80))

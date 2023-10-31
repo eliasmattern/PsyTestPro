@@ -13,6 +13,7 @@ import subprocess
 from .create_time_picker import create_time_picker
 from .create_date_picker import create_date_picker
 from services import TranslateService, LanguageConfiguration
+from .play_task import play_tasks
 
 schedule_page = 0
 
@@ -96,7 +97,9 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         filtered_schedule = {key: value for key, value in schedule.items() if value["state"] == "todo"}
         # convert the schedule to a list of tuples and sort it by time
         sorted_schedule = sorted([(datetime.strptime(info["datetime"], '%d/%m/%Y %H:%M:%S'), event) for event, info in filtered_schedule.items()])
-               
+        check_for_old_tasks = True    
+        play_next_task = False
+
         running = True
         while running:
             pygame.mouse.set_visible(True)
@@ -104,6 +107,19 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            if check_for_old_tasks:
+                filtered_dict = {
+                    key: value for key, value in schedule.items()
+                    if value['state'] == 'todo'
+                    and datetime.strptime(value['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now()
+                }
+                # Print the filtered list
+                for item in filtered_dict:
+                    upcoming_event = item
+                    eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
+                    play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    schedule[upcoming_event]["state"]= "done"
+                check_for_old_tasks = False
             
             # get the current time
             now = datetime.now()
@@ -151,86 +167,45 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     create_schedule_display(schedule, participant_info, teststarter, isHab)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
+            if 75 + edit_button_width > mouse[0] > 75 and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
+                pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
+                if click[0] == 1:
+                    play_next_task = True
+            else:
+                pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
 
             # Draw the text on the button
             small_text = pygame.font.Font(None, 20)
             text_surf, text_rect = text_objects(translate_service.get_translation("editTeststarter"), small_text)
             text_rect.center = ((edit_button_x + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
             screen.blit(text_surf, text_rect)
-
+            
+            next_surf, next_rect = text_objects(translate_service.get_translation("nextTask"), small_text)
+            next_rect.center = ((75 + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
+            screen.blit(next_surf, next_rect)
             # update the display
             pygame.display.flip()
+            if play_next_task:
+                check_for_old_tasks = True
+                upcoming_event = next_event[1]
+                beep_sound = pygame.mixer.Sound("./lib/beep.wav")
+                beep_sound.play()
+                eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
+                play_tasks(eventName, participant_info, upcoming_event, schedule)
+                schedule[upcoming_event]["state"]= "done"
+                sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
+                print(sorted_schedule)
+                play_next_task = False
             
             if not isHab or next_event_in_seconds == -1:
                 if round(next_event_in_seconds) == 1:
+                    check_for_old_tasks = True
                     upcoming_event = next_event[1]
                     pythonTime.sleep(1.1)
                     beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                     beep_sound.play()
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    match eventName:
-                        case "welcome":
-                            #process = subprocess.Popen("py ./lib/wakingEeg.py")
-                            #process.communicate()
-                            text_screen("Willkommen zur Studie", "Vielen Dank fürs Mitmachen")
-                        case "good_morn":
-                            text_screen("Guten Morgen", "")
-                        case "morn_sleep_diary" | "sleep_diary_expe":
-                            text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Forscher/in wird Ihnen helfen, das Schlaftagebuch zuführen.")
-                        case "leeds":
-                            leeds(participant_info["participant_id"], participant_info["week_no"])
-                        case "break_morn" | "breaktime":
-                            text_screen("Pause", "Es ist Zeit für eine Pause.")
-                        case "waking_eeg_morn" | "waking_eeg":
-                            waking_eeg()
-                        case "pvt_morn" | "pvt":
-                            # block = week number number = pvt number
-                            pvtNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                            pvt(participant_info["participant_id"], participant_info["week_no"], pvtNumber)
-                        case "saliva_morn" | "saliva":
-                            # kss = wie viele mal
-                            salivaNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                            saliva(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], salivaNumber)
-                        case "teethbrushing":
-                            text_screen("Zähneputzen", "Sie können jetzt Ihre Zähne in Ihrem Zimmer putzen.")
-                        case "mood_morn" | "mood":
-                            moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
-                        case "wof_morn" | "wof":
-                            text_screen("Glücksrad", "Ein/e Forscher/in wird kommen und Ihnen helfen.")
-                        case "task_payment":
-                            text_screen("Zahlung", "Ein/e Forscher/in wird kommen und wird Sie bezahlen.")
-                        case "gonogo_morn" | "gonogo":
-                            # block = week number number = gonogo number
-                            gonogo_number = ''.join([i for i in upcoming_event if i.isdigit()])
-                            GoNoGo_Real(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], gonogo_number)
-                        case "nback_morn" | "nback":
-                            # study night se sr
-                            start_real_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
-                        case "eeg_removal":
-                            text_screen("EEG entfernen", "Ein/e Forscher/in wird kommen und Ihnen helfen.")
-                        case "breakfast_morn":
-                            text_screen("Frühstück", "Es ist Zeit für das Frühstück.")
-                        case "eeg_fitting":
-                            text_screen("EEG", "Jemand wird mit Ihnen das EEG vorbereiten")
-                        case "dinner":
-                            text_screen("Abendessen", "Es ist Zeit für das Abendessen. Wir werden es Ihnen bringen")
-                        case "capsule":
-                            text_screen("Kapsel", "Jemand wird Ihnen die Kapsel bringen")
-                        case "bed_prep": 
-                            text_screen("Bettzeit", "Zeit, sich bettfertig zu machen")
-                        case "in_bed": 
-                            text_screen("Bettzeit", "Bitte begeben Sie sich ins Bett")
-                        case "goodbye":
-                            text_screen("Vielen Dank fürs Mitmachen. Tschüss!", "")
-                        case _:
-                            if schedule[upcoming_event]["type"] == "text":
-                                title = schedule[upcoming_event]["value"]["title"]
-                                description = schedule[upcoming_event]["value"]["description"]
-                                text_screen(title, description)
-                            elif schedule[upcoming_event]["type"] == "command":
-                                command = schedule[upcoming_event]["value"]
-                                process = subprocess.Popen(command)
-                                process.communicate()
+                    play_tasks(eventName, participant_info, upcoming_event, schedule)
                     schedule[upcoming_event]["state"]= "done"
             elif len(sorted_schedule) > 0:
                 if schedule["pvt_hab"]["state"] == "todo":
