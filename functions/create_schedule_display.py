@@ -194,7 +194,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                         case "teethbrushing":
                             text_screen("Zähneputzen", "Sie können jetzt Ihre Zähne in Ihrem Zimmer putzen.")
                         case "mood_morn" | "mood":
-                            moodscales(participant_info["participant_id"], participant_info["week_no"])
+                            moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
                         case "wof_morn" | "wof":
                             text_screen("Glücksrad", "Ein/e Forscher/in wird kommen und Ihnen helfen.")
                         case "task_payment":
@@ -423,7 +423,9 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             todo_input_active = False
                             newtime_active_row = None
                             newtime_input_active = False
-                            date = create_date_picker()
+                            splitted_date = newdate_input_values[row].split("/")
+                            day,month,year = splitted_date[0], splitted_date[1], splitted_date[2]
+                            date = create_date_picker(int(year), int(month), int(day))
                             newdate_input_values[newdate_active_row] = date
                         elif newtime_input_box_rect.collidepoint(mouse_pos) and not isHab:
                             newtime_active_row = row

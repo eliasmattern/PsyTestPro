@@ -6,7 +6,7 @@ import os
 import time
 from pygame_widgets.slider import Slider
 
-def moodscales(subject, block):
+def moodscales(subject, block, experiment):
 
     # Get the screen width and height
     screen_info = pygame.display.Info()
@@ -42,7 +42,7 @@ def moodscales(subject, block):
     slider_data = []
     rows = []
     filename = os.path.join("./lib", "MoodscaleSlider.csv")
-    outdir = "./Logs/Moodscale_Results/" + u'%s_%s_moodscales.csv' % (subject, block)
+    outdir = "./Logs/Moodscale_Results/Moodscales_" + u'%s_%s_%s_.csv' % (subject, block, experiment)
     headers = []
     # get all rows except for the header
     with open(filename, 'r', encoding="utf8") as csvfile:

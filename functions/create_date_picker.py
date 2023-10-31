@@ -2,7 +2,7 @@ from datetime import datetime
 import tkinter as tk
 from tkcalendar import Calendar
 
-def create_date_picker():
+def create_date_picker(year, month, day):
     def save_date():
         root.quit()  # Close the window
         root.destroy()
@@ -24,7 +24,7 @@ def create_date_picker():
     root.option_add("*TLabel*foreground", "#ffffff")
     root.option_add("*TFrame*background", "#333333")
 
-    cal = Calendar(root, selectmode="day", year=2023, month=10, day=23, background="#555555", foreground="#ffffff", bordercolor="#333333")
+    cal = Calendar(root, selectmode="day", year=year, month=month, day=day, background="#555555", foreground="#ffffff", bordercolor="#333333")
     cal.pack(padx=10, pady=10)
 
     button = tk.Button(root, text="Get Selected Date", command=save_date, bg="#555555", fg="#ffffff", relief=tk.FLAT)
