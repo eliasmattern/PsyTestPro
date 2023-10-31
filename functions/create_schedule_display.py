@@ -238,7 +238,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         pattern = r"^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$"
         return re.match(pattern, datetime_str) is not None
 
-    def change_night():
+    def change_settings():
         global schedule_page
         schedule_page = 0
 
@@ -425,7 +425,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         
         # This invokes the function draw_button
         draw_button(screen, translate_service.get_translation("runTeststarter"), 50 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_back)
-        draw_button(screen, translate_service.get_translation("changNight"), 50 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, change_night)
+        draw_button(screen, translate_service.get_translation("changeSettings"), 50 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, change_settings)
         draw_button(screen, translate_service.get_translation("quit"), 50 * width_scale_factor, 300 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_quit_teststarter)
         draw_button(screen, translate_service.get_translation("help"), 50 * width_scale_factor, 400 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_help)
         draw_button(screen, translate_service.get_translation("english"), 50 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "en"))
