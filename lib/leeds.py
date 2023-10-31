@@ -182,6 +182,8 @@ def leeds(subject, block):
     text_y = (screen_height // 6)
 
     slider = Slider(window, percent_screen_width * 20, round(screen_height / 2), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
+    slider_rect = pygame.Rect(0, 0, percent_screen_width * 65, 60)
+    slider_rect.center = (percent_screen_width * 50, round(screen_height / 2) + 17)
     isTouched = False
 
     # Main loop
@@ -228,7 +230,6 @@ def leeds(subject, block):
                 window.blit(button_surface, button_rect)
             window.blit(left_surface, (left_pos, screen_height / 2 - line_spacing))
             window.blit(right_surface, (right_pos, screen_height / 2 - line_spacing))
-
             # update screen
             slider.draw()
             pygame.display.flip()
@@ -250,7 +251,8 @@ def leeds(subject, block):
                         slider = Slider(window, percent_screen_width * 20, round(screen_height / 2), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
                 slider.listen(event)
                 # Calculate slider position
-                if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
+                mouse_pos = pygame.mouse.get_pos()
+                if slider_rect.collidepoint(mouse_pos) and event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     relative_x = max(min(mouse_x - slider.getX(), slider.getWidth()), 0)
                     normalized_x = relative_x / slider.getWidth()
