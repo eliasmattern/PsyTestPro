@@ -5,7 +5,7 @@ import random
 import time
 import os
 
-def pvt(subject, block, number):
+def pvt(subject, experiment, block, number):
     # Convert numerical inputs to strings
     subject_str = str(subject)
     block_str = str(block)
@@ -70,7 +70,7 @@ def pvt(subject, block, number):
     start_time = time.time()  # set the start_time as the current time
 
     # Output file name
-    output_filename = f"{subject_str}_{block_str}_{number_str}.csv"
+    output_filename = f"PVT{subject_str}_{block_str}_{experiment}_{number_str}.csv"
     
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
@@ -80,7 +80,7 @@ def pvt(subject, block, number):
         # Create a CSV writer object
         writer = csv.writer(csvfile)
         # Write the header row
-        writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'Trial Number', 'Fixation Cross Duration (ms)', 'Reaction Time (ms)'])
+        writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'Trial Number', 'Fixation Cross Duration (ms)', 'Reaction Time (ms)', 'Absolute Time'])
 
         trial_number = 1
 
@@ -119,8 +119,11 @@ def pvt(subject, block, number):
                 screen.fill(pygame.Color("black"))  # Clear the screen
                 pygame.display.flip()
                 break       
-            
+        
+        absolute_start_time = None
         while running:
+            if absolute_start_time == None:
+                absolute_start_time = time.time()
             # Check if the duration has elapsed
             if time.time() - start_time >= duration:
                 running = False
@@ -180,14 +183,17 @@ def pvt(subject, block, number):
                         beep_sound.play()
                         beep_sound_playing = True
                         pygame.time.set_timer(STOP_SOUND_EVENT, 1000)
+                        absolute_time = time.time() - absolute_start_time
 
                 if counter >= 10000 or spacebar_pressed:
                     if spacebar_pressed:
                         counter_text = str(spacebar_press_time) + " ms"
                         reaction_time = spacebar_press_time
+                        absolute_time = time.time() - absolute_start_time
                     else:
                         counter_text = "Zeit ist um!"
                         reaction_time = counter
+                        absolute_time = time.time() - absolute_start_time
                 else:
                     counter_text = str(counter) + " ms"
 
@@ -219,7 +225,7 @@ def pvt(subject, block, number):
                     second = splitted_time[2]
                     
                     # Write the data to the CSV file
-                    writer.writerow([day , month, year, hour, minute, second, trial_number, fix_duration, reaction_time])
+                    writer.writerow([day , month, year, hour, minute, second, trial_number, fix_duration, reaction_time, absolute_time])
 
                     trial_number += 1
 
@@ -237,3 +243,5 @@ def pvt(subject, block, number):
 
     # Quit Pygame
     return
+
+pvt(1,1,1)

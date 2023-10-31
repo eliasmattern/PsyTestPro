@@ -21,7 +21,7 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
         case "pvt_morn" | "pvt":
             # block = week number number = pvt number
             pvtNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-            pvt(participant_info["participant_id"], participant_info["week_no"], pvtNumber)
+            pvt(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], pvtNumber)
         case "saliva_morn" | "saliva":
             # kss = wie viele mal
             salivaNumber = ''.join([i for i in upcoming_event if i.isdigit()])
