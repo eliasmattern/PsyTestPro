@@ -155,8 +155,13 @@ def practice_nback(subject, experiment, week, study_night, current_block, num_ba
 
         #NC 27.7 commented out: while current_block <= total_num_blocks: (&inserted the following line)
         while True:
+            if current_block == 1:
+                info_text = "Diese Aufgabe besteht aus 3 Blöcken. Vor jedem Block gibt es eine übungsaufgabe"
+            else:
+                info_text = ""
             # Define the introduction screen texts
             first_screen_intro_texts = [
+                info_text,
                 f"Du wirst nun eine Übungsaufgabe {num_back}-BACK durchführen.",
                 "Das heißt, dass du den gerade gezeigten Buchstaben mit jenem vergleichst",
                 f"den du {num_back} Buchstaben zuvor gesehen hast.",
@@ -827,7 +832,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
                     screen.blit(continue_surface, continue_rect)
 
                     pygame.display.flip()
-
+                    print(num_back_performance_addition)
                     # Wait for the 'A' or 'L' key to be pressed
                     key_pressed = False
                     while not key_pressed:
@@ -839,8 +844,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
                                     key_pressed = True
                     current_block += 1
                     #current_trial = 0
-                    practice_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
-
+                    practice_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
                     # Clear the screen for the next block
                     #screen.fill(black)
                     #pygame.display.flip()
@@ -859,4 +863,3 @@ def start_real_nback(subject, experiment, week, study_night):
     real_nback(subject, experiment ,week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
 
 #########################################################################################
-                    
