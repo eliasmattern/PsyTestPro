@@ -58,18 +58,18 @@ class Teststarter:
         return re.match(pattern, datetime_str) is not None
 
     def create_input_boxes(self):
-        labels = ["participantId", "experiment", "timeOfDay", "weekNumber", "startTime"]
+        labels = ["participantId", "timeOfDay", "experiment", "weekNumber", "startTime"]
         experiments_string = ""
         for experiment in self.teststarterConfig.experiments:
             experiments_string = experiments_string + experiment + ", "
         if "," in experiments_string:
             experiments_string = experiments_string[:-2]
-        inforomation = ["", "(" + experiments_string + ")", "", "", ""]
-        initial_text = [self.id, self.experiment, self.time_of_day, self.week_number, self.time]
+        information = ["", "", "(" + experiments_string + ")", "", ""]
+        initial_text = [self.id, self.time_of_day, self.experiment, self.week_number, self.time]
         x = self.width // 2
         y = self.height // 2 - 100
         spacing = 60
-        for label, text, info in zip(labels, initial_text, inforomation):
+        for label, text, info in zip(labels, initial_text, information):
             input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
             self.input_boxes[label] = input_box
             y += spacing
@@ -106,7 +106,7 @@ class Teststarter:
 
     def handle_events(self):
         def get_input_index():
-            index_to_key = {0: "participantId", 1: "experiment", 2:"timeOfDay", 3: "weekNumber", 4: "startTime"}
+            index_to_key = {0: "participantId", 1:"timeOfDay", 2: "experiment", 3: "weekNumber", 4: "startTime"}
 
             index = 0 
             for key, input_box in self.input_boxes.items():
@@ -142,13 +142,13 @@ class Teststarter:
             is_start_time_valid = self.is_valid_time_format(self.input_boxes["startTime"].text)
 
             # Define validation checks and corresponding error messages
-            index_to_key = {0: "participantId", 1: "experiment", 2:"timeOfDay", 3: "weekNumber", 4: "startTime"}
+            index_to_key = {0: "participantId", 1: "timeOfDay", 2: "experiment", 3: "weekNumber", 4: "startTime"}
 
             if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["timeOfDay"].text and self.input_boxes["weekNumber"].text and self.input_boxes["startTime"].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, "idError"),
-                    (lambda text: text in experiments, "experimentError"),
                     (lambda text: text in ["morn", "eve", "full"], "timeOfDayError"),
+                    (lambda text: text in experiments, "experimentError"),
                     (lambda text: text.isnumeric(), "weekNoError"),
                     (self.is_valid_time_format, "startTimeError")
                 ]
@@ -260,11 +260,11 @@ class Teststarter:
         self.input_boxes = {}
 
     def save_details(self):
-        participant_id = self.input_boxes[0].text
-        experiment = self.input_boxes[1].text
-        time_of_day = self.input_boxes[2].text
-        week_no = self.input_boxes[3].text
-        start_time = self.input_boxes[4].text
+        participant_id = self.input_boxes["participantId"].text
+        experiment = self.input_boxes["experiment"].text
+        time_of_day = self.input_boxes["timeOfDay"].text
+        week_no = self.input_boxes["weekNumber"].text
+        start_time = self.input_boxes["startTime"].text
 
         with open("experiment_details.txt", "w") as file:
             file.write(f"Participant ID: {participant_id}\n")
