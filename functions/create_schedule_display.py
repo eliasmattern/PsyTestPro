@@ -295,7 +295,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         return dict_list
     
 
-    splitted_schedule = split_dict(schedule, 30)
+    splitted_schedule = split_dict(schedule, 20)
 
     def page_update(schedule, increment):
         pythonTime.sleep(0.25)
@@ -311,9 +311,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     if isHab:
         column_start_x = screen_width - (column_width * 2) - 50 # Hab night Calculate column positions based on screen size (adjusted for right alignment)
 
-    max_row_height = 75    
-    row_height = screen_height // (len(schedule) + 1.5) if screen_height // (len(schedule) + 1.5) < max_row_height else max_row_height  # +1 for the header row
-    
+    max_row_height = 75   
+    row_height = screen_height // (len(splitted_schedule[schedule_page]) + 3) if screen_height // (len(splitted_schedule[schedule_page]) + 3) < max_row_height else max_row_height  # +1 for the header row
     
     # Padding for cell
     cellPadding = 10
@@ -568,7 +567,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         
             row += 1  # Increment the row counter
             
-            max_grid_rows = 30 if len(schedule) > 30 else len(schedule)
+            max_grid_rows = len(splitted_schedule[schedule_page]) 
 
             final_y = (max_grid_rows + 1) * row_height
 
