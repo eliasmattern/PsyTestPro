@@ -25,7 +25,7 @@ class Teststarter:
         self.lang = "en"
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 24)
-        self.input_boxes = []
+        self.input_boxes = {}
         self.buttons = []
         self.errors = []
         self.language_config = LanguageConfiguration()
@@ -71,7 +71,7 @@ class Teststarter:
         spacing = 60
         for label, text, info in zip(labels, initial_text, inforomation):
             input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
-            self.input_boxes.append(input_box)
+            self.input_boxes[label] = input_box
             y += spacing
         
         exit_button = Button(x - 75, y + 60, 100, 40, "exit", self.exit, self.translateService)
@@ -99,29 +99,31 @@ class Teststarter:
         self.language_config.update_language_config(lang)
 
     def update_text(self):
-        for box in self.input_boxes:
+        for key, box in self.input_boxes.items():
             box.update_text()
         for button in self.buttons:
             button.update_text()
 
     def handle_events(self):
         def get_input_index():
+            index_to_key = {0: "participantId", 1: "experiment", 2:"timeOfDay", 3: "weekNumber", 4: "startTime"}
+
             index = 0 
-            for input_box in self.input_boxes:
+            for key, input_box in self.input_boxes.items():
                 index += 1
                 if input_box.is_selected:
-                    self.input_boxes[index -1].is_selected = False
+                    self.input_boxes[index_to_key[index -1]].is_selected = False
                     break
             if index < len(self.input_boxes):
-                return index
+                return index_to_key[index]
             else:
-                return 0
+                return index_to_key[0]
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_TAB:
                     index = get_input_index()
                     self.input_boxes[index].is_selected = True
-            for box in self.input_boxes:
+            for key, box in self.input_boxes.items():
                 box.handle_event(event)
             for button in self.buttons:
                 button.handle_event(event)
@@ -133,15 +135,16 @@ class Teststarter:
     
     def draw(self):
         def validate_inputs(experiments):
-            is_id_valid = len(self.input_boxes[0].text) != 0
-            is_experiment_valid = self.input_boxes[1].text in experiments
-            is_time_of_day_valid = self.input_boxes[2].text == "morn" or self.input_boxes[2].text == "eve" or self.input_boxes[2].text == "full"
-            is_week_no_valid = self.input_boxes[3].text.isnumeric()
-            is_start_time_valid = self.is_valid_time_format(self.input_boxes[4].text)
+            is_id_valid = len(self.input_boxes["participantId"].text) != 0
+            is_experiment_valid = self.input_boxes["experiment"].text in experiments
+            is_time_of_day_valid = self.input_boxes["timeOfDay"].text == "morn" or self.input_boxes["timeOfDay"].text == "eve" or self.input_boxes["timeOfDay"].text == "full"
+            is_week_no_valid = self.input_boxes["weekNumber"].text.isnumeric()
+            is_start_time_valid = self.is_valid_time_format(self.input_boxes["startTime"].text)
 
             # Define validation checks and corresponding error messages
+            index_to_key = {0: "participantId", 1: "experiment", 2:"timeOfDay", 3: "weekNumber", 4: "startTime"}
 
-            if self.input_boxes[0].text and self.input_boxes[1].text and self.input_boxes[2].text and self.input_boxes[3].text and self.input_boxes[4].text:
+            if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["timeOfDay"].text and self.input_boxes["weekNumber"].text and self.input_boxes["startTime"].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, "idError"),
                     (lambda text: text in experiments, "experimentError"),
@@ -151,7 +154,7 @@ class Teststarter:
                 ]
 
                 for validation_check, error_key in validation_checks:
-                    is_valid = validation_check(self.input_boxes[validation_checks.index((validation_check, error_key))].text)
+                    is_valid = validation_check(self.input_boxes[index_to_key[validation_checks.index((validation_check, error_key))]].text)
 
                     error_translation = self.translateService.get_translation(error_key)
                     if not is_valid and error_translation not in self.errors:
@@ -176,7 +179,7 @@ class Teststarter:
         text_rect = text_surface.get_rect()
         self.screen.blit(text_surface, (x - text_rect.width // 2, y))
 
-        for box in self.input_boxes:
+        for key, box in self.input_boxes.items():
             box.draw(self.screen)
         is_input_valid = validate_inputs(self.teststarterConfig.experiments)
 
@@ -211,7 +214,7 @@ class Teststarter:
             x = self.width // 2
             y = self.height - 75
             font = pygame.font.Font(None, 24) 
-            text_surface = font.render(' ' + error_msg, True, pygame.Color("gray")) 
+            text_surface = font.render(' ' + error_msg, True, pygame.Color("red")) 
             self.screen.blit(text_surface, (x- text_surface.get_rect().width // 2, y)) 
         
         
@@ -254,7 +257,7 @@ class Teststarter:
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         print("ee = ", edited_schedule)
         create_schedule_display(schedule, participant_info, Teststarter, isHab)
-        self.input_boxes = []
+        self.input_boxes = {}
 
     def save_details(self):
         participant_id = self.input_boxes[0].text
