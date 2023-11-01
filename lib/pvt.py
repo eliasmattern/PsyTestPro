@@ -243,5 +243,3 @@ def pvt(subject, experiment, block, number):
 
     # Quit Pygame
     return
-
-pvt(1,1,1)
