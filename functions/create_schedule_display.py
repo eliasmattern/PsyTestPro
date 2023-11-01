@@ -298,7 +298,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     splitted_schedule = split_dict(schedule, 30)
 
     def page_update(schedule, increment):
-        pythonTime.sleep(0.125)
+        pythonTime.sleep(0.25)
         global schedule_page
         if increment:
             schedule_page = (schedule_page + 1) % len(splitted_schedule)
