@@ -7,7 +7,7 @@ import time
 from pygame_widgets.slider import Slider
 
 
-def leeds(subject, block):
+def leeds(subject, block, experiment):
     pygame.init()
 
     # Get the screen width and height
@@ -43,19 +43,31 @@ def leeds(subject, block):
     keyboard_rows = []
     slider_rows = []
     questions = []
-    headers = []
+    headers = [
+    "einzuschlafen",
+    "erwacht",
+    "wach",
+    "geschlafen",
+    "schwerer",
+    "langsamer",
+    "schläfrig",
+    "unruhiger",
+    "wachphasen",
+    "schwieriger",
+    "länger",
+    "frisch",
+    "müde",
+    "Qualität",
+]
     keyboard_filename = os.path.join("./lib", "LeedsKeyboard.csv")
     slider_filename = os.path.join("./lib", "LeedsSlider.csv")
-    outdir = "./Logs/Leeds/" + u'%s_%s_leeds.csv' % (subject, block)
+    outdir = "./Logs/Leeds/" + u'Leeds%s_%s_%s.csv' % (subject, block, experiment)
 
     # get all rows except for the header
     with open(keyboard_filename, 'r', encoding="utf8") as csvfile:
         datareader = csv.reader(csvfile)
         row_count = 0
         for row in datareader:
-            if row_count == 0:
-                for header in row:
-                    headers.append(header)
             if row_count > 1:
                keyboard_rows.append(row)
                questions.append(row[1])
@@ -168,9 +180,6 @@ def leeds(subject, block):
         datareader = csv.reader(csvfile)
         row_count = 0
         for row in datareader:
-            if row_count == 0:
-                for header in row:
-                    headers.append(header)
             if row_count > 1:
                slider_rows.append(row)
                questions.append(row[1])

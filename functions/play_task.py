@@ -13,7 +13,7 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
         case "morn_sleep_diary" | "sleep_diary_expe":
             text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Forscher/in wird Ihnen helfen, das Schlaftagebuch zuführen.")
         case "leeds":
-            leeds(participant_info["participant_id"], participant_info["week_no"])
+            leeds(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
         case "break_morn" | "breaktime":
             text_screen("Pause", "Es ist Zeit für eine Pause.")
         case "waking_eeg_morn" | "waking_eeg":
