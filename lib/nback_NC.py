@@ -156,7 +156,7 @@ def practice_nback(subject, experiment, week, study_night, current_block, num_ba
         #NC 27.7 commented out: while current_block <= total_num_blocks: (&inserted the following line)
         while True:
             if current_block == 1:
-                info_text = "Diese Aufgabe besteht aus 3 Blöcken. Vor jedem Block gibt es eine übungsaufgabe"
+                info_text = "Diese Aufgabe besteht aus 3 Blöcken. Vor jedem Block gibt es eine Übungsaufgabe."
             else:
                 info_text = ""
             # Define the introduction screen texts
