@@ -1,8 +1,8 @@
-# Teststarter
+# :test_tube: Teststarter
 
 Teststarter is a Python program developed using the Pygame library that allows users to create and manage experiments. With Teststarter, users can define experiments, each of which consists of a series of tasks. These tasks can be customized to suit specific requirements.
 
-The user interface of Teststarter is intentionally designed to be predominantly black. This deliberate choice is driven by its primary application in sleep studies. By minimizing light emission, Teststarter ensures a conducive environment for conducting experiments, where even the slightest disruptions from external sources of light are mitigated.
+The user interface of Teststarter is intentionally designed to be predominantly black. This deliberate choice is driven by its primary application in sleep studies. By minimizing light emission, Teststarter ensures a conducive environment for conducting experiments, where even the slightest disruptions from external sources of light are mitigated. 
 
 ## Key Features
 ### Experiment Creation: 
@@ -19,7 +19,7 @@ Once an experiment is started, Teststarter will automatically manage the executi
 
 ## Table of Contens
 
-- [Teststarter](#teststarter)
+- [:test\_tube: Teststarter](#test_tube-teststarter)
   - [Key Features](#key-features)
     - [Experiment Creation:](#experiment-creation)
     - [Customizable Tasks:](#customizable-tasks)
