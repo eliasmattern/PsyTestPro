@@ -58,10 +58,11 @@ def leeds(subject, block, experiment):
     "frisch",
     "müde",
     "Qualität",
-]
+    ]
     keyboard_filename = os.path.join("./lib", "LeedsKeyboard.csv")
     slider_filename = os.path.join("./lib", "LeedsSlider.csv")
-    outdir = "./Logs/Leeds/" + u'Leeds%s_%s_%s.csv' % (subject, block, experiment)
+    folderdir = "./Logs/Leeds/" 
+    outdir = folderdir + u'Leeds_%s_%s_%s.csv' % (subject, block, experiment)
 
     # get all rows except for the header
     with open(keyboard_filename, 'r', encoding="utf8") as csvfile:
@@ -144,8 +145,10 @@ def leeds(subject, block, experiment):
                     if event.key == pygame.K_ESCAPE:
                         running = False
                         return
-                    elif event.key == K_BACKSPACE:
+                    elif event.key == K_BACKSPACE and is_input_active:
                         answer = answer[:-1]
+                    elif event.key == K_BACKSPACE and is_input2_active:
+                        second_answer = second_answer[:-1]
                     elif event.key == K_TAB or event.key == K_KP_ENTER or event.key == K_RETURN:
                         pass
                     elif is_input_active:
@@ -271,7 +274,8 @@ def leeds(subject, block, experiment):
     # save if user filled out at least one 1 question
     if len(keyboard_data) > 0:    
         csv_exists = os.path.isfile(outdir)
-
+        if not os.path.exists(folderdir):
+            os.makedirs(folderdir)
         with open(outdir, 'a', newline='') as csvfile:
             writer = csv.writer(csvfile)
             if not csv_exists:
@@ -288,7 +292,7 @@ def leeds(subject, block, experiment):
             hour = splitted_time[0]
             minute = splitted_time[1]
             second = splitted_time[2]
-
+            print([day , month, year, hour, minute, second, subject, block, *keyboard_data, *slider_data])
             writer.writerow([day , month, year, hour, minute, second, subject, block, *keyboard_data, *slider_data])
         
     slider.hide()

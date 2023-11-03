@@ -43,6 +43,7 @@ def moodscales(subject, block, experiment):
     slider_data = []
     rows = []
     filename = os.path.join("./lib", "MoodscaleSlider.csv")
+    folderdir= "./Logs/Moodscale_Results/" 
     outdir = "./Logs/Moodscale_Results/Moodscales_" + u'%s_%s_%s_.csv' % (subject, block, experiment)
     headers = []
     # get all rows except for the header
@@ -120,7 +121,8 @@ def moodscales(subject, block, experiment):
     # save if user filled out at least one 1 question
     if len(slider_data) > 0:    
         csv_exists = os.path.isfile(outdir)
-
+        if not os.path.exists(folderdir):
+            os.makedirs(folderdir)
         with open(outdir, 'a', newline='') as csvfile:
             writer = csv.writer(csvfile)
             if not csv_exists:
@@ -140,4 +142,4 @@ def moodscales(subject, block, experiment):
 
             writer.writerow([day , month, year, hour, minute, second, subject, block, *slider_data])
     slider.hide()
-        
+    
