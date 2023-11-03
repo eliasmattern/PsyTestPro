@@ -138,7 +138,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 next_event_in_seconds = (next_event[0] - now).total_seconds()
                 # calculate the time until the next event
                 if next_event is not None:
-                    event_message = f' minutes until {next_event[1]}'
+                    event_message = ' ' + translate_service.get_translation('until') + f' {next_event[1]}'
                 else:
                     event_message = 'No more events today' 
 
@@ -355,7 +355,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
                 for row in range(1, len(splitted_schedule[schedule_page]) + 1):
                     if not isHab:

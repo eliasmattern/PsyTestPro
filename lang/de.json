@@ -61,5 +61,6 @@
     "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: CSV",
     "commandFailedToExecute": "Befehl konnte nicht ausgeführt werden",
     "editTeststarter": "Teststarter bearbeiten",
-    "nextTask": "Nächste Aufgabe starten"
+    "nextTask": "Nächste Aufgabe starten",
+    "until": "bis"
 }
