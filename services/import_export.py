@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import os
 
 class JSONToCSVConverter:
     def __init__(self, file1_path, file2_path, output_path):
@@ -13,6 +14,9 @@ class JSONToCSVConverter:
         return data
 
     def export_to_csv(self):
+        directory = self.output_path.split(os.path.basename(self.output_path))[0]
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         file1_data = self.read_json(self.file1_path)
         file2_data = self.read_json(self.file2_path)
 
@@ -20,7 +24,6 @@ class JSONToCSVConverter:
         file2_rows = []
         for key, value in file2_data.items():
             tasks = value.get('tasks', {})
-            print(value)
             for task_key, task_value in tasks.items():
                 if "value" in task_value and isinstance(task_value['value'], dict):
                     row = [key, task_key, task_value['value'].get('title', ''), task_value['value'].get('description', '')]
