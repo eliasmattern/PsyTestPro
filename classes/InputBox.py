@@ -22,7 +22,7 @@ class InputBox:
 
     def handle_event(self, event):
         if event.type == MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
+            if self.rect.collidepoint(event.pos) and event.button == 1:
                 self.is_selected = True
             else:
                 self.is_selected = False

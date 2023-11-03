@@ -56,7 +56,7 @@ class TimeInput:
         self.cursor_timer = 0
 
     def handle_event(self, event):
-        if event.type == MOUSEBUTTONDOWN:
+        if event.type == MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 splitted_time = self.time.split(":") if self.time else "00:00"
                 time_picker = create_time_picker(splitted_time[0], splitted_time[1], self.translate_service)
