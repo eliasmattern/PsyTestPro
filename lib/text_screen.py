@@ -1,10 +1,9 @@
 import pygame
 
+
 def text_screen(title, description):
     title = title.replace(r' \n ', '\n')
     title = title.replace(r'\n', '\n')
-    description = description.replace(r' \n ', '\n')
-    description = description.replace(r'\n', '\n')
     # Initialize Pygame
     pygame.init()
 
@@ -39,19 +38,25 @@ def text_screen(title, description):
     text_x = screen_width // 2
     line_spacing = 40
     text_y = (screen_height // 3) - 50
+    print(text_y)
 
     # Render and position the text
-    title_surface = title_font.render(title, True, font_color)
-    title_rect = title_surface.get_rect(center=(text_x, text_y))
-    text_surfaces.append(title_surface)
-    text_rects.append(title_rect)
-    text_y += line_spacing
-
-    description_surface = font.render(description, True, font_color)
-    description_rect = description_surface.get_rect(center=(text_x, text_y))
-    text_surfaces.append(description_surface)
-    text_rects.append((text_x - description_rect.width // 2, text_y))
-    text_y += line_spacing
+    title_lines = title.split("\\n")
+    for line in title_lines:
+        title_surface = title_font.render(line, True, font_color)
+        title_rect = title_surface.get_rect(center=(text_x, text_y))
+        text_surfaces.append(title_surface)
+        text_rects.append(title_rect)
+        text_y += title_font.get_linesize()
+    text_y = title_rect.bottom + title_font.get_linesize() * 2
+    print(title_rect.bottom)
+    description_lines = description.split("\\n")
+    for line in description_lines:
+        description_surface = font.render(line, True, font_color)
+        description_rect = description_surface.get_rect(center=(text_x, text_y))
+        text_surfaces.append(description_surface)
+        text_rects.append((text_x - description_rect.width // 2, text_y))
+        text_y += font.get_linesize()
 
     info = 'Bitte drücke "ESC" um zurückzukehren'
     info_surface = font.render(info, True, font_color)
