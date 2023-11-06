@@ -258,7 +258,17 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         # Create a root window and hide it
         root = tk.Tk()
         root.withdraw()
-
+        screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
+        count = 0
+        posX, posY = pygame.mouse.get_pos() 
+        posX -= 150
+        posY -= 150
+        for display in pygame.display.get_desktop_sizes():
+            if count == screenIndex:
+                break
+            posX += display[0]
+            count += 1
+        root.geometry('+'+ str(posX) +'+'+ str(posY))
         # Show a messagebox asking for confirmation
         response = messagebox.askyesno(translate_service.get_translation("confirmExit"), translate_service.get_translation("confirmExitText"))
 
@@ -274,7 +284,16 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     def button_help():
         root = tk.Tk()
         root.withdraw()
-
+        screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
+        count = 0
+        posX, posY = pygame.mouse.get_pos() 
+        posX -= 150
+        for display in pygame.display.get_desktop_sizes():
+            if count == screenIndex:
+                break
+            posX += display[0]
+            count += 1
+        root.geometry('+'+ str(posX) +'+'+ str(posY))
         # Show a messagebox asking for confirmation
         response = messagebox.askyesno(translate_service.get_translation("help"), translate_service.get_translation("helpText"))
 

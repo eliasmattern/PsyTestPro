@@ -1,6 +1,7 @@
 from datetime import datetime
 import tkinter as tk
 from tkcalendar import Calendar
+import pygame
 
 def create_date_picker(year, month, day):
     def save_date():
@@ -12,17 +13,28 @@ def create_date_picker(year, month, day):
         root.destroy()
 
     root = tk.Tk()
-    root.title("Dark Mode Date Picker Example")
+    screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
+    count = 0
+    posX, posY = pygame.mouse.get_pos() 
+    posX -= 150
+    posY -= 150
+    for display in pygame.display.get_desktop_sizes():
+        if count == screenIndex:
+            break
+        posX += display[0]
+        count += 1
+    root.geometry('+'+ str(posX) +'+'+ str(posY))
+    root.title("Dark Mode Date Picker")
 
     # Set a dark color scheme
-    root.configure(bg="#333333")
-    root.option_add("*TButton*highlightBackground", "#333333")
-    root.option_add("*TButton*highlightColor", "#333333")
-    root.option_add("*TButton*background", "#555555")
-    root.option_add("*TButton*foreground", "#ffffff")
-    root.option_add("*TLabel*background", "#333333")
-    root.option_add("*TLabel*foreground", "#ffffff")
-    root.option_add("*TFrame*background", "#333333")
+    root.configure(bg="#151515")
+    root.option_add("*TButton*highlightBackground", "#151515")
+    root.option_add("*TButton*highlightColor", "#151515")
+    root.option_add("*TButton*background", "#1D1D1D")
+    root.option_add("*TButton*foreground", "##F0F3F5")
+    root.option_add("*TLabel*background", "#151515")
+    root.option_add("*TLabel*foreground", "##F0F3F5")
+    root.option_add("*TFrame*background", "#151515")
 
     cal = Calendar(root, selectmode="day", year=year, month=month, day=day, background="#555555", foreground="#ffffff", bordercolor="#333333")
     cal.pack(padx=10, pady=10)
