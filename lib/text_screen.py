@@ -52,7 +52,6 @@ def text_screen(title, description):
     text_y = title_rect.bottom + title_font.get_linesize() * 2
 
     description_lines = description.split("\n")
-    print(description_lines)
     for line in description_lines:
         description_surface = font.render(line, True, font_color)
         description_rect = description_surface.get_rect(center=(text_x, text_y))
