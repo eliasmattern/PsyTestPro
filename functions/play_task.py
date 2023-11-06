@@ -11,7 +11,7 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
         case "good_morn":
             text_screen("Guten Morgen", "")
         case "morn_sleep_diary" | "sleep_diary_expe":
-            text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Forscher/in wird Ihnen helfen, das Schlaftagebuch zuführen.")
+            text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Forscher/in wird dir helfen, das Schlaftagebuch zuführen.")
         case "leeds":
             leeds(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
         case "break_morn" | "breaktime":
@@ -27,13 +27,13 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
             salivaNumber = ''.join([i for i in upcoming_event if i.isdigit()])
             saliva(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], salivaNumber)
         case "teethbrushing":
-            text_screen("Zähneputzen", "Sie können jetzt Ihre Zähne in Ihrem Zimmer putzen.")
+            text_screen("Zähneputzen", "Du kannst jetzt deine Zähne in deinem Zimmer putzen.")
         case "mood_morn" | "mood":
             moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
         case "wof_morn" | "wof":
-            text_screen("Glücksrad", "Ein/e Forscher/in wird kommen und Ihnen helfen.")
+            text_screen("Glücksrad", "Ein/e Forscher/in wird kommen und dir helfen.")
         case "task_payment":
-            text_screen("Zahlung", "Ein/e Forscher/in wird kommen und wird Sie bezahlen.")
+            text_screen("Zahlung", "Ein/e Forscher/in wird kommen und wird dich bezahlen.")
         case "gonogo_morn" | "gonogo":
             # block = week number number = gonogo number
             gonogo_number = ''.join([i for i in upcoming_event if i.isdigit()])
@@ -42,19 +42,19 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
             # study night se sr
             start_real_nback(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], participant_info["experiment"])
         case "eeg_removal":
-            text_screen("EEG entfernen", "Ein/e Forscher/in wird kommen und Ihnen helfen.")
+            text_screen("EEG entfernen", "Ein/e Forscher/in wird kommen und dir helfen.")
         case "breakfast_morn":
             text_screen("Frühstück", "Es ist Zeit für das Frühstück.")
         case "eeg_fitting":
-            text_screen("EEG", "Jemand wird mit Ihnen das EEG vorbereiten")
+            text_screen("EEG", "Jemand wird mit dir das EEG vorbereiten")
         case "dinner":
-            text_screen("Abendessen", "Es ist Zeit für das Abendessen. Wir werden es Ihnen bringen")
+            text_screen("Abendessen", "Es ist Zeit für das Abendessen. Wir werden es dir bringen")
         case "capsule":
-            text_screen("Kapsel", "Jemand wird Ihnen die Kapsel bringen")
+            text_screen("Kapsel", "Jemand wird dir die Kapsel bringen")
         case "bed_prep": 
             text_screen("Bettzeit", "Zeit, sich bettfertig zu machen")
         case "in_bed": 
-            text_screen("Bettzeit", "Bitte begeben Sie sich ins Bett")
+            text_screen("Bettzeit", "Bitte begebe dich ins Bett")
         case "goodbye":
             text_screen("Vielen Dank fürs Mitmachen. Tschüss!", "")
         case _:

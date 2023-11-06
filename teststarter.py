@@ -9,7 +9,6 @@ import csv
 from datetime import datetime, timedelta
 from classes import InputBox, Button
 from functions import create_schedule_display, ExperimentConfigDisplay
-from ctypes import windll
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
