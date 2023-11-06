@@ -62,5 +62,8 @@
     "commandFailedToExecute": "Befehl konnte nicht ausgeführt werden",
     "editTeststarter": "Teststarter bearbeiten",
     "nextTask": "Nächste Aufgabe starten",
-    "until": "bis"
+    "until": "bis",
+    "importExport": "Importieren / Exportieren",
+    "configureTasks": "Aufgaben konfigurieren",
+    "configureTeststarter": "Teststarter konfigurieren"
 }
