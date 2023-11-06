@@ -41,7 +41,7 @@ def pvt(subject, block, number):
     os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
     # Set the screen size and create the Pygame window
-    screen = pygame.display.set_mode((screen_width, screen_height), FULLSCREEN)
+    screen = pygame.display.get_surface()
 
     # Set the font properties
     font = pygame.font.Font(None, 30)

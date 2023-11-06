@@ -48,7 +48,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     height_scale_factor = screen_height / original_height
     
     # Creating a fullscreen display surface
-    screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+    screen = pygame.display.get_surface()
     
     # Setting the window caption
     pygame.display.set_caption('Schedule Editor')
@@ -86,7 +86,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     def button_back():
 
         # set the display mode to fullscreen
-        screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+        screen = pygame.display.get_surface()
     
         # Setting the window caption
         pygame.display.set_caption('Schedule Processor')
@@ -118,6 +118,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     upcoming_event = item
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                     play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
                 check_for_old_tasks = False
             
@@ -192,6 +193,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 beep_sound.play()
                 eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                 play_tasks(eventName, participant_info, upcoming_event, schedule)
+                pygame.mouse.set_visible(True)
                 schedule[upcoming_event]["state"]= "done"
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
                 print(sorted_schedule)
@@ -206,6 +208,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     beep_sound.play()
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                     play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
             elif len(sorted_schedule) > 0:
                 if schedule["pvt_hab"]["state"] == "todo":

@@ -11,7 +11,7 @@ def waking_eeg():
     screen_height = screen_info.current_h
 
     # Open a fullscreen window
-    window = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+    window = pygame.display.get_surface()
 
     # Hide the mouse cursor
     pygame.mouse.set_visible(False)

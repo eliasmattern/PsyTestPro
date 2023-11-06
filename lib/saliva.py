@@ -54,7 +54,7 @@ def saliva(subject, experiment,week_number, kss_number):
     height_scale_factor = screen_height / original_height
 
     # Define the fullscreen window based on current device
-    window = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+    window = pygame.display.get_surface()
     
     # Set the colours to be used
     light_grey = (192, 192, 192)

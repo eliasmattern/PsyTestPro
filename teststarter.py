@@ -15,8 +15,9 @@ from services import TranslateService, LanguageConfiguration, TeststarterConfig
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
         pygame.init()
-        self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h
-        self.screen = pygame.display.set_mode((self.width, self.height), FULLSCREEN)
+        self.screen = pygame.display.set_mode((0, 0))
+        pygame.display.toggle_fullscreen()
+        self.width, self.height = pygame.display.get_surface().get_rect().size
         pygame.display.set_caption("Teststarter")
         pygame.scrap.init()
         self.teststarterConfig = TeststarterConfig()

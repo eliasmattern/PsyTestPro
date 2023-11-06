@@ -58,9 +58,10 @@ def GoNoGo_Real(subject, experiment,block,number):
     screen_width, screen_height = pygame.display.Info().current_w, pygame.display.Info().current_h
 
     # Set up the screen
-    screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+    screen = pygame.display.get_surface()
     pygame.display.set_caption("GoNoGo Task")
     clock = pygame.time.Clock()
+    screen.fill(BACKGROUND_COLOR)
 
     
     # Instruction screen

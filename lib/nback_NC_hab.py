@@ -96,7 +96,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
     white = (255, 255, 255)
 
     # Initialize the game window
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.NOFRAME)  # Use pygame.FULLSCREEN flag
+    screen = pygame.display.get_surface()  # Use pygame.FULLSCREEN flag
 
     pygame.display.set_caption("N-Back Task")
 

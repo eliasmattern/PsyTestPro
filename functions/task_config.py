@@ -113,9 +113,7 @@ class TaskConfig:
         height_scale_factor = screen_height / original_height
 
         # Creating a fullscreen display surface
-        screen = pygame.display.set_mode(
-            (screen_width, screen_height), pygame.FULLSCREEN
-        )
+        screen = pygame.display.get_surface()
 
         # Setting the window caption
         pygame.display.set_caption("Create Task")
@@ -452,9 +450,7 @@ class TaskConfig:
         height_scale_factor = screen_height / original_height
 
         # Creating a fullscreen display surface
-        screen = pygame.display.set_mode(
-            (screen_width, screen_height), pygame.FULLSCREEN
-        )
+        screen = pygame.display.get_surface()
 
         # Setting the window caption
         pygame.display.set_caption("Add task")
