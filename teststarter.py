@@ -207,18 +207,15 @@ class Teststarter:
 
 
         if len(self.errors) > 0:
-            error_msg = ""
+            font = pygame.font.Font(None, 24) 
+            x = self.width // 2
+            y = self.height - font.get_linesize() - font.get_linesize() * len(self.errors)
 
             for error in self.errors:
-                error_msg = error_msg + error
-            x = self.width // 2
-            y = self.height - 75
-            font = pygame.font.Font(None, 24) 
-            text_surface = font.render(' ' + error_msg, True, pygame.Color("red")) 
-            self.screen.blit(text_surface, (x- text_surface.get_rect().width // 2, y)) 
+                text_surface = font.render(error, True, pygame.Color("red")) 
+                self.screen.blit(text_surface, (x- text_surface.get_rect().width // 2, y)) 
+                y += font.get_linesize()
         
-        
-   
     def exit(self):
         self.is_running = False
 
