@@ -268,3 +268,4 @@ class DeleteExperimentConfig:
                     sys.exit()
                 for button in buttons:
                     button.handle_event(event)
+        self.running = True

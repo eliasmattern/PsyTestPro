@@ -218,3 +218,5 @@ class CreateExperimentConfig:
                 pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
 
             pygame.display.flip()  # Flip the display to update the screen
+        self.running = True
+
