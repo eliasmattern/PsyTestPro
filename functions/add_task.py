@@ -12,7 +12,7 @@ class AddTask():
         self.adding = True
         self.selected_multiple = False
         self.error = ""
-
+        self.is_task_working = False
     
     def validate_task_inputs(self, input_boxes, time_input, command_inputs, text_screen_inputs, is_command):
         is_valid = False
@@ -36,11 +36,18 @@ class AddTask():
                 process = subprocess.Popen(command_inputs[0].text)
                 process.communicate()
                 self.error = ""
+                self.is_task_working = True
             except Exception as e:
                 print(e)
                 self.error = translate_service.get_translation("commandFailedToExecute")
+                self.is_task_working = False
         else:
-            text_screen(text_screen_inputs[0].text, text_screen_inputs[1].text)
+            try:
+                text_screen(text_screen_inputs[0].text, text_screen_inputs[1].text)
+                self.is_task_working = True
+            except Exception as e:
+                print(e)
+                self.is_task_working = False
 
     def save_task(
         self,
@@ -64,6 +71,8 @@ class AddTask():
         teststarter_Config = TeststarterConfig()
         teststarter_Config.save_task(variable, name, time, type, value)
         if create_continously:
+            self.is_task_working = False
+            self.error = ""
             self.add(
                 teststarter,
                 translate_service,
@@ -73,6 +82,8 @@ class AddTask():
             )
         else:
             self.adding = False
+            self.is_task_working = False
+            self.error = ""
 
     def backToAddTask(self):
         self.adding = False
@@ -264,11 +275,13 @@ class AddTask():
                         ):  # If the cursor position has collided with the start timer button
                             text_screen = not text_screen
                             command = not command
+                            self.error = ""
                         if command_tick_box_rect.collidepoint(
                             mouse_pos
                         ):  # If the cursor position has collided with the start timer button
                             text_screen = not text_screen
                             command = not command
+                            self.error = ""
                 for box in input_boxes:
                     box.handle_event(event)
                 for box in text_screen_inputs:
@@ -294,6 +307,9 @@ class AddTask():
                 buttons[2].set_color((100, 100, 100))
                 buttons[3].set_active(False)
                 buttons[3].set_color((100, 100, 100))
+            if not self.is_task_working:
+                buttons[2].set_active(False)
+                buttons[2].set_color((100, 100, 100))
 
 
             for box in input_boxes:
