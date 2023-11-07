@@ -5,7 +5,6 @@
 import pygame
 import sys
 from pygame.locals import *
-import csv
 from datetime import datetime, timedelta
 from classes import InputBox, Button
 from functions import create_schedule_display, ExperimentConfigDisplay
