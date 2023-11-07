@@ -14,6 +14,7 @@ from .create_time_picker import create_time_picker
 from .create_date_picker import create_date_picker
 from services import TranslateService, LanguageConfiguration
 from .play_task import play_tasks
+from classes import Button
 
 schedule_page = 0
 
@@ -56,29 +57,6 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     # Creating a Pygame clock object
     clock = pygame.time.Clock()
     
-    def draw_button(screen, message, x, y, w, h, ic, ac, action=None):
-        global button_clicked
-
-        # This is the function declaration, which includes the parameters: 
-        # screen (the Pygame display surface), 
-        # message (the text to be displayed on the button), 
-        # x and y (the coordinates of the top left corner of the button), 
-        # w and h (the width and height of the button)
-        # ic is the inactive color (when the mouse is not hovering over the button)
-        # ac is the active color (when the mouse is hovering over the button)
-        mouse = pygame.mouse.get_pos() # This line gets the current position of the mouse
-        click = pygame.mouse.get_pressed() # This line gets the state of the mouse buttons. click[0] will be 1 if the left mouse button is pressed, and 0 otherwise.
-        if x+w > mouse[0] > x and y+h > mouse[1] > y: # This line checks if the mouse is currently hovering over the button
-            pygame.draw.rect(screen, ac,(x, y, w, h)) # If the mouse is hovering over the button, this line draws the button with the active color.
-            if click[0] == 1 and action != None:
-                action() # If the mouse is hovering over the button and the left mouse button is clicked
-        else:
-            pygame.draw.rect(screen, ic,(x, y, w, h)) # If the mouse is not hovering over the button, this line draws the button with the inactive color
-        small_text = pygame.font.Font(None, int(20 * width_scale_factor)) # This line creates a Pygame font object for the text on the button
-        text_surf, text_rect = text_objects(message, small_text) # This line creates a text surface and a rectangle object for positioning the text
-        text_rect.center = ( (x+(w/2)), (y+(h/2)) ) # This line centers the text rectangle in the middle of the button
-        screen.blit(text_surf, text_rect) # This line draws the text surface on the screen at the position specified by the text rectangle
-
     def text_objects(text, font):
         text_surface = font.render(text, True, black)
         return text_surface, text_surface.get_rect()
@@ -320,7 +298,6 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     splitted_schedule = split_dict(schedule, 20)
 
     def page_update(schedule, increment):
-        pythonTime.sleep(0.25)
         global schedule_page
         if increment:
             schedule_page = (schedule_page + 1) % len(splitted_schedule)
@@ -372,6 +349,31 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     todo_row_multiplicator = 3
     if isHab:
         todo_row_multiplicator = 1
+
+    buttons = []
+    page_butons = []
+
+    # Create buttons
+    run_button = Button(150 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, "runTeststarter", button_back, translate_service)
+    settings_button = Button(150 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, "changeSettings", change_settings, translate_service)
+    quit_button = Button(150 * width_scale_factor, 300 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, "quit", button_quit_teststarter, translate_service)
+    help_button = Button(150 * width_scale_factor, 400 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, "help", button_help, translate_service)
+    english_button = Button(85 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, "english", lambda: change_language(translate_service, language_config, "en"), translate_service)
+    german_button = Button(215 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, "german", lambda: change_language(translate_service, language_config, "de"), translate_service)
+   
+    buttons.append(run_button)
+    buttons.append(settings_button)
+    buttons.append(quit_button)
+    buttons.append(help_button)
+    buttons.append(english_button)
+    buttons.append(german_button)
+
+    left_button = Button(column_start_x + 1.5 * column_width , 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, "<", lambda: page_update(splitted_schedule, False))
+    right_button = Button(column_start_x + 2.5 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, ">", lambda: page_update(splitted_schedule, True))
+
+    page_butons.append(left_button)
+    page_butons.append(right_button)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -441,23 +443,24 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                                 newtime_input_values[newtime_active_row] = formatted_time
                             else: 
                                 newtime_input_values[newtime_active_row] = formatted_time
+            for button in buttons:
+                button.handle_event(event)
+            
+            if len(splitted_schedule) > 1:
+                for button in page_butons:
+                    button.handle_event(event)
 
         screen.fill(black) # Fill the screen with the black color
         
-        # This invokes the function draw_button
-        draw_button(screen, translate_service.get_translation("runTeststarter"), 50 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_back)
-        draw_button(screen, translate_service.get_translation("changeSettings"), 50 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, change_settings)
-        draw_button(screen, translate_service.get_translation("quit"), 50 * width_scale_factor, 300 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_quit_teststarter)
-        draw_button(screen, translate_service.get_translation("help"), 50 * width_scale_factor, 400 * height_scale_factor, 200 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, button_help)
-        draw_button(screen, translate_service.get_translation("english"), 50 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "en"))
-        draw_button(screen, translate_service.get_translation("german"), 180 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor, 50 * height_scale_factor, light_grey, light_grey, lambda: change_language(translate_service, language_config, "de"))
-        
+        for button in buttons:
+            button.draw(screen)
+
         font = pygame.font.Font(None, int(20 * width_scale_factor)) # Create font object for header
         if len(splitted_schedule) > 1:
             page_number_surface = font.render(str(schedule_page + 1) + "/" + str(len(splitted_schedule)) , True, light_grey)
             screen.blit(page_number_surface, (column_start_x + 2 * column_width, 775 * height_scale_factor))
-            draw_button(screen, "<", column_start_x + 1.5 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, False))
-            draw_button(screen, ">", column_start_x + 2.4 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, light_grey, light_grey, lambda: page_update(splitted_schedule, True))
+            for button in page_butons:
+                button.draw(screen)
 
         # Display column headers with adjusted font size
         text_surface = font.render(' ' + translate_service.get_translation("task"), True, light_grey) # Render the text 'Task' with the font and color light_grey
