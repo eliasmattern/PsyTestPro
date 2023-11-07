@@ -17,7 +17,7 @@ Teststarter provides a scheduling system that displays the upcoming tasks and th
 ### :rocket: Automated Execution: 
 Once an experiment is started, Teststarter will automatically manage the execution of tasks according to the predefined schedule. When a task's scheduled time arrives, Teststarter will launch the corresponding script.
 
-## Table of Contens
+## :books: Table of Contens
 
 - [:test\_tube: Teststarter](#test_tube-teststarter)
   - [:gem: Key Features](#gem-key-features)
@@ -25,7 +25,7 @@ Once an experiment is started, Teststarter will automatically manage the executi
     - [:wrench: Customizable Tasks:](#wrench-customizable-tasks)
     - [:calendar: Schedule Management:](#calendar-schedule-management)
     - [:rocket: Automated Execution:](#rocket-automated-execution)
-  - [Table of Contens](#table-of-contens)
+  - [:books: Table of Contens](#books-table-of-contens)
   - [:inbox\_tray: Installation](#inbox_tray-installation)
   - [:arrow\_forward: How to run Teststarter](#arrow_forward-how-to-run-teststarter)
     - [:gear: Start Settings](#gear-start-settings)
