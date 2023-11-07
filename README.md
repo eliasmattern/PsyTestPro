@@ -70,6 +70,7 @@ To start an experiment, and its schedule, you have to put in the following value
 | ------------- | ------------- |
 | Participant ID  | Name of the task  |
 | Time of Day  | Starting time of the task.<br />Relative to the start time  |
+| Experiment  | Name of experiment  |
 | Week Number  | Command to execute your own script*  |
 | Start Time  | Time, when the experiment should start |
 
