@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import messagebox
 import re
 import time as pythonTime
-from lib import GoNoGo_Real, GoNoGo_Real_Hab, start_real_nback, pvt, pvt_hab, saliva, waking_eeg, text_screen, start_hab_nback, leeds, moodscales
+from lib import GoNoGo_Real_Hab, pvt_hab, text_screen, start_hab_nback
 import webbrowser
 import subprocess
 from .create_time_picker import create_time_picker
