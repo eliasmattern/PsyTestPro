@@ -68,13 +68,13 @@ To start Teststarter simply execute the `testarter.py` in the root directory.
 To start an experiment, and its schedule, you have to put in the following values:
 | Name  | Description |
 | ------------- | ------------- |
-| Participant ID  | Name of the task  |
-| Time of Day  | Starting time of the task.<br />Relative to the start time  |
+| Participant ID  | Name of Paricipant  |
+| Time of Day  | Starting time of the experiment. (morn, eve, full) |
 | Experiment  | Name of experiment  |
-| Week Number  | Command to execute your own script*  |
+| Week Number  | Week number  |
 | Start Time  | Time, when the experiment should start |
 
-When everything is filled out correctly, you can press submit
+When everything is filled out correctly, you can press submit.
 
 ### :clock1: Schedule
 After you start an experiment, you will see a table with all the tasks and their start time and state. There you can modify to each task. 
