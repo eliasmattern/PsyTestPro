@@ -23,22 +23,22 @@ class CreateExperimentConfig:
         self.running = False
 
     def save_experiment(
-        self, teststarter, experiment_name, experiment_time_of_day, translate_service
+        self, teststarter, experiment_name, input_boxes
     ):
         teststarter_config = TeststarterConfig()
-        teststarter_config.save_experiment(experiment_name, experiment_time_of_day)
+        teststarter_config.save_experiment(experiment_name)
 
         if self.selected_multiple:
-            self.create_experiment_config_display(
-                teststarter, translate_service, self.selected_multiple
-            )
+            for input_box in input_boxes:
+                input_box.text = ""
+            return
         else:
             self.backToTeststarter(teststarter)
 
     def create_input_boxes(self, teststarter, translate_service, selected_multiple):
         input_boxes = []
         buttons = []
-        labels = ["experimentName", "timeOfDay"]
+        labels = ["experimentName"]
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
@@ -48,7 +48,7 @@ class CreateExperimentConfig:
             input_boxes.append(input_box)
             y += spacing
 
-        exit_button = Button(x - 75, y + 60, 100, 40, "back", lambda: self.back())
+        exit_button = Button(x - 75, y + 60, 100, 40, "back", lambda: self.back(), translate_service)
         submit_button = Button(
             x + 75,
             y + 60,
@@ -56,7 +56,7 @@ class CreateExperimentConfig:
             40,
             "submit",
             lambda: self.save_experiment(
-                teststarter, input_boxes[0].text, input_boxes[1].text, translate_service
+                teststarter, input_boxes[0].text, input_boxes
             ),
             translate_service,
         )
@@ -70,9 +70,6 @@ class CreateExperimentConfig:
 
         if (
             input_boxes[0].text
-            and input_boxes[1].text == "morn"
-            or input_boxes[1].text == "eve"
-            or input_boxes[1].text == "full"
         ):
             is_valid = True
 

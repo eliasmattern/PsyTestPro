@@ -1,15 +1,1 @@
-{
-    "morn_test_variable": {
-        "tasks": {
-            "123": {
-                "time": "01:00",
-                "state": "todo",
-                "type": "text",
-                "value": {
-                    "title": "{id}",
-                    "description": "{id}"
-                }
-            }
-        }
-    }
-}
+{}

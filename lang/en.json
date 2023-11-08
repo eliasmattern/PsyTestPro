@@ -67,5 +67,6 @@
     "until": "until",
     "importExport": "Import / Export",
     "configureTasks": "Configure Tasks",
-    "configureTeststarter": "Configure Teststarter"
+    "configureTeststarter": "Configure Teststarter",
+    "noExperiments": "No experiments"
 }

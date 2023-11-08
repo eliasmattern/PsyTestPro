@@ -134,9 +134,7 @@ If you want to provide your command or text screen some variables you can choose
 | Usage  | Description |
 | ------------- | ------------- |
 | {id}  | Name of the task  |
-| {timeOfDay}  | Starting time of the task.<br />Relative to the start time  |
 | {experiment}  | Command to execute your own script*  |
-| {weekNo}  | Title of the screen with text  |
 | {startTime}  | Time when the experiment started  |
 | {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss   |
 

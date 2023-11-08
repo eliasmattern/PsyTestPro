@@ -14,15 +14,14 @@ class TeststarterConfig:
         except FileNotFoundError:
             raise Exception(f"File Error: ./json/experimentConfig.json not found ")
 
-    def load_experiment_tasks(self, experiment, time_of_day = ""):
+    def load_experiment_tasks(self, experiment):
         self.current_experiment = experiment
         self.error_msg = ""
         try:
             with open(f"json/taskConfig.json", "r", encoding="utf-8") as file:
                 tasks = json.load(file)
-                tim_of_day_and_experiment = time_of_day + "_" + experiment
-                if tasks.get(tim_of_day_and_experiment + "_variable") != None:
-                    self.current_tasks = tasks.get(tim_of_day_and_experiment + "_variable").get("tasks")
+                if tasks.get(experiment + "_variable") != None:
+                    self.current_tasks = tasks.get(experiment + "_variable").get("tasks")
                 elif tasks.get("full_" + experiment + "_variable") != None:
                     self.current_tasks = tasks.get("full_" + experiment + "_variable").get("tasks")
                 elif tasks.get(experiment + "_variable") != None:
@@ -32,7 +31,7 @@ class TeststarterConfig:
         except FileNotFoundError:
             raise Exception(f"File Error: ./json/taskConfig.json not found")
 
-    def save_experiment(self, experiment_name, experiment_time_of_day):
+    def save_experiment(self, experiment_name):
         with open('json/experimentConfig.json', 'r') as file:
             original_experiments = json.load(file)
 
@@ -48,22 +47,22 @@ class TeststarterConfig:
         with open('json/taskConfig.json', 'r') as file:
             original_tasks = json.load(file)
 
-        if not experiment_time_of_day + "_" + experiment_name + "_variable" in original_tasks:
+        if not experiment_name + "_variable" in original_tasks:
             # Add a new variable with an empty task object
-            original_tasks[experiment_time_of_day + "_" + experiment_name + "_variable"] = {"tasks": {}}
+            original_tasks[experiment_name + "_variable"] = {"tasks": {}}
 
         # Save the updated JSON back to the file
         with open('json/taskConfig.json', 'w') as file:
             json.dump(original_tasks, file, indent=4)
 
-    def get_experiment_and_time_of_day(self):
+    def get_experiments(self):
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
         variable_names = data.keys()
-        result = {}
+        result = []
         for variable in variable_names:
             splitted_variable = variable.split("_")
-            result[variable] = {"experiment": splitted_variable[1], "time_of_day": splitted_variable[0]}
+            result.append(splitted_variable[0])
 
         return result
 

@@ -13,7 +13,6 @@ class DeleteTaskConfig():
            self.page = 0
            self.removing = True
            self.experiment_name = ""
-           self.time_of_day = ""
     
     def backToConfig(self):
         self.running = False
@@ -21,24 +20,9 @@ class DeleteTaskConfig():
     def backToAddTask(self):
         self.removing = False
 
-    def split_dict(self, input_dict, chunk_size):
-        result = []
-        current_chunk = {}
-        count = 0
-
-        for key, value in input_dict.items():
-            current_chunk[key] = value
-            count += 1
-
-            if count == chunk_size:
-                result.append(current_chunk)
-                current_chunk = {}
-                count = 0
-
-        if current_chunk:
-            result.append(current_chunk)
-
-        return result
+    def split_dict(self, input_list, chunk_size):
+        for i in range(0, len(input_list), chunk_size):  
+            yield input_list[i:i + chunk_size] 
 
     def page_update(self, increment, splitted_tasks):
         if increment:
@@ -64,11 +48,10 @@ class DeleteTaskConfig():
             config.delete_task(experiment, task)
         
         root.destroy()
-        self.delete_task(translate_service, self.experiment_name, self.time_of_day)
+        self.delete_task(translate_service, self.experiment_name)
 
-    def delete_task(self, translate_service, experiment_name, time_of_day):
+    def delete_task(self, translate_service, experiment_name):
         self.experiment_name = experiment_name
-        self.time_of_day = time_of_day
         self.page = 0
         self.running = True
 
@@ -97,7 +80,7 @@ class DeleteTaskConfig():
 
         # Setting the window caption
         pygame.display.set_caption("Delete task")
-        full_experiment_name = time_of_day + "_" + experiment_name + "_variable"
+        full_experiment_name = experiment_name + "_variable"
         tasks = (
             teststarter_config.load_tasks_of_experiment(full_experiment_name)
         )
@@ -191,7 +174,7 @@ class DeleteTaskConfig():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation("deleteTaskFrom") + " " + experiment_name + " " + time_of_day , True, light_grey
+                translate_service.get_translation("deleteTaskFrom") + " " + experiment_name , True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -239,9 +222,9 @@ class DeleteTaskConfig():
         pygame.display.set_caption("Delete task")
 
         experiments_and_day_of_times = (
-            teststarter_config.get_experiment_and_time_of_day()
+            teststarter_config.get_experiments()
         )
-        splitted_experiments = self.split_dict(experiments_and_day_of_times, 5)
+        splitted_experiments = list(self.split_dict(experiments_and_day_of_times, 5))
 
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
@@ -257,20 +240,28 @@ class DeleteTaskConfig():
             x = width // 2
             y = height // 2 - 150
 
-            for key, experiment in splitted_experiments[self.page].items():
-                exp_button = Button(
-                    x,
-                    y + 60 + spacing,
-                    400,
-                    40,
-                    experiment.get("experiment") + " " + experiment.get("time_of_day"),
-                    lambda exp=experiment: self.delete_task(
-                        translate_service,
-                        exp.get("experiment"),
-                        exp.get("time_of_day"),
-                    ),
-                )
-                buttons.append(exp_button)
+            if len(splitted_experiments) > 0:
+                for experiment in splitted_experiments[self.page]:
+                    exp_button = Button(
+                        x,
+                        y + 60 + spacing,
+                        400,
+                        40,
+                        experiment,
+                        lambda exp=experiment: self.delete_task(
+                            translate_service,
+                            exp
+                        ),
+                    )
+                    buttons.append(exp_button)
+                    spacing += 60
+            else: 
+                font = pygame.font.Font(None, int(24))  # Create font object for header
+                text_surface = font.render(
+                    translate_service.get_translation("noExperiments"), True, "gray"
+                )  
+                text_rect = text_surface.get_rect()
+                screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
                 spacing += 60
 
             spacing = 5 * 60

@@ -12,7 +12,7 @@ import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
 class Teststarter:
-    def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
+    def __init__(self, id="", experiment = "", time = ""):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
             pygame.init()
@@ -34,8 +34,6 @@ class Teststarter:
         self.lang = self.load_config_lang()
         self.id = id
         self.experiment = experiment
-        self.time_of_day = time_of_day
-        self.week_number = week_number
         self.time = time
         self.experiment_config_display = ExperimentConfigDisplay(self.translateService)
         self.create_input_boxes()
@@ -59,14 +57,14 @@ class Teststarter:
         return re.match(pattern, datetime_str) is not None
 
     def create_input_boxes(self):
-        labels = ["participantId", "timeOfDay", "experiment", "weekNumber", "startTime"]
+        labels = ["participantId", "experiment", "startTime"]
         experiments_string = ""
         for experiment in self.teststarterConfig.experiments:
             experiments_string = experiments_string + experiment + ", "
         if "," in experiments_string:
             experiments_string = experiments_string[:-2]
-        information = ["", "", "(" + experiments_string + ")", "", ""]
-        initial_text = [self.id, self.time_of_day, self.experiment, self.week_number, self.time]
+        information = ["", "(" + experiments_string + ")", ""]
+        initial_text = [self.id, self.experiment, self.time]
         x = self.width // 2
         y = self.height // 2 - 100
         spacing = 60
@@ -107,7 +105,7 @@ class Teststarter:
 
     def handle_events(self):
         def get_input_index():
-            index_to_key = {0: "participantId", 1:"timeOfDay", 2: "experiment", 3: "weekNumber", 4: "startTime"}
+            index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
 
             index = 0 
             for key, input_box in self.input_boxes.items():
@@ -138,19 +136,15 @@ class Teststarter:
         def validate_inputs(experiments):
             is_id_valid = len(self.input_boxes["participantId"].text) != 0
             is_experiment_valid = self.input_boxes["experiment"].text in experiments
-            is_time_of_day_valid = self.input_boxes["timeOfDay"].text == "morn" or self.input_boxes["timeOfDay"].text == "eve" or self.input_boxes["timeOfDay"].text == "full"
-            is_week_no_valid = self.input_boxes["weekNumber"].text.isnumeric()
             is_start_time_valid = self.is_valid_time_format(self.input_boxes["startTime"].text)
 
             # Define validation checks and corresponding error messages
-            index_to_key = {0: "participantId", 1: "timeOfDay", 2: "experiment", 3: "weekNumber", 4: "startTime"}
+            index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
 
-            if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["timeOfDay"].text and self.input_boxes["weekNumber"].text and self.input_boxes["startTime"].text:
+            if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["startTime"].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, "idError"),
-                    (lambda text: text in ["morn", "eve", "full"], "timeOfDayError"),
                     (lambda text: text in experiments, "experimentError"),
-                    (lambda text: text.isnumeric(), "weekNoError"),
                     (self.is_valid_time_format, "startTimeError")
                 ]
 
@@ -163,7 +157,7 @@ class Teststarter:
                     elif is_valid and error_translation in self.errors:
                         self.errors.remove(error_translation)
 
-            if is_id_valid and is_experiment_valid and is_time_of_day_valid and is_week_no_valid and is_start_time_valid:
+            if is_id_valid and is_experiment_valid and is_start_time_valid:
                 return True
             else:
                 return False
@@ -260,15 +254,13 @@ class Teststarter:
     def save_details(self):
         participant_id = self.input_boxes["participantId"].text
         experiment = self.input_boxes["experiment"].text
-        time_of_day = self.input_boxes["timeOfDay"].text
-        week_no = self.input_boxes["weekNumber"].text
         start_time = self.input_boxes["startTime"].text
 
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, "%H:%M").time())
 
-        participant_info={"participant_id": participant_id, "experiment": experiment, "time_of_day": time_of_day, "week_no": week_no, "start_time": start_time}
+        participant_info={"participant_id": participant_id, "experiment": experiment, "start_time": start_time}
     
-        self.teststarterConfig.load_experiment_tasks(experiment, time_of_day)
+        self.teststarterConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info)
 
 Teststarter()

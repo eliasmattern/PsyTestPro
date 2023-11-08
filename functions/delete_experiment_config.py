@@ -33,83 +33,19 @@ class DeleteExperimentConfig:
             with open("json/taskConfig.json", "r") as file:
                 original_tasks = json.load(file)
 
-            # Add a new variable with an empty task object
             exp_keys = [key for key in original_tasks.keys() if experiment_name in key]
 
-            if len(exp_keys) > 1:
-                root = tk.Tk()
-                root.withdraw()
+            del original_tasks[exp_keys[0]]
+            with open("json/experimentConfig.json", "r") as file:
+                original_experiments = json.load(file)
 
-                # Show a messagebox asking for confirmation
-                response = messagebox.askyesno(
-                    translate_service.get_translation("delete"),
-                    translate_service.get_translation("deleteMultipleExperimentMsg"),
-                )
+            # Add a new value to the array
 
-                # If the user clicked 'Yes', then open browser
-                if response == True:
-                    with open("json/experimentConfig.json", "r") as file:
-                        original_experiments = json.load(file)
+            original_experiments.remove(experiment_name)
 
-                    # Add a new value to the array
-
-                    original_experiments.remove(experiment_name)
-
-                    # Save the updated array back to the file
-                    with open("json/experimentConfig.json", "w") as file:
-                        json.dump(original_experiments, file)
-                    for key in exp_keys:
-                        del original_tasks[key]
-
-                else:
-                    times_said_yes = 0
-                    for exp in exp_keys:
-                        root = tk.Tk()
-                        root.withdraw()
-
-                        splitted_exp_name = exp.split("_")
-                        exp_name = splitted_exp_name[1]
-                        time_of_day = splitted_exp_name[0]
-                        # Show a messagebox asking for confirmation
-                        response = messagebox.askyesno(
-                            translate_service.get_translation("delete"),
-                            translate_service.get_translation("deleteExperimentMsg")
-                            + exp_name
-                            + " "
-                            + translate_service.get_translation("timeOfDayShort")
-                            + ": "
-                            + time_of_day,
-                        )
-
-                        # If the user clicked 'Yes', then open browser
-                        if response == True:
-                            del original_tasks[exp]
-                            times_said_yes += 1
-                    if times_said_yes == len(exp_keys):
-                        with open("json/experimentConfig.json", "r") as file:
-                            original_experiments = json.load(file)
-
-                        # Add a new value to the array
-
-                        original_experiments.remove(experiment_name)
-
-                        # Save the updated array back to the file
-                        with open("json/experimentConfig.json", "w") as file:
-                            json.dump(original_experiments, file)
-
-            else:
-                print(exp_keys)
-                del original_tasks[exp_keys[0]]
-                with open("json/experimentConfig.json", "r") as file:
-                    original_experiments = json.load(file)
-
-                # Add a new value to the array
-
-                original_experiments.remove(experiment_name)
-
-                # Save the updated array back to the file
-                with open("json/experimentConfig.json", "w") as file:
-                    json.dump(original_experiments, file)
+            # Save the updated array back to the file
+            with open("json/experimentConfig.json", "w") as file:
+                json.dump(original_experiments, file)
 
             # Save the updated JSON back to the file
             with open("json/taskConfig.json", "w") as file:
@@ -182,19 +118,20 @@ class DeleteExperimentConfig:
             x = width // 2
             y = height // 2 - 150
 
-            for experiment in splitted_experiments[self.page]:
-                exp_button = Button(
-                    x,
-                    y + 60 + spacing,
-                    400,
-                    40,
-                    experiment,
-                    lambda exp=experiment: self.delete_experiment(
-                        teststarter, translate_service, exp
-                    ),
-                )
-                buttons.append(exp_button)
-                spacing += 60
+            if len(splitted_experiments) > 0:
+                for experiment in splitted_experiments[self.page]:
+                    exp_button = Button(
+                        x,
+                        y + 60 + spacing,
+                        400,
+                        40,
+                        experiment,
+                        lambda exp=experiment: self.delete_experiment(
+                            teststarter, translate_service, exp
+                        ),
+                    )
+                    buttons.append(exp_button)
+                    spacing += 60
 
             spacing = 5 * 60
             spacing += 60

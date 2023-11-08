@@ -20,24 +20,9 @@ class TaskConfig:
     def backToConfig(self):
         self.running = False
     
-    def split_dict(self, input_dict, chunk_size):
-        result = []
-        current_chunk = {}
-        count = 0
-
-        for key, value in input_dict.items():
-            current_chunk[key] = value
-            count += 1
-
-            if count == chunk_size:
-                result.append(current_chunk)
-                current_chunk = {}
-                count = 0
-
-        if current_chunk:
-            result.append(current_chunk)
-
-        return result
+    def split_dict(self, input_list, chunk_size):
+        for i in range(0, len(input_list), chunk_size):  
+            yield input_list[i:i + chunk_size] 
 
     def page_update(self, increment, splitted_experiments):
         if increment:
@@ -78,9 +63,9 @@ class TaskConfig:
         pygame.display.set_caption("Add task")
 
         experiments_and_day_of_times = (
-            teststarter_config.get_experiment_and_time_of_day()
+            teststarter_config.get_experiments()
         )
-        splitted_experiments = self.split_dict(experiments_and_day_of_times, 5)
+        splitted_experiments = list(self.split_dict(experiments_and_day_of_times, 5))
 
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
@@ -95,24 +80,32 @@ class TaskConfig:
 
             x = width // 2
             y = height // 2 - 150
-
-            for key, experiment in splitted_experiments[self.page].items():
-                exp_button = Button(
-                    x,
-                    y + 60 + spacing,
-                    400,
-                    40,
-                    experiment.get("experiment") + " " + experiment.get("time_of_day"),
-                    lambda exp=experiment: self.add_task.add(
-                        teststarter,
-                        translate_service,
-                        False,
-                        exp.get("experiment"),
-                        exp.get("time_of_day"),
-                    ),
-                )
-                buttons.append(exp_button)
+            if len(splitted_experiments) > 0:
+                for experiment in splitted_experiments[self.page]:
+                    exp_button = Button(
+                        x,
+                        y + 60 + spacing,
+                        400,
+                        40,
+                        experiment,
+                        lambda exp=experiment: self.add_task.add(
+                            teststarter,
+                            translate_service,
+                            False,
+                            exp
+                        ),
+                    )
+                    buttons.append(exp_button)
+                    spacing += 60
+            else: 
+                font = pygame.font.Font(None, int(24))  # Create font object for header
+                text_surface = font.render(
+                    translate_service.get_translation("noExperiments"), True, "gray"
+                )  
+                text_rect = text_surface.get_rect()
+                screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
                 spacing += 60
+
 
             spacing = 5 * 60
             spacing += 60

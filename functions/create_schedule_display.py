@@ -193,17 +193,13 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             now = datetime.now()
                             formatted_timestamp = now.strftime("%Y.%m.%d %H:%M:%S")
                             title = title.format(id = participant_info["participant_id"], 
-                                         timeOfDay = participant_info["time_of_day"], 
                                          experiment = participant_info["experiment"], 
-                                         weekNo = participant_info["week_no"], 
                                          startTime = participant_info["start_time"], 
                                          timestamp = formatted_timestamp)
                             
                             description = schedule[task[0]]["value"]["description"]
                             description= description.format(id = participant_info["participant_id"], 
-                                         timeOfDay = participant_info["time_of_day"], 
                                          experiment = participant_info["experiment"], 
-                                         weekNo = participant_info["week_no"], 
                                          startTime = participant_info["start_time"], 
                                          timestamp = formatted_timestamp)  
                             
@@ -214,9 +210,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             formatted_timestamp = now.strftime("%Y.%m.%d %H:%M:%S")
                             command = schedule[task[0]]["value"]
                             command = command.format(id = participant_info["participant_id"], 
-                                                     timeOfDay = participant_info["time_of_day"], 
                                                      experiment = participant_info["experiment"], 
-                                                     weekNo = participant_info["week_no"], 
                                                      startTime = participant_info["start_time"], 
                                                      timestamp = formatted_timestamp)   
                             process = subprocess.Popen(command)
@@ -238,7 +232,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         time = str(participant_info["start_time"]).split(" ")[1]
         splittedTime = time.split(":")
         formattedTime = splittedTime[0] + ":" + splittedTime[1]
-        teststarter(participant_info["participant_id"], participant_info["experiment"], participant_info["time_of_day"], participant_info["week_no"], formattedTime)
+        teststarter(participant_info["participant_id"], participant_info["experiment"], formattedTime)
     
     def change_language(translateService, language_config, lang):
         translateService.set_language(lang)

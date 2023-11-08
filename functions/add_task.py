@@ -33,18 +33,14 @@ class AddTask():
     def preview(self, translate_service,command, command_inputs, text_screen_inputs):
         participant_info = {
             "participant_id": "VARIABLE_ID",
-            "time_of_day": "VARIABLE_TIMEOFDAY",
             "experiment": "VARIABLE_EXPERMENT",
-            "week_no": "VARIABLE_WEEKNUMBER",
             "start_time": "VARIABLE_STARTTIME",
             "timestamp": "VARIABLE_TIMESTAMP"
         }
         if command:
             try: 
                 command = command_inputs[0].text.format(id = participant_info["participant_id"], 
-                             timeOfDay = participant_info["time_of_day"], 
                              experiment = participant_info["experiment"], 
-                             weekNo = participant_info["week_no"], 
                              startTime = participant_info["start_time"], 
                              timestamp = participant_info["timestamp"])
                 process = subprocess.Popen(command)
@@ -58,16 +54,12 @@ class AddTask():
         else:
             try:
                 title = text_screen_inputs[0].text.format(id = participant_info["participant_id"], 
-                             timeOfDay = participant_info["time_of_day"], 
                              experiment = participant_info["experiment"], 
-                             weekNo = participant_info["week_no"], 
                              startTime = participant_info["start_time"], 
                              timestamp = participant_info["timestamp"])
                 
                 description = text_screen_inputs[1].text.format(id = participant_info["participant_id"], 
-                             timeOfDay = participant_info["time_of_day"], 
                              experiment = participant_info["experiment"], 
-                             weekNo = participant_info["week_no"], 
                              startTime = participant_info["start_time"], 
                              timestamp = participant_info["timestamp"])
                 
@@ -79,18 +71,19 @@ class AddTask():
 
     def save_task(
         self,
-        teststarter,
-        translate_service,
         create_continously,
-        experiment,
-        time_of_day,
         variable,
         name,
         time,
+        input_boxes,
+        time_input,
+        command_inputs,
+        text_screen_inputs,
         command=None,
         title=None,
         description=None,
         is_command=False,
+        
     ):
         type = "text" if not is_command else "command"
         value = (
@@ -101,13 +94,14 @@ class AddTask():
         if create_continously:
             self.is_task_working = False
             self.error = ""
-            self.add(
-                teststarter,
-                translate_service,
-                create_continously,
-                experiment,
-                time_of_day,
-            )
+            for input_box in input_boxes:
+                input_box.text = ""
+            for input_box in command_inputs:
+                input_box.text = ""
+            for input_box in text_screen_inputs:
+                input_box.text = ""
+            time_input.time = ""
+            return
         else:
             self.adding = False
             self.is_task_working = False
@@ -122,9 +116,8 @@ class AddTask():
         translate_service,
         create_continously,
         experiment,
-        time_of_day,
     ):
-        variable = time_of_day + "_" + experiment + "_variable"
+        variable = experiment + "_variable"
         # Define colors
         black = (0, 0, 0)
         light_grey = (192, 192, 192)
@@ -194,14 +187,14 @@ class AddTask():
             40,
             "submit",
             lambda: self.save_task(
-                teststarter,
-                translate_service,
                 self.selected_multiple,
-                experiment,
-                time_of_day,
                 variable,
                 input_boxes[0].text,
                 time_input.time,
+                input_boxes,
+                time_input,
+                command_inputs,
+                text_screen_inputs,
                 command_inputs[0].text,
                 text_screen_inputs[0].text,
                 text_screen_inputs[1].text,
@@ -249,9 +242,7 @@ class AddTask():
         text_surface = font.render(
             translate_service.get_translation("createTask")
             + " for "
-            + experiment
-            + " "
-            + time_of_day,
+            + experiment,
             True,
             light_grey,
         )  # Render the text 'Task' with the font and color light_grey
