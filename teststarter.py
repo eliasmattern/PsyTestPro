@@ -5,7 +5,6 @@
 import pygame
 import sys
 from pygame.locals import *
-import csv
 from datetime import datetime, timedelta
 from classes import InputBox, Button
 from functions import create_schedule_display, ExperimentConfigDisplay
@@ -263,21 +262,11 @@ class Teststarter:
         week_no = self.input_boxes["weekNumber"].text
         start_time = self.input_boxes["startTime"].text
 
-        with open("experiment_details.txt", "w") as file:
-            file.write(f"Participant ID: {participant_id}\n")
-            file.write(f"Experiment: {experiment}\n")
-            file.write(f"Time of Day: {time_of_day}\n")
-            file.write(f"Week No: {week_no}\n")
-            file.write(f"Start Time: {start_time}\n")
-
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, "%H:%M").time())
 
         participant_info={"participant_id": participant_id, "experiment": experiment, "time_of_day": time_of_day, "week_no": week_no, "start_time": start_time}
     
         self.teststarterConfig.load_experiment_tasks(experiment, time_of_day)
         self.start_experiment(start_time, participant_info)
-       
-
-
 
 Teststarter()
