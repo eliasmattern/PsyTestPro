@@ -31,9 +31,23 @@ class AddTask():
         return is_valid
 
     def preview(self, translate_service,command, command_inputs, text_screen_inputs):
+        participant_info = {
+            "participant_id": "VARIABLE_ID",
+            "time_of_day": "VARIABLE_TIMEOFDAY",
+            "experiment": "VARIABLE_EXPERMENT",
+            "week_no": "VARIABLE_WEEKNUMBER",
+            "start_time": "VARIABLE_STARTTIME",
+            "timestamp": "VARIABLE_TIMESTAMP"
+        }
         if command:
             try: 
-                process = subprocess.Popen(command_inputs[0].text)
+                command = command_inputs[0].text.format(id = participant_info["participant_id"], 
+                             timeOfDay = participant_info["time_of_day"], 
+                             experiment = participant_info["experiment"], 
+                             weekNo = participant_info["week_no"], 
+                             startTime = participant_info["start_time"], 
+                             timestamp = participant_info["timestamp"])
+                process = subprocess.Popen(command)
                 process.communicate()
                 self.error = ""
                 self.is_task_working = True
@@ -43,7 +57,21 @@ class AddTask():
                 self.is_task_working = False
         else:
             try:
-                text_screen(text_screen_inputs[0].text, text_screen_inputs[1].text)
+                title = text_screen_inputs[0].text.format(id = participant_info["participant_id"], 
+                             timeOfDay = participant_info["time_of_day"], 
+                             experiment = participant_info["experiment"], 
+                             weekNo = participant_info["week_no"], 
+                             startTime = participant_info["start_time"], 
+                             timestamp = participant_info["timestamp"])
+                
+                description = text_screen_inputs[1].text.format(id = participant_info["participant_id"], 
+                             timeOfDay = participant_info["time_of_day"], 
+                             experiment = participant_info["experiment"], 
+                             weekNo = participant_info["week_no"], 
+                             startTime = participant_info["start_time"], 
+                             timestamp = participant_info["timestamp"])
+                
+                text_screen(title, description)
                 self.is_task_working = True
             except Exception as e:
                 print(e)
