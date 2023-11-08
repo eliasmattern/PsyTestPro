@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import messagebox
 import re
 import time as pythonTime
-from lib import GoNoGo_Real_Hab, pvt_hab, text_screen, start_hab_nback
+from lib import text_screen
 import webbrowser
 import subprocess
 from .create_time_picker import create_time_picker
@@ -94,8 +94,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 # Print the filtered list
                 for item in filtered_dict:
                     upcoming_event = item
-                    eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    play_tasks(participant_info, upcoming_event, schedule)
                     pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
                 check_for_old_tasks = False
@@ -169,8 +168,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 upcoming_event = next_event[1]
                 beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                 beep_sound.play()
-                eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                play_tasks(eventName, participant_info, upcoming_event, schedule)
+                play_tasks(participant_info, upcoming_event, schedule)
                 pygame.mouse.set_visible(True)
                 schedule[upcoming_event]["state"]= "done"
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
@@ -184,29 +182,43 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     pythonTime.sleep(1.1)
                     beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                     beep_sound.play()
-                    eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    play_tasks(participant_info, upcoming_event, schedule)
                     pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
             elif len(sorted_schedule) > 0:
-                if schedule["pvt_hab"]["state"] == "todo":
-                    pvt_hab(participant_info["participant_id"], participant_info["week_no"], 1)
-                    schedule["pvt_hab"]["state"] = "done"
-                if schedule["gonogo_hab"]["state"] == "todo":
-                    GoNoGo_Real_Hab(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], 1)
-                    schedule["gonogo_hab"]["state"] = "done"
-                if schedule["n-back_hab"]["state"] == "todo":
-                    start_hab_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
-                    schedule["n-back_hab"]["state"] = "done"
                 for task in schedule.items():
                     if schedule[task[0]]['state'] == "todo":
                         if schedule[task[0]]["type"] == "text":
                             title = schedule[task[0]]["value"]["title"]
+                            now = datetime.now()
+                            formatted_timestamp = now.strftime("%Y.%m.%d %H:%M:%S")
+                            title = title.format(id = participant_info["participant_id"], 
+                                         timeOfDay = participant_info["time_of_day"], 
+                                         experiment = participant_info["experiment"], 
+                                         weekNo = participant_info["week_no"], 
+                                         startTime = participant_info["start_time"], 
+                                         timestamp = formatted_timestamp)
+                            
                             description = schedule[task[0]]["value"]["description"]
+                            description= description.format(id = participant_info["participant_id"], 
+                                         timeOfDay = participant_info["time_of_day"], 
+                                         experiment = participant_info["experiment"], 
+                                         weekNo = participant_info["week_no"], 
+                                         startTime = participant_info["start_time"], 
+                                         timestamp = formatted_timestamp)  
+                            
                             text_screen(title, description)
                             schedule[task[0]]['state'] = "done"
                         elif schedule[task[0]]["type"] == "command":
+                            now = datetime.now()
+                            formatted_timestamp = now.strftime("%Y.%m.%d %H:%M:%S")
                             command = schedule[task[0]]["value"]
+                            command = command.format(id = participant_info["participant_id"], 
+                                                     timeOfDay = participant_info["time_of_day"], 
+                                                     experiment = participant_info["experiment"], 
+                                                     weekNo = participant_info["week_no"], 
+                                                     startTime = participant_info["start_time"], 
+                                                     timestamp = formatted_timestamp)   
                             process = subprocess.Popen(command)
                             process.communicate()
                             schedule[task[0]]['state'] = "done"
