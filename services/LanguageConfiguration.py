@@ -1,4 +1,4 @@
-import csv
+import json
 
 class LanguageConfiguration:
     def __init__(self):
@@ -6,18 +6,24 @@ class LanguageConfiguration:
         self.config_file = "language_config.csv"
     
     def read_language_config(self):
-        with open(self.config_file, 'r') as file:
-            reader = csv.reader(file)
-            next(reader, None)  # skip the headers
-            for row in reader:
-                for i, value in enumerate(row):
-                    self.lang = value
+        try:
+            with open(f"json/settings.json", "r", encoding="utf-8") as file:
+                settings = json.load(file)
+                self.lang = settings["language"]
+        except Exception as e:
+            print(e)
+            print("not able to access ./json/settings.json!")
 
     def update_language_config(self, new_language):
-        with open(self.config_file, 'w') as file:
-            writer = csv.writer(file)
-            writer.writerow(["language"])
-            writer.writerow([new_language])
+        try:
+            with open(f"json/settings.json", "r", encoding="utf-8") as file:
+                    settings = json.load(file)
+            settings["language"] = new_language
+            with open('json/settings.json', 'w') as file:
+                json.dump(settings, file)
+        except Exception as e:
+            print(e)
+            print("not able to access ./json/settings.json! Couldn't save language!")
             
     
     def get_language(self):
