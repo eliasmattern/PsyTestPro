@@ -46,7 +46,7 @@ Once an experiment is started, Teststarter will automatically manage the executi
 To install Teststarter you can either download this GitHub project as a ZIP and unpack it, or you can clone the repository using git:
 
 ```git
-git clone LINK
+git clone https://github.com/eliasmattern/teststarter
 ```
 
 To use Teststarter python must be installed:
