@@ -26,8 +26,7 @@ class InputBox:
         self.posX = x
         self.posY = y
         self.imagePos = pygame.Rect(0,0, self.image.get_rect().width, self.image.get_rect().height)
-
-
+        self.delayMultiplicator = 0.4
 
     def handle_event(self, event):
         if event.type == MOUSEBUTTONDOWN:
@@ -42,6 +41,7 @@ class InputBox:
                 if event.key == K_BACKSPACE:
                     self.started_removing = False
                     self.delay = None
+                    self.delayMultiplicator = 0.4
         elif event.type == KEYDOWN:
             mods = pygame.key.get_mods()
             if self.is_selected:
@@ -67,7 +67,7 @@ class InputBox:
                 elif event.key == K_BACKSPACE:
                     self.text = self.text[:-1]
                     self.started_removing = True
-                    self.delay = -10
+                    self.delay = datetime.now().timestamp()
                 elif event.key == K_TAB:
                     pass
                 else:
@@ -86,11 +86,12 @@ class InputBox:
         while text_surface.get_rect().width > self.rect.width // 100 * 88:
             input_text = input_text[1:]
             text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color)
-        if self.is_selected and self.delay != None and -20 < self.delay < 16:
-            if self.delay == 15:
+        if self.is_selected and self.delay != None:
+            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplicator:
                 self.text = self.text[:-1]
-                self.delay = 10
-            self.delay += 1
+                self.delay = datetime.now().timestamp()
+                self.delayMultiplicator = 0.1
+           
 
         screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
         screen.blit(self.label, (self.rect.x - self.label.get_width() - 10, self.rect.y + 5))
