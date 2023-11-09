@@ -68,5 +68,7 @@
     "importExport": "Import / Export",
     "configureTasks": "Configure Tasks",
     "configureTeststarter": "Configure Teststarter",
-    "noExperiments": "No experiments"
+    "noExperiments": "No experiments",
+    "createWithSchedule": "Create experiment with a schedule",
+    "for": "for"
 }

@@ -117,7 +117,7 @@ class AddTask():
         create_continously,
         experiment,
     ):
-        variable = experiment + "_variable"
+        variable = experiment
         # Define colors
         black = (0, 0, 0)
         light_grey = (192, 192, 192)
@@ -241,8 +241,8 @@ class AddTask():
         )  # Create font object for header
         text_surface = font.render(
             translate_service.get_translation("createTask")
-            + " for "
-            + experiment,
+            + " " + translate_service.get_translation("for") + " "
+            + experiment.split("_")[0],
             True,
             light_grey,
         )  # Render the text 'Task' with the font and color light_grey

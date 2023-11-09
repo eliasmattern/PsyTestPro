@@ -17,7 +17,7 @@ class CheckBox():
                 True,
                 (192, 192, 192),
             )
-        self.posX = posX
+        self.posX = posX - (self.label.get_width() // 2)
         self.posY = posY
         self.active = active
         self.tick_box_rect = None

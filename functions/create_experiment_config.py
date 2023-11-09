@@ -2,12 +2,10 @@ import pygame
 import sys
 import os
 from pygame.locals import *
-from classes import InputBox, Button, TimeInput
-import json
+from classes import InputBox, Button, CheckBox
 from services import TeststarterConfig
-import tkinter as tk
-from tkinter import messagebox
 from services import TeststarterConfig
+
 
 
 class CreateExperimentConfig:
@@ -23,12 +21,13 @@ class CreateExperimentConfig:
         self.running = False
 
     def save_experiment(
-        self, teststarter, experiment_name, input_boxes
+        self, teststarter, experiment_name, input_boxes, check_box
     ):
         teststarter_config = TeststarterConfig()
-        teststarter_config.save_experiment(experiment_name)
+        teststarter_config.save_experiment(experiment_name, check_box.active)
 
         if self.selected_multiple:
+            check_box.active = True
             for input_box in input_boxes:
                 input_box.text = ""
             return
@@ -44,10 +43,10 @@ class CreateExperimentConfig:
         x = width // 2
         y = height // 2 - 100
         for label in labels:
-            input_box = InputBox(x, y, 400, 40, label, translate_service)
+            input_box = InputBox(x, y, 400, 40, label, translate_service, not_allowed_characters=["_"])
             input_boxes.append(input_box)
             y += spacing
-
+        check_box = CheckBox("createWithSchedule", x, y, active=True, translate_service=translate_service, font_size=24)
         exit_button = Button(x - 75, y + 60, 100, 40, "back", lambda: self.back(), translate_service)
         submit_button = Button(
             x + 75,
@@ -56,14 +55,14 @@ class CreateExperimentConfig:
             40,
             "submit",
             lambda: self.save_experiment(
-                teststarter, input_boxes[0].text, input_boxes
+                teststarter, input_boxes[0].text, input_boxes, check_box
             ),
             translate_service,
         )
 
         buttons.append(exit_button)
         buttons.append(submit_button)
-        return input_boxes, buttons
+        return input_boxes, buttons, check_box
 
     def validate_inputs(self, input_boxes):
         is_valid = False
@@ -108,7 +107,7 @@ class CreateExperimentConfig:
 
         self.selected_multiple = create_continously
 
-        input_boxes, buttons = self.create_input_boxes(
+        input_boxes, buttons, check_box = self.create_input_boxes(
             teststarter, translate_service, self.selected_multiple
         )
 
@@ -174,6 +173,7 @@ class CreateExperimentConfig:
                     box.handle_event(event)
                 for button in buttons:
                     button.handle_event(event)
+                check_box.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
             screen.blit(option_text_rendered, option_text_rect)
@@ -191,6 +191,8 @@ class CreateExperimentConfig:
 
             for button in buttons:
                 button.draw(screen)
+
+            check_box.draw(screen)
 
             # draw the tick box rectangle on the window surface
             pygame.draw.rect(screen, light_grey, tick_box_rect, 2)

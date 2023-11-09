@@ -15,23 +15,22 @@ class TeststarterConfig:
             raise Exception(f"File Error: ./json/experimentConfig.json not found ")
 
     def load_experiment_tasks(self, experiment):
-        self.current_experiment = experiment
         self.error_msg = ""
         try:
             with open(f"json/taskConfig.json", "r", encoding="utf-8") as file:
                 tasks = json.load(file)
-                if tasks.get(experiment + "_variable") != None:
-                    self.current_tasks = tasks.get(experiment + "_variable").get("tasks")
-                elif tasks.get("full_" + experiment + "_variable") != None:
-                    self.current_tasks = tasks.get("full_" + experiment + "_variable").get("tasks")
-                elif tasks.get(experiment + "_variable") != None:
-                    self.current_tasks = tasks.get(experiment + "_variable").get("tasks")
+                if tasks.get(experiment + "_schedule") != None:
+                    self.current_tasks = tasks.get(experiment + "_schedule").get("tasks")
+                    self.current_experiment = experiment + "_schedule"
+                elif tasks.get(experiment + "_list") != None:
+                    self.current_tasks = tasks.get(experiment + "_list").get("tasks")
+                    self.current_experiment = experiment + "_list"
                 else:
                     self.error_msg = "experimentNotFound"
         except FileNotFoundError:
             raise Exception(f"File Error: ./json/taskConfig.json not found")
 
-    def save_experiment(self, experiment_name):
+    def save_experiment(self, experiment_name, schedule):
         with open('json/experimentConfig.json', 'r') as file:
             original_experiments = json.load(file)
 
@@ -46,10 +45,14 @@ class TeststarterConfig:
         # Load the original JSON from the file
         with open('json/taskConfig.json', 'r') as file:
             original_tasks = json.load(file)
+        if schedule:
+            experiment_name += "_schedule"
+        else:
+            experiment_name += "_list"
 
-        if not experiment_name + "_variable" in original_tasks:
+        if not experiment_name in original_tasks:
             # Add a new variable with an empty task object
-            original_tasks[experiment_name + "_variable"] = {"tasks": {}}
+            original_tasks[experiment_name] = {"tasks": {}}
 
         # Save the updated JSON back to the file
         with open('json/taskConfig.json', 'w') as file:
@@ -61,14 +64,11 @@ class TeststarterConfig:
         variable_names = data.keys()
         result = []
         for variable in variable_names:
-            splitted_variable = variable.split("_")
-            result.append(splitted_variable[0])
+            result.append(variable)
 
         return result
 
     def load_tasks_of_experiment(self, experiment):
-        if experiment == "hab_variable_variable":
-            experiment = "hab_variable"
 
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
@@ -88,8 +88,6 @@ class TeststarterConfig:
             json.dump(data, file, indent=4)
 
     def save_task(self, variable, name, time, type, value):
-        if variable == "hab_variable_variable":
-            variable = "hab_variable"
 
         # Load the JSON data from a file
         with open('json/taskConfig.json', 'r') as file:

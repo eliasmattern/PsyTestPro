@@ -219,7 +219,9 @@ class Teststarter:
         
     def start_experiment(self, start_time, participant_info):
         global schedule
-        isHab = self.teststarterConfig.current_experiment == "hab"
+        print(self.teststarterConfig.current_experiment)
+        isHab = "_list" in self.teststarterConfig.current_experiment
+        print(isHab)
         schedule = {}
         current_tasks = self.teststarterConfig.current_tasks
         if len(self.teststarterConfig.error_msg) > 0:

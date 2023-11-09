@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 class InputBox:
-    def __init__(self, x, y, width, height, translation_key, translate_service, info="", initial_text="", allow_new_line = False):
+    def __init__(self, x, y, width, height, translation_key, translate_service, info="", initial_text="", allow_new_line = False, not_allowed_characters = []):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color("gray")
@@ -19,6 +19,7 @@ class InputBox:
         self.cursor_visible = False
         self.cursor_timer = 0
         self.allow_new_line = allow_new_line
+        self.not_allowed_characters = not_allowed_characters
 
     def handle_event(self, event):
         if event.type == MOUSEBUTTONDOWN:
@@ -51,7 +52,8 @@ class InputBox:
                 elif event.key == K_TAB:
                     pass
                 else:
-                    self.text += event.unicode
+                    if event.unicode not in self.not_allowed_characters:
+                        self.text += event.unicode
                 self.cursor_visible = True
                 self.cursor_timer = pygame.time.get_ticks() + 500
     

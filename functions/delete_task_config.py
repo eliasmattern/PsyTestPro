@@ -80,7 +80,7 @@ class DeleteTaskConfig():
 
         # Setting the window caption
         pygame.display.set_caption("Delete task")
-        full_experiment_name = experiment_name + "_variable"
+        full_experiment_name = experiment_name
         tasks = (
             teststarter_config.load_tasks_of_experiment(full_experiment_name)
         )
@@ -174,7 +174,7 @@ class DeleteTaskConfig():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation("deleteTaskFrom") + " " + experiment_name , True, light_grey
+                translate_service.get_translation("deleteTaskFrom") + " " + experiment_name.split("_")[0] , True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

@@ -87,7 +87,7 @@ class TaskConfig:
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment,
+                        experiment.split("_")[0],
                         lambda exp=experiment: self.add_task.add(
                             teststarter,
                             translate_service,
