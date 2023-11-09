@@ -1,0 +1,41 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Teststarter
+message: 'If you use this software, please cite it as below.'
+type: software
+authors:
+  - given-names: Elias
+    family-names: Mattern
+  - given-names: Noëmi
+    family-names: Capdevila
+  - given-names: Lina
+    family-names: Lane
+repository-code: 'https://github.com/eliasmattern/teststarter'
+abstract: >-
+  Teststarter is a Python program developed using the Pygame
+  library that allows users to create and manage
+  experiments. With Teststarter, users can define
+  experiments, each of which consists of a series of tasks.
+  These tasks can be customized to suit specific
+  requirements.
+keywords:
+  - Teststarter
+  - automation tool
+  - Custom Scripts
+  - Schedule
+  - Test runner
+  - experiment manager
+  - experiment scheduler
+  - scheduler
+  - python scheduler
+  - Sleep study experiment tool
+  - experiment tool
+  - Sleep study
+  - Task automation tool
+  - task scheduler
+  - python
+  - pygame
+  - Task customization software
+  - customization
