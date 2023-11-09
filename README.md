@@ -39,6 +39,7 @@ Once an experiment is started, Teststarter will automatically manage the executi
     - [:x: Delete task](#x-delete-task)
     - [:outbox\_tray: Export experiments](#outbox_tray-export-experiments)
     - [:inbox\_tray: Import experiments](#inbox_tray-import-experiments)
+  - [Citation](#citation)
   - [:question: FAQ](#question-faq)
 
 ## :inbox_tray: Installation
@@ -169,5 +170,15 @@ NOTE: This will not export your own scripts. You will have to transfer these by 
 ### :inbox_tray: Import experiments
 This allows you to choose a CSV on your computer to import Experiments and their tasks
 
+## Citation
+Use the follwing to cite Teststarter :
+Mattern, E., Capdevila, N., & Lane, L. Teststarter [Computer software]. https://github.com/eliasmattern/teststarter
+
 ## :question: FAQ
 <strong>What scripts are supported?</strong><br /> Any scripts, which you can execute from the console are supported by Teststarter
+
+<strong>I found a bug/problem. How can I report it?</strong><br />
+Feel free to create an Issue [here](https://github.com/eliasmattern/teststarter/issues)
+
+<strong>How can I contribute?</strong><br />
+Yes you can! Follow these steps to find out how: [here](./information/contribute.md)
