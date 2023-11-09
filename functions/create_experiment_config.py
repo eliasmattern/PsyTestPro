@@ -136,10 +136,10 @@ class CreateExperimentConfig:
             True,
             light_grey,
         )
-        option_text_rect = option_text_rendered.get_rect(left=x + 180, top=y + 240)
+        option_text_rect = option_text_rendered.get_rect(left=x + 180, top=y + 180)
         tick_box_rect = pygame.Rect(
             x + 170 - 20 * height_scale_factor,
-            y + 240,
+            y + 180,
             20 * width_scale_factor,
             20 * height_scale_factor,
         )
@@ -200,15 +200,15 @@ class CreateExperimentConfig:
                 tick_mark_points = [
                     (
                         x + 180 - 25 * height_scale_factor,
-                        y + 240 + 10 * height_scale_factor,
+                        y + 180 + 10 * height_scale_factor,
                     ),
                     (
                         x + 180 - 20 * height_scale_factor,
-                        y + 240 + 15 * height_scale_factor,
+                        y + 180 + 15 * height_scale_factor,
                     ),
                     (
                         x + 180 - 15 * height_scale_factor,
-                        y + 240 + 5 * width_scale_factor,
+                        y + 180 + 5 * width_scale_factor,
                     ),
                 ]
                 # draw lines connecting the points defined above (draw the tick)
