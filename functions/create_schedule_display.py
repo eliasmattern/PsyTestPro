@@ -283,7 +283,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
 
         # If the user clicked 'Yes', then open browser
         if response == True:
-            webbrowser.open("https://github.com/")    
+            webbrowser.open("https://github.com/eliasmattern/teststarter")    
 
         # Destroy the root window
         root.destroy()
