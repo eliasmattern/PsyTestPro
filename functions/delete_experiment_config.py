@@ -13,6 +13,7 @@ class DeleteExperimentConfig:
     def __init__(self):
         self.page = 0
         self.running = True
+        self.update = False
 
     def back(self):
         self.running = False
@@ -52,7 +53,9 @@ class DeleteExperimentConfig:
                 json.dump(original_tasks, file, indent=4)
             # Destroy the root window
             root.destroy()
-            self.delete_experiment_config_display(teststarter, translate_service)
+            self.update = True
+            self.running = False
+            return
         else:
             root.destroy()
 
@@ -95,9 +98,6 @@ class DeleteExperimentConfig:
         teststarter_config.load_experiments()
         experiments = teststarter_config.experiments
         
-        if "hab" in experiments:
-            experiments.remove("hab")
-
         splitted_experiments = [
             experiments[i : i + 5] for i in range(0, len(experiments), 5)
         ]
@@ -206,3 +206,7 @@ class DeleteExperimentConfig:
                 for button in buttons:
                     button.handle_event(event)
         self.running = True
+        if (self.update): 
+            self.update = False
+            self.delete_experiment_config_display(teststarter, translate_service)
+        

@@ -106,7 +106,7 @@ From there, you can do the following actions:
 - Export experiments
 
 ### :heavy_plus_sign: Create experiment
-The experiments you create will have a schedule with tasks for the user. You can also declare that an experiment should not have a schedule. If you do this, all tasks will immediately start when Te starter begins.
+The experiments you create will have a schedule with tasks for the user. You can also declare that an experiment should not have a schedule. If you do this, all tasks will immediately start when Testarter begins.
 
 ### :x: Delete experiment
 Here you can delete your experiments. Once deleted, the experiment and its tasks will be removed.

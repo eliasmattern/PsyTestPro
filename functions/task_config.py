@@ -107,7 +107,7 @@ class TaskConfig:
                 spacing += 60
 
 
-            spacing = 5 * 60
+            spacing = len(splitted_experiments[0]) * 60 if len(splitted_experiments) > 0 else 60
             spacing += 60
             back_button = Button(
                 x,

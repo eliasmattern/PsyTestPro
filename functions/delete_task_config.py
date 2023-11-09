@@ -117,7 +117,7 @@ class DeleteTaskConfig():
                     buttons.append(exp_button)
                     spacing += 60
 
-            spacing = 5 * 60
+            spacing = len(splitted_tasks[0]) * 60 if len(splitted_tasks) > 0 else 60
             spacing += 60
             back_button = Button(
                 x,
@@ -247,7 +247,7 @@ class DeleteTaskConfig():
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment,
+                        experiment.split("_")[0],
                         lambda exp=experiment: self.delete_task(
                             translate_service,
                             exp
