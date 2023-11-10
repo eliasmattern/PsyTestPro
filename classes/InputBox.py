@@ -40,6 +40,7 @@ class InputBox:
                 self.is_selected = True
             else:
                 self.is_selected = False
+                self.is_highlighted = False
             if self.imagePos.collidepoint(pygame.mouse.get_pos()) and event.button == 1:
                 pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
         elif event.type == KEYUP:
@@ -74,6 +75,7 @@ class InputBox:
                         else:
                             print("Error: Unable to retrieve clipboard content.")
                     elif event.key == K_BACKSPACE:
+                        text_length = len(self.text)
                         self.text = self.text[text_length-self.offset:text_length]
                     elif event.key == K_a:
                         self.is_highlighted = True
