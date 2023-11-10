@@ -430,6 +430,24 @@
                 "state": "todo",
                 "type": "",
                 "value": ""
+            },
+            "drug_screening": {
+                "time": "00:10",
+                "state": "todo",
+                "type": "text",
+                "value": {
+                    "title": "Dug Screening",
+                    "description": "Ein/e Forscher/in wird kommen und dir helfen."
+                }
+            },
+            "actiwatch_check": {
+                "time": "00:21",
+                "state": "todo",
+                "type": "text",
+                "value": {
+                    "title": "Actiwatch Compilance Check",
+                    "description": "Ein/e Forscher/in wird kommen und dir helfen."
+                }
             }
         }
     },
@@ -690,24 +708,6 @@
                 "state": "todo",
                 "type": "",
                 "value": ""
-            },
-            "drug_screening": {
-                "time": "00:10",
-                "state": "todo",
-                "type": "text",
-                "value": {
-                    "title": "Dug Screening",
-                    "description": "Ein/e Forscher/in wird kommen und dir helfen."
-                }
-            },
-            "actiwatch_check": {
-                "time": "00:21",
-                "state": "todo",
-                "type": "text",
-                "value": {
-                    "title": "Actiwatch Compilance Check",
-                    "description": "Ein/e Forscher/in wird kommen und dir helfen."
-                }
             }
         }
     },
