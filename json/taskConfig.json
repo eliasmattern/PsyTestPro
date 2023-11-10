@@ -7,204 +7,6 @@
                 "type": "",
                 "value": ""
             },
-            "saliva1": {
-                "time": "00:15",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "eeg_fitting": {
-                "time": "00:26",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "waking_eeg1": {
-                "time": "01:26",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva2": {
-                "time": "01:32",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "mood1": {
-                "time": "01:38",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "wof1": {
-                "time": "01:43",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "dinner": {
-                "time": "01:55",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva3": {
-                "time": "02:23",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "gonogo1": {
-                "time": "02:29",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime1": {
-                "time": "02:32",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "pvt1": {
-                "time": "02:39",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "capsule": {
-                "time": "02:51",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime2": {
-                "time": "02:56",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva4": {
-                "time": "03:11",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime3": {
-                "time": "03:17",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "waking_eeg2": {
-                "time": "03:27",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "mood2": {
-                "time": "03:33",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "wof2": {
-                "time": "03:38",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime4": {
-                "time": "03:50",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "gonogo2": {
-                "time": "03:55",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva5": {
-                "time": "03:58",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "pvt2": {
-                "time": "04:04",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "sleep_diary_expe": {
-                "time": "04:16",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime5": {
-                "time": "04:26",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "nback1": {
-                "time": "04:38",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva6": {
-                "time": "04:48",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "pvt3": {
-                "time": "04:54",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime6": {
-                "time": "05:06",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "waking_eeg3": {
-                "time": "05:13",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "bed_prep": {
-                "time": "05:19",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva7": {
-                "time": "05:34",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "teethbrushing": {
-                "time": "05:40",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "in_bed": {
-                "time": "05:45",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
             "drug_screening": {
                 "time": "00:10",
                 "state": "todo",
@@ -214,6 +16,12 @@
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
             },
+            "saliva1": {
+                "time": "00:15",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
             "actiwatch_check": {
                 "time": "00:21",
                 "state": "todo",
@@ -222,6 +30,207 @@
                     "title": "Actiwatch Compilance Check",
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
+            },
+            "eeg_fitting": {
+                "time": "00:31",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "waking_eeg1": {
+                "time": "01:21",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva2": {
+                "time": "01:27",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "mood1": {
+                "time": "01:33",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "wof1": {
+                "time": "01:38",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "dinner": {
+                "time": "01:50",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva3": {
+                "time": "02:18",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "gonogo1": {
+                "time": "02:24",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime1": {
+                "time": "02:27",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "pvt1": {
+                "time": "02:34",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "capsule": {
+                "time": "02:49",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime2": {
+                "time": "02:51",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva4": {
+                "time": "03:06",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime3": {
+                "time": "03:12",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "waking_eeg2": {
+                "time": "03:22",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "mood2": {
+                "time": "03:28",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "wof2": {
+                "time": "03:33",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime4": {
+                "time": "03:45",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "gonogo2": {
+                "time": "03:50",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva5": {
+                "time": "03:53",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "pvt2": {
+                "time": "03:59",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "sleep_diary_expe": {
+                "time": "04:11",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "expectancy_questionnaire": {
+                "time": "04:16",
+                "state": "todo",
+                "type": "text",
+                "value": {
+                    "title": "Expectancy Questionnaire",
+                    "description": "Bitte fülle den Fragebogen auf RedCap aus"
+                }
+            },
+            "breaktime5": {
+                "time": "04:21",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "nback1": {
+                "time": "04:33",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva6": {
+                "time": "04:43",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "pvt3": {
+                "time": "04:49",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime6": {
+                "time": "05:01",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "waking_eeg3": {
+                "time": "05:08",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "bed_prep": {
+                "time": "05:14",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva7": {
+                "time": "05:29",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "teethbrushing": {
+                "time": "05:35",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "in_bed": {
+                "time": "05:40",
+                "state": "todo",
+                "type": "",
+                "value": ""
             }
         }
     },
@@ -233,204 +242,6 @@
                 "type": "",
                 "value": ""
             },
-            "saliva1": {
-                "time": "00:15",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "eeg_fitting": {
-                "time": "00:26",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "waking_eeg1": {
-                "time": "01:26",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva2": {
-                "time": "01:32",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "mood1": {
-                "time": "01:38",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "wof1": {
-                "time": "01:43",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "dinner": {
-                "time": "01:55",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva3": {
-                "time": "02:23",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "gonogo1": {
-                "time": "02:29",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime1": {
-                "time": "02:32",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "pvt1": {
-                "time": "02:39",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "capsule": {
-                "time": "02:51",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime2": {
-                "time": "02:56",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva4": {
-                "time": "03:11",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime3": {
-                "time": "03:17",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "waking_eeg2": {
-                "time": "03:27",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "mood2": {
-                "time": "03:33",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "wof2": {
-                "time": "03:38",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime4": {
-                "time": "03:50",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "gonogo2": {
-                "time": "03:55",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva5": {
-                "time": "03:58",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "pvt2": {
-                "time": "04:04",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "sleep_diary_expe": {
-                "time": "04:16",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime5": {
-                "time": "04:26",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "nback1": {
-                "time": "04:38",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva6": {
-                "time": "04:48",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "pvt3": {
-                "time": "04:54",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "breaktime6": {
-                "time": "05:06",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "waking_eeg3": {
-                "time": "05:13",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "bed_prep": {
-                "time": "05:19",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "saliva7": {
-                "time": "05:34",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "teethbrushing": {
-                "time": "05:40",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
-            "in_bed": {
-                "time": "05:45",
-                "state": "todo",
-                "type": "",
-                "value": ""
-            },
             "drug_screening": {
                 "time": "00:10",
                 "state": "todo",
@@ -440,6 +251,12 @@
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
             },
+            "saliva1": {
+                "time": "00:15",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
             "actiwatch_check": {
                 "time": "00:21",
                 "state": "todo",
@@ -448,6 +265,207 @@
                     "title": "Actiwatch Compilance Check",
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
+            },
+            "eeg_fitting": {
+                "time": "00:31",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "waking_eeg1": {
+                "time": "01:21",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva2": {
+                "time": "01:27",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "mood1": {
+                "time": "01:33",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "wof1": {
+                "time": "01:38",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "dinner": {
+                "time": "01:50",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva3": {
+                "time": "02:18",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "gonogo1": {
+                "time": "02:24",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime1": {
+                "time": "02:27",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "pvt1": {
+                "time": "02:34",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "capsule": {
+                "time": "02:49",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime2": {
+                "time": "02:51",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva4": {
+                "time": "03:06",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime3": {
+                "time": "03:12",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "waking_eeg2": {
+                "time": "03:22",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "mood2": {
+                "time": "03:28",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "wof2": {
+                "time": "03:33",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime4": {
+                "time": "03:45",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "gonogo2": {
+                "time": "03:50",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva5": {
+                "time": "03:53",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "pvt2": {
+                "time": "03:59",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "sleep_diary_expe": {
+                "time": "04:11",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "expectancy_questionnaire": {
+                "time": "04:16",
+                "state": "todo",
+                "type": "text",
+                "value": {
+                    "title": "Expectancy Questionnaire",
+                    "description": "Bitte fülle den Fragebogen auf RedCap aus"
+                }
+            },
+            "breaktime5": {
+                "time": "04:21",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "nback1": {
+                "time": "04:33",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva6": {
+                "time": "04:43",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "pvt3": {
+                "time": "04:49",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "breaktime6": {
+                "time": "05:01",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "waking_eeg3": {
+                "time": "05:08",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "bed_prep": {
+                "time": "05:14",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "saliva7": {
+                "time": "05:29",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "teethbrushing": {
+                "time": "05:35",
+                "state": "todo",
+                "type": "",
+                "value": ""
+            },
+            "in_bed": {
+                "time": "05:40",
+                "state": "todo",
+                "type": "",
+                "value": ""
             }
         }
     },
@@ -458,6 +476,15 @@
                 "state": "todo",
                 "type": "",
                 "value": ""
+            },
+            "check_eeg": {
+                "time": "00:05",
+                "state": "todo",
+                "type": "text",
+                "value": {
+                    "title": "Check EEG",
+                    "description": "Wir werden jetzt deine EEG Daten überprüfen"
+                }
             },
             "morn_sleep_diary": {
                 "time": "00:10",
@@ -558,6 +585,15 @@
                 "state": "todo",
                 "type": "",
                 "value": ""
+            },
+            "check_eeg": {
+                "time": "00:05",
+                "state": "todo",
+                "type": "text",
+                "value": {
+                    "title": "Check EEG",
+                    "description": "Wir werden jetzt deine EEG Daten überprüfen"
+                }
             },
             "morn_sleep_diary": {
                 "time": "00:10",
