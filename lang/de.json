@@ -4,7 +4,7 @@
     "submit": "Senden",
     "participantId": "Teilnehmer ID:",
     "experiment": "Experiment:",
-    "timeOfDay": "Tageszeit (morn/eve/full):",
+    "timeOfDay": "Tageszeit (morn/eve):",
     "timeOfDayShort": "Tageszeit",
     "weekNumber": "Wochennummer:",
     "startTime": "Zeit (24-Stunden Format):",
