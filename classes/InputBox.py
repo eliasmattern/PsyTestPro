@@ -21,13 +21,19 @@ class InputBox:
         self.allow_new_line = allow_new_line
         self.not_allowed_characters = not_allowed_characters
         self.started_removing = False
+        self.started_moving_r = False
+        self.started_moving_l = False
         self.delay = None
         self.image = pygame.image.load("./img/copyIcon.png")
         self.posX = x
         self.posY = y
         self.imagePos = pygame.Rect(0,0, self.image.get_rect().width, self.image.get_rect().height)
         self.delayMultiplicator = 0.4
-
+        self.cursor_blink = True
+        self.offset = 0
+        self.cursor_pos = (0,0)
+        self.is_highlighted = False
+        
     def handle_event(self, event):
         if event.type == MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos) and event.button == 1:
@@ -40,6 +46,14 @@ class InputBox:
             if self.is_selected:
                 if event.key == K_BACKSPACE:
                     self.started_removing = False
+                    self.delay = None
+                    self.delayMultiplicator = 0.4
+                elif event.key == K_RIGHT:
+                    self.started_moving_r = False
+                    self.delay = None
+                    self.delayMultiplicator = 0.4
+                elif event.key == K_LEFT:
+                    self.started_moving_l = False
                     self.delay = None
                     self.delayMultiplicator = 0.4
         elif event.type == KEYDOWN:
@@ -60,19 +74,54 @@ class InputBox:
                         else:
                             print("Error: Unable to retrieve clipboard content.")
                     elif event.key == K_BACKSPACE:
-                        self.text = ""
+                        self.text = self.text[text_length-self.offset:text_length]
+                    elif event.key == K_a:
+                        self.is_highlighted = True
+                    elif event.key == K_c:
+                        if self.is_highlighted:
+                            self.is_highlighted = False
+                            pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
 
                 elif event.key == K_RETURN:
                     pass
-                elif event.key == K_BACKSPACE:
-                    self.text = self.text[:-1]
-                    self.started_removing = True
+                elif event.key == K_LEFT:
+                    text_length = len(self.text)
+                    if self.offset < text_length:
+                        self.offset += 1
+                        self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.started_moving_l = True
                     self.delay = datetime.now().timestamp()
+                    self.is_highlighted = False
+                elif event.key == K_RIGHT:
+                    text_length = len(self.text)
+                    if self.offset > 0:
+                        self.offset -= 1
+                        self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.started_moving_r = True
+                    self.delay = datetime.now().timestamp()
+                    self.is_highlighted = False
+                elif event.key == K_BACKSPACE:
+                    text_length = len(self.text)
+                    if self.is_highlighted:
+                        self.text = ""
+                        self.cursor_pos = (0,0)
+                        self.offset = 0
+                        pass
+                    if (len(self.text[0:text_length-self.offset]) > 0):
+                        self.text = self.text[0:text_length-self.offset-1] + self.text[text_length-self.offset:text_length]
+                        self.started_removing = True
+                        self.delay = datetime.now().timestamp()
+                    self.is_highlighted = False
                 elif event.key == K_TAB:
-                    pass
+                    self.is_highlighted = False
+                elif event.key == K_ESCAPE:
+                    self.is_highlighted = False
                 else:
+                    text_length = len(self.text)
                     if event.unicode not in self.not_allowed_characters:
-                        self.text += event.unicode
+                        self.text = self.text[0:text_length-self.offset] + event.unicode + self.text[text_length-self.offset:text_length]
+                    self.is_highlighted = False
+
                 self.cursor_visible = True
                 self.cursor_timer = pygame.time.get_ticks() + 500
     
@@ -82,29 +131,63 @@ class InputBox:
     def draw(self, screen):
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
         input_text = self.text
-        text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color)
+        text_bg_color = self.color
+        if self.is_selected:
+            text_bg_color = self.active_color
+        if self.is_highlighted:
+            text_bg_color = (102, 101, 221)
+        
+
+        text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color, text_bg_color)
         while text_surface.get_rect().width > self.rect.width // 100 * 88:
             input_text = input_text[1:]
             text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color)
-        if self.is_selected and self.delay != None:
+        if self.is_selected and self.delay != None and self.started_removing:
             if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplicator:
-                self.text = self.text[:-1]
-                self.delay = datetime.now().timestamp()
-                self.delayMultiplicator = 0.1
-           
+                text_length = len(self.text)
+                if (len(self.text[0:text_length-self.offset]) > 0):
+                    self.text = self.text[0:text_length-self.offset-1] + self.text[text_length-self.offset:text_length]
+                    self.delay = datetime.now().timestamp()
+                    self.delayMultiplicator = 0.1
+        
+        if self.is_selected and self.delay != None and self.started_moving_r:
+            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplicator:
+                text_length = len(self.text)
+                if self.offset > 0:
+                    self.offset -= 1
+                    self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.delay = datetime.now().timestamp()
+                    self.delayMultiplicator = 0.1
+        
+        if self.is_selected and self.delay != None and self.started_moving_l:
+            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplicator:
+                text_length = len(self.text)
+                if self.offset < text_length:
+                    self.offset += 1
+                    self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.delay = datetime.now().timestamp()
+                    self.delayMultiplicator = 0.1
 
         screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
         screen.blit(self.label, (self.rect.x - self.label.get_width() - 10, self.rect.y + 5))
         if self.is_selected:
-            pygame.draw.line(screen, pygame.Color("black"), (self.rect.x + text_surface.get_width() + 5, self.rect.y + 5),
-                             (self.rect.x + text_surface.get_width() + 5, self.rect.y + self.rect.height - 5))
+            color = pygame.Color("black") if self.cursor_blink else self.active_color
+            pygame.draw.line(screen, color, (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + 5),
+                             (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + self.rect.height - 5))
         if self.cursor_visible:
             if pygame.time.get_ticks() >= self.cursor_timer:
                 self.cursor_visible = False
             else:
-                pygame.draw.line(screen, pygame.Color("black"),
-                                 (self.rect.x + text_surface.get_width() + 5, self.rect.y + 5),
-                                 (self.rect.x + text_surface.get_width() + 5, self.rect.y + self.rect.height - 5))
+                color = pygame.Color("black") if self.cursor_blink else self.active_color
+                pygame.draw.line(screen, color,
+                                 (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + 5),
+                                 (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + self.rect.height - 5))
         self.imagePos = pygame.Rect(self.posX + (self.rect.width// 2) // 100 * 80, self.posY, self.image.get_rect().width, self.image.get_rect().height)
         screen.blit(self.image, (self.posX + (self.rect.width// 2) // 100 * 80, self.posY ))
+        if self.is_selected:
+            if ((pygame.time.get_ticks()// 500) % 2) == 0 or self.started_moving_r or self.started_moving_l:
+                self.cursor_blink = True
+            else:
+                self.cursor_blink = False
         
