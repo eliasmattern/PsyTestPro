@@ -12,7 +12,7 @@
                 "state": "todo",
                 "type": "text",
                 "value": {
-                    "title": "Dug Screening",
+                    "title": "Drug Screening",
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
             },
@@ -27,7 +27,7 @@
                 "state": "todo",
                 "type": "text",
                 "value": {
-                    "title": "Actiwatch Compilance Check",
+                    "title": "Actiwatch Compliance Check",
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
             },
@@ -244,7 +244,7 @@
                 "state": "todo",
                 "type": "text",
                 "value": {
-                    "title": "Dug Screening",
+                    "title": "Drug Screening",
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
             },
@@ -259,7 +259,7 @@
                 "state": "todo",
                 "type": "text",
                 "value": {
-                    "title": "Actiwatch Compilance Check",
+                    "title": "Actiwatch Compliance Check",
                     "description": "Ein/e Forscher/in wird kommen und dir helfen."
                 }
             },
