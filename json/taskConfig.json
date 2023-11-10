@@ -166,11 +166,8 @@
             "expectancy_questionnaire": {
                 "time": "04:16",
                 "state": "todo",
-                "type": "text",
-                "value": {
-                    "title": "Expectancy Questionnaire",
-                    "description": "Bitte fülle den Fragebogen auf RedCap aus"
-                }
+                "type": "",
+                "value": ""
             },
             "breaktime5": {
                 "time": "04:21",

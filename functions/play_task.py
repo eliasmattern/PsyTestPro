@@ -11,7 +11,9 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
         case "good_morn":
             text_screen("Guten Morgen", "")
         case "morn_sleep_diary" | "sleep_diary_expe":
-            text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Forscher/in wird dir helfen, das Schlaftagebuch zuführen.")
+            text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Versuchsleiter/in wird dir helfen, das Schlaftagebuch auszfüllen.")
+        case "expectancy_questionnaire":
+            text_screen("Erwartungsfrabogen", "Bitte fülle auch noch diesen Erwartungs-Fragebogen aus. Ein/e Versuchsleiter/in kommt gleich.")
         case "leeds":
             leeds(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
         case "break_morn" | "breaktime":
@@ -31,9 +33,9 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
         case "mood_morn" | "mood":
             moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
         case "wof_morn" | "wof":
-            text_screen("Glücksrad", "Ein/e Forscher/in wird kommen und dir helfen.")
+            text_screen("Glücksrad", "Ein/e Versuchsleiter/in wird kommen und dir helfen.")
         case "task_payment":
-            text_screen("Zahlung", "Ein/e Forscher/in wird kommen und wird dich bezahlen.")
+            text_screen("Zahlung", "Ein/e Versuchsleiter/in wird kommen und wird dich bezahlen.")
         case "gonogo_morn" | "gonogo":
             # block = week number number = gonogo number
             gonogo_number = ''.join([i for i in upcoming_event if i.isdigit()])
@@ -42,7 +44,7 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
             # study night se sr
             start_real_nback(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], participant_info["experiment"])
         case "eeg_removal":
-            text_screen("EEG entfernen", "Ein/e Forscher/in wird kommen und dir helfen.")
+            text_screen("EEG entfernen", "Ein/e Versuchsleiter/in wird kommen und dir helfen.")
         case "breakfast_morn":
             text_screen("Frühstück", "Es ist Zeit für das Frühstück.")
         case "eeg_fitting":
