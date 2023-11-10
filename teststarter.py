@@ -104,24 +104,31 @@ class Teststarter:
             button.update_text()
 
     def handle_events(self):
-        def get_input_index():
+        def get_input_index(step):
             index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
-
+            key_to_index = {"participantId": 0, "experiment": 1, "startTime": 2}
             index = 0 
             for key, input_box in self.input_boxes.items():
-                index += 1
                 if input_box.is_selected:
-                    self.input_boxes[index_to_key[index -1]].is_selected = False
+                    self.input_boxes[key].is_selected = False
+                    index = key_to_index[key] + step
                     break
-            if index < len(self.input_boxes):
+            if 0 <= index < len(self.input_boxes):
                 return index_to_key[index]
+            elif index < 0:
+                return index_to_key[len(self.input_boxes) -1]
             else:
                 return index_to_key[0]
         for event in pygame.event.get():
             if event.type == KEYDOWN:
-                if event.key == K_TAB:
-                    index = get_input_index()
+                mods = pygame.key.get_mods()
+                if mods != 4160 and event.key == K_TAB:
+                    index = get_input_index(1)
                     self.input_boxes[index].is_selected = True
+                elif mods & mods == 4160:  # Check if Ctrl is pressed
+                    if event.key == K_TAB:
+                        index = get_input_index(-1)
+                        self.input_boxes[index].is_selected = True
             for key, box in self.input_boxes.items():
                 box.handle_event(event)
             for button in self.buttons:
