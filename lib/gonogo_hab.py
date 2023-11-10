@@ -69,6 +69,8 @@ def GoNoGo_Real(subject, experiment,block,number):
     text = "Drücke die Leertaste mit deiner dominanten Hand, wenn du ein blaues Quadrat siehst.\nDrücke nicht, wenn es gelb ist.\n\nDrücke die Leertaste, um zu starten."
     lines = text.split('\n')
     line_height = 30
+    screen.fill(BACKGROUND_COLOR)
+
     for i, line in enumerate(lines):
         text_surface = font.render(line, True, TEXT_COLOR)
         text_rect = text_surface.get_rect(center=(screen_width // 2, screen_height // 2 + i * line_height))
