@@ -15,11 +15,7 @@ def pvt(subject, block, number):
     TITLE = 'PVT_Hab_Results'
 
     # Check if output directory exists
-    out_dir = './Logs'
-    if not os.path.exists(out_dir):
-        print("Output directory does not exist. Exiting...")
-        return
-
+    out_dir = './Logs/1_HabNight'
     # Define the title directory (a folder in logs called "GoNoGo_Results")
     title_dir = os.path.join(out_dir, TITLE)
     if not os.path.exists(title_dir):

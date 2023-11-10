@@ -128,12 +128,8 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
     TITLE = 'N-Back_Hab_Results'
 
     # Check if output directory exists #'C:/Users/noemi/Desktop/teststarter_python/Logs'
-    out_dir = './Logs'
-    if not os.path.exists(out_dir):
-        print("Output directory does not exist. Creating now...")
-        os.makedirs(out_dir)
-
-    # Define the title directory (a folder in logs called "NBack results")
+    out_dir = './Logs/1_HabNight'
+        # Define the title directory (a folder in logs called "NBack results")
     title_dir = os.path.join(out_dir, TITLE)
     if not os.path.exists(title_dir):
         print(f"{title_dir} does not exist. Creating now...")

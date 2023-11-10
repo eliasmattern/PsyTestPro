@@ -28,11 +28,7 @@ def GoNoGo_Real(subject, experiment,block,number):
 
     
     # Check if output directory exists
-    out_dir = './Logs'
-    if not os.path.exists(out_dir):
-        print("Output directory does not exist. Exiting...")
-        return
-
+    out_dir = './Logs/1_HabNight'
     # Define the title directory (a folder in logs called "GoNoGo_Results")
     title_dir = os.path.join(out_dir, TITLE) # asks if a folder called GoNoGo_Results exists
     if not os.path.exists(title_dir): # if the folder doesn't exist
