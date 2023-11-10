@@ -6,7 +6,6 @@ import csv
 import datetime
 import os
 
-#test
 # Function to perform the gonogo
 def GoNoGo_Real(subject, experiment,block,number):
 
