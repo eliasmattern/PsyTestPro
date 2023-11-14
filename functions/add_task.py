@@ -63,7 +63,7 @@ class AddTask():
                              startTime = participant_info["start_time"], 
                              timestamp = participant_info["timestamp"])
                 
-                text_screen(title, description)
+                text_screen(title, description, translate_service.get_translation("escToReturn"))
                 self.is_task_working = True
             except Exception as e:
                 print(e)

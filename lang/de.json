@@ -68,5 +68,6 @@
     "configureTeststarter": "Teststarter konfigurieren",
     "noExperiments": "Keine Experimente",
     "createWithSchedule": "Experiment mit Zeitplan erstellen",
-    "for": "für"
+    "for": "für",
+    "escToReturn": "Bitte drücke 'ESC' um zurückzukehren"
 }

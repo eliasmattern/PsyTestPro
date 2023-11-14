@@ -1,11 +1,9 @@
 import pygame
 import sys
 from pygame.locals import *
-from classes import InputBox, Button, TimeInput
+from classes import Button
 from services import TeststarterConfig
 from services import TeststarterConfig
-from lib import text_screen
-import subprocess
 from .add_task import AddTask
 
 class TaskConfig:

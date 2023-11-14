@@ -1,7 +1,7 @@
 import pygame
 
 
-def text_screen(title, description):
+def text_screen(title, description, info):
     title = title.replace(r' \n ', '\n')
     title = title.replace(r'\n', '\n')
     description = description.replace(r' \n ', '\n')
@@ -59,7 +59,6 @@ def text_screen(title, description):
         text_rects.append((text_x - description_rect.width // 2, text_y))
         text_y += font.get_linesize()
 
-    info = 'Bitte drücke "ESC" um zurückzukehren'
     info_surface = font.render(info, True, font_color)
     info_rect = info_surface.get_rect(center=(text_x, screen_height - 250))
     text_surfaces.append(info_surface)

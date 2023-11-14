@@ -70,5 +70,6 @@
     "configureTeststarter": "Configure Teststarter",
     "noExperiments": "No experiments",
     "createWithSchedule": "Create experiment with a schedule",
-    "for": "for"
+    "for": "for",
+    "escToReturn": "Please press 'ESC' to return."
 }

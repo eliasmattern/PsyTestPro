@@ -77,7 +77,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         sorted_schedule = sorted([(datetime.strptime(info["datetime"], '%d/%m/%Y %H:%M:%S'), event) for event, info in filtered_schedule.items()])
         check_for_old_tasks = True    
         play_next_task = False
-
+        start_time = datetime.now()
         running = True
         while running:
             pygame.mouse.set_visible(True)
@@ -89,12 +89,12 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 filtered_dict = {
                     key: value for key, value in schedule.items()
                     if value['state'] == 'todo'
-                    and datetime.strptime(value['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now()
+                    and start_time < datetime.strptime(value['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now()
                 }
                 # Print the filtered list
                 for item in filtered_dict:
                     upcoming_event = item
-                    play_tasks(participant_info, upcoming_event, schedule)
+                    play_tasks(participant_info, upcoming_event, schedule, translate_service)
                     pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
                 check_for_old_tasks = False
@@ -168,7 +168,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 upcoming_event = next_event[1]
                 beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                 beep_sound.play()
-                play_tasks(participant_info, upcoming_event, schedule)
+                play_tasks(participant_info, upcoming_event, schedule, translate_service)
                 pygame.mouse.set_visible(True)
                 schedule[upcoming_event]["state"]= "done"
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
@@ -182,7 +182,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     pythonTime.sleep(1.1)
                     beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                     beep_sound.play()
-                    play_tasks(participant_info, upcoming_event, schedule)
+                    play_tasks(participant_info, upcoming_event, schedule, translate_service)
                     pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
             elif len(sorted_schedule) > 0:
@@ -203,7 +203,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                                          startTime = participant_info["start_time"], 
                                          timestamp = formatted_timestamp)  
                             
-                            text_screen(title, description)
+                            text_screen(title, description, translate_service.get_translation("escToReturn"))
                             schedule[task[0]]['state'] = "done"
                         elif schedule[task[0]]["type"] == "command":
                             now = datetime.now()
@@ -380,6 +380,10 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     page_butons.append(left_button)
     page_butons.append(right_button)
 
+    def update_text():
+        for button in buttons:
+            button.update_text()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -457,7 +461,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     button.handle_event(event)
 
         screen.fill(black) # Fill the screen with the black color
-        
+        update_text()
         for button in buttons:
             button.draw(screen)
 
