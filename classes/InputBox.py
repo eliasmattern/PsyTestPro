@@ -33,7 +33,9 @@ class InputBox:
         self.offset = 0
         self.cursor_pos = (0,0)
         self.is_highlighted = False
-        
+        self.started_del = False
+        self.textPage = 0
+
     def handle_event(self, event):
         if event.type == MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos) and event.button == 1:
@@ -55,6 +57,10 @@ class InputBox:
                     self.delayMultiplicator = 0.4
                 elif event.key == K_LEFT:
                     self.started_moving_l = False
+                    self.delay = None
+                    self.delayMultiplicator = 0.4
+                elif event.key == K_DELETE:
+                    self.started_del = False
                     self.delay = None
                     self.delayMultiplicator = 0.4
         elif event.type == KEYDOWN:
@@ -83,6 +89,15 @@ class InputBox:
                         if self.is_highlighted:
                             self.is_highlighted = False
                             pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
+                        else: 
+                            pass
+                    elif event.key == K_x:
+                        if self.is_highlighted:
+                            self.is_highlighted = False
+                            pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
+                            self.text = ""
+                        else: 
+                            pass
 
                 elif event.key == K_RETURN:
                     pass
@@ -118,6 +133,19 @@ class InputBox:
                     self.is_highlighted = False
                 elif event.key == K_ESCAPE:
                     self.is_highlighted = False
+                elif event.key == K_DELETE:
+                    text_length = len(self.text)
+                    if self.is_highlighted:
+                        self.text = ""
+                        self.cursor_pos = (0,0)
+                        self.offset = 0
+                        pass
+                    if (len(self.text[text_length-self.offset:text_length]) > 0):
+                        self.text = self.text[0:text_length-self.offset] + self.text[(text_length-self.offset)+1:text_length]
+                        self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                        self.offset -= 1
+                        self.started_del = True
+                        self.delay = datetime.now().timestamp()
                 else:
                     text_length = len(self.text)
                     if event.unicode not in self.not_allowed_characters:
@@ -138,12 +166,11 @@ class InputBox:
             text_bg_color = self.active_color
         if self.is_highlighted:
             text_bg_color = (102, 101, 221)
-        
 
         text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color, text_bg_color)
         while text_surface.get_rect().width > self.rect.width // 100 * 88:
             input_text = input_text[1:]
-            text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color)
+            text_surface = self.font.render(input_text, True, self.active_text_color if self.is_selected else self.text_color, text_bg_color)
         if self.is_selected and self.delay != None and self.started_removing:
             if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplicator:
                 text_length = len(self.text)
@@ -167,7 +194,16 @@ class InputBox:
                 if self.offset < text_length:
                     self.offset += 1
                     self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.delay = datetime.now().timestamp()
+                    self.delayMultiplicator = 0.1
+        
+        if self.is_selected and self.delay != None and self.started_del:
+            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplicator:
+                text_length = len(self.text)
+                if (len(self.text[text_length-self.offset:text_length]) > 0):
+                    self.text = self.text[0:text_length-self.offset] + self.text[(text_length-self.offset)+1:text_length]
                     self.cursor_pos = self.font.size(self.text[text_length-self.offset:text_length])
+                    self.offset -= 1
                     self.delay = datetime.now().timestamp()
                     self.delayMultiplicator = 0.1
 
