@@ -102,9 +102,9 @@ def pvt(subject, block, number):
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    return
+                    return False
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                    return
+                    return False
                 elif event.type == KEYDOWN and event.key == K_SPACE:
                     intro_spacebar_pressed = True
                     break
@@ -233,5 +233,5 @@ def pvt(subject, block, number):
     time.sleep(3)  # Pause for 2 seconds
 
     # Quit Pygame
-    return
+    return True
 

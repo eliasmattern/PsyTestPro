@@ -27,9 +27,6 @@ def GoNoGo_Real(subject, experiment,block,number):
     
     # Check if output directory exists
     out_dir = './Logs'
-    if not os.path.exists(out_dir):
-        print("Output directory does not exist. Exiting...")
-        return
 
     # Define the title directory (a folder in logs called "GoNoGo_Results")
     title_dir = os.path.join(out_dir, TITLE) # asks if a folder called GoNoGo_Results exists
@@ -84,7 +81,7 @@ def GoNoGo_Real(subject, experiment,block,number):
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 waiting = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                return
+                return False
                 
     # Experiment parameters
     n_trials = 100 # to be set to 100
@@ -160,7 +157,7 @@ def GoNoGo_Real(subject, experiment,block,number):
                             pygame.time.wait(remaining_duration)   
                         break                     
                     elif event.key == pygame.K_ESCAPE: # If there is an Esc key press
-                        return
+                        return False
             
         # Clear the screen
         screen.fill(BACKGROUND_COLOR)
@@ -195,6 +192,6 @@ def GoNoGo_Real(subject, experiment,block,number):
         pygame.display.flip()
 
     # End of the experiment
-    return
+    return True
 
     

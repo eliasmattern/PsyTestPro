@@ -83,7 +83,7 @@ def GoNoGo_Real(subject, experiment,block,number):
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 waiting = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                return
+                return False
                 
     # Experiment parameters
     n_trials = 100
@@ -161,7 +161,7 @@ def GoNoGo_Real(subject, experiment,block,number):
                             pygame.time.wait(remaining_duration)
                             break
                     elif event.key == pygame.K_ESCAPE: # If there is an Esc key press
-                        return
+                        return False
             
         # Clear the screen
         screen.fill(BACKGROUND_COLOR)
@@ -202,5 +202,5 @@ def GoNoGo_Real(subject, experiment,block,number):
             break
 
     # End of the experiment
-    return
+    return True
     

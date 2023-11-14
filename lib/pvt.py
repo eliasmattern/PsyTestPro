@@ -16,9 +16,6 @@ def pvt(subject, experiment, block, number):
 
     # Check if output directory exists
     out_dir = './Logs'
-    if not os.path.exists(out_dir):
-        print("Output directory does not exist. Exiting...")
-        return
 
     # Define the title directory (a folder in logs called "GoNoGo_Results")
     title_dir = os.path.join(out_dir, TITLE)
@@ -108,9 +105,9 @@ def pvt(subject, experiment, block, number):
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    return
+                    return False
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                    return
+                    return False
                 elif event.type == KEYDOWN and event.key == K_SPACE:
                     intro_spacebar_pressed = True
                     break
@@ -146,8 +143,10 @@ def pvt(subject, experiment, block, number):
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         running = False
+                        return False
                     elif event.type == KEYDOWN and event.key == K_ESCAPE:
                         running = False
+                        return False
 
             # Reset variables for the new counter
             counter = 0
@@ -161,6 +160,7 @@ def pvt(subject, experiment, block, number):
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         running = False
+                        return False
                     elif event.type == KEYDOWN and event.key == K_SPACE:
                         if not spacebar_pressed:
                             spacebar_pressed = True
@@ -169,6 +169,7 @@ def pvt(subject, experiment, block, number):
                         beep_sound.stop()
                     elif event.type == KEYDOWN and event.key == K_ESCAPE:
                         running = False
+                        return False
 
                 screen.fill(pygame.Color("black"))  # Clear the screen
 
@@ -242,4 +243,4 @@ def pvt(subject, experiment, block, number):
     time.sleep(3)  # Pause for 2 seconds
 
     # Quit Pygame
-    return
+    return True

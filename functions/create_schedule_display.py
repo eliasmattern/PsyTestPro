@@ -107,7 +107,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            if check_for_old_tasks:
+            if check_for_old_tasks and not isHab:
                 filtered_dict = {
                     key: value for key, value in schedule.items()
                     if value['state'] == 'todo'
@@ -117,9 +117,12 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 for item in filtered_dict:
                     upcoming_event = item
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    result = play_tasks(eventName, participant_info, upcoming_event, schedule)
                     pygame.mouse.set_visible(True)
-                    schedule[upcoming_event]["state"]= "done"
+                    if result:
+                        schedule[upcoming_event]["state"]= "done"
+                    else:
+                        schedule[upcoming_event]["state"]= "error"
                 check_for_old_tasks = False
             
             # get the current time
@@ -192,8 +195,12 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                 beep_sound.play()
                 eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                play_tasks(eventName, participant_info, upcoming_event, schedule)
+                result = play_tasks(eventName, participant_info, upcoming_event, schedule)
                 pygame.mouse.set_visible(True)
+                if result:
+                    schedule[upcoming_event]["state"]= "done"
+                else:
+                    schedule[upcoming_event]["state"]= "error"
                 schedule[upcoming_event]["state"]= "done"
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
                 print(sorted_schedule)
@@ -209,17 +216,32 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                     play_tasks(eventName, participant_info, upcoming_event, schedule)
                     pygame.mouse.set_visible(True)
-                    schedule[upcoming_event]["state"]= "done"
+                    if result:
+                        schedule[upcoming_event]["state"]= "done"
+                    else:
+                        schedule[upcoming_event]["state"]= "error"
             elif len(sorted_schedule) > 0:
+                result = True
                 if schedule["pvt_hab"]["state"] == "todo":
-                    pvt_hab(participant_info["participant_id"], participant_info["week_no"], 1)
-                    schedule["pvt_hab"]["state"] = "done"
+                    result = pvt_hab(participant_info["participant_id"], participant_info["week_no"], 1)
+                    if result:
+                        schedule["pvt_hab"]["state"] = "done"
+                    else:
+                        schedule["pvt_hab"]["state"] = "error"
                 if schedule["gonogo_hab"]["state"] == "todo":
-                    GoNoGo_Real_Hab(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], 1)
-                    schedule["gonogo_hab"]["state"] = "done"
+                    result = GoNoGo_Real_Hab(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], 1)
+                    if result:
+                        schedule["gonogo_hab"]["state"] = "done"
+                    else:
+                        schedule["gonogo_hab"]["state"] = "error"
+                    
                 if schedule["n-back_hab"]["state"] == "todo":
-                    start_hab_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
-                    schedule["n-back_hab"]["state"] = "done"
+                    result = start_hab_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
+                    if result:
+                        schedule["n-back_hab"]["state"] = "done"
+                    else:
+                        schedule["n-back_hab"]["state"] = "error"
+
                 for task in schedule.items():
                     if schedule[task[0]]['state'] == "todo":
                         if schedule[task[0]]["type"] == "text":
@@ -368,7 +390,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     newdate_input_active = False  # Initialize the text input variable
     newtime_input_active = False  # Initialize the text input variable
     todo_input_active = False  # Initialize the text input variable
-    state_iterator = {"todo": "skip", "skip": "done", "done": "todo"}
+    state_iterator = {"todo": "skip", "skip": "done", "done": "todo", "error": "todo"}
     todo_row_multiplicator = 3
     if isHab:
         todo_row_multiplicator = 1
@@ -554,12 +576,12 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     newtime_input_text_surface = newtime_input_box_font.render(time, True, light_grey)
                     screen.blit(newtime_input_text_surface, newtime_input_box_rect.move(5, 5))
 
-            todo_color = {"todo": light_grey, "skip": (240, 230, 140), "done": (0, 179, 113)}
+            todo_color = {"todo": light_grey, "skip": (240, 230, 140), "done": (0, 179, 113), "error": (255, 0, 0)}
             if row in todo_input_values:
                 todo_input_value = todo_input_values[row]
                 todo_input_text_surface = todo_input_box_font.render(translate_service.get_translation(todo_input_value), True, todo_color[todo_input_value.lower()])
 
-                if todo_input_value.lower() == "todo" or todo_input_value.lower() == "done" or todo_input_value.lower() == "skip":
+                if todo_input_value.lower() == "todo" or todo_input_value.lower() == "done" or todo_input_value.lower() == "skip"  or todo_input_value.lower() == "error":
                     splitted_schedule[schedule_page][list(splitted_schedule[schedule_page])[row-1]]["state"] = todo_input_value.lower()
                 else:
                     todo_input_text_surface = todo_input_box_font.render(todo_input_value, True, red)

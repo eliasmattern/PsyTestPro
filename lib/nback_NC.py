@@ -212,7 +212,7 @@ def practice_nback(subject, experiment, week, study_night, current_block, num_ba
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            return
+                            return False
                         elif event.key in [pygame.K_a, pygame.K_l]:
                             key_pressed = True
 
@@ -241,7 +241,7 @@ def practice_nback(subject, experiment, week, study_night, current_block, num_ba
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            return
+                            return False
                         elif event.key in [pygame.K_a, pygame.K_l]:
                             key_pressed = True
 
@@ -462,15 +462,17 @@ def practice_nback(subject, experiment, week, study_night, current_block, num_ba
                         for event in pygame.event.get():
                             if event.type == pygame.KEYDOWN:
                                 if event.key == pygame.K_ESCAPE:
-                                    return
+                                    return False
                                 elif event.key in [pygame.K_a, pygame.K_l]:
                                     key_pressed = True
                                     #current_trial = 0
-                                    return
+                                    return True
                     # Clear the screen for the next block
                     screen.fill(black)
                     pygame.display.flip()
                     pygame.time.wait(blank_duration)
+                    return True
+        
                     
                     
                                     
@@ -605,7 +607,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
                     for event in pygame.event.get():
                         if event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_ESCAPE:
-                                return
+                                return False
                             elif event.key in [pygame.K_a, pygame.K_l]:
                                 key_pressed = True
 
@@ -634,7 +636,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
                     for event in pygame.event.get():
                         if event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_ESCAPE:
-                                return
+                                return False
                             elif event.key in [pygame.K_a, pygame.K_l]:
                                 key_pressed = True
 
@@ -815,7 +817,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
                     screen.blit(end_surface, end_rect)
                     pygame.display.flip()
                     pygame.time.wait(2000)
-                    return
+                    return True
                 else:
                     # End of block feedback
                     screen.fill(black)
@@ -839,7 +841,7 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
                         for event in pygame.event.get():
                             if event.type == pygame.KEYDOWN:
                                 if event.key == pygame.K_ESCAPE:
-                                    return
+                                    return False
                                 elif event.key in [pygame.K_a, pygame.K_l]:
                                     key_pressed = True
                     current_block += 1
@@ -859,7 +861,11 @@ def start_real_nback(subject, experiment, week, study_night):
     num_back = 2
     num_back_addition = None
     num_back_performance_addition = 0
-    practice_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
-    real_nback(subject, experiment ,week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+    result_practice = practice_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+    result_real = real_nback(subject, experiment ,week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+    if result_real and result_practice:
+        return True
+    else:
+        return False
 
 #########################################################################################

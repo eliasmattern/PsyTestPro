@@ -65,5 +65,6 @@
     "until": "bis",
     "importExport": "Importieren / Exportieren",
     "configureTasks": "Aufgaben konfigurieren",
-    "configureTeststarter": "Teststarter konfigurieren"
+    "configureTeststarter": "Teststarter konfigurieren",
+    "error": "Abgebrochen"
 }

@@ -144,7 +144,7 @@ def leeds(subject, block, experiment):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         running = False
-                        return
+                        return False
                     elif event.key == K_BACKSPACE and is_input_active:
                         answer = answer[:-1]
                     elif event.key == K_BACKSPACE and is_input2_active:
@@ -251,7 +251,7 @@ def leeds(subject, block, experiment):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         running = False
-                        return
+                        return False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if button_rect.collidepoint(mouse_pos):
@@ -296,3 +296,4 @@ def leeds(subject, block, experiment):
             writer.writerow([day , month, year, hour, minute, second, subject, block, *keyboard_data, *slider_data])
         
     slider.hide()
+    return True
