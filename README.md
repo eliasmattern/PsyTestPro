@@ -88,10 +88,7 @@ plays the task and sets it to `done`.
 
 You can always press `Play next task` to start the next task without waiting for the timer to run out.
 
-If a task is `todo` but in the past, teststarter will immediately start it. 
-This ensures that no task is being skipped when another task is taking longer or
-the teststarter was started too late.
-If you do not want this, set the tasks, which are in the past, to `skip` or `done`. 
+If a task takes longer than expected and another task should have started already it will be executed asoon as the previous task ends.
 
 ## :nut_and_bolt: Configure Teststarter
 
