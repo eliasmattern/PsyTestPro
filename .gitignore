@@ -16,3 +16,4 @@ sdist/
 var/
 wheels/
 Logs/
+exports/
