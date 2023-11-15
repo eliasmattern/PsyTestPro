@@ -12,8 +12,7 @@ import webbrowser
 import subprocess
 from .create_time_picker import create_time_picker
 from .create_date_picker import create_date_picker
-from services import TranslateService, LanguageConfiguration
-from .play_task import play_tasks
+from services import TranslateService, LanguageConfiguration, play_tasks
 from classes import Button
 
 schedule_page = 0
@@ -146,12 +145,13 @@ def create_schedule_display(schedule, participant_info, teststarter, custom_vari
                     create_schedule_display(schedule, participant_info, teststarter, isHab)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
-            if 75 + edit_button_width > mouse[0] > 75 and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
-                pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
-                if click[0] == 1:
-                    play_next_task = True
-            else:
-                pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
+            if next_event:
+                if 75 + edit_button_width > mouse[0] > 75 and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
+                    pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
+                    if click[0] == 1:
+                        play_next_task = True
+                else:
+                    pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
 
             # Draw the text on the button
             small_text = pygame.font.Font(None, 20)
@@ -161,7 +161,8 @@ def create_schedule_display(schedule, participant_info, teststarter, custom_vari
             
             next_surf, next_rect = text_objects(translate_service.get_translation("nextTask"), small_text)
             next_rect.center = ((75 + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
-            screen.blit(next_surf, next_rect)
+            if next_event:
+                screen.blit(next_surf, next_rect)
             # update the display
             pygame.display.flip()
             if play_next_task:
