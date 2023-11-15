@@ -38,6 +38,8 @@ class InputBox:
         self.is_highlighted = False
         self.started_del = False
         self.textPage = 0
+        self.text_memmory = []
+        self.memmory_index = 0
 
     def handle_event(self, event):
         if event.type == MOUSEBUTTONDOWN:
@@ -70,6 +72,8 @@ class InputBox:
             mods = pygame.key.get_mods()
             if self.is_selected:
                 if event.key == K_RETURN and self.allow_new_line:
+                    self.text_memmory.append(self.text)
+                    self.memmory_index = 0
                     self.text += " \\n "
                 elif mods & KMOD_CTRL:  # Check if Ctrl is pressed
                     if event.key == K_v:
@@ -78,12 +82,16 @@ class InputBox:
                             try:
                                 decoded_content = clipboard_content.decode('utf-8')
                                 cleaned_content = decoded_content.replace('\x00', '')
+                                self.text_memmory.append(self.text)
+                                self.memmory_index = 0
                                 self.text += cleaned_content
                             except UnicodeDecodeError:
                                 print("Error: Unable to decode clipboard content.")
                         else:
                             print("Error: Unable to retrieve clipboard content.")
                     elif event.key == K_BACKSPACE:
+                        self.text_memmory.append(self.text)
+                        self.memmory_index = 0
                         text_length = len(self.text)
                         self.text = self.text[text_length-self.offset:text_length]
                     elif event.key == K_a:
@@ -96,11 +104,29 @@ class InputBox:
                             pass
                     elif event.key == K_x:
                         if self.is_highlighted:
+                            self.text_memmory.append(self.text)
+                            self.memmory_index = 0
                             self.is_highlighted = False
                             pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
                             self.text = ""
                         else: 
                             pass
+                    elif event.key == K_z:
+                        if self.is_selected:
+                            if self.memmory_index == 0 and len(self.text_memmory) > 0 and self.text != self.text_memmory[-1:][0]:
+                                self.text_memmory.append(self.text)
+                            memmory_copy = self.text_memmory.copy()
+                            memmory_copy.reverse()
+                            if self.memmory_index + 1 < len(memmory_copy):
+                                self.memmory_index += 1
+                                self.text = memmory_copy[self.memmory_index]
+                    elif event.key == K_y:
+                        if self.is_selected:
+                            if self.memmory_index != 0:
+                                memmory_copy = self.text_memmory.copy()
+                                memmory_copy.reverse()
+                                self.memmory_index -= 1
+                                self.text = memmory_copy[self.memmory_index]
 
                 elif event.key == K_RETURN:
                     pass
@@ -121,6 +147,12 @@ class InputBox:
                     self.delay = datetime.now().timestamp()
                     self.is_highlighted = False
                 elif event.key == K_BACKSPACE:
+                    memmory_copy = self.text_memmory.copy()
+                    if len(memmory_copy) > 0:
+                        memmory_copy.reverse()
+                        if len(memmory_copy[0]) > 1:
+                            self.text_memmory.append(self.text)
+                    self.memmory_index = 0
                     text_length = len(self.text)
                     if self.is_highlighted:
                         self.text = ""
@@ -137,6 +169,12 @@ class InputBox:
                 elif event.key == K_ESCAPE:
                     self.is_highlighted = False
                 elif event.key == K_DELETE:
+                    memmory_copy = self.text_memmory.copy()
+                    if len(memmory_copy) > 0:
+                        memmory_copy.reverse()
+                        if len(memmory_copy[0]) > 1:
+                            self.text_memmory.append(self.text)
+                    self.memmory_index = 0
                     text_length = len(self.text)
                     if self.is_highlighted:
                         self.text = ""
@@ -152,6 +190,8 @@ class InputBox:
                 else:
                     text_length = len(self.text)
                     if event.unicode not in self.not_allowed_characters:
+                        self.text_memmory.append(self.text)
+                        self.memmory_index = 0
                         self.text = self.text[0:text_length-self.offset] + event.unicode + self.text[text_length-self.offset:text_length]
                     self.is_highlighted = False
 
@@ -163,6 +203,8 @@ class InputBox:
             self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
 
     def draw(self, screen):
+        if self.is_selected:
+            print(self.text_memmory)
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
         input_text = self.text
         text_bg_color = self.color
