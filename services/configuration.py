@@ -109,3 +109,7 @@ class TeststarterConfig:
         # Save the updated JSON data back to the file
         with open('json/taskConfig.json', 'w') as file:
             json.dump(json_data, file, indent=4)
+    
+    def load_custom_variables(self):
+        with open('json/customVariables.json', 'r') as file:
+            return json.load(file)

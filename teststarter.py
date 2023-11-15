@@ -12,7 +12,7 @@ import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
 class Teststarter:
-    def __init__(self, id="", experiment = "", time = ""):
+    def __init__(self, id="", experiment = "", time = "", custom_variables = {}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
             pygame.init()
@@ -35,6 +35,7 @@ class Teststarter:
         self.id = id
         self.experiment = experiment
         self.time = time
+        self.custom_variables = custom_variables
         self.experiment_config_display = ExperimentConfigDisplay(self.translateService)
         self.create_input_boxes()
         self.is_running = True
@@ -57,6 +58,7 @@ class Teststarter:
         return re.match(pattern, datetime_str) is not None
 
     def create_input_boxes(self):
+        custom_variables = self.teststarterConfig.load_custom_variables()
         labels = ["participantId", "experiment", "startTime"]
         experiments_string = ""
         for experiment in self.teststarterConfig.experiments:
@@ -65,12 +67,27 @@ class Teststarter:
             experiments_string = experiments_string[:-2]
         information = ["", "(" + experiments_string + ")", ""]
         initial_text = [self.id, self.experiment, self.time]
+        if len(self.custom_variables) == len(custom_variables):
+            for key, value in custom_variables.items():
+                labels.append(value["name"])
+                information.append("")
+            for key, variable in self.custom_variables.items():
+                initial_text.append(variable)
+        else:
+            for key, value in custom_variables.items():
+                labels.append(value["name"])
+                information.append("")
+                initial_text.append("")
         x = self.width // 2
         y = self.height // 2 - 100
         spacing = 60
         for label, text, info in zip(labels, initial_text, information):
-            input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
-            self.input_boxes[label] = input_box
+            if len(self.input_boxes) > 2:
+                input_box = InputBox(x, y, 400, 40, label, None, info, text)
+                self.input_boxes[label] = input_box
+            else:
+                input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
+                self.input_boxes[label] = input_box
             y += spacing
         
         exit_button = Button(x - 75, y + 60, 100, 40, "exit", self.exit, self.translateService)
@@ -105,8 +122,14 @@ class Teststarter:
 
     def handle_events(self):
         def get_input_index(step):
+            custom_variables = self.teststarterConfig.load_custom_variables()
             index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
             key_to_index = {"participantId": 0, "experiment": 1, "startTime": 2}
+            count = 3
+            for key, value in custom_variables.items():
+                index_to_key[count] = value["name"]
+                key_to_index[value["name"]] = count
+                count += 1
             index = 0 
             for key, input_box in self.input_boxes.items():
                 if input_box.is_selected:
@@ -148,6 +171,11 @@ class Teststarter:
             # Define validation checks and corresponding error messages
             index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
 
+            custom_variables = self.teststarterConfig.load_custom_variables()
+            count = 3
+            for key, value in custom_variables.items():
+                index_to_key[count] = value["name"]
+                count += 1
             if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["startTime"].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, "idError"),
@@ -224,7 +252,7 @@ class Teststarter:
     def custom_sort(self, item):
         return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
         
-    def start_experiment(self, start_time, participant_info):
+    def start_experiment(self, start_time, participant_info,custom_variables):
         global schedule
         print(self.teststarterConfig.current_experiment)
         isHab = "_list" in self.teststarterConfig.current_experiment
@@ -255,9 +283,10 @@ class Teststarter:
         edited_schedule = {}
         for key, value in schedule.items():
             edited_schedule.update({key: {"datetime": value, "state": states[key], "type": types[key], "value": values[key]}})
+        
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         print("ee = ", edited_schedule)
-        create_schedule_display(schedule, participant_info, Teststarter, isHab)
+        create_schedule_display(schedule, participant_info, Teststarter, custom_variables, isHab)
         self.input_boxes = {}
 
     def save_details(self):
@@ -268,8 +297,16 @@ class Teststarter:
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, "%H:%M").time())
 
         participant_info={"participant_id": participant_id, "experiment": experiment, "start_time": start_time}
+        
+        cutsom_variables = self.teststarterConfig.load_custom_variables()
+
+        variables = {}
+
+        for key, value in cutsom_variables.items():
+            participant_info[value["name"]] = self.input_boxes[value["name"]].text
+            variables[value["name"]] = self.input_boxes[value["name"]].text
     
         self.teststarterConfig.load_experiment_tasks(experiment)
-        self.start_experiment(start_time, participant_info)
+        self.start_experiment(start_time, participant_info, variables)
 
 Teststarter()

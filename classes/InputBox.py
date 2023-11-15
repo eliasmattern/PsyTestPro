@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from datetime import datetime
 class InputBox:
-    def __init__(self, x, y, width, height, translation_key, translate_service, info="", initial_text="", allow_new_line = False, not_allowed_characters = []):
+    def __init__(self, x, y, width, height, translation_key, translate_service=None, info="", initial_text="", allow_new_line = False, not_allowed_characters = []):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color("gray")
@@ -14,7 +14,10 @@ class InputBox:
         self.font = pygame.font.SysFont("Arial", 24)
         self.translation_key = translation_key
         self.info = info
-        self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
+        if self.translate_service:
+            self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
+        else:
+            self.label = self.font.render(self.translation_key  + " " + self.info, True, self.label_color)
         self.is_selected = False
         self.cursor_visible = False
         self.cursor_timer = 0
@@ -156,7 +159,8 @@ class InputBox:
                 self.cursor_timer = pygame.time.get_ticks() + 500
     
     def update_text(self):
-        self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
+        if self.translate_service:
+            self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)

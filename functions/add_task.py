@@ -3,7 +3,6 @@ import sys
 from pygame.locals import *
 from classes import InputBox, Button, TimeInput
 from services import TeststarterConfig
-from services import TeststarterConfig
 from lib import text_screen
 import subprocess
 
@@ -31,18 +30,25 @@ class AddTask():
         return is_valid
 
     def preview(self, translate_service,command, command_inputs, text_screen_inputs):
+        custom_varibales = TeststarterConfig().load_custom_variables()
         participant_info = {
             "participant_id": "VARIABLE_ID",
             "experiment": "VARIABLE_EXPERMENT",
             "start_time": "VARIABLE_STARTTIME",
             "timestamp": "VARIABLE_TIMESTAMP"
         }
+
+        variables = {}
+
+        for key, value in custom_varibales.items():
+            variables[value["name"]] = "CUSTOM_VARIABLE"
         if command:
             try: 
-                command = command_inputs[0].text.format(id = participant_info["participant_id"], 
-                             experiment = participant_info["experiment"], 
-                             startTime = participant_info["start_time"], 
-                             timestamp = participant_info["timestamp"])
+                command = command_inputs[0].text.format(id = participant_info["participant_id"],
+                             experiment = participant_info["experiment"],
+                             startTime = participant_info["start_time"],
+                             timestamp = participant_info["timestamp"],
+                             **variables)
                 process = subprocess.Popen(command)
                 process.communicate()
                 self.error = ""
@@ -53,15 +59,17 @@ class AddTask():
                 self.is_task_working = False
         else:
             try:
-                title = text_screen_inputs[0].text.format(id = participant_info["participant_id"], 
-                             experiment = participant_info["experiment"], 
-                             startTime = participant_info["start_time"], 
-                             timestamp = participant_info["timestamp"])
+                title = text_screen_inputs[0].text.format(id = participant_info["participant_id"],
+                             experiment = participant_info["experiment"],
+                             startTime = participant_info["start_time"],
+                             timestamp = participant_info["timestamp"],
+                             **variables)
                 
-                description = text_screen_inputs[1].text.format(id = participant_info["participant_id"], 
-                             experiment = participant_info["experiment"], 
-                             startTime = participant_info["start_time"], 
-                             timestamp = participant_info["timestamp"])
+                description = text_screen_inputs[1].text.format(id = participant_info["participant_id"],
+                             experiment = participant_info["experiment"],
+                             startTime = participant_info["start_time"],
+                             timestamp = participant_info["timestamp"],
+                             **variables)
                 
                 text_screen(title, description, translate_service.get_translation("escToReturn"))
                 self.is_task_working = True

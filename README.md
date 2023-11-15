@@ -88,7 +88,7 @@ plays the task and sets it to `done`.
 
 You can always press `Play next task` to start the next task without waiting for the timer to run out.
 
-If a task takes longer than expected and another task should have started already it will be executed asoon as the previous task ends.
+If a task takes longer than expected and another task should have already started, it will be executed as soon as the previous task is finished.
 
 ## :nut_and_bolt: Configure Teststarter
 

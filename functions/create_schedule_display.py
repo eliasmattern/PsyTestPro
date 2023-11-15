@@ -18,7 +18,7 @@ from classes import Button
 
 schedule_page = 0
 
-def create_schedule_display(schedule, participant_info, teststarter, isHab = False):
+def create_schedule_display(schedule, participant_info, teststarter, custom_variables, isHab = False):
     language_config = LanguageConfiguration()
     translate_service = TranslateService(language_config)
 
@@ -94,7 +94,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 # Print the filtered list
                 for item in filtered_dict:
                     upcoming_event = item
-                    play_tasks(participant_info, upcoming_event, schedule, translate_service)
+                    
+                    play_tasks(participant_info, upcoming_event, schedule, translate_service, custom_variables)
                     pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
                 check_for_old_tasks = False
@@ -168,7 +169,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 upcoming_event = next_event[1]
                 beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                 beep_sound.play()
-                play_tasks(participant_info, upcoming_event, schedule, translate_service)
+                play_tasks(participant_info, upcoming_event, schedule, translate_service, custom_variables)
                 pygame.mouse.set_visible(True)
                 schedule[upcoming_event]["state"]= "done"
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
@@ -182,7 +183,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     pythonTime.sleep(1.1)
                     beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                     beep_sound.play()
-                    play_tasks(participant_info, upcoming_event, schedule, translate_service)
+                    play_tasks(participant_info, upcoming_event, schedule, translate_service, custom_variables)
                     pygame.mouse.set_visible(True)
                     schedule[upcoming_event]["state"]= "done"
             elif len(sorted_schedule) > 0:
@@ -232,7 +233,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
         time = str(participant_info["start_time"]).split(" ")[1]
         splittedTime = time.split(":")
         formattedTime = splittedTime[0] + ":" + splittedTime[1]
-        teststarter(participant_info["participant_id"], participant_info["experiment"], formattedTime)
+        teststarter(participant_info["participant_id"], participant_info["experiment"], formattedTime,custom_variables)
     
     def change_language(translateService, language_config, lang):
         translateService.set_language(lang)
