@@ -187,6 +187,7 @@ class CreateExperimentConfig:
                 buttons[1].set_color((100, 100, 100))
 
             for box in input_boxes:
+                box.update_text()
                 box.draw(screen)
 
             for button in buttons:

@@ -15,9 +15,9 @@ class InputBox:
         self.translation_key = translation_key
         self.info = info
         if self.translate_service:
-            self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
+            self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, pygame.Color("black"))
         else:
-            self.label = self.font.render(self.translation_key  + " " + self.info, True, self.label_color)
+            self.label = self.font.render(self.translation_key  + " " + self.info, True, pygame.Color("black"))
         self.is_selected = False
         self.cursor_visible = False
         self.cursor_timer = 0
@@ -113,6 +113,8 @@ class InputBox:
                             pass
                     elif event.key == K_z:
                         if self.is_selected:
+                            self.offset = 0
+                            self.cursor_pos = (0,0)
                             if self.memmory_index == 0 and len(self.text_memmory) > 0 and self.text != self.text_memmory[-1:][0]:
                                 self.text_memmory.append(self.text)
                             memmory_copy = self.text_memmory.copy()
@@ -123,6 +125,8 @@ class InputBox:
                     elif event.key == K_y:
                         if self.is_selected:
                             if self.memmory_index != 0:
+                                self.offset = 0
+                                self.cursor_pos = (0,0)
                                 memmory_copy = self.text_memmory.copy()
                                 memmory_copy.reverse()
                                 self.memmory_index -= 1
@@ -200,11 +204,17 @@ class InputBox:
     
     def update_text(self):
         if self.translate_service:
-            self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, self.label_color)
+            if self.is_selected:
+                self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, (128, 128, 128))
+            else:
+                self.label = self.font.render(self.translate_service.get_translation(self.translation_key)  + " " + self.info, True, pygame.Color("black"))
+        else:
+            if self.is_selected:
+                self.label = self.font.render(self.translation_key  + " " + self.info, True, (128, 128, 128))
+            else:
+                self.label = self.font.render(self.translation_key  + " " + self.info, True, pygame.Color("black"))
 
     def draw(self, screen):
-        if self.is_selected:
-            print(self.text_memmory)
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
         input_text = self.text
         text_bg_color = self.color
@@ -254,7 +264,6 @@ class InputBox:
                     self.delayMultiplicator = 0.1
 
         screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
-        screen.blit(self.label, (self.rect.x - self.label.get_width() - 10, self.rect.y + 5))
         if self.is_selected:
             color = pygame.Color("black") if self.cursor_blink else self.active_color
             pygame.draw.line(screen, color, (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + 5),
@@ -274,4 +283,8 @@ class InputBox:
                 self.cursor_blink = True
             else:
                 self.cursor_blink = False
+        if len(self.text) == 0 and not self.is_selected:
+            screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
+
+        
         

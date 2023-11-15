@@ -340,14 +340,16 @@ class AddTask():
 
 
             for box in input_boxes:
+                box.update_text()
                 box.draw(screen)
             if command:
                 for box in command_inputs:
+                    box.update_text()
                     box.draw(screen)
             if text_screen:
                 for box in text_screen_inputs:
                     box.draw(screen)
-
+                    box.update_text()
             for button in buttons:
                 button.draw(screen)
 
