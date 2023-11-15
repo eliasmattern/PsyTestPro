@@ -65,7 +65,7 @@ class Teststarter:
             experiments_string = experiments_string + experiment + ", "
         if "," in experiments_string:
             experiments_string = experiments_string[:-2]
-        information = ["", "(" + experiments_string + ")", ""]
+        information = ["", "(" + experiments_string + ")", "hh:mm"]
         initial_text = [self.id, self.experiment, self.time]
         if len(self.custom_variables) == len(custom_variables):
             for key, value in custom_variables.items():
