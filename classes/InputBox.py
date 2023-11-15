@@ -196,6 +196,8 @@ class InputBox:
                     if event.unicode not in self.not_allowed_characters:
                         self.text_memmory.append(self.text)
                         self.memmory_index = 0
+                        if self.is_highlighted:
+                            self.text = ""
                         self.text = self.text[0:text_length-self.offset] + event.unicode + self.text[text_length-self.offset:text_length]
                     self.is_highlighted = False
 
@@ -285,6 +287,10 @@ class InputBox:
                 self.cursor_blink = False
         if len(self.text) == 0 and not self.is_selected:
             screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
+        if self.is_selected:
+            info_font = pygame.font.SysFont("Arial", 12)
+            info_label = info_font.render(self.info, True, pygame.Color("gray"))
+            screen.blit(info_label, (self.rect.x + 5, self.rect.y + 40))
 
         
         
