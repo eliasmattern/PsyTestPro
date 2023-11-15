@@ -7,7 +7,7 @@ import sys
 from pygame.locals import *
 from datetime import datetime, timedelta
 from classes import InputBox, Button
-from displays import create_schedule_display, ExperimentConfigDisplay
+from views import create_schedule_display, ExperimentConfigDisplay
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
