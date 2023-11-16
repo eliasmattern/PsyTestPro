@@ -11,21 +11,22 @@ from views import create_schedule_display, ExperimentConfigDisplay
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
+
 class Teststarter:
-    def __init__(self, id="", experiment = "", time = "", custom_variables = {}):
+    def __init__(self, id='', experiment='', time='', custom_variables={}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
             pygame.init()
             self.screen = pygame.display.set_mode((0, 0))
             pygame.display.toggle_fullscreen()
         self.width, self.height = pygame.display.get_surface().get_rect().size
-        pygame.display.set_caption("Teststarter")
+        pygame.display.set_caption('Teststarter')
         pygame.scrap.init()
         self.teststarterConfig = TeststarterConfig()
         self.teststarterConfig.load_experiments()
-        self.lang = "en"
+        self.lang = 'en'
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont("Arial", 24)
+        self.font = pygame.font.SysFont('Arial', 24)
         self.input_boxes = {}
         self.buttons = []
         self.errors = []
@@ -53,33 +54,33 @@ class Teststarter:
 
         pygame.quit()
         sys.exit()
-    
+
     def is_valid_time_format(slef, datetime_str):
         # This pattern strictly matches DD/MM/YYYY HH:MM:SS
-        pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"
+        pattern = r'^(?:[01]\d|2[0-3]):[0-5]\d$'
         return re.match(pattern, datetime_str) is not None
 
     def create_input_boxes(self):
         custom_variables = self.teststarterConfig.load_custom_variables()
-        labels = ["participantId", "experiment", "startTime"]
-        experiments_string = ""
+        labels = ['participantId', 'experiment', 'startTime']
+        experiments_string = ''
         for experiment in self.teststarterConfig.experiments:
-            experiments_string = experiments_string + experiment + ", "
-        if "," in experiments_string:
+            experiments_string = experiments_string + experiment + ', '
+        if ',' in experiments_string:
             experiments_string = experiments_string[:-2]
-        information = ["", "(" + experiments_string + ")", "hh:mm"]
+        information = ['', '(' + experiments_string + ')', 'hh:mm']
         initial_text = [self.id, self.experiment, self.time]
         if len(self.custom_variables) == len(custom_variables):
             for value in custom_variables:
                 labels.append(value)
-                information.append("")
+                information.append('')
             for variable in self.custom_variables:
                 initial_text.append(variable)
         else:
             for value in custom_variables:
                 labels.append(value)
-                information.append("")
-                initial_text.append("")
+                information.append('')
+                initial_text.append('')
         x = self.width // 2
         y = self.height // 2 - 100
         spacing = 60
@@ -91,24 +92,28 @@ class Teststarter:
                 input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
                 self.input_boxes[label] = input_box
             y += spacing
-        
-        exit_button = Button(x - 75, y + 60, 100, 40, "exit", self.exit, self.translateService)
-        submit_button = Button(x + 75, y + 60, 100, 40, "submit", self.save_details, self.translateService)
-        english_button = Button(self.width-250, 100, 100, 40, "english", lambda: self.change_language("en"), self.translateService)
-        german_button = Button(self.width-100, 100, 100, 40, "german", lambda: self.change_language("de"), self.translateService)
-        create_experiment_button = Button(self.width-175, 150, 250, 40, "configureExperiment", lambda: self.experiment_config_display.display(Teststarter), self.translateService)
+
+        exit_button = Button(x - 75, y + 60, 100, 40, 'exit', self.exit, self.translateService)
+        submit_button = Button(x + 75, y + 60, 100, 40, 'submit', self.save_details, self.translateService)
+        english_button = Button(self.width - 250, 100, 100, 40, 'english', lambda: self.change_language('en'),
+                                self.translateService)
+        german_button = Button(self.width - 100, 100, 100, 40, 'german', lambda: self.change_language('de'),
+                               self.translateService)
+        create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureExperiment',
+                                          lambda: self.experiment_config_display.display(Teststarter),
+                                          self.translateService)
 
         self.buttons.append(english_button)
         self.buttons.append(german_button)
         self.buttons.append(exit_button)
         self.buttons.append(submit_button)
         self.buttons.append(create_experiment_button)
-    
+
     def load_config_lang(self):
         self.language_config.read_language_config()
         language = self.language_config.get_language()
         if len(language) > 0:
-            self.translateService.set_language(language) 
+            self.translateService.set_language(language)
             self.lang = language
 
     def change_language(self, lang):
@@ -125,14 +130,14 @@ class Teststarter:
     def handle_events(self):
         def get_input_index(step):
             custom_variables = self.teststarterConfig.load_custom_variables()
-            index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
-            key_to_index = {"participantId": 0, "experiment": 1, "startTime": 2}
+            index_to_key = {0: 'participantId', 1: 'experiment', 2: 'startTime'}
+            key_to_index = {'participantId': 0, 'experiment': 1, 'startTime': 2}
             count = 3
             for value in custom_variables:
                 index_to_key[count] = value
                 key_to_index[value] = count
                 count += 1
-            index = 0 
+            index = 0
             for key, input_box in self.input_boxes.items():
                 if input_box.is_selected:
                     self.input_boxes[key].is_selected = False
@@ -141,10 +146,15 @@ class Teststarter:
             if 0 <= index < len(self.input_boxes):
                 return index_to_key[index]
             elif index < 0:
-                return index_to_key[len(self.input_boxes) -1]
+                return index_to_key[len(self.input_boxes) - 1]
             else:
                 return index_to_key[0]
+
         for event in pygame.event.get():
+            for key, box in self.input_boxes.items():
+                box.handle_event(event)
+            for button in self.buttons:
+                button.handle_event(event)
             if event.type == KEYDOWN:
                 mods = pygame.key.get_mods()
                 if mods != 4160 and event.key == K_TAB:
@@ -154,39 +164,40 @@ class Teststarter:
                     if event.key == K_TAB:
                         index = get_input_index(-1)
                         self.input_boxes[index].is_selected = True
-            for key, box in self.input_boxes.items():
-                box.handle_event(event)
-            for button in self.buttons:
-                button.handle_event(event)
-
+                elif event.key == K_BACKSPACE:
+                    pass
+                else:
+                    if len(self.input_boxes.get('startTime').text) == 2:
+                        self.input_boxes.get('startTime').text += ':'
 
     def clear_screen(self):
         self.screen.fill((0, 0, 0))
 
-    
     def draw(self):
         def validate_inputs(experiments):
-            is_id_valid = len(self.input_boxes["participantId"].text) != 0
-            is_experiment_valid = self.input_boxes["experiment"].text in experiments
-            is_start_time_valid = self.is_valid_time_format(self.input_boxes["startTime"].text)
+            is_id_valid = len(self.input_boxes['participantId'].text) != 0
+            is_experiment_valid = self.input_boxes['experiment'].text in experiments
+            is_start_time_valid = self.is_valid_time_format(self.input_boxes['startTime'].text)
 
             # Define validation checks and corresponding error messages
-            index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
+            index_to_key = {0: 'participantId', 1: 'experiment', 2: 'startTime'}
 
             custom_variables = self.teststarterConfig.load_custom_variables()
             count = 3
             for value in custom_variables:
                 index_to_key[count] = value
                 count += 1
-            if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["startTime"].text:
+            if self.input_boxes['participantId'].text and self.input_boxes['experiment'].text and self.input_boxes[
+                'startTime'].text:
                 validation_checks = [
-                    (lambda text: len(text) != 0, "idError"),
-                    (lambda text: text in experiments, "experimentError"),
-                    (self.is_valid_time_format, "startTimeError")
+                    (lambda text: len(text) != 0, 'idError'),
+                    (lambda text: text in experiments, 'experimentError'),
+                    (self.is_valid_time_format, 'startTimeError')
                 ]
 
                 for validation_check, error_key in validation_checks:
-                    is_valid = validation_check(self.input_boxes[index_to_key[validation_checks.index((validation_check, error_key))]].text)
+                    is_valid = validation_check(
+                        self.input_boxes[index_to_key[validation_checks.index((validation_check, error_key))]].text)
 
                     error_translation = self.translateService.get_translation(error_key)
                     if not is_valid and error_translation not in self.errors:
@@ -198,16 +209,16 @@ class Teststarter:
                 return True
             else:
                 return False
-        
+
         y = self.height // 2 - 200
         x = self.width // 2
 
         font = pygame.font.Font(
-                None, int(64)
-            )  # Create font object for header
+            None, int(64)
+        )  # Create font object for header
         text_surface = font.render(
-            self.translateService.get_translation("teststarter"), True, "gray"
-        )  
+            self.translateService.get_translation('teststarter'), True, 'gray'
+        )
         text_rect = text_surface.get_rect()
         self.screen.blit(text_surface, (x - text_rect.width // 2, y))
 
@@ -220,44 +231,43 @@ class Teststarter:
 
         if is_input_valid:
             self.buttons[3].set_active(True)
-            self.buttons[3].set_color("gray")
+            self.buttons[3].set_color('gray')
         else:
             self.buttons[3].set_active(False)
             self.buttons[3].set_color((100, 100, 100))
-        
-        if self.teststarterConfig.error_msg == "":
+
+        if self.teststarterConfig.error_msg == '':
             for item in self.errors:
-                if self.translateService.get_translation("experimentNotFound") in item:
+                if self.translateService.get_translation('experimentNotFound') in item:
                     self.errors.remove(item)
         else:
             is_in_errors = False
             for item in self.errors:
-                if self.translateService.get_translation("experimentNotFound") in item:
+                if self.translateService.get_translation('experimentNotFound') in item:
                     is_in_errors = True
             if not is_in_errors:
-                self.errors.append(self.translateService.get_translation("experimentNotFound"))
-
+                self.errors.append(self.translateService.get_translation('experimentNotFound'))
 
         if len(self.errors) > 0:
-            font = pygame.font.Font(None, 24) 
+            font = pygame.font.Font(None, 24)
             x = self.width // 2
             y = self.height - font.get_linesize() - font.get_linesize() * len(self.errors)
 
             for error in self.errors:
-                text_surface = font.render(error, True, pygame.Color("red")) 
-                self.screen.blit(text_surface, (x- text_surface.get_rect().width // 2, y)) 
+                text_surface = font.render(error, True, pygame.Color('red'))
+                self.screen.blit(text_surface, (x - text_surface.get_rect().width // 2, y))
                 y += font.get_linesize()
-        
+
     def exit(self):
         self.is_running = False
 
     def custom_sort(self, item):
         return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
-        
-    def start_experiment(self, start_time, participant_info,custom_variables):
+
+    def start_experiment(self, start_time, participant_info, custom_variables):
         global schedule
         print(self.teststarterConfig.current_experiment)
-        isHab = "_list" in self.teststarterConfig.current_experiment
+        isHab = '_list' in self.teststarterConfig.current_experiment
         print(isHab)
         schedule = {}
         current_tasks = self.teststarterConfig.current_tasks
@@ -273,33 +283,35 @@ class Teststarter:
             tasks.append(task)
             times.append(details['time'])
             states[task] = details['state']
-            types[task] = details['type'] if 'type' in details else ""
-            values[task] = details['value'] if 'value' in details else ""
+            types[task] = details['type'] if 'type' in details else ''
+            values[task] = details['value'] if 'value' in details else ''
 
         for i, time_delta in enumerate(times):
             exp_variable = tasks[i]
             if time_delta:
-                activation_time = start_time + timedelta(hours=int(time_delta.split(':')[0]), minutes=int(time_delta.split(':')[1]))
-                #schedule[exp_variable] = str(activation_time)
+                activation_time = start_time + timedelta(hours=int(time_delta.split(':')[0]),
+                                                         minutes=int(time_delta.split(':')[1]))
+                # schedule[exp_variable] = str(activation_time)
                 schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
         edited_schedule = {}
         for key, value in schedule.items():
-            edited_schedule.update({key: {"datetime": value, "state": states[key], "type": types[key], "value": values[key]}})
-        
+            edited_schedule.update(
+                {key: {'datetime': value, 'state': states[key], 'type': types[key], 'value': values[key]}})
+
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
-        print("ee = ", edited_schedule)
+        print('ee = ', edited_schedule)
         create_schedule_display(schedule, participant_info, Teststarter, custom_variables, isHab)
         self.input_boxes = {}
 
     def save_details(self):
-        participant_id = self.input_boxes["participantId"].text
-        experiment = self.input_boxes["experiment"].text
-        start_time = self.input_boxes["startTime"].text
+        participant_id = self.input_boxes['participantId'].text
+        experiment = self.input_boxes['experiment'].text
+        start_time = self.input_boxes['startTime'].text
 
-        start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, "%H:%M").time())
+        start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, '%H:%M').time())
 
-        participant_info={"participant_id": participant_id, "experiment": experiment, "start_time": start_time}
-        
+        participant_info = {'participant_id': participant_id, 'experiment': experiment, 'start_time': start_time}
+
         custom_variables = self.teststarterConfig.load_custom_variables()
 
         variables = {}
@@ -307,8 +319,9 @@ class Teststarter:
         for value in custom_variables:
             participant_info[value] = self.input_boxes[value].text
             variables[value] = self.input_boxes[value].text
-    
+
         self.teststarterConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info, variables)
+
 
 Teststarter()
