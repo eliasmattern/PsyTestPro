@@ -1,18 +1,18 @@
-import pygame
-import sys
-from pygame.locals import *
-from classes import InputBox, Button, TimeInput
-from services import TeststarterConfig
-from lib import text_screen
 import subprocess
+import sys
+import pygame
+from classes import InputBox, Button, TimeInput
+from lib import text_screen
+from services import TeststarterConfig
+
 
 class AddTask():
     def __init__(self) -> None:
         self.adding = True
         self.selected_multiple = False
-        self.error = ""
+        self.error = ''
         self.is_task_working = False
-    
+
     def validate_task_inputs(self, input_boxes, time_input, command_inputs, text_screen_inputs, is_command):
         is_valid = False
 
@@ -21,109 +21,109 @@ class AddTask():
                 is_valid = True
 
             if (
-                not command_inputs
-                and text_screen_inputs[0].text
-                and text_screen_inputs[1].text
+                    not command_inputs
+                    and text_screen_inputs[0].text
+                    and text_screen_inputs[1].text
             ):
                 is_valid = False
 
         return is_valid
 
-    def preview(self, translate_service,command, command_inputs, text_screen_inputs):
+    def preview(self, translate_service, command, command_inputs, text_screen_inputs):
         custom_variables = TeststarterConfig().load_custom_variables()
         participant_info = {
-            "participant_id": "VARIABLE_ID",
-            "experiment": "VARIABLE_EXPERMENT",
-            "start_time": "VARIABLE_STARTTIME",
-            "timestamp": "VARIABLE_TIMESTAMP"
+            'participant_id': 'VARIABLE_ID',
+            'experiment': 'VARIABLE_EXPERMENT',
+            'start_time': 'VARIABLE_STARTTIME',
+            'timestamp': 'VARIABLE_TIMESTAMP'
         }
 
         variables = {}
 
         for value in custom_variables:
-            variables[value] = "CUSTOM_VARIABLE"
+            variables[value] = 'CUSTOM_VARIABLE'
         if command:
-            try: 
-                command = command_inputs[0].text.format(id = participant_info["participant_id"],
-                             experiment = participant_info["experiment"],
-                             startTime = participant_info["start_time"],
-                             timestamp = participant_info["timestamp"],
-                             **variables)
+            try:
+                command = command_inputs[0].text.format(id=participant_info['participant_id'],
+                                                        experiment=participant_info['experiment'],
+                                                        startTime=participant_info['start_time'],
+                                                        timestamp=participant_info['timestamp'],
+                                                        **variables)
                 process = subprocess.Popen(command)
                 process.communicate()
-                self.error = ""
+                self.error = ''
                 self.is_task_working = True
             except Exception as e:
                 print(e)
-                self.error = translate_service.get_translation("commandFailedToExecute")
+                self.error = translate_service.get_translation('commandFailedToExecute')
                 self.is_task_working = False
         else:
             try:
-                title = text_screen_inputs[0].text.format(id = participant_info["participant_id"],
-                             experiment = participant_info["experiment"],
-                             startTime = participant_info["start_time"],
-                             timestamp = participant_info["timestamp"],
-                             **variables)
-                
-                description = text_screen_inputs[1].text.format(id = participant_info["participant_id"],
-                             experiment = participant_info["experiment"],
-                             startTime = participant_info["start_time"],
-                             timestamp = participant_info["timestamp"],
-                             **variables)
-                
-                text_screen(title, description, translate_service.get_translation("escToReturn"))
+                title = text_screen_inputs[0].text.format(id=participant_info['participant_id'],
+                                                          experiment=participant_info['experiment'],
+                                                          startTime=participant_info['start_time'],
+                                                          timestamp=participant_info['timestamp'],
+                                                          **variables)
+
+                description = text_screen_inputs[1].text.format(id=participant_info['participant_id'],
+                                                                experiment=participant_info['experiment'],
+                                                                startTime=participant_info['start_time'],
+                                                                timestamp=participant_info['timestamp'],
+                                                                **variables)
+
+                text_screen(title, description, translate_service.get_translation('escToReturn'))
                 self.is_task_working = True
             except Exception as e:
                 print(e)
                 self.is_task_working = False
 
     def save_task(
-        self,
-        create_continously,
-        variable,
-        name,
-        time,
-        input_boxes,
-        time_input,
-        command_inputs,
-        text_screen_inputs,
-        command=None,
-        title=None,
-        description=None,
-        is_command=False,
-        
+            self,
+            create_continously,
+            variable,
+            name,
+            time,
+            input_boxes,
+            time_input,
+            command_inputs,
+            text_screen_inputs,
+            command=None,
+            title=None,
+            description=None,
+            is_command=False,
+
     ):
-        type = "text" if not is_command else "command"
+        type = 'text' if not is_command else 'command'
         value = (
-            {"title": title, "description": description} if not is_command else command
+            {'title': title, 'description': description} if not is_command else command
         )
         teststarter_Config = TeststarterConfig()
         teststarter_Config.save_task(variable, name, time, type, value)
         if create_continously:
             self.is_task_working = False
-            self.error = ""
+            self.error = ''
             for input_box in input_boxes:
-                input_box.text = ""
+                input_box.text = ''
             for input_box in command_inputs:
-                input_box.text = ""
+                input_box.text = ''
             for input_box in text_screen_inputs:
-                input_box.text = ""
-            time_input.time = ""
+                input_box.text = ''
+            time_input.time = ''
             return
         else:
             self.adding = False
             self.is_task_working = False
-            self.error = ""
+            self.error = ''
 
     def backToAddTask(self):
         self.adding = False
 
     def add(
-        self,
-        teststarter,
-        translate_service,
-        create_continously,
-        experiment,
+            self,
+            teststarter,
+            translate_service,
+            create_continously,
+            experiment,
     ):
         variable = experiment
         # Define colors
@@ -149,7 +149,7 @@ class AddTask():
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Create Task")
+        pygame.display.set_caption('Create Task')
 
         self.selected_multiple = create_continously
 
@@ -157,18 +157,18 @@ class AddTask():
         buttons = []
         text_screen_inputs = []
         command_inputs = []
-        command_labels = ["command"]
-        text_labels = ["title", "description"]
+        command_labels = ['command']
+        text_labels = ['title', 'description']
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
         y = height // 2 - 100
         input_box = InputBox(
-            x, y, 400, 40, "taskName", translate_service, allow_new_line=False
+            x, y, 400, 40, 'taskName', translate_service, allow_new_line=False
         )
         input_boxes.append(input_box)
         y += spacing
-        time_input = TimeInput(x, y, 400, 40, "timeForTask", translate_service)
+        time_input = TimeInput(x, y, 400, 40, 'timeForTask', translate_service)
         y += spacing + spacing
         for label in text_labels:
             input_box = InputBox(
@@ -186,14 +186,14 @@ class AddTask():
         y += spacing
 
         exit_button = Button(
-            x - 150, y + 60, 100, 40, "back", self.backToAddTask, translate_service
+            x - 150, y + 60, 100, 40, 'back', self.backToAddTask, translate_service
         )
         submit_button = Button(
             x + 150,
             y + 60,
             100,
             40,
-            "submit",
+            'submit',
             lambda: self.save_task(
                 self.selected_multiple,
                 variable,
@@ -216,7 +216,7 @@ class AddTask():
             y + 60,
             100,
             40,
-            "preview",
+            'preview',
             lambda: self.preview(translate_service, command, command_inputs, text_screen_inputs),
             translate_service,
         )
@@ -234,7 +234,7 @@ class AddTask():
             None, int(24 * width_scale_factor)
         )  # Create font object for header
         option_text_rendered = question_font.render(
-            translate_service.get_translation("createMultipleTasks"), True, light_grey
+            translate_service.get_translation('createMultipleTasks'), True, light_grey
         )
         option_text_rect = option_text_rendered.get_rect(left=x + 285, top=y + 420)
         tick_box_rect = pygame.Rect(
@@ -248,9 +248,9 @@ class AddTask():
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            translate_service.get_translation("createTask")
-            + " " + translate_service.get_translation("for") + " "
-            + experiment.split("_")[0],
+            translate_service.get_translation('createTask')
+            + ' ' + translate_service.get_translation('for') + ' '
+            + experiment.split('_')[0],
             True,
             light_grey,
         )  # Render the text 'Task' with the font and color light_grey
@@ -260,7 +260,7 @@ class AddTask():
         command = False
 
         text_screen_rendered = question_font.render(
-            translate_service.get_translation("textScreen"), True, light_grey
+            translate_service.get_translation('textScreen'), True, light_grey
         )
         text_screen_rect = text_screen_rendered.get_rect(left=x - 300, top=y + 180)
         text_tick_box_rect = pygame.Rect(
@@ -271,7 +271,7 @@ class AddTask():
         )
 
         command_screen_rendered = question_font.render(
-            translate_service.get_translation("command"), True, light_grey
+            translate_service.get_translation('command'), True, light_grey
         )
         command_screen_rect = command_screen_rendered.get_rect(
             left=x + 100, top=y + 180
@@ -294,21 +294,21 @@ class AddTask():
                             pygame.mouse.get_pos()
                         )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
                         if tick_box_rect.collidepoint(
-                            mouse_pos
+                                mouse_pos
                         ):  # If the cursor position has collided with the start timer button
                             self.selected_multiple = not self.selected_multiple
                         if text_tick_box_rect.collidepoint(
-                            mouse_pos
+                                mouse_pos
                         ):  # If the cursor position has collided with the start timer button
                             text_screen = not text_screen
                             command = not command
-                            self.error = ""
+                            self.error = ''
                         if command_tick_box_rect.collidepoint(
-                            mouse_pos
+                                mouse_pos
                         ):  # If the cursor position has collided with the start timer button
                             text_screen = not text_screen
                             command = not command
-                            self.error = ""
+                            self.error = ''
                 for box in input_boxes:
                     box.handle_event(event)
                 for box in text_screen_inputs:
@@ -323,12 +323,12 @@ class AddTask():
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
             if self.validate_task_inputs(
-                input_boxes, time_input, command_inputs, text_screen_inputs, command
+                    input_boxes, time_input, command_inputs, text_screen_inputs, command
             ):
                 buttons[2].set_active(True)
-                buttons[2].set_color("gray")
+                buttons[2].set_color('gray')
                 buttons[3].set_active(True)
-                buttons[3].set_color("gray")
+                buttons[3].set_color('gray')
             else:
                 buttons[2].set_active(False)
                 buttons[2].set_color((100, 100, 100))
@@ -337,7 +337,6 @@ class AddTask():
             if not self.is_task_working:
                 buttons[2].set_active(False)
                 buttons[2].set_color((100, 100, 100))
-
 
             for box in input_boxes:
                 box.update_text()

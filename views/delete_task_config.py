@@ -1,19 +1,18 @@
-import pygame
 import sys
-from pygame.locals import *
-from classes import Button
-from services import TeststarterConfig
-from services import TeststarterConfig
 import tkinter as tk
 from tkinter import messagebox
+import pygame
+from classes import Button
+from services import TeststarterConfig
+
 
 class DeleteTaskConfig():
     def __init__(self):
-           self.running = True
-           self.page = 0
-           self.removing = True
-           self.experiment_name = ""
-    
+        self.running = True
+        self.page = 0
+        self.removing = True
+        self.experiment_name = ''
+
     def backToConfig(self):
         self.running = False
 
@@ -21,8 +20,8 @@ class DeleteTaskConfig():
         self.removing = False
 
     def split_dict(self, input_list, chunk_size):
-        for i in range(0, len(input_list), chunk_size):  
-            yield input_list[i:i + chunk_size] 
+        for i in range(0, len(input_list), chunk_size):
+            yield input_list[i:i + chunk_size]
 
     def page_update(self, increment, splitted_tasks):
         if increment:
@@ -39,14 +38,14 @@ class DeleteTaskConfig():
 
         # Show a messagebox asking for confirmation
         response = messagebox.askyesno(
-            translate_service.get_translation("delete"),
-            translate_service.get_translation("deleteTaskMsg") + task,
+            translate_service.get_translation('delete'),
+            translate_service.get_translation('deleteTaskMsg') + task,
         )
 
         # If the user clicked 'Yes', then open browser
         if response == True:
             config.delete_task(experiment, task)
-        
+
         root.destroy()
         self.delete_task(translate_service, self.experiment_name)
 
@@ -79,13 +78,13 @@ class DeleteTaskConfig():
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Delete task")
+        pygame.display.set_caption('Delete task')
         full_experiment_name = experiment_name
         tasks = (
             teststarter_config.load_tasks_of_experiment(full_experiment_name)
         )
         chunk_size = 5
-        splitted_tasks = [tasks[i:i+chunk_size] for i in range(0, len(tasks), chunk_size)]
+        splitted_tasks = [tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)]
 
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
@@ -124,7 +123,7 @@ class DeleteTaskConfig():
                 y + spacing + 100,
                 100,
                 40,
-                "back",
+                'back',
                 lambda: self.backToConfig(),
                 translate_service,
             )
@@ -133,7 +132,7 @@ class DeleteTaskConfig():
             if len(splitted_tasks) > 1:
                 page_font = pygame.font.Font(None, int(24 * width_scale_factor))
                 page_text_surface = page_font.render(
-                    str(self.page + 1) + "/" + str(len(splitted_tasks)),
+                    str(self.page + 1) + '/' + str(len(splitted_tasks)),
                     True,
                     light_grey,
                 )
@@ -147,7 +146,7 @@ class DeleteTaskConfig():
                     y + 100 + spacing - 60,
                     25,
                     25,
-                    "<",
+                    '<',
                     lambda: self.page_update(False, splitted_tasks),
                     border_radius=90
                 )
@@ -156,7 +155,7 @@ class DeleteTaskConfig():
                     y + 100 + spacing - 60,
                     25,
                     25,
-                    ">",
+                    '>',
                     lambda: self.page_update(True, splitted_tasks),
                     border_radius=90
                 )
@@ -176,7 +175,8 @@ class DeleteTaskConfig():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation("deleteTaskFrom") + " " + experiment_name.split("_")[0] , True, light_grey
+                translate_service.get_translation('deleteTaskFrom') + ' ' + experiment_name.split('_')[0], True,
+                light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -191,7 +191,6 @@ class DeleteTaskConfig():
                     sys.exit()
                 for button in buttons:
                     button.handle_event(event)
-
 
     def delete_task_config_display(self, translate_service):
         self.page = 0
@@ -221,7 +220,7 @@ class DeleteTaskConfig():
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Delete task")
+        pygame.display.set_caption('Delete task')
 
         experiments_and_day_of_times = (
             teststarter_config.get_experiments()
@@ -249,7 +248,7 @@ class DeleteTaskConfig():
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment.split("_")[0],
+                        experiment.split('_')[0],
                         lambda exp=experiment: self.delete_task(
                             translate_service,
                             exp
@@ -257,11 +256,11 @@ class DeleteTaskConfig():
                     )
                     buttons.append(exp_button)
                     spacing += 60
-            else: 
+            else:
                 font = pygame.font.Font(None, int(24))  # Create font object for header
                 text_surface = font.render(
-                    translate_service.get_translation("noExperiments"), True, "gray"
-                )  
+                    translate_service.get_translation('noExperiments'), True, 'gray'
+                )
                 text_rect = text_surface.get_rect()
                 screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
                 spacing += 60
@@ -273,7 +272,7 @@ class DeleteTaskConfig():
                 y + spacing + 100,
                 100,
                 40,
-                "back",
+                'back',
                 lambda: self.backToConfig(),
                 translate_service,
             )
@@ -282,7 +281,7 @@ class DeleteTaskConfig():
             if len(splitted_experiments) > 1:
                 page_font = pygame.font.Font(None, int(24 * width_scale_factor))
                 page_text_surface = page_font.render(
-                    str(self.page + 1) + "/" + str(len(splitted_experiments)),
+                    str(self.page + 1) + '/' + str(len(splitted_experiments)),
                     True,
                     light_grey,
                 )
@@ -296,7 +295,7 @@ class DeleteTaskConfig():
                     y + 100 + spacing - 60,
                     25,
                     25,
-                    "<",
+                    '<',
                     lambda: self.page_update(False, splitted_experiments),
                     border_radius=90
                 )
@@ -305,7 +304,7 @@ class DeleteTaskConfig():
                     y + 100 + spacing - 60,
                     25,
                     25,
-                    ">",
+                    '>',
                     lambda: self.page_update(True, splitted_experiments),
                     border_radius=90
                 )
@@ -325,7 +324,7 @@ class DeleteTaskConfig():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation("chooseExperiment"), True, light_grey
+                translate_service.get_translation('chooseExperiment'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

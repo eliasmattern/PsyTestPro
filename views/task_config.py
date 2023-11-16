@@ -1,10 +1,9 @@
-import pygame
 import sys
-from pygame.locals import *
+import pygame
 from classes import Button
 from services import TeststarterConfig
-from services import TeststarterConfig
 from .add_task import AddTask
+
 
 class TaskConfig:
     def __init__(self):
@@ -12,15 +11,15 @@ class TaskConfig:
         self.adding = True
         self.selected_multiple = False
         self.page = 0
-        self.error = ""
+        self.error = ''
         self.add_task = AddTask()
 
     def backToConfig(self):
         self.running = False
-    
+
     def split_dict(self, input_list, chunk_size):
-        for i in range(0, len(input_list), chunk_size):  
-            yield input_list[i:i + chunk_size] 
+        for i in range(0, len(input_list), chunk_size):
+            yield input_list[i:i + chunk_size]
 
     def page_update(self, increment, splitted_experiments):
         if increment:
@@ -58,7 +57,7 @@ class TaskConfig:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Add task")
+        pygame.display.set_caption('Add task')
 
         experiments_and_day_of_times = (
             teststarter_config.get_experiments()
@@ -85,7 +84,7 @@ class TaskConfig:
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment.split("_")[0],
+                        experiment.split('_')[0],
                         lambda exp=experiment: self.add_task.add(
                             teststarter,
                             translate_service,
@@ -95,15 +94,14 @@ class TaskConfig:
                     )
                     buttons.append(exp_button)
                     spacing += 60
-            else: 
+            else:
                 font = pygame.font.Font(None, int(24))  # Create font object for header
                 text_surface = font.render(
-                    translate_service.get_translation("noExperiments"), True, "gray"
-                )  
+                    translate_service.get_translation('noExperiments'), True, 'gray'
+                )
                 text_rect = text_surface.get_rect()
                 screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
                 spacing += 60
-
 
             spacing = len(splitted_experiments[0]) * 60 if len(splitted_experiments) > 0 else 60
             spacing += 60
@@ -112,7 +110,7 @@ class TaskConfig:
                 y + spacing + 100,
                 100,
                 40,
-                "back",
+                'back',
                 lambda: self.backToConfig(),
                 translate_service,
             )
@@ -121,7 +119,7 @@ class TaskConfig:
             if len(splitted_experiments) > 1:
                 page_font = pygame.font.Font(None, int(24 * width_scale_factor))
                 page_text_surface = page_font.render(
-                    str(self.page + 1) + "/" + str(len(splitted_experiments)),
+                    str(self.page + 1) + '/' + str(len(splitted_experiments)),
                     True,
                     light_grey,
                 )
@@ -135,7 +133,7 @@ class TaskConfig:
                     y + 100 + spacing - 60,
                     25,
                     25,
-                    "<",
+                    '<',
                     lambda: self.page_update(False, splitted_experiments),
                     border_radius=90
                 )
@@ -144,7 +142,7 @@ class TaskConfig:
                     y + 100 + spacing - 60,
                     25,
                     25,
-                    ">",
+                    '>',
                     lambda: self.page_update(True, splitted_experiments),
                     border_radius=90
                 )
@@ -164,7 +162,7 @@ class TaskConfig:
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation("createTask"), True, light_grey
+                translate_service.get_translation('createTask'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

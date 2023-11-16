@@ -1,40 +1,37 @@
-import pygame
 import sys
-import os
+import pygame
 from pygame.locals import *
-from classes import InputBox, Button, CheckBox
+from classes import InputBox, Button
 from services import TeststarterConfig
-from services import TeststarterConfig
-
 
 
 class CreateVariablesConfig:
     def __init__(self):
         self.running = True
         self.selected_multiple = False
-        self.error = ""
+        self.error = ''
 
     def backToTeststarter(self, teststarter):
         self.selected_multiple = False
-        self.error = ""
+        self.error = ''
         teststarter()
 
     def back(self):
         self.running = False
-        self.error = ""
+        self.error = ''
 
     def save_var(
-        self, teststarter, var_name, input_boxes
+            self, teststarter, var_name, input_boxes
     ):
         teststarter_config = TeststarterConfig()
         result = teststarter_config.save_var(var_name)
 
         if not result:
-            self.error = "dsafj"
+            self.error = 'dsafj'
 
         if self.selected_multiple:
             for input_box in input_boxes:
-                input_box.text = ""
+                input_box.text = ''
             return
         else:
             self.backToTeststarter(teststarter)
@@ -42,22 +39,22 @@ class CreateVariablesConfig:
     def create_input_boxes(self, teststarter, translate_service, selected_multiple):
         input_boxes = []
         buttons = []
-        labels = ["varName"]
+        labels = ['varName']
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
         y = height // 2 - 100
         for label in labels:
-            input_box = InputBox(x, y, 400, 40, label, translate_service, not_allowed_characters=["_"])
+            input_box = InputBox(x, y, 400, 40, label, translate_service, not_allowed_characters=['_'])
             input_boxes.append(input_box)
             y += spacing
-        exit_button = Button(x - 75, y + 60, 100, 40, "back", lambda: self.back(), translate_service)
+        exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), translate_service)
         submit_button = Button(
             x + 75,
             y + 60,
             100,
             40,
-            "submit",
+            'submit',
             lambda: self.save_var(
                 teststarter, input_boxes[0].text, input_boxes
             ),
@@ -72,7 +69,7 @@ class CreateVariablesConfig:
         is_valid = False
 
         if (
-            input_boxes[0].text
+                input_boxes[0].text
         ):
             is_valid = True
 
@@ -105,7 +102,7 @@ class CreateVariablesConfig:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Create Variable")
+        pygame.display.set_caption('Create Variable')
 
         self.selected_multiple = create_continously
 
@@ -133,7 +130,7 @@ class CreateVariablesConfig:
             None, int(24 * width_scale_factor)
         )  # Create font object for header
         option_text_rendered = question_font.render(
-            translate_service.get_translation("createMultipleVars"),
+            translate_service.get_translation('createMultipleVars'),
             True,
             light_grey,
         )
@@ -149,7 +146,7 @@ class CreateVariablesConfig:
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            translate_service.get_translation("createVar"), True, light_grey
+            translate_service.get_translation('createVar'), True, light_grey
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
@@ -168,7 +165,7 @@ class CreateVariablesConfig:
                             pygame.mouse.get_pos()
                         )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
                         if tick_box_rect.collidepoint(
-                            mouse_pos
+                                mouse_pos
                         ):  # If the cursor position has collided with the start timer button
                             self.selected_multiple = not self.selected_multiple
                 for box in input_boxes:
@@ -182,7 +179,7 @@ class CreateVariablesConfig:
 
             if self.validate_inputs(input_boxes):
                 buttons[1].set_active(True)
-                buttons[1].set_color("gray")
+                buttons[1].set_color('gray')
             else:
                 buttons[1].set_active(False)
                 buttons[1].set_color((100, 100, 100))
@@ -193,12 +190,12 @@ class CreateVariablesConfig:
 
             for button in buttons:
                 button.draw(screen)
-            
-            if self.error: 
+
+            if self.error:
                 error_font = pygame.font.Font(None, 18)
                 error_surface = error_font.render(self.error, True, (200, 0, 0))
-                screen.blit(error_surface, (screen_height// 100 * 80, screen_width//2- (error_surface.get_width() // 2)))
-
+                screen.blit(error_surface,
+                            (screen_height // 100 * 80, screen_width // 2 - (error_surface.get_width() // 2)))
 
             # draw the tick box rectangle on the window surface
             pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
@@ -224,4 +221,3 @@ class CreateVariablesConfig:
 
             pygame.display.flip()  # Flip the display to update the screen
         self.running = True
-

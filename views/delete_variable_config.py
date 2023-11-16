@@ -1,11 +1,8 @@
-import pygame
 import sys
-from pygame.locals import *
-from classes import Button
-import json
-from services import TeststarterConfig
 import tkinter as tk
 from tkinter import messagebox
+import pygame
+from classes import Button
 from services import TeststarterConfig
 
 
@@ -23,8 +20,8 @@ class DeleteVariableConfig:
 
         # Show a messagebox asking for confirmation
         response = messagebox.askyesno(
-            translate_service.get_translation("delete"),
-            translate_service.get_translation("deleteVarMsg") + name,
+            translate_service.get_translation('delete'),
+            translate_service.get_translation('deleteVarMsg') + name,
         )
 
         # If the user clicked 'Yes', then open browser
@@ -59,11 +56,10 @@ class DeleteVariableConfig:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Delete Variable")
+        pygame.display.set_caption('Delete Variable')
 
-        
         while self.running:
-            screen.fill(black)  
+            screen.fill(black)
 
             buttons = []
 
@@ -99,12 +95,12 @@ class DeleteVariableConfig:
                 y + spacing + 100,
                 100,
                 40,
-                "back",
+                'back',
                 lambda: self.back(),
                 translate_service,
             )
             buttons.append(back_button)
-            
+
             width, height = (
                 pygame.display.Info().current_w,
                 pygame.display.Info().current_h,
@@ -115,7 +111,7 @@ class DeleteVariableConfig:
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation("deleteVar"), True, light_grey
+                translate_service.get_translation('deleteVar'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -131,7 +127,6 @@ class DeleteVariableConfig:
                 for button in buttons:
                     button.handle_event(event)
         self.running = True
-        if (self.update): 
+        if (self.update):
             self.update = False
             self.delete_experiment_config_display(teststarter, translate_service)
-        

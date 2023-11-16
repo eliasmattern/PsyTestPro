@@ -1,46 +1,43 @@
-import pygame
-import sys
 import os
-from pygame.locals import *
-from classes import Button
-from .task_config import TaskConfig
-from .delete_experiment_config import DeleteExperimentConfig
-from .create_experiment_config import CreateExperimentConfig
-from .delete_task_config import DeleteTaskConfig
-from .create_variable_config import CreateVariablesConfig
-from .delete_variable_config import DeleteVariableConfig
-from services import CSVToJSONConverter, JSONToCSVConverter
+import sys
 from datetime import datetime
-import tkinter as tk
 from tkinter import filedialog
+import pygame
+from classes import Button
+from services import CSVToJSONConverter, JSONToCSVConverter
+from .create_experiment_config import CreateExperimentConfig
+from .create_variable_config import CreateVariablesConfig
+from .delete_experiment_config import DeleteExperimentConfig
+from .delete_task_config import DeleteTaskConfig
+from .delete_variable_config import DeleteVariableConfig
+from .task_config import TaskConfig
+
 
 class ExperimentConfigDisplay():
     def __init__(self, translate_service):
-        self.info_text = ""
+        self.info_text = ''
         self.translate_service = translate_service
 
     def backToTeststarter(self, teststarter):
         teststarter()
 
-
     def back(self, teststarter):
         self.display(teststarter, self.translate_service)
-
 
     def import_config(self):
         try:
             filepath = filedialog.askopenfilename(
-                initialdir="./",  # The initial directory (you can change this)
-                title=self.translate_service.get_translation("selectFile"),
-                filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))  # Add more file types if needed
+                initialdir='./',  # The initial directory (you can change this)
+                title=self.translate_service.get_translation('selectFile'),
+                filetypes=(('CSV files', '*.csv'), ('All files', '*.*'))  # Add more file types if needed
             )
             if filepath:
                 converter = CSVToJSONConverter(filepath, './json/experimentConfig.json', './json/taskConfig.json')
                 converter.convert_to_json()
-                self.info_text = "importSuccessfully"
+                self.info_text = 'importSuccessfully'
         except Exception as e:
-            self.info_text = "importFailed"
-            print(f"An error occurred: {e}")
+            self.info_text = 'importFailed'
+            print(f'An error occurred: {e}')
 
     def export_config(self):
         try:
@@ -51,18 +48,18 @@ class ExperimentConfigDisplay():
             formatted_time = current_time.strftime('%Y-%m-%dT%H%M%S')
 
             # Usage
-            converter = JSONToCSVConverter('./json/experimentConfig.json', './json/taskConfig.json', './exports/Experiments_export_' + formatted_time + '.csv')
+            converter = JSONToCSVConverter('./json/experimentConfig.json', './json/taskConfig.json',
+                                           './exports/Experiments_export_' + formatted_time + '.csv')
             converter.export_to_csv()
-            self.info_text = "exportSuccessfully"
+            self.info_text = 'exportSuccessfully'
 
         except Exception as e:
-            self.info_text = "exportFailed"
-            print(f"An error occurred: {e}")
-        
+            self.info_text = 'exportFailed'
+            print(f'An error occurred: {e}')
 
     def display(self, teststarter, create_continously=False):
         # Open the pygame window at front of all windows open on screen
-        os.environ["SDL_VIDEO_WINDOW_POS"] = "0,0"  # Set window position to top-left corner
+        os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
         # Define colors
         black = (0, 0, 0)
@@ -90,7 +87,7 @@ class ExperimentConfigDisplay():
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption("Configure Experiment")
+        pygame.display.set_caption('Configure Experiment')
 
         create_experiment_config = CreateExperimentConfig()
         delete_experiment_config = DeleteExperimentConfig()
@@ -110,13 +107,12 @@ class ExperimentConfigDisplay():
         x = width // 2
         y = height // 2 - 150
 
-
         create_experiment_button = Button(
             x,
             y + spacing,
             400,
             40,
-            "createExperiment",
+            'createExperiment',
             lambda: create_experiment_config.create_experiment_config_display(
                 teststarter, self.translate_service, create_continously
             ),
@@ -127,7 +123,7 @@ class ExperimentConfigDisplay():
             y + spacing * 2,
             400,
             40,
-            "deleteExperiment",
+            'deleteExperiment',
             lambda: delete_experiment_config.delete_experiment_config_display(
                 teststarter, self.translate_service
             ),
@@ -138,7 +134,7 @@ class ExperimentConfigDisplay():
             y + spacing,
             400,
             40,
-            "createTask",
+            'createTask',
             lambda: task_config.add_task_config_display(teststarter, self.translate_service),
             self.translate_service,
         )
@@ -147,7 +143,7 @@ class ExperimentConfigDisplay():
             y + spacing * 2,
             400,
             40,
-            "deleteTask",
+            'deleteTask',
             lambda: delte_task_config.delete_task_config_display(self.translate_service),
             self.translate_service,
         )
@@ -157,7 +153,7 @@ class ExperimentConfigDisplay():
             y + spacing * 2,
             400,
             40,
-            "exportExperiments",
+            'exportExperiments',
             lambda: self.export_config(),
             self.translate_service,
         )
@@ -167,7 +163,7 @@ class ExperimentConfigDisplay():
             y + spacing,
             400,
             40,
-            "importExperiments",
+            'importExperiments',
             lambda: self.import_config(),
             self.translate_service,
         )
@@ -177,7 +173,7 @@ class ExperimentConfigDisplay():
             y + spacing,
             400,
             40,
-            "createVar",
+            'createVar',
             lambda: create_variables_config.display(teststarter, self.translate_service),
             self.translate_service,
         )
@@ -187,7 +183,7 @@ class ExperimentConfigDisplay():
             y + spacing * 2,
             400,
             40,
-            "deleteVar",
+            'deleteVar',
             lambda: delete_variables_config.display(teststarter, self.translate_service),
             self.translate_service,
         )
@@ -197,7 +193,7 @@ class ExperimentConfigDisplay():
             y + 60 + 3 * spacing,
             100,
             40,
-            "back",
+            'back',
             lambda: self.display(teststarter, create_continously),
             self.translate_service,
         )
@@ -220,19 +216,19 @@ class ExperimentConfigDisplay():
             y + 60,
             400,
             40,
-            "configureExperiment",
-            lambda: self.show_setting_buttons(screen, experiment_buttons, "configureExperiment"),
+            'configureExperiment',
+            lambda: self.show_setting_buttons(screen, experiment_buttons, 'configureExperiment'),
             self.translate_service,
         )
         y += spacing
-        
+
         task_config_button = Button(
             x,
             y + 60,
             400,
             40,
-            "configureTasks",
-            lambda: self.show_setting_buttons(screen, task_buttons, "configureTasks"),
+            'configureTasks',
+            lambda: self.show_setting_buttons(screen, task_buttons, 'configureTasks'),
             self.translate_service,
         )
         y += spacing
@@ -241,8 +237,8 @@ class ExperimentConfigDisplay():
             y + 60,
             400,
             40,
-            "configureVariable",
-            lambda: self.show_setting_buttons(screen, var_buttons, "configureVariable"),
+            'configureVariable',
+            lambda: self.show_setting_buttons(screen, var_buttons, 'configureVariable'),
             self.translate_service,
         )
         y += spacing
@@ -251,18 +247,18 @@ class ExperimentConfigDisplay():
             y + 60,
             400,
             40,
-            "importExport",
-            lambda: self.show_setting_buttons(screen, import_export_buttons, "importExport"),
+            'importExport',
+            lambda: self.show_setting_buttons(screen, import_export_buttons, 'importExport'),
             self.translate_service,
         )
-       
+
         y += spacing
         back_button = Button(
             x,
             y + 60,
             100,
             40,
-            "back",
+            'back',
             lambda: self.backToTeststarter(teststarter),
             self.translate_service,
         )
@@ -271,7 +267,6 @@ class ExperimentConfigDisplay():
         buttons.append(import_export_config_button)
         buttons.append(task_config_button)
         buttons.append(back_button)
-
 
         while True:
             for event in pygame.event.get():
@@ -289,7 +284,7 @@ class ExperimentConfigDisplay():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                self.translate_service.get_translation("configureExperiment"), True, light_grey
+                self.translate_service.get_translation('configureExperiment'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, height // 2 - 150))
