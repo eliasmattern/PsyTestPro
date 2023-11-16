@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 from tkinter import filedialog
 import pygame
-from classes import Button
+from components import Button
 from services import CSVToJSONConverter, JSONToCSVConverter
 from .experiment_create_view import CreateExperimentView
 from .variable_create_view import CreateVariablesView

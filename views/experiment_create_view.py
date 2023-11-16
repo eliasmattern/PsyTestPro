@@ -2,7 +2,7 @@ import sys
 
 import pygame
 from pygame.locals import *
-from classes import InputBox, Button, CheckBox
+from components import InputBox, Button, CheckBox
 from services import TeststarterConfig
 
 

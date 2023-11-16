@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame.locals import *
-from classes import InputBox, Button
+from components import InputBox, Button
 from services import TeststarterConfig
 
 

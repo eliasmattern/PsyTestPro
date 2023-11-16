@@ -8,7 +8,7 @@ import webbrowser
 from datetime import datetime, timedelta
 from tkinter import messagebox
 import pygame
-from classes import Button
+from components import Button
 from lib import text_screen
 from services import TranslateService, LanguageConfiguration, play_tasks
 from .create_date_picker import create_date_picker

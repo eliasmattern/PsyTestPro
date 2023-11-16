@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import pygame
-from classes import InputBox, Button, TimeInput
+from components import InputBox, Button, TimeInput
 from lib import text_screen
 from services import TeststarterConfig
 

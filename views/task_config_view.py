@@ -1,6 +1,6 @@
 import sys
 import pygame
-from classes import Button
+from components import Button
 from services import TeststarterConfig
 from .task_create_view import AddTaskView
 

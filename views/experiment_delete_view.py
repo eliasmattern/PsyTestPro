@@ -3,7 +3,7 @@ import sys
 import tkinter as tk
 from tkinter import messagebox
 import pygame
-from classes import Button
+from components import Button
 from services import TeststarterConfig
 
 
