@@ -84,7 +84,10 @@ class InputBox:
                                 cleaned_content = decoded_content.replace('\x00', '')
                                 self.text_memmory.append(self.text)
                                 self.memmory_index = 0
+                                if self.is_highlighted:
+                                    self.text = ""
                                 self.text += cleaned_content
+                                self.is_highlighted = False
                             except UnicodeDecodeError:
                                 print("Error: Unable to decode clipboard content.")
                         else:
