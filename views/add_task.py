@@ -30,7 +30,7 @@ class AddTask():
         return is_valid
 
     def preview(self, translate_service,command, command_inputs, text_screen_inputs):
-        custom_varibales = TeststarterConfig().load_custom_variables()
+        custom_variables = TeststarterConfig().load_custom_variables()
         participant_info = {
             "participant_id": "VARIABLE_ID",
             "experiment": "VARIABLE_EXPERMENT",
@@ -40,8 +40,8 @@ class AddTask():
 
         variables = {}
 
-        for key, value in custom_varibales.items():
-            variables[value["name"]] = "CUSTOM_VARIABLE"
+        for value in custom_variables:
+            variables[value] = "CUSTOM_VARIABLE"
         if command:
             try: 
                 command = command_inputs[0].text.format(id = participant_info["participant_id"],

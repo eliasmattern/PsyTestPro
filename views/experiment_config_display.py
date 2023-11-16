@@ -7,6 +7,8 @@ from .task_config import TaskConfig
 from .delete_experiment_config import DeleteExperimentConfig
 from .create_experiment_config import CreateExperimentConfig
 from .delete_task_config import DeleteTaskConfig
+from .create_variable_config import CreateVariablesConfig
+from .delete_variable_config import DeleteVariableConfig
 from services import CSVToJSONConverter, JSONToCSVConverter
 from datetime import datetime
 import tkinter as tk
@@ -94,11 +96,14 @@ class ExperimentConfigDisplay():
         delete_experiment_config = DeleteExperimentConfig()
         task_config = TaskConfig()
         delte_task_config = DeleteTaskConfig()
+        create_variables_config = CreateVariablesConfig()
+        delete_variables_config = DeleteVariableConfig()
 
         buttons = []
         experiment_buttons = []
         task_buttons = []
         import_export_buttons = []
+        var_buttons = []
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
 
@@ -166,6 +171,27 @@ class ExperimentConfigDisplay():
             lambda: self.import_config(),
             self.translate_service,
         )
+
+        create_var_button = Button(
+            x,
+            y + spacing,
+            400,
+            40,
+            "createVar",
+            lambda: create_variables_config.display(teststarter, self.translate_service),
+            self.translate_service,
+        )
+
+        delete_var_button = Button(
+            x,
+            y + spacing * 2,
+            400,
+            40,
+            "deleteVar",
+            lambda: delete_variables_config.display(teststarter, self.translate_service),
+            self.translate_service,
+        )
+
         back_to_config_button = Button(
             x,
             y + 60 + 3 * spacing,
@@ -185,7 +211,9 @@ class ExperimentConfigDisplay():
         task_buttons.append(create_task_button)
         task_buttons.append(delete_task_button)
         task_buttons.append(back_to_config_button)
-
+        var_buttons.append(create_var_button)
+        var_buttons.append(delete_var_button)
+        var_buttons.append(back_to_config_button)
 
         experiment_config_button = Button(
             x,
@@ -205,6 +233,16 @@ class ExperimentConfigDisplay():
             40,
             "configureTasks",
             lambda: self.show_setting_buttons(screen, task_buttons, "configureTasks"),
+            self.translate_service,
+        )
+        y += spacing
+        variable_config_button = Button(
+            x,
+            y + 60,
+            400,
+            40,
+            "configureVariable",
+            lambda: self.show_setting_buttons(screen, var_buttons, "configureVariable"),
             self.translate_service,
         )
         y += spacing
@@ -229,6 +267,7 @@ class ExperimentConfigDisplay():
             self.translate_service,
         )
         buttons.append(experiment_config_button)
+        buttons.append(variable_config_button)
         buttons.append(import_export_config_button)
         buttons.append(task_config_button)
         buttons.append(back_button)

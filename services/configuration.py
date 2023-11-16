@@ -113,3 +113,22 @@ class TeststarterConfig:
     def load_custom_variables(self):
         with open('json/customVariables.json', 'r') as file:
             return json.load(file)
+        
+    def save_var(self, name):
+        with open('json/customVariables.json', 'r') as file:
+            data = json.load(file)
+        if len(data) >= 5:
+            return False
+        else:
+            data.append(name)
+            with open('json/customVariables.json', 'w') as file:
+                json.dump(data, file)
+            return True
+        
+    def delete_var(self, name):
+        with open('json/customVariables.json', 'r') as file:
+            data = json.load(file)
+        data.remove(name)
+        with open('json/customVariables.json', 'w') as file:
+            json.dump(data, file)
+        

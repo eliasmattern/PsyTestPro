@@ -142,7 +142,7 @@ def create_schedule_display(schedule, participant_info, teststarter, custom_vari
             if edit_button_x + edit_button_width > mouse[0] > edit_button_x and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
                 if click[0] == 1:
-                    create_schedule_display(schedule, participant_info, teststarter, isHab)  # Call create_schedule_display() when the button is clicked
+                    create_schedule_display(schedule, participant_info, teststarter, custom_variables, isHab)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
             if next_event:

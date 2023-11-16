@@ -35,7 +35,9 @@ class Teststarter:
         self.id = id
         self.experiment = experiment
         self.time = time
-        self.custom_variables = custom_variables
+        self.custom_variables = []
+        for key, value in custom_variables.items():
+            self.custom_variables.append(value)
         self.experiment_config_display = ExperimentConfigDisplay(self.translateService)
         self.create_input_boxes()
         self.is_running = True
@@ -68,14 +70,14 @@ class Teststarter:
         information = ["", "(" + experiments_string + ")", "hh:mm"]
         initial_text = [self.id, self.experiment, self.time]
         if len(self.custom_variables) == len(custom_variables):
-            for key, value in custom_variables.items():
-                labels.append(value["name"])
+            for value in custom_variables:
+                labels.append(value)
                 information.append("")
-            for key, variable in self.custom_variables.items():
+            for variable in self.custom_variables:
                 initial_text.append(variable)
         else:
-            for key, value in custom_variables.items():
-                labels.append(value["name"])
+            for value in custom_variables:
+                labels.append(value)
                 information.append("")
                 initial_text.append("")
         x = self.width // 2
@@ -126,9 +128,9 @@ class Teststarter:
             index_to_key = {0: "participantId", 1: "experiment", 2: "startTime"}
             key_to_index = {"participantId": 0, "experiment": 1, "startTime": 2}
             count = 3
-            for key, value in custom_variables.items():
-                index_to_key[count] = value["name"]
-                key_to_index[value["name"]] = count
+            for value in custom_variables:
+                index_to_key[count] = value
+                key_to_index[value] = count
                 count += 1
             index = 0 
             for key, input_box in self.input_boxes.items():
@@ -173,8 +175,8 @@ class Teststarter:
 
             custom_variables = self.teststarterConfig.load_custom_variables()
             count = 3
-            for key, value in custom_variables.items():
-                index_to_key[count] = value["name"]
+            for value in custom_variables:
+                index_to_key[count] = value
                 count += 1
             if self.input_boxes["participantId"].text and self.input_boxes["experiment"].text and self.input_boxes["startTime"].text:
                 validation_checks = [
@@ -298,13 +300,13 @@ class Teststarter:
 
         participant_info={"participant_id": participant_id, "experiment": experiment, "start_time": start_time}
         
-        cutsom_variables = self.teststarterConfig.load_custom_variables()
+        custom_variables = self.teststarterConfig.load_custom_variables()
 
         variables = {}
 
-        for key, value in cutsom_variables.items():
-            participant_info[value["name"]] = self.input_boxes[value["name"]].text
-            variables[value["name"]] = self.input_boxes[value["name"]].text
+        for value in custom_variables:
+            participant_info[value] = self.input_boxes[value].text
+            variables[value] = self.input_boxes[value].text
     
         self.teststarterConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info, variables)
