@@ -7,7 +7,7 @@ import sys
 from pygame.locals import *
 from datetime import datetime, timedelta
 from classes import InputBox, Button
-from views import CreateScheduleDisplay, ExperimentConfigDisplay
+from views import CreateScheduleDisplay, ExperimentConfig
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
@@ -39,7 +39,7 @@ class Teststarter:
         self.custom_variables = []
         for key, value in custom_variables.items():
             self.custom_variables.append(value)
-        self.experiment_config_display = ExperimentConfigDisplay(self.translateService)
+        self.experiment_config_display = ExperimentConfig(self.translateService)
         self.create_input_boxes()
         self.is_running = True
         self.start_time = None

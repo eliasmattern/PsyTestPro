@@ -1,31 +1,35 @@
 import sys
-
 import pygame
 from pygame.locals import *
-from classes import InputBox, Button, CheckBox
+from classes import InputBox, Button
 from services import TeststarterConfig
 
 
-class CreateExperimentConfig:
+class CreateVariablesView:
     def __init__(self):
         self.running = True
         self.selected_multiple = False
+        self.error = ''
 
     def backToTeststarter(self, teststarter):
         self.selected_multiple = False
+        self.error = ''
         teststarter()
 
     def back(self):
         self.running = False
+        self.error = ''
 
-    def save_experiment(
-            self, teststarter, experiment_name, input_boxes, check_box
+    def save_var(
+            self, teststarter, var_name, input_boxes
     ):
         teststarter_config = TeststarterConfig()
-        teststarter_config.save_experiment(experiment_name, check_box.active)
+        result = teststarter_config.save_var(var_name)
+
+        if not result:
+            self.error = 'dsafj'
 
         if self.selected_multiple:
-            check_box.active = True
             for input_box in input_boxes:
                 input_box.text = ''
             return
@@ -35,7 +39,7 @@ class CreateExperimentConfig:
     def create_input_boxes(self, teststarter, translate_service, selected_multiple):
         input_boxes = []
         buttons = []
-        labels = ['experimentName']
+        labels = ['varName']
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
@@ -44,7 +48,6 @@ class CreateExperimentConfig:
             input_box = InputBox(x, y, 400, 40, label, translate_service, not_allowed_characters=['_'])
             input_boxes.append(input_box)
             y += spacing
-        check_box = CheckBox('createWithSchedule', x, y, active=True, translate_service=translate_service, font_size=24)
         exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), translate_service)
         submit_button = Button(
             x + 75,
@@ -52,15 +55,15 @@ class CreateExperimentConfig:
             100,
             40,
             'submit',
-            lambda: self.save_experiment(
-                teststarter, input_boxes[0].text, input_boxes, check_box
+            lambda: self.save_var(
+                teststarter, input_boxes[0].text, input_boxes
             ),
             translate_service,
         )
 
         buttons.append(exit_button)
         buttons.append(submit_button)
-        return input_boxes, buttons, check_box
+        return input_boxes, buttons
 
     def validate_inputs(self, input_boxes):
         is_valid = False
@@ -75,9 +78,7 @@ class CreateExperimentConfig:
         else:
             return False
 
-    def create_experiment_config_display(
-            self, teststarter, translate_service, create_continously=False
-    ):
+    def display(self, teststarter, translate_service, create_continously=False):
         # Define colors
         black = (0, 0, 0)
         light_grey = (192, 192, 192)
@@ -101,11 +102,11 @@ class CreateExperimentConfig:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption('Create Experiment')
+        pygame.display.set_caption('Create Variable')
 
         self.selected_multiple = create_continously
 
-        input_boxes, buttons, check_box = self.create_input_boxes(
+        input_boxes, buttons = self.create_input_boxes(
             teststarter, translate_service, self.selected_multiple
         )
 
@@ -129,7 +130,7 @@ class CreateExperimentConfig:
             None, int(24 * width_scale_factor)
         )  # Create font object for header
         option_text_rendered = question_font.render(
-            translate_service.get_translation('createMultipleExperiments'),
+            translate_service.get_translation('createMultipleVars'),
             True,
             light_grey,
         )
@@ -145,7 +146,7 @@ class CreateExperimentConfig:
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            translate_service.get_translation('createExperiment'), True, light_grey
+            translate_service.get_translation('createVar'), True, light_grey
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
@@ -171,7 +172,6 @@ class CreateExperimentConfig:
                     box.handle_event(event)
                 for button in buttons:
                     button.handle_event(event)
-                check_box.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
             screen.blit(option_text_rendered, option_text_rect)
@@ -191,7 +191,11 @@ class CreateExperimentConfig:
             for button in buttons:
                 button.draw(screen)
 
-            check_box.draw(screen)
+            if self.error:
+                error_font = pygame.font.Font(None, 18)
+                error_surface = error_font.render(self.error, True, (200, 0, 0))
+                screen.blit(error_surface,
+                            (screen_height // 100 * 80, screen_width // 2 - (error_surface.get_width() // 2)))
 
             # draw the tick box rectangle on the window surface
             pygame.draw.rect(screen, light_grey, tick_box_rect, 2)

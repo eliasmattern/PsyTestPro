@@ -6,7 +6,7 @@ from lib import text_screen
 from services import TeststarterConfig
 
 
-class AddTask():
+class AddTaskView():
     def __init__(self) -> None:
         self.adding = True
         self.selected_multiple = False

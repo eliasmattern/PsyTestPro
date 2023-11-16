@@ -6,7 +6,7 @@ from classes import Button
 from services import TeststarterConfig
 
 
-class DeleteTaskConfig():
+class DeleteTaskView():
     def __init__(self):
         self.running = True
         self.page = 0

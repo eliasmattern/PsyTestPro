@@ -5,15 +5,15 @@ from tkinter import filedialog
 import pygame
 from classes import Button
 from services import CSVToJSONConverter, JSONToCSVConverter
-from .create_experiment_config import CreateExperimentConfig
-from .create_variable_config import CreateVariablesConfig
-from .delete_experiment_config import DeleteExperimentConfig
-from .delete_task_config import DeleteTaskConfig
-from .delete_variable_config import DeleteVariableConfig
-from .task_config import TaskConfig
+from .experiment_create_view import CreateExperimentView
+from .variable_create_view import CreateVariablesView
+from .experiment_delete_view import DeleteExperimentView
+from .task_delete_view import DeleteTaskView
+from .variable_delete_view import DeleteVariableView
+from .task_config_view import TaskConfig
 
 
-class ExperimentConfigDisplay():
+class ExperimentConfig():
     def __init__(self, translate_service):
         self.info_text = ''
         self.translate_service = translate_service
@@ -89,12 +89,12 @@ class ExperimentConfigDisplay():
         # Setting the window caption
         pygame.display.set_caption('Configure Experiment')
 
-        create_experiment_config = CreateExperimentConfig()
-        delete_experiment_config = DeleteExperimentConfig()
+        create_experiment_config = CreateExperimentView()
+        delete_experiment_config = DeleteExperimentView()
         task_config = TaskConfig()
-        delte_task_config = DeleteTaskConfig()
-        create_variables_config = CreateVariablesConfig()
-        delete_variables_config = DeleteVariableConfig()
+        delte_task_config = DeleteTaskView()
+        create_variables_config = CreateVariablesView()
+        delete_variables_config = DeleteVariableView()
 
         buttons = []
         experiment_buttons = []

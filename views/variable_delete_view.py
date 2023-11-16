@@ -6,7 +6,7 @@ from classes import Button
 from services import TeststarterConfig
 
 
-class DeleteVariableConfig:
+class DeleteVariableView:
     def __init__(self):
         self.running = True
         self.update = False

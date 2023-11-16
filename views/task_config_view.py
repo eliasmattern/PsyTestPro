@@ -1,61 +1,25 @@
-import json
 import sys
-import tkinter as tk
-from tkinter import messagebox
 import pygame
 from classes import Button
 from services import TeststarterConfig
+from .task_create_view import AddTaskView
 
 
-class DeleteExperimentConfig:
+class TaskConfig:
     def __init__(self):
-        self.page = 0
         self.running = True
-        self.update = False
+        self.adding = True
+        self.selected_multiple = False
+        self.page = 0
+        self.error = ''
+        self.add_task = AddTaskView()
 
-    def back(self):
+    def backToConfig(self):
         self.running = False
 
-    def delete_experiment(self, teststarter, translate_service, experiment_name):
-        root = tk.Tk()
-        root.withdraw()
-
-        # Show a messagebox asking for confirmation
-        response = messagebox.askyesno(
-            translate_service.get_translation('delete'),
-            translate_service.get_translation('deleteExperimentMsg') + experiment_name,
-        )
-
-        # If the user clicked 'Yes', then open browser
-        if response == True:
-            # Load the original JSON from the file
-            with open('json/taskConfig.json', 'r') as file:
-                original_tasks = json.load(file)
-
-            exp_keys = [key for key in original_tasks.keys() if experiment_name in key]
-
-            del original_tasks[exp_keys[0]]
-            with open('json/experimentConfig.json', 'r') as file:
-                original_experiments = json.load(file)
-
-            # Add a new value to the array
-
-            original_experiments.remove(experiment_name)
-
-            # Save the updated array back to the file
-            with open('json/experimentConfig.json', 'w') as file:
-                json.dump(original_experiments, file)
-
-            # Save the updated JSON back to the file
-            with open('json/taskConfig.json', 'w') as file:
-                json.dump(original_tasks, file, indent=4)
-            # Destroy the root window
-            root.destroy()
-            self.update = True
-            self.running = False
-            return
-        else:
-            root.destroy()
+    def split_dict(self, input_list, chunk_size):
+        for i in range(0, len(input_list), chunk_size):
+            yield input_list[i:i + chunk_size]
 
     def page_update(self, increment, splitted_experiments):
         if increment:
@@ -65,9 +29,11 @@ class DeleteExperimentConfig:
                 (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
             )
 
-    def delete_experiment_config_display(self, teststarter, translate_service):
-        teststarter_config = TeststarterConfig()
+    def add_task_config_display(self, teststarter, translate_service):
+        self.page = 0
+        self.running = True
 
+        teststarter_config = TeststarterConfig()
         # Define colors
         black = (0, 0, 0)
         light_grey = (192, 192, 192)
@@ -91,16 +57,12 @@ class DeleteExperimentConfig:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption('Delete Experiment')
+        pygame.display.set_caption('Add task')
 
-        teststarter_config.load_experiments()
-        experiments = teststarter_config.experiments
-
-        splitted_experiments = [
-            experiments[i: i + 5] for i in range(0, len(experiments), 5)
-        ]
-
-        self.page = 0
+        experiments_and_day_of_times = (
+            teststarter_config.get_experiments()
+        )
+        splitted_experiments = list(self.split_dict(experiments_and_day_of_times, 5))
 
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
@@ -115,7 +77,6 @@ class DeleteExperimentConfig:
 
             x = width // 2
             y = height // 2 - 150
-
             if len(splitted_experiments) > 0:
                 for experiment in splitted_experiments[self.page]:
                     exp_button = Button(
@@ -123,15 +84,26 @@ class DeleteExperimentConfig:
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment,
-                        lambda exp=experiment: self.delete_experiment(
-                            teststarter, translate_service, exp
+                        experiment.split('_')[0],
+                        lambda exp=experiment: self.add_task.add(
+                            teststarter,
+                            translate_service,
+                            False,
+                            exp
                         ),
                     )
                     buttons.append(exp_button)
                     spacing += 60
+            else:
+                font = pygame.font.Font(None, int(24))  # Create font object for header
+                text_surface = font.render(
+                    translate_service.get_translation('noExperiments'), True, 'gray'
+                )
+                text_rect = text_surface.get_rect()
+                screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
+                spacing += 60
 
-            spacing = 5 * 60
+            spacing = len(splitted_experiments[0]) * 60 if len(splitted_experiments) > 0 else 60
             spacing += 60
             back_button = Button(
                 x,
@@ -139,7 +111,7 @@ class DeleteExperimentConfig:
                 100,
                 40,
                 'back',
-                lambda: self.back(),
+                lambda: self.backToConfig(),
                 translate_service,
             )
             buttons.append(back_button)
@@ -190,7 +162,7 @@ class DeleteExperimentConfig:
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation('deleteExperiment'), True, light_grey
+                translate_service.get_translation('createTask'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -205,7 +177,3 @@ class DeleteExperimentConfig:
                     sys.exit()
                 for button in buttons:
                     button.handle_event(event)
-        self.running = True
-        if (self.update):
-            self.update = False
-            self.delete_experiment_config_display(teststarter, translate_service)
