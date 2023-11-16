@@ -376,8 +376,8 @@ def create_schedule_display(schedule, participant_info, teststarter, custom_vari
     buttons.append(english_button)
     buttons.append(german_button)
 
-    left_button = Button(column_start_x + 1.5 * column_width , 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, "<", lambda: page_update(splitted_schedule, False))
-    right_button = Button(column_start_x + 2.5 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, ">", lambda: page_update(splitted_schedule, True))
+    left_button = Button(column_start_x + 1.5 * column_width , 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, "<", lambda: page_update(splitted_schedule, False), border_radius=90)
+    right_button = Button(column_start_x + 2.5 * column_width, 760 * height_scale_factor, 40 * width_scale_factor, 40 * height_scale_factor, ">", lambda: page_update(splitted_schedule, True), border_radius=90)
 
     page_butons.append(left_button)
     page_butons.append(right_button)

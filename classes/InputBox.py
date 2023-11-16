@@ -217,7 +217,7 @@ class InputBox:
                 self.label = self.font.render(self.translation_key  + " " + self.info, True, self.label_color)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect)
+        pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
         input_text = self.text
         text_bg_color = self.color
         if self.is_selected:
@@ -279,7 +279,7 @@ class InputBox:
                                  (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + 5),
                                  (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0], self.rect.y + self.rect.height - 5))
         self.imagePos = pygame.Rect(self.posX + (self.rect.width// 2) // 100 * 80, self.posY, self.image.get_rect().width, self.image.get_rect().height)
-        screen.blit(self.image, (self.posX + (self.rect.width// 2) // 100 * 80, self.posY ))
+        screen.blit(self.image, (self.posX + (self.rect.width// 2) // 100 * 80, self.posY + 5 ))
         if self.is_selected:
             if ((pygame.time.get_ticks()// 500) % 2) == 0 or self.started_moving_r or self.started_moving_l:
                 self.cursor_blink = True

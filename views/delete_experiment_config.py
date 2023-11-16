@@ -165,6 +165,7 @@ class DeleteExperimentConfig:
                     25,
                     "<",
                     lambda: self.page_update(False, splitted_experiments),
+                    border_radius=90
                 )
                 next_page_back_button = Button(
                     x + 40,
@@ -173,6 +174,7 @@ class DeleteExperimentConfig:
                     25,
                     ">",
                     lambda: self.page_update(True, splitted_experiments),
+                    border_radius=90
                 )
                 buttons.append(previous_page_button)
                 buttons.append(next_page_back_button)

@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 class Button:
-    def __init__(self, x, y, width, height, translation_key, action, translate_service = None, color = "gray"):
+    def __init__(self, x, y, width, height, translation_key, action, translate_service = None, color = "gray", border_radius = 8):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color(color)
@@ -12,6 +12,7 @@ class Button:
                                                               True, pygame.Color("black"))
         self.action = action
         self.is_active = True
+        self.border_radius = border_radius
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
@@ -27,7 +28,7 @@ class Button:
                                                              True, pygame.Color("black"))
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
+        pygame.draw.rect(screen, self.color, self.rect, border_radius = self.border_radius)
         label_width, label_height = self.label.get_size()
         label_x = self.rect.x + (self.rect.width - label_width) // 2
         label_y = self.rect.y + (self.rect.height - label_height) // 2
