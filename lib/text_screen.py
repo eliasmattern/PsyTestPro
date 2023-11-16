@@ -42,7 +42,7 @@ def text_screen(title, description, info):
     text_y = (screen_height // 3) - 50
 
     # Render and position the text
-    title_lines = title.split("\n")
+    title_lines = title.split('\n')
     for line in title_lines:
         title_surface = title_font.render(line, True, font_color)
         title_rect = title_surface.get_rect(center=(text_x, text_y))
@@ -51,7 +51,7 @@ def text_screen(title, description, info):
         text_y += title_font.get_linesize()
     text_y = title_rect.bottom + title_font.get_linesize() * 2
 
-    description_lines = description.split("\n")
+    description_lines = description.split('\n')
     for line in description_lines:
         description_surface = font.render(line, True, font_color)
         description_rect = description_surface.get_rect(center=(text_x, text_y))
