@@ -127,6 +127,3 @@ class DeleteVariableView:
                 for button in buttons:
                     button.handle_event(event)
         self.running = True
-        if (self.update):
-            self.update = False
-            self.delete_experiment_config_display(teststarter, translate_service)
