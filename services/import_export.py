@@ -1,6 +1,7 @@
-import pandas as pd
 import json
 import os
+import pandas as pd
+
 
 class JSONToCSVConverter:
     def __init__(self, file1_path, file2_path, output_path):
@@ -25,14 +26,16 @@ class JSONToCSVConverter:
         for key, value in file2_data.items():
             tasks = value.get('tasks', {})
             for task_key, task_value in tasks.items():
-                if "value" in task_value and isinstance(task_value['value'], dict):
-                    row = [key, task_key, task_value['value'].get('title', ''), task_value['value'].get('description', '')]
+                if 'value' in task_value and isinstance(task_value['value'], dict):
+                    row = [key, task_key, task_value['value'].get('title', ''),
+                           task_value['value'].get('description', '')]
                 else:
                     row = [key, task_key, '', '']
                 row += [task_value['time'], task_value['state'], task_value['type'], task_value['value']]
                 file2_rows.append(row)
 
-        file2_df = pd.DataFrame(file2_rows, columns=['Variable', "Task", 'Title', 'Description', 'Time', 'State', 'Type', 'Value'])
+        file2_df = pd.DataFrame(file2_rows,
+                                columns=['Variable', 'Task', 'Title', 'Description', 'Time', 'State', 'Type', 'Value'])
 
         # Create DataFrame for file1
         file1_df = pd.DataFrame({'File 1': file1_data})
@@ -42,6 +45,7 @@ class JSONToCSVConverter:
 
         # Write to CSV
         result_df.to_csv(self.output_path, index=False)
+
 
 class CSVToJSONConverter:
     def __init__(self, input_csv_path, output_file1_path, output_file2_path):
@@ -64,10 +68,10 @@ class CSVToJSONConverter:
 
             time = row['Time']
             state = row['State']
-            task_type = row['Type'] if not pd.isna(row['Type']) else ""
+            task_type = row['Type'] if not pd.isna(row['Type']) else ''
             title = row['Title']
             description = row['Description']
-            value = row['Value'] if not pd.isna(row['Value']) else ""
+            value = row['Value'] if not pd.isna(row['Value']) else ''
 
             if variable not in file2_data:
                 file2_data[variable] = {'tasks': {}}
@@ -87,7 +91,7 @@ class CSVToJSONConverter:
                 elif task_type == 'command':
                     task_info['value'] = value
                 else:
-                    task_info['value'] = ""
+                    task_info['value'] = ''
 
                 file2_data[variable]['tasks'][task_key] = task_info
 
@@ -103,5 +107,3 @@ class CSVToJSONConverter:
         # Write to file2.json
         with open(self.output_file2_path, 'w') as file:
             json.dump(file2_data, file, indent=4)
-
-
