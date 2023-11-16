@@ -1,3 +1,3 @@
-from .create_schedule_display import create_schedule_display
+from .create_schedule_display import CreateScheduleDisplay
 from .create_time_picker import create_time_picker
 from .experiment_config_display import ExperimentConfigDisplay
