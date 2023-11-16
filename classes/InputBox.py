@@ -1,27 +1,28 @@
+from datetime import datetime
+
 import pygame
 from pygame.locals import *
-from datetime import datetime
 
 
 class InputBox:
-    def __init__(self, x, y, width, height, translation_key, translate_service=None, info="", initial_text="",
+    def __init__(self, x, y, width, height, translation_key, translate_service=None, info='', initial_text='',
                  allow_new_line=False, not_allowed_characters=[]):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.color = pygame.Color("gray")
+        self.color = pygame.Color('gray')
         self.active_color = (218, 221, 220)
-        self.text_color = pygame.Color("black")
+        self.text_color = pygame.Color('black')
         self.label_color = (37, 39, 41)
-        self.active_text_color = pygame.Color("black")
+        self.active_text_color = pygame.Color('black')
         self.text = initial_text
-        self.font = pygame.font.SysFont("Arial", 24)
+        self.font = pygame.font.SysFont('Arial', 24)
         self.translation_key = translation_key
         self.info = info
         if self.translate_service:
             self.label = self.font.render(
-                self.translate_service.get_translation(self.translation_key) + " " + self.info, True, self.label_color)
+                self.translate_service.get_translation(self.translation_key) + ' ' + self.info, True, self.label_color)
         else:
-            self.label = self.font.render(self.translation_key + " " + self.info, True, self.label_color)
+            self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
         self.is_selected = False
         self.cursor_visible = False
         self.cursor_timer = 0
@@ -31,7 +32,7 @@ class InputBox:
         self.started_moving_r = False
         self.started_moving_l = False
         self.delay = None
-        self.image = pygame.image.load("./img/copyIcon.png")
+        self.image = pygame.image.load('./img/copyIcon.png')
         self.posX = x
         self.posY = y
         self.imagePos = pygame.Rect(0, 0, self.image.get_rect().width, self.image.get_rect().height)
@@ -78,7 +79,7 @@ class InputBox:
                 if event.key == K_RETURN and self.allow_new_line:
                     self.text_memory.append(self.text)
                     self.memory_index = 0
-                    self.text += " \\n "
+                    self.text += ' \\n '
                 elif mods & KMOD_CTRL:  # Check if Ctrl is pressed
                     if event.key == K_v:
                         clipboard_content = pygame.scrap.get(pygame.SCRAP_TEXT)
@@ -89,15 +90,15 @@ class InputBox:
                                 self.text_memory.append(self.text)
                                 self.memory_index = 0
                                 if self.is_highlighted:
-                                    self.text = ""
+                                    self.text = ''
                                     self.offset = 0
                                     self.cursor_pos = (0, 0)
                                 self.text += cleaned_content
                                 self.is_highlighted = False
                             except UnicodeDecodeError:
-                                print("Error: Unable to decode clipboard content.")
+                                print('Error: Unable to decode clipboard content.')
                         else:
-                            print("Error: Unable to retrieve clipboard content.")
+                            print('Error: Unable to retrieve clipboard content.')
                     elif event.key == K_BACKSPACE:
                         self.text_memory.append(self.text)
                         self.memory_index = 0
@@ -117,7 +118,7 @@ class InputBox:
                             self.memory_index = 0
                             self.is_highlighted = False
                             pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
-                            self.text = ""
+                            self.text = ''
                             self.offset = 0
                             self.cursor_pos = (0, 0)
                         else:
@@ -152,7 +153,7 @@ class InputBox:
                                 if self.is_highlighted:
                                     self.offset = 0
                                     self.cursor_pos = (0, 0)
-                                    self.text = ""
+                                    self.text = ''
                                 self.text = self.text[0:text_length - self.offset] + '{' + self.text[
                                                                                            text_length - self.offset:text_length]
                             self.is_highlighted = False
@@ -164,7 +165,7 @@ class InputBox:
                                 if self.is_highlighted:
                                     self.offset = 0
                                     self.cursor_pos = (0, 0)
-                                    self.text = ""
+                                    self.text = ''
                                 self.text = self.text[0:text_length - self.offset] + '}' + self.text[
                                                                                            text_length - self.offset:text_length]
                             self.is_highlighted = False
@@ -195,7 +196,7 @@ class InputBox:
                     self.memory_index = 0
                     text_length = len(self.text)
                     if self.is_highlighted:
-                        self.text = ""
+                        self.text = ''
                         self.cursor_pos = (0, 0)
                         self.offset = 0
                         pass
@@ -219,7 +220,7 @@ class InputBox:
                     self.memory_index = 0
                     text_length = len(self.text)
                     if self.is_highlighted:
-                        self.text = ""
+                        self.text = ''
                         self.cursor_pos = (0, 0)
                         self.offset = 0
                         pass
@@ -238,7 +239,7 @@ class InputBox:
                         if self.is_highlighted:
                             self.offset = 0
                             self.cursor_pos = (0, 0)
-                            self.text = ""
+                            self.text = ''
                         self.text = self.text[0:text_length - self.offset] + event.unicode + self.text[
                                                                                              text_length - self.offset:text_length]
                     self.is_highlighted = False
@@ -250,17 +251,17 @@ class InputBox:
         if self.translate_service:
             if self.is_selected:
                 self.label = self.font.render(
-                    self.translate_service.get_translation(self.translation_key) + " " + self.info, True,
+                    self.translate_service.get_translation(self.translation_key) + ' ' + self.info, True,
                     (128, 128, 128))
             else:
                 self.label = self.font.render(
-                    self.translate_service.get_translation(self.translation_key) + " " + self.info, True,
+                    self.translate_service.get_translation(self.translation_key) + ' ' + self.info, True,
                     self.label_color)
         else:
             if self.is_selected:
-                self.label = self.font.render(self.translation_key + " " + self.info, True, (128, 128, 128))
+                self.label = self.font.render(self.translation_key + ' ' + self.info, True, (128, 128, 128))
             else:
-                self.label = self.font.render(self.translation_key + " " + self.info, True, self.label_color)
+                self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
@@ -340,14 +341,14 @@ class InputBox:
             posX = self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0]
 
         if self.is_selected:
-            color = pygame.Color("black") if self.cursor_blink else self.active_color
+            color = pygame.Color('black') if self.cursor_blink else self.active_color
             pygame.draw.line(screen, color, (posX, self.rect.y + 5),
                              (posX, self.rect.y + self.rect.height - 5))
         if self.cursor_visible:
             if pygame.time.get_ticks() >= self.cursor_timer:
                 self.cursor_visible = False
             else:
-                color = pygame.Color("black") if self.cursor_blink else self.active_color
+                color = pygame.Color('black') if self.cursor_blink else self.active_color
                 pygame.draw.line(screen, color,
                                  (posX, self.rect.y + 5),
                                  (posX, self.rect.y + self.rect.height - 5))
@@ -362,6 +363,6 @@ class InputBox:
         if len(self.text) == 0 and not self.is_selected:
             screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
         if self.is_selected:
-            info_font = pygame.font.SysFont("Arial", 12)
-            info_label = info_font.render(self.info, True, pygame.Color("gray"))
+            info_font = pygame.font.SysFont('Arial', 12)
+            info_label = info_font.render(self.info, True, pygame.Color('gray'))
             screen.blit(info_label, (self.rect.x + 5, self.rect.y + 40))

@@ -1,8 +1,8 @@
 import pygame
-from pygame.locals import *
+
 
 class CheckBox():
-    def __init__(self, label, posX, posY, active = False, translate_service = None, font_size = 18) -> None:
+    def __init__(self, label, posX, posY, active=False, translate_service=None, font_size=18) -> None:
         self.translate_service = translate_service
         self.font = pygame.font.Font(None, font_size)
         if translate_service:
@@ -21,7 +21,7 @@ class CheckBox():
         self.posY = posY
         self.active = active
         self.tick_box_rect = None
-        self.label_rect= None
+        self.label_rect = None
         pass
 
     def handle_event(self, event):
@@ -30,7 +30,7 @@ class CheckBox():
                 if self.tick_box_rect.collidepoint(event.pos) or self.label_rect.collidepoint(event.pos):
                     if event.button == 1:
                         self.active = not self.active
-    
+
     def draw(self, screen):
         screen_info = pygame.display.Info()
 
