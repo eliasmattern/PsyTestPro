@@ -21,13 +21,15 @@ class CheckBox():
         self.posY = posY
         self.active = active
         self.tick_box_rect = None
+        self.label_rect= None
         pass
 
     def handle_event(self, event):
         if self.tick_box_rect:
-            if event.type == pygame.MOUSEBUTTONUP and self.tick_box_rect.collidepoint(event.pos):
-                if event.button == 1:
-                    self.active = not self.active
+            if event.type == pygame.MOUSEBUTTONUP:
+                if self.tick_box_rect.collidepoint(event.pos) or self.label_rect.collidepoint(event.pos):
+                    if event.button == 1:
+                        self.active = not self.active
     
     def draw(self, screen):
         screen_info = pygame.display.Info()
@@ -68,5 +70,5 @@ class CheckBox():
             ]
             # draw lines connecting the points defined above (draw the tick)
             pygame.draw.lines(screen, (192, 192, 192), False, tick_mark_points, 2)
-        label_rect = self.label.get_rect(left=self.posX, top=self.posY)
-        screen.blit(self.label, label_rect)
+        self.label_rect = self.label.get_rect(left=self.posX, top=self.posY)
+        screen.blit(self.label, self.label_rect)
