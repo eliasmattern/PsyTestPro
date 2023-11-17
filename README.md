@@ -71,24 +71,12 @@ To use Teststarter python must be installed:
 There are also some dependencies that must be installed using pip:
 
 ```python
-pip
-install
-pygame
-pip
-install
-pygame_widgets
-pip
-install
-tk
-pip
-install
-tktimepicker
-pip
-install
-tkcalendar
-pip
-install
-pandas
+pip install pygame
+pip install pygame_widgets
+pip install tk
+pip install tktimepicker
+pip install tkcalendar
+pip install pandas
 ```
 
 ## :arrow_forward: How to run Teststarter
