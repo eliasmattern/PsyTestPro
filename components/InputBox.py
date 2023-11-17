@@ -80,7 +80,7 @@ class InputBox:
                     self.text_memory.append(self.text)
                     self.memory_index = 0
                     self.text += ' \\n '
-                elif mods & KMOD_CTRL and event.key in {K_v, K_BACKSPACE, K_a, K_c, K_x, K_z, K_y}:  # Check if Ctrl is pressed
+                elif mods & KMOD_CTRL and event.key in {K_v, K_BACKSPACE, K_a, K_c, K_x, K_z, K_y, K_LEFT, K_RIGHT}:  # Check if Ctrl is pressed
                     if event.key == K_v:
                         clipboard_content = pygame.scrap.get(pygame.SCRAP_TEXT)
                         if clipboard_content is not None:
@@ -123,6 +123,9 @@ class InputBox:
                             self.cursor_pos = (0, 0)
                         else:
                             pass
+                    elif event.key == K_RIGHT:
+                        self.offset = 0
+                        self.cursor_pos = (0, 0)
                     elif event.key == K_z:
                         if self.is_selected:
                             self.offset = 0
