@@ -242,6 +242,13 @@ class InputBox:
                 self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
 
     def draw(self, screen):
+        if not self.is_selected:
+            self.started_del = False
+            self.started_moving_l = False
+            self.started_removing = False
+            self.started_moving_r = False
+            self.delay = None
+            self.delayMultiplier = 0.4
         if self.text == "" and self.is_selected and self.offset != 0:
             self.offset = 0
             self.cursor_pos = (0, 0)
