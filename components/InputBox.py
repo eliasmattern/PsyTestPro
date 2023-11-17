@@ -80,7 +80,7 @@ class InputBox:
                     self.text_memory.append(self.text)
                     self.memory_index = 0
                     self.text += ' \\n '
-                elif mods & KMOD_CTRL:  # Check if Ctrl is pressed
+                elif mods & KMOD_CTRL and event.key in {K_v, K_BACKSPACE, K_a, K_c, K_x, K_z, K_y}:  # Check if Ctrl is pressed
                     if event.key == K_v:
                         clipboard_content = pygame.scrap.get(pygame.SCRAP_TEXT)
                         if clipboard_content is not None:
@@ -144,31 +144,6 @@ class InputBox:
                                 memmory_copy.reverse()
                                 self.memory_index -= 1
                                 self.text = memmory_copy[self.memory_index]
-                    elif mods & KMOD_RALT:  # Check if Ctrl is pressed
-                        if event.key == 228:
-                            text_length = len(self.text)
-                            if event.unicode not in self.not_allowed_characters:
-                                self.text_memory.append(self.text)
-                                self.memory_index = 0
-                                if self.is_highlighted:
-                                    self.offset = 0
-                                    self.cursor_pos = (0, 0)
-                                    self.text = ''
-                                self.text = self.text[0:text_length - self.offset] + '{' + self.text[
-                                                                                           text_length - self.offset:text_length]
-                            self.is_highlighted = False
-                        elif event.key == 36:
-                            text_length = len(self.text)
-                            if event.unicode not in self.not_allowed_characters:
-                                self.text_memory.append(self.text)
-                                self.memory_index = 0
-                                if self.is_highlighted:
-                                    self.offset = 0
-                                    self.cursor_pos = (0, 0)
-                                    self.text = ''
-                                self.text = self.text[0:text_length - self.offset] + '}' + self.text[
-                                                                                           text_length - self.offset:text_length]
-                            self.is_highlighted = False
                 elif event.key == K_RETURN:
                     pass
                 elif event.key == K_LEFT:
@@ -266,7 +241,7 @@ class InputBox:
     def draw(self, screen):
         if self.text == "" and self.is_selected and self.offset != 0:
             self.offset = 0
-            self.cursor_pos = (0,0)
+            self.cursor_pos = (0, 0)
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
         input_text = self.text
         text_bg_color = self.color
