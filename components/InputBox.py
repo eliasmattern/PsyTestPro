@@ -264,6 +264,9 @@ class InputBox:
                 self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
 
     def draw(self, screen):
+        if self.text == "" and self.is_selected and self.offset != 0:
+            self.offset = 0
+            self.cursor_pos = (0,0)
         pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
         input_text = self.text
         text_bg_color = self.color
