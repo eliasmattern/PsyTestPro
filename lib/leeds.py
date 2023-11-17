@@ -8,6 +8,12 @@ from pygame_widgets.slider import Slider
 
 
 def leeds(subject, block, experiment):
+    current_time = time.strftime("%H:%M:%S")
+    # prepare date and time to be saved
+    splitted_time = current_time.split(":")
+    start_hour = splitted_time[0]
+    start_minute = splitted_time[1]
+    start_second = splitted_time[2]
     pygame.init()
 
     # Get the screen width and height
@@ -279,7 +285,7 @@ def leeds(subject, block, experiment):
         with open(outdir, 'a', newline='') as csvfile:
             writer = csv.writer(csvfile)
             if not csv_exists:
-                writer.writerow(["Day", "Month", "Year", "Hours", "Minutes", "Seconds", 'SubjectID', 'Block', *headers])
+                writer.writerow(["Day", "Month", "Year", "Start Hours", "Start Minutes", "Start Seconds", "End Hours", "End Minutes", "End Seconds", 'SubjectID', 'Block', *headers])
             # Get the current date and time
             current_date = time.strftime("%Y-%m-%d")
             current_time = time.strftime("%H:%M:%S")
@@ -292,8 +298,8 @@ def leeds(subject, block, experiment):
             hour = splitted_time[0]
             minute = splitted_time[1]
             second = splitted_time[2]
-            print([day , month, year, hour, minute, second, subject, block, *keyboard_data, *slider_data])
-            writer.writerow([day , month, year, hour, minute, second, subject, block, *keyboard_data, *slider_data])
+            print([day, month, year, hour, minute, second, subject, block, *keyboard_data, *slider_data])
+            writer.writerow([day, month, year, start_hour, start_minute, start_second, hour, minute, second, subject, block, *keyboard_data, *slider_data])
         
     slider.hide()
     return True
