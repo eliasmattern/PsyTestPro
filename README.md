@@ -17,7 +17,7 @@ Teststarter provides a scheduling system that displays the upcoming tasks and th
 ### :rocket: Automated Execution: 
 Once an experiment is started, Teststarter will automatically manage the execution of tasks according to the predefined schedule. When a task's scheduled time arrives, Teststarter will launch the corresponding script.
 
-## :books: Table of Contens
+## :books: Table of Contents
 
 - [:test\_tube: Teststarter](#test_tube-teststarter)
   - [:gem: Key Features](#gem-key-features)
@@ -25,7 +25,7 @@ Once an experiment is started, Teststarter will automatically manage the executi
     - [:wrench: Customizable Tasks:](#wrench-customizable-tasks)
     - [:calendar: Schedule Management:](#calendar-schedule-management)
     - [:rocket: Automated Execution:](#rocket-automated-execution)
-  - [:books: Table of Contens](#books-table-of-contens)
+  - [:books: Table of Contents](#books-table-of-contents)
   - [:inbox\_tray: Installation](#inbox_tray-installation)
   - [:arrow\_forward: How to run Teststarter](#arrow_forward-how-to-run-teststarter)
     - [:gear: Start Settings](#gear-start-settings)
@@ -37,6 +37,7 @@ Once an experiment is started, Teststarter will automatically manage the executi
     - [:heavy\_plus\_sign: Add Task](#heavy_plus_sign-add-task)
       - [Variables](#variables)
     - [:x: Delete task](#x-delete-task)
+    - [Create Custom Variables](#create-custom-variables)
     - [:outbox\_tray: Export experiments](#outbox_tray-export-experiments)
     - [:inbox\_tray: Import experiments](#inbox_tray-import-experiments)
   - [Citation](#citation)
@@ -70,20 +71,20 @@ To start Teststarter simply execute the `testarter.py` in the root directory.
 To start an experiment, and its schedule, you have to put in the following values:
 | Name  | Description |
 | ------------- | ------------- |
-| Participant ID  | Name of Paricipant  |
+| Participant ID  | Name of Participant  |
 | Experiment  | Name of experiment  |
 | Start Time  | Time, when the experiment should start |
 
 When everything is filled out correctly, you can press submit.
 
 ### :clock1: Schedule
-After you start an experiment, you will see a table with all the tasks and their start time and state. There you can modify to each task. 
+After you start an experiment, you will see a table with all the tasks, their start time and state. There you can modify to each task. 
 
 You can change the Date, Time and State. The State shows if a Task is todo, should be skipped, or is done. 
 
 ### :running: Run tasks
 Use the button `Run Teststarter` to start the Teststarter with your schedule.
-When it started, there will be a timer until the next Task. When it reaches 0 it 
+When it starts, there will be a timer until the next Task. When it reaches 0 it 
 plays the task and sets it to `done`.
 
 You can always press `Play next task` to start the next task without waiting for the timer to run out.
@@ -99,18 +100,20 @@ From there, you can do the following actions:
 - Delete experiment
 - Create task
 - Delete task
+- Create Custom Variables
+- Delete Custom Variables
 - Import experiments
 - Export experiments
 
 ### :heavy_plus_sign: Create experiment
-The experiments you create will have a schedule with tasks for the user. You can also declare that an experiment should not have a schedule. If you do this, all tasks will immediately start when Testarter begins.
+The experiments you create will have a schedule with tasks for the user. You can also declare that an experiment should not have a schedule. If you do this, all tasks will immediately start when Teststarter begins.
 
 ### :x: Delete experiment
 Here you can delete your experiments. Once deleted, the experiment and its tasks will be removed.
 
 ### :heavy_plus_sign: Add Task
 A task can be either a screen with text or your own script. To create a task, you have to assign a name and a time.
-The time is relative to the start time which you define when you start the teststarter. 
+The time is relative to the start time, which you define when you start the teststarter. 
 
 Task properties
 
@@ -123,7 +126,7 @@ Task properties
 | Description  | Description of the screen with text  |
 
 #### Variables
-If you want to provide your command or text screen some variables you can choose from the variables below. These will have the value you provide when you start an experiment
+If you want to provide your command or text screen some variables, you can choose from the variables below. These will have the value you provide when you start an experiment
 
 | Usage  | Description |
 | ------------- | ------------- |
@@ -134,7 +137,7 @@ If you want to provide your command or text screen some variables you can choose
 
 NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at this moment.
 
-Expample command:
+Example command:
 py yourTask.py {experiment}
 
 <p style="color: #d7ba7d; font-size: 0.8em; line-height: 1.1em;">
@@ -143,15 +146,27 @@ A relative path starts in the directory you are in. An absolute path has the ent
 Example: <br />
  C:\users\[username]\Desktop\teststarter\scripts\your_own.script <br />
  Because of the username in your path, it will only work on your computer. <br>
- instead use: <br />
+ Instead use: <br />
  .\scripts\your_own.script <br />
- This will go from the teststarter folder into the script folder to access your script. 
+ This will go from the Teststarter folder into the script folder to access your script. 
  Therefore, it would work on any computer which has the script at this location.</p>
 
 Before you save a task, use the preview to see if everything is working.
 
 ### :x: Delete task
 Here, you can delete tasks from experiments. Once deleted, the task will be removed.
+
+### :heavy_plus_sign: Create Custom Variables
+Here you can create custom variables. You can use them like the other variables:
+
+Usage: ```{CustomVariableName}```
+
+For each variable, an input box will be created on the start page of Teststarter
+
+<strong>What are custom variables good for? </strong><br />
+To provide specific information in your script, perhaps to save data, you can provide this information with a custom variable. In your code, you need to figure out how to access command line arguments, and then you can use them in your code.
+
+Example command of a task: ```python ./path/to/your_script.py {CustomVariableName}```
 
 ### :outbox_tray: Export experiments
 This will export all your experiments, their tasks and schedule.
@@ -164,14 +179,14 @@ NOTE: This will not export your own scripts. You will have to transfer these by 
 This allows you to choose a CSV on your computer to import Experiments and their tasks
 
 ## Citation
-Use the follwing to cite Teststarter :
+Use the following to cite Teststarter :
 Mattern, E., Capdevila, N., & Lane, L. Teststarter [Computer software]. https://github.com/eliasmattern/teststarter
 
 ## :question: FAQ
 <strong>What scripts are supported?</strong><br /> Any scripts, which you can execute from the console are supported by Teststarter
 
 <strong>I found a bug/problem. How can I report it?</strong><br />
-Feel free to create an Issue [here](https://github.com/eliasmattern/teststarter/issues)
+You are welcome to create an Issue [here](https://github.com/eliasmattern/teststarter/issues)
 
 <strong>How can I contribute?</strong><br />
-Yes you can! Follow these steps to find out how: [here](./information/contribute.md)
+Yes, you can! Follow these steps to find out how: [here](./information/contribute.md)
