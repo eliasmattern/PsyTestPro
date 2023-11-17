@@ -19,13 +19,12 @@ def create_time_picker(hour, minute, translate_service):
     screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
     count = 0
     posX, posY = pygame.mouse.get_pos()
-    posX -= 150
-    posY -= 150
     for display in pygame.display.get_desktop_sizes():
         if count == screenIndex:
             break
         posX += display[0]
         count += 1
+    print(posY)
     root.geometry('+' + str(posX) + '+' + str(posY))
     root.configure(background='black')
 
