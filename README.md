@@ -124,22 +124,6 @@ Task properties
 | Command  | Command to execute your own script*  |
 | Title  | Title of the screen with text  |
 | Description  | Description of the screen with text  |
-
-#### Variables
-If you want to provide your command or text screen some variables, you can choose from the variables below. These will have the value you provide when you start an experiment
-
-| Usage  | Description |
-| ------------- | ------------- |
-| {id}  | Name of the task  |
-| {experiment}  | Command to execute your own script*  |
-| {startTime}  | Time when the experiment started  |
-| {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss   |
-
-NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at this moment.
-
-Example command:
-py yourTask.py {experiment}
-
 <p style="color: #d7ba7d; font-size: 0.8em; line-height: 1.1em;">
 * Use relative paths instead of absolute paths to execute a file. <br /> 
 A relative path starts in the directory you are in. An absolute path has the entire file path. This can be a problem when you use the schedule on a different computer. <br />
@@ -150,6 +134,21 @@ Example: <br />
  .\scripts\your_own.script <br />
  This will go from the Teststarter folder into the script folder to access your script. 
  Therefore, it would work on any computer which has the script at this location.</p>
+
+#### Variables
+If you want to provide your command or text screen some variables, you can choose from the variables below. These will have the value you provide when you start an experiment
+
+| Usage  | Description                                     |
+| ------------- |-------------------------------------------------|
+| {id}  | Participant ID                                  |
+| {experiment}  | Experiment Name                                 |
+| {startTime}  | Time when the experiment started                |
+| {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss |
+
+NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at this moment.
+
+Example command:
+py yourTask.py {experiment}
 
 Before you save a task, use the preview to see if everything is working.
 
