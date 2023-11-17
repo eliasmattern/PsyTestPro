@@ -166,6 +166,9 @@ class Teststarter:
                         self.input_boxes[index].is_selected = True
                 elif event.key == K_BACKSPACE:
                     pass
+                elif event.key == K_RETURN:
+                    if self.buttons[3].is_active:
+                        self.save_details()
                 else:
                     if len(self.input_boxes.get('startTime').text) == 1 and self.input_boxes.get('startTime').text.isnumeric() and 2 < int(self.input_boxes.get('startTime').text) < 10:
                         box.text = '0' + box.text
