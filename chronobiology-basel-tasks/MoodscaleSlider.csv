@@ -1,0 +1,7 @@
+entspannt, körperlich wohl, stimmung, motivation, Koffein
+Number,Item,Answer,Buttontext
+1,"Bitte gib auf der Skala an, wie du dich JETZT GERADE fühlst.","Extrem entspannt, Extrem angespannt", Weiter
+2,"Bitte gib auf der Skala an, wie du dich JETZT GERADE fühlst.","Extrem körperlich wohl, Extrem körperlich unwohl", Weiter
+3,"Bitte gib auf der Skala an, wie du dich JETZT GERADE fühlst.","Extrem schlechte Stimmung, Extrem gute Stimmung", Weiter
+4,"Bitte gib auf der Skala an, wie du dich JETZT GERADE fühlst.","Extrem unmotiviert, Extrem motiviert", Weiter
+5,Wie stark ist dein momentanes Verlangen nach Koffein?,"Sehr gering, Sehr stark", Absenden
