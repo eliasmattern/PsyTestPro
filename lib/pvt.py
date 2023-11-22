@@ -67,7 +67,7 @@ def pvt(subject, experiment, block, number):
     start_time = time.time()  # set the start_time as the current time
 
     # Output file name
-    output_filename = f"PVT{subject_str}_{block_str}_{experiment}_{number_str}.csv"
+    output_filename = f"PVT_{subject_str}_{block_str}_{experiment}_{number_str}.csv"
     
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
