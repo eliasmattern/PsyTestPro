@@ -173,6 +173,10 @@ class Teststarter:
                 if len(self.input_boxes.get('startTime').text) == 1 and self.input_boxes.get(
                         'startTime').text.isnumeric() and 2 < int(self.input_boxes.get('startTime').text) < 10:
                     self.input_boxes.get('startTime').text = '0' + self.input_boxes.get('startTime').text
+                if len(self.input_boxes.get('startTime').text) == 2 and self.input_boxes.get(
+                        'startTime').text[1].isnumeric() and int(self.input_boxes.get(
+                        'startTime').text) > 23:
+                    self.input_boxes.get('startTime').text = self.input_boxes.get('startTime').text[0]
                 if len(self.input_boxes.get('startTime').text) == 3:
                     if self.input_boxes.get('startTime').text[2] != ":":
                         self.input_boxes.get('startTime').text = self.input_boxes.get('startTime').text[
