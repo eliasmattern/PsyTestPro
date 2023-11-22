@@ -32,7 +32,8 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
         case "teethbrushing":
             text_screen("Zähneputzen", "Du kannst jetzt deine Zähne in deinem Zimmer putzen.")
         case "mood_morn" | "mood":
-            result = moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
+            moodscaleNumber = ''.join([i for i in upcoming_event if i.isdigit()])
+            result = moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"], moodscaleNumber)
         case "wof_morn" | "wof":
             text_screen("Glücksrad", "Ein/e Versuchsleiter/in wird kommen und dir helfen.")
         case "task_payment":

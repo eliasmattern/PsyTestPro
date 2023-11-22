@@ -1,12 +1,12 @@
-import pygame
-import pygame_widgets
-from pygame.locals import *
 import csv
 import os
 import time
+
+import pygame
 from pygame_widgets.slider import Slider
 
-def moodscales(subject, block, experiment):
+
+def moodscales(subject, block, experiment, number):
     current_time = time.strftime("%H:%M:%S")
     # prepare date and time to be saved
     splitted_time = current_time.split(":")
@@ -31,7 +31,7 @@ def moodscales(subject, block, experiment):
     # Set text parameters
     font_size = 50
     font = pygame.font.Font(None, font_size)
-    font_color = (192, 192, 192) 
+    font_color = (192, 192, 192)
     grey = (80, 80, 80)  # Gray
 
     # text padding
@@ -43,14 +43,15 @@ def moodscales(subject, block, experiment):
     percent_screen_width = screen_width / 100
 
     # Slider 
-    slider = Slider(window, percent_screen_width * 20, text_y + 2 * line_spacing, percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
+    slider = Slider(window, percent_screen_width * 20, text_y + 2 * line_spacing, percent_screen_width * 60, 40, min=0,
+                    max=100, step=1, handleColour=grey)
     slider_rect = pygame.Rect(0, 0, percent_screen_width * 65, 60)
     slider_rect.center = (percent_screen_width * 50, text_y + 2 * line_spacing + 15)
     slider_data = []
     rows = []
     filename = os.path.join("./lib", "MoodscaleSlider.csv")
-    folderdir= "./Logs/Moodscale_Results/" 
-    outdir = "./Logs/Moodscale_Results/Moodscales_" + u'%s_%s_%s_.csv' % (subject, block, experiment)
+    folderdir = "./Logs/Moodscale_Results/"
+    outdir = "./Logs/Moodscale_Results/Moodscales_" + u'%s_%s_%s_%s.csv' % (subject, block, experiment, number)
     headers = []
     # get all rows except for the header
     with open(filename, 'r', encoding="utf8") as csvfile:
@@ -61,7 +62,7 @@ def moodscales(subject, block, experiment):
                 for header in row:
                     headers.append(header)
             if row_count > 1:
-               rows.append(row)
+                rows.append(row)
             row_count += 1
 
     count = 0
@@ -84,11 +85,11 @@ def moodscales(subject, block, experiment):
 
         right_text = rows[count][2].split(",")[1]
         right_surface = font.render(right_text, True, font_color)
-        
+
         # rener continue buttion
-        button_surface = font.render("  Weiter  ", True, (0,0,0))
+        button_surface = font.render("  Weiter  ", True, (0, 0, 0))
         button_rect = button_surface.get_rect(center=(percent_screen_width * 50,
-                            screen_height /100 * 80))
+                                                      screen_height / 100 * 80))
         window.blit(title_surface, title_rect)
         if isTouched:
             pygame.draw.rect(window, font_color, button_rect)
@@ -114,7 +115,8 @@ def moodscales(subject, block, experiment):
                     isTouched = False
                     slider.hide()
                     # update screen
-                    slider = Slider(window, percent_screen_width * 20, text_y + 2 * line_spacing, percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
+                    slider = Slider(window, percent_screen_width * 20, text_y + 2 * line_spacing,
+                                    percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour=grey)
             slider.listen(event)
             # Calculate slider position
             mouse_pos = pygame.mouse.get_pos()
@@ -125,14 +127,15 @@ def moodscales(subject, block, experiment):
                 new_value = int(normalized_x * (slider.max - slider.min) + slider.min)
                 slider.setValue(new_value)
     # save if user filled out at least one 1 question
-    if len(slider_data) > 0:    
+    if len(slider_data) > 0:
         csv_exists = os.path.isfile(outdir)
         if not os.path.exists(folderdir):
             os.makedirs(folderdir)
         with open(outdir, 'a', newline='') as csvfile:
             writer = csv.writer(csvfile)
             if not csv_exists:
-                writer.writerow(["Day", "Month", "Year", "Start Hours", "Start Minutes", "Start Seconds", "End Hours", "End Minutes", "End Seconds", 'SubjectID', 'Block', *headers])
+                writer.writerow(["Day", "Month", "Year", "Start Hours", "Start Minutes", "Start Seconds", "End Hours",
+                                 "End Minutes", "End Seconds", 'SubjectID', 'Block', 'Number', *headers])
             # Get the current date and time
             current_date = time.strftime("%Y-%m-%d")
             current_time = time.strftime("%H:%M:%S")
@@ -146,7 +149,8 @@ def moodscales(subject, block, experiment):
             minute = splitted_time[1]
             second = splitted_time[2]
 
-            writer.writerow([day , month, year, start_hour, start_minute, start_second, hour, minute, second, subject, block, *slider_data])
+            writer.writerow(
+                [day, month, year, start_hour, start_minute, start_second, hour, minute, second, subject, block, number,
+                 *slider_data])
     slider.hide()
     return True
-    
