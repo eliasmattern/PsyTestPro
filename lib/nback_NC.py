@@ -527,14 +527,9 @@ def real_nback(subject, experiment, week, study_night, current_block, num_back, 
 
     # Check if output directory exists #'C:/Users/noemi/Desktop/teststarter_python/Logs'
     out_dir = './Logs'
-    if not os.path.exists(out_dir):
-    #    print("Output directory does not exist. Exiting...")
-    #    sys.exit()
-        print(f"{title_dir} does not exist. Creating now...")
-        os.makedirs(title_dir)   
+    title_dir = os.path.join(out_dir, TITLE)
 
     # Define the title directory (a folder in logs called "GoNoGo_Results")
-    title_dir = os.path.join(out_dir, TITLE)
     if not os.path.exists(title_dir):
         print(f"{title_dir} does not exist. Creating now...")
         os.makedirs(title_dir)   

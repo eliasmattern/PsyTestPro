@@ -226,7 +226,7 @@ def pvt(subject, experiment, block, number):
                     second = splitted_time[2]
                     
                     # Write the data to the CSV file
-                    writer.writerow([day , month, year, hour, minute, second, trial_number, fix_duration, reaction_time, absolute_time])
+                    writer.writerow([day, month, year, hour, minute, second, trial_number, fix_duration, reaction_time, absolute_time])
 
                     trial_number += 1
 
