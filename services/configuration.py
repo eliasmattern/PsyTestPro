@@ -132,3 +132,35 @@ class TeststarterConfig:
         data.remove(name)
         with open('json/customVariables.json', 'w') as file:
             json.dump(data, file)
+
+    def get_settings(self):
+        with open(f'json/settings.json', 'r', encoding='utf-8') as file:
+            settings = json.load(file)
+
+        return settings
+
+    def save_colors(self, background_color,
+                    primary_color,
+                    button_color,
+                    button_text_color,
+                    active_button_color,
+                    inactive_button_color,
+                    success_color,
+                    danger_color,
+                    warning_color
+                    ):
+        with open(f'json/settings.json', 'r', encoding='utf-8') as file:
+            settings = json.load(file)
+
+        settings["backgroundColor"] = background_color
+        settings["primaryColor"] = primary_color
+        settings["buttonColor"] = button_color
+        settings["buttonTextColor"] = button_text_color
+        settings["activeButtonColor"] = active_button_color
+        settings["inactiveButtonColor"] = inactive_button_color
+        settings["successColor"] = success_color
+        settings["dangerColor"] = danger_color
+        settings["warningColor"] = warning_color
+
+        with open('json/settings.json', 'w') as file:
+            json.dump(settings, file)

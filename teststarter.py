@@ -7,7 +7,7 @@ import sys
 from pygame.locals import *
 from datetime import datetime, timedelta
 from components import InputBox, Button
-from views import CreateScheduleDisplay, ExperimentConfig
+from views import CreateScheduleDisplay, ExperimentConfig, SettingsView
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
 
@@ -43,6 +43,7 @@ class Teststarter:
         self.create_input_boxes()
         self.is_running = True
         self.start_time = None
+        self.settings_view = SettingsView()
 
         while self.is_running:
             self.update_text()
@@ -95,19 +96,16 @@ class Teststarter:
 
         exit_button = Button(x - 75, y + 60, 100, 40, 'exit', self.exit, self.translateService)
         submit_button = Button(x + 75, y + 60, 100, 40, 'submit', self.save_details, self.translateService)
-        english_button = Button(self.width - 250, 100, 100, 40, 'english', lambda: self.change_language('en'),
-                                self.translateService)
-        german_button = Button(self.width - 100, 100, 100, 40, 'german', lambda: self.change_language('de'),
+        settings_button = Button(self.width - 175, 100, 250, 40, 'settings', lambda: self.settings_view.display(Teststarter, self.translateService, self.language_config),
                                self.translateService)
         create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureExperiment',
                                           lambda: self.experiment_config_display.display(Teststarter),
                                           self.translateService)
 
-        self.buttons.append(english_button)
-        self.buttons.append(german_button)
         self.buttons.append(exit_button)
-        self.buttons.append(submit_button)
+        self.buttons.append(settings_button)
         self.buttons.append(create_experiment_button)
+        self.buttons.append(submit_button)
 
     def load_config_lang(self):
         self.language_config.read_language_config()

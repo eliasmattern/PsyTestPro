@@ -75,5 +75,17 @@
     "deleteVar": "Variabel löschen",
     "createMultipleVars": "Mehrere Variabeln erstellen",
     "varName": "Variabel Name",
-    "deleteVarMsg": "Möchtest du diese Variabel löschen?\nVariabel: "
+    "deleteVarMsg": "Möchtest du diese Variabel löschen?\nVariabel: ",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "colors": "Farben",
+    "edit": "Editieren",
+    "backgroundColor": "Hintergrundfarbe",
+    "primaryColor":"Hauptfarbe",
+    "buttonColor":"Button Farbe",
+    "buttonTextColor": "Button Text Farbe",
+    "successColor":"Success Farbe",
+    "dangerColor": "Danger Farbe",
+    "warningColor":"Warning Farbe",
+    "save": "Speichern"
 }
