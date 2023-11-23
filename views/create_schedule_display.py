@@ -36,6 +36,9 @@ class CreateScheduleDisplay:
         self.button_color = pygame.Color(self.settings["buttonColor"])
         self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.grid_color = pygame.Color(self.settings["gridColor"])
+        self.todo_input_values = {}
+        self.newdate_input_values = {}
+        self.newtime_input_values = {}
 
     def display(self):
 
@@ -97,11 +100,6 @@ class CreateScheduleDisplay:
         cursor_color = self.light_grey
         cursor_width = 2
         cursor_blink_interval = 500  # milliseconds
-
-        # Create a dictionary to store the input values for each row
-        newdate_input_values = {}
-        newtime_input_values = {}
-        todo_input_values = {}
 
         newdate_active_row = None  # Initialize the active row to None
         newtime_active_row = None  # Initialize the active row to None
@@ -192,38 +190,34 @@ class CreateScheduleDisplay:
                             row_height
                         )
                         if todo_input_box_rect.collidepoint(mouse_pos):
-                            todo_active_row = row
-                            todo_input_values[row] = state_iterator[
+                            self.todo_input_values[row] = state_iterator[
                                 splitted_schedule[self.schedule_page][
                                     list(splitted_schedule[self.schedule_page])[row - 1]][
                                     'state']]
                             active_column = 'todo'  # Set the active column
-                            todo_input_active = True
+                            todo_input_active = False
                             newtime_input_active = False
                             newtime_active_row = None
                             newtimedate_active_row = None  # Deactivate the other column
                             newtimedate_input_active = False
                         if not self.isHab:
                             if newdate_input_box_rect.collidepoint(mouse_pos) and not self.isHab:
-                                newdate_active_row = row
-                                newdate_input_values[row] = \
+                                self.newdate_input_values[row] = \
                                     splitted_schedule[self.schedule_page][
                                         list(splitted_schedule[self.schedule_page])[row - 1]][
                                         'datetime'].split(' ')[0]
                                 active_column = 'newdate'  # Set the active column
                                 newtimedate_input_active = False
-                                newdate_input_active = True
                                 todo_active_row = None  # Deactivate the other column
                                 todo_input_active = False
                                 newtime_active_row = None
                                 newtime_input_active = False
-                                splitted_date = newdate_input_values[row].split('/')
+                                splitted_date = self.newdate_input_values[row].split('/')
                                 day, month, year = splitted_date[0], splitted_date[1], splitted_date[2]
                                 date = create_date_picker(int(year), int(month), int(day))
-                                newdate_input_values[newdate_active_row] = date
+                                self.newdate_input_values[row] = date
                             elif newtime_input_box_rect.collidepoint(mouse_pos) and not self.isHab:
-                                newtime_active_row = row
-                                newtime_input_values[row] = ''
+                                self.newtime_input_values[row] = ''
                                 active_column = 'newtime'  # Set the active column
                                 newtimedate_input_active = False
                                 newtime_input_active = True
@@ -240,10 +234,10 @@ class CreateScheduleDisplay:
                                                                  self.translate_service)
                                 formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ':' + str(
                                     time_picker.time()[1]).rjust(2, '0') + ':00'
-                                if newtime_active_row in newtime_input_values:
-                                    newtime_input_values[newtime_active_row] = formatted_time
+                                if row in self.newtime_input_values:
+                                    self.newtime_input_values[row] = formatted_time
                                 else:
-                                    newtime_input_values[newtime_active_row] = formatted_time
+                                    self.newtime_input_values[row] = formatted_time
                 for button in buttons:
                     button.handle_event(event)
 
@@ -333,8 +327,8 @@ class CreateScheduleDisplay:
 
                 # Render input value
                 if not self.isHab:
-                    if row in newdate_input_values:
-                        newdate_input_value = newdate_input_values[row]
+                    if row in self.newdate_input_values:
+                        newdate_input_value = self.newdate_input_values[row]
                         newdate_input_text_surface = newdate_input_box_font.render(newdate_input_value, True,
                                                                                    self.light_grey)
                         if not self.is_valid_datetime_format(newdate_input_value + ' ' + time):
@@ -354,8 +348,8 @@ class CreateScheduleDisplay:
                         newdate_input_text_surface = newdate_input_box_font.render(date, True, self.light_grey)
                         screen.blit(newdate_input_text_surface, newdate_input_box_rect.move(5, 5))
 
-                    if row in newtime_input_values:
-                        newtime_input_value = newtime_input_values[row]
+                    if row in self.newtime_input_values:
+                        newtime_input_value = self.newtime_input_values[row]
                         newtime_input_text_surface = newtime_input_box_font.render(newtime_input_value, True,
                                                                                    self.light_grey)
                         if not self.is_valid_datetime_format(date + ' ' + newtime_input_value):
@@ -376,8 +370,8 @@ class CreateScheduleDisplay:
                         screen.blit(newtime_input_text_surface, newtime_input_box_rect.move(5, 5))
 
                 todo_color = {'todo': self.light_grey, 'skip': self.warning, 'done': self.success}
-                if row in todo_input_values:
-                    todo_input_value = todo_input_values[row]
+                if row in self.todo_input_values:
+                    todo_input_value = self.todo_input_values[row]
                     todo_input_text_surface = todo_input_box_font.render(
                         self.translate_service.get_translation(todo_input_value), True,
                         todo_color[todo_input_value.lower()])
@@ -390,7 +384,7 @@ class CreateScheduleDisplay:
                     screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
                 elif todo_active_row == row:
                     todo_input_text_surface = todo_input_box_font.render(todo_input_text, True,
-                                                                         todo_color[todo_input_values[row].lower()])
+                                                                         todo_color[self.todo_input_values[row].lower()])
                     screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
                 elif todo_active_row != row:
                     todo_input_text_surface = todo_input_box_font.render(self.translate_service.get_translation(state),
@@ -719,6 +713,10 @@ class CreateScheduleDisplay:
         return dict_list
 
     def page_update(self, schedule, increment):
+        self.todo_input_values = {}
+        self.newdate_input_values = {}
+        self.newtime_input_values = {}
+
         if increment:
             self.schedule_page = (self.schedule_page + 1) % len(schedule)
         else:
