@@ -296,23 +296,22 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
                     pygame.display.flip()
                     # Set the start time for the letter display
                     start_time = pygame.time.get_ticks()
-                    reaction_start_time = time.time()
+                    reaction_start_time = time.time_ns()
                     # Process user input during letter display
                     while pygame.time.get_ticks() < start_time + letter_duration:
                         if current_trial >= num_back:
                             for event in pygame.event.get():
                                 if event.type == pygame.KEYDOWN:
                                     if event.key == pygame.K_a:
-                                        response_time = (time.time() - reaction_start_time) 
+                                        response_time = (time.time_ns() - reaction_start_time) / 1e9
                                         user_input = "No Match"
                                     elif event.key == pygame.K_l:
-                                        response_time = (time.time() - reaction_start_time)
+                                        response_time = (time.time_ns() - reaction_start_time) / 1e9
                                         user_input = "Match"
                                     elif event.key == pygame.K_ESCAPE:
                                         running = False
                                         break
                                         
-
                     # Set the start time for the letter display
                     start_time = pygame.time.get_ticks()
                     # Continue only once the letter duration has passed
@@ -688,17 +687,17 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
                         pygame.display.flip()
                         # Set the start time for the letter display
                         start_time = pygame.time.get_ticks()
-                        reaction_start_time = time.time()
+                        reaction_start_time = time.time_ns()
                         # Process user input during letter display
                         while pygame.time.get_ticks() < start_time + letter_duration:
                             if current_trial >= num_back:
                                 for event in pygame.event.get():
                                     if event.type == pygame.KEYDOWN:
                                         if event.key == pygame.K_a:
-                                            response_time = (time.time() - reaction_start_time)
+                                            response_time = (time.time_ns() - reaction_start_time) / 1e9
                                             user_input = "No Match"
                                         elif event.key == pygame.K_l:
-                                            response_time = (time.time() - reaction_start_time)
+                                            response_time = (time.time_ns() - reaction_start_time) / 1e9
                                             user_input = "Match"
                                         elif event.key == pygame.K_ESCAPE:
                                             running = False
