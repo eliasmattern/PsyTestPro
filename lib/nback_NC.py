@@ -96,8 +96,7 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
     white = (255, 255, 255)
 
     # Initialize the game window
-    # screen = pygame.display.get_surface()  # Use pygame.FULLSCREEN flag
-    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+    screen = pygame.display.get_surface()
     pygame.display.set_caption("N-Back Task")
 
     clock = pygame.time.Clock()
@@ -872,5 +871,3 @@ def start_real_nback(subject, week, experiment,):
         return False
 
 #########################################################################################
-
-start_real_nback("elias", 9, "elias")
