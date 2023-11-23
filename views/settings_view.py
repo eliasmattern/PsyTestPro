@@ -18,15 +18,16 @@ class SettingsView:
         teststarter()
 
     def save_colors(self, input_boxes):
-        self.teststarter_config.save_colors(input_boxes["backgroundColor"].text,
-                                            input_boxes["primaryColor"].text,
-                                            input_boxes["buttonColor"].text,
-                                            input_boxes["buttonTextColor"].text,
-                                            input_boxes["activeButtonColor"].text,
-                                            input_boxes["inactiveButtonColor"].text,
-                                            input_boxes["successColor"].text,
-                                            input_boxes["dangerColor"].text,
-                                            input_boxes["warningColor"].text)
+        self.teststarter_config.save_colors(input_boxes['backgroundColor'].text,
+                                            input_boxes['primaryColor'].text,
+                                            input_boxes['buttonColor'].text,
+                                            input_boxes['buttonTextColor'].text,
+                                            input_boxes['activeButtonColor'].text,
+                                            input_boxes['inactiveButtonColor'].text,
+                                            input_boxes['successColor'].text,
+                                            input_boxes['dangerColor'].text,
+                                            input_boxes['warningColor'].text,
+                                            input_boxes['gridColor'].text)
         self.refresh_view()
 
     def refresh_view(self):
@@ -42,7 +43,7 @@ class SettingsView:
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
-                  'inactiveButtonColor', 'successColor', 'dangerColor', 'warningColor']
+                  'inactiveButtonColor', 'successColor', 'dangerColor', 'warningColor', 'gridColor']
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
@@ -76,10 +77,10 @@ class SettingsView:
             translate_service,
         )
 
-        buttons["english"] = english_button
-        buttons["german"] = german_button
-        buttons["back"] = exit_button
-        buttons["save"] = save_button
+        buttons['english'] = english_button
+        buttons['german'] = german_button
+        buttons['back'] = exit_button
+        buttons['save'] = save_button
         return input_boxes, buttons
 
     def is_hex_color_code(self, code):
@@ -92,7 +93,7 @@ class SettingsView:
         for key, box in input_boxes.items():
             if not self.is_hex_color_code(box.text):
                 is_valid = False
-                self.errors.append(box.text + " " + translate_service.get_translation("invalidHex"))
+                self.errors.append(box.text + ' ' + translate_service.get_translation('invalidHex'))
         if is_valid:
             self.errors.clear()
         return is_valid
@@ -127,7 +128,8 @@ class SettingsView:
 
         initial_texts = [settings['backgroundColor'], settings['primaryColor'], settings['buttonColor'],
                          settings['buttonTextColor'], settings['activeButtonColor'], settings['inactiveButtonColor'],
-                         settings['successColor'], settings['dangerColor'], settings['warningColor']]
+                         settings['successColor'], settings['dangerColor'], settings['warningColor'],
+                         settings['gridColor']]
 
         input_boxes, buttons = self.create_input_boxes(
             teststarter, translate_service, language_config, initial_texts

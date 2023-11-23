@@ -35,6 +35,7 @@ class CreateScheduleDisplay:
         self.success = pygame.Color(self.settings["successColor"])
         self.button_color = pygame.Color(self.settings["buttonColor"])
         self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
+        self.grid_color = pygame.Color(self.settings["gridColor"])
 
     def display(self):
 
@@ -328,10 +329,7 @@ class CreateScheduleDisplay:
                     column_width,
                     row_height
                 )
-                if not self.isHab:
-                    pygame.draw.rect(screen, self.light_grey, newdate_input_box_rect, 1)
-                    pygame.draw.rect(screen, self.light_grey, newtime_input_box_rect, 1)
-                pygame.draw.rect(screen, self.light_grey, todo_input_box_rect, 1)
+
 
                 # Render input value
                 if not self.isHab:
@@ -430,11 +428,11 @@ class CreateScheduleDisplay:
                 grid_range = 5 if not self.isHab else 3
                 for i in range(grid_range):
                     x = column_start_x + (i * column_width)
-                    pygame.draw.line(screen, self.light_grey, (x, 0), (x, final_y), 1)
+                    pygame.draw.line(screen, self.grid_color, (x, 0), (x, final_y), 1)
 
                 for i in range(1, max_grid_rows + 2):
                     y = i * row_height
-                    pygame.draw.line(screen, self.light_grey, (column_start_x, y),
+                    pygame.draw.line(screen, self.grid_color, (column_start_x, y),
                                      (column_start_x + ((grid_range - 1) * column_width), y), 1)
 
             # Update the cursor visibility

@@ -147,7 +147,8 @@ class TeststarterConfig:
                     inactive_button_color,
                     success_color,
                     danger_color,
-                    warning_color
+                    warning_color,
+                    grid_color
                     ):
         with open(f'json/settings.json', 'r', encoding='utf-8') as file:
             settings = json.load(file)
@@ -161,6 +162,7 @@ class TeststarterConfig:
         settings["successColor"] = success_color
         settings["dangerColor"] = danger_color
         settings["warningColor"] = warning_color
+        settings["gridColor"] = grid_color
 
         with open('json/settings.json', 'w') as file:
             json.dump(settings, file)
