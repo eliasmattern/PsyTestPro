@@ -5,7 +5,7 @@ import random
 import time
 import os
 
-def pvt(subject, block, number):
+def pvt(subject, experriment , block, number):
     # Convert numerical inputs to strings
     subject_str = str(subject)
     block_str = str(block)
@@ -64,7 +64,7 @@ def pvt(subject, block, number):
 
 
     # Output file name
-    output_filename = f"PVT_hab_{subject_str}_{block_str}_{number_str}.csv"
+    output_filename = f"PVT_hab_{subject_str}_{experriment}_{block_str}_{number_str}.csv"
     
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)

@@ -223,7 +223,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             elif len(sorted_schedule) > 0:
                 result = True
                 if schedule["pvt_hab"]["state"] == "todo":
-                    result = pvt_hab(participant_info["participant_id"], participant_info["week_no"], 1)
+                    result = pvt_hab(participant_info["participant_id"],  participant_info["experiment"], participant_info["week_no"], 1)
                     if result:
                         schedule["pvt_hab"]["state"] = "done"
                     else:
