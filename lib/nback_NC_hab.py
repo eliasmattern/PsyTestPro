@@ -74,7 +74,7 @@ def generate_nback_sequence(num_trials, num_back):
 
 
 #########################################################################################
-def practice_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition):
+def practice_nback(subject, week, experiment, current_block, num_back, num_back_addition, num_back_performance_addition):
     # Initialise variables is going to be problematic when creating a loop later! putting it above the definition didnt' help.
     #num_back = 2
     #num_back_addition = None
@@ -122,7 +122,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
     # Create strings for file saving purposes
     subject_str = str(subject)
     week_str = str(week)
-    study_night_str = str(study_night)
+    experiment_str = str(experiment)
     
     # Title (for outputs)
     TITLE = 'N-Back_Hab_Results'
@@ -136,7 +136,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
         os.makedirs(title_dir)   
 
     # Output file name
-    output_filename = f"{subject_str}_{week_str}_{study_night_str}_{TITLE}.csv"
+    output_filename = f"{TITLE}_{subject_str}_{week_str}_{experiment_str}.csv"
 
     # Full path for the output file
     output_filename = os.path.join(title_dir, output_filename)
@@ -322,6 +322,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
                                 else: 
                                     user_input == "No Input"
                                     result = "No Input"
+                                    response_time = ""
                             else:  # If the current letter is different from the n-back letter
                                 if user_input == "No Match":
                                     result = "Correct"
@@ -330,6 +331,7 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
                                 else:
                                     user_input == "No Input"
                                     result = "No Input"
+                                    response_time = ""
 
                             result_list.append(result)
                             # Provide feedback based on the result
@@ -501,12 +503,12 @@ def practice_nback(subject, week, study_night, current_block, num_back, num_back
 
 
 #########################################################################################
-def start_hab_nback(subject, week, study_night):
+def start_hab_nback(subject, week, experiment):
     current_block = 1
     num_back = 2
     num_back_addition = None
     num_back_performance_addition = 0
-    result = practice_nback(subject, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+    result = practice_nback(subject, week, experiment, current_block, num_back, num_back_addition, num_back_performance_addition)
     return result
 #########################################################################################
                     

@@ -848,7 +848,7 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
                                     key_pressed = True
                     current_block += 1
                     #current_trial = 0
-                    practice_nback(subject, experiment, week, study_night, current_block, num_back, num_back_addition, num_back_performance_addition)
+                    practice_nback(subject, experiment, week, current_block, num_back, num_back_addition, num_back_performance_addition)
                     # Clear the screen for the next block
                     #screen.fill(black)
                     #pygame.display.flip()
