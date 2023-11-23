@@ -10,6 +10,8 @@ class CreateExperimentView:
     def __init__(self):
         self.running = True
         self.selected_multiple = False
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
 
     def backToTeststarter(self, teststarter):
         self.selected_multiple = False
@@ -79,8 +81,8 @@ class CreateExperimentView:
             self, teststarter, translate_service, create_continously=False
     ):
         # Define colors
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()
@@ -182,7 +184,7 @@ class CreateExperimentView:
                 buttons[1].set_color('gray')
             else:
                 buttons[1].set_active(False)
-                buttons[1].set_color((100, 100, 100))
+                buttons[1].set_color(pygame.Color(self.settings["inactiveButtonColor"]))
 
             for box in input_boxes:
                 box.update_text()

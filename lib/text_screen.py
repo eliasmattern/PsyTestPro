@@ -1,7 +1,10 @@
 import pygame
+from services import TeststarterConfig
 
 
 def text_screen(title, description, info):
+    teststarter_config = TeststarterConfig()
+    settings = teststarter_config.get_settings()
     title = title.replace(r' \n ', '\n')
     title = title.replace(r'\n', '\n')
     description = description.replace(r' \n ', '\n')
@@ -21,14 +24,14 @@ def text_screen(title, description, info):
     pygame.mouse.set_visible(False)
 
     # Set the background color
-    background_color = (0, 0, 0)  # Black
+    background_color = pygame.Color(settings["backgroundColor"])  # Black
 
     # Set text parameters
     title_font_size = 50
     font_size = 30
     title_font = pygame.font.Font(None, title_font_size)
     font = pygame.font.Font(None, font_size)
-    font_color = (192, 192, 192)  # Gray
+    font_color = pygame.Color(settings["primaryColor"])  # Gray
 
     # Define the text content
 
@@ -63,13 +66,6 @@ def text_screen(title, description, info):
     info_rect = info_surface.get_rect(center=(text_x, screen_height - 250))
     text_surfaces.append(info_surface)
     text_rects.append(info_rect)
-
-    # Create a fixation cross surface
-    cross_size = 70
-    cross_surface = pygame.Surface((cross_size, cross_size), pygame.SRCALPHA)
-    pygame.draw.line(cross_surface, (255, 255, 255), (cross_size // 2, 0), (cross_size // 2, cross_size), 5)
-    pygame.draw.line(cross_surface, (255, 255, 255), (0, cross_size // 2), (cross_size, cross_size // 2), 5)
-    cross_rect = cross_surface.get_rect(center=(screen_width // 2, screen_height // 2))
 
     # Main loop
     running = True

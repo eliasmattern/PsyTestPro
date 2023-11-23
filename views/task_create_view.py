@@ -12,6 +12,9 @@ class AddTaskView():
         self.selected_multiple = False
         self.error = ''
         self.is_task_working = False
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
+        self.inactive_button_color = pygame.Color(self.settings["inactiveButtonColor"])
 
     def validate_task_inputs(self, input_boxes, time_input, command_inputs, text_screen_inputs, is_command):
         is_valid = False
@@ -127,8 +130,8 @@ class AddTaskView():
     ):
         variable = experiment
         # Define colors
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()
@@ -331,12 +334,12 @@ class AddTaskView():
                 buttons[3].set_color('gray')
             else:
                 buttons[2].set_active(False)
-                buttons[2].set_color((100, 100, 100))
+                buttons[2].set_color(self.inactive_button_color)
                 buttons[3].set_active(False)
-                buttons[3].set_color((100, 100, 100))
+                buttons[3].set_color(self.inactive_button_color)
             if not self.is_task_working:
                 buttons[2].set_active(False)
-                buttons[2].set_color((100, 100, 100))
+                buttons[2].set_color(self.inactive_button_color)
 
             for box in input_boxes:
                 box.update_text()

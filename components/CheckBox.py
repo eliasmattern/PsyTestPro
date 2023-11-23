@@ -1,21 +1,25 @@
 import pygame
+from services import TeststarterConfig
 
 
 class CheckBox():
     def __init__(self, label, posX, posY, active=False, translate_service=None, font_size=18) -> None:
         self.translate_service = translate_service
         self.font = pygame.font.Font(None, font_size)
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
+        self.primary_color = pygame.Color(self.settings["primaryColor"])
         if translate_service:
             self.label = self.font.render(
                 self.translate_service.get_translation(label),
                 True,
-                (192, 192, 192),
+                self.primary_color,
             )
         else:
             self.label = self.font.render(
                 label,
                 True,
-                (192, 192, 192),
+                self.primary_color,
             )
         self.posX = posX - (self.label.get_width() // 2)
         self.posY = posY
@@ -51,7 +55,7 @@ class CheckBox():
             20,
             20,
         )
-        pygame.draw.rect(screen, (192, 192, 192), self.tick_box_rect, 2)
+        pygame.draw.rect(screen, self.primary_color, self.tick_box_rect, 2)
         if self.active:
             # create a list of points that define the shape of the tick mark
             tick_mark_points = [
@@ -69,6 +73,6 @@ class CheckBox():
                 ),
             ]
             # draw lines connecting the points defined above (draw the tick)
-            pygame.draw.lines(screen, (192, 192, 192), False, tick_mark_points, 2)
+            pygame.draw.lines(screen, self.primary_color, False, tick_mark_points, 2)
         self.label_rect = self.label.get_rect(left=self.posX, top=self.posY)
         screen.blit(self.label, self.label_rect)

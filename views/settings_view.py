@@ -12,6 +12,7 @@ class SettingsView:
         self.refresh = False
         self.teststarter_config = TeststarterConfig()
         self.errors = []
+        self.settings = self.teststarter_config.get_settings()
 
     def backToTeststarter(self, teststarter):
         teststarter()

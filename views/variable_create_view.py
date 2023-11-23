@@ -10,6 +10,8 @@ class CreateVariablesView:
         self.running = True
         self.selected_multiple = False
         self.error = ''
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
 
     def backToTeststarter(self, teststarter):
         self.selected_multiple = False
@@ -80,8 +82,8 @@ class CreateVariablesView:
 
     def display(self, teststarter, translate_service, create_continously=False):
         # Define colors
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()
@@ -182,7 +184,7 @@ class CreateVariablesView:
                 buttons[1].set_color('gray')
             else:
                 buttons[1].set_active(False)
-                buttons[1].set_color((100, 100, 100))
+                buttons[1].set_color(pygame.Color(self.settings["inactiveButtonColor"]))
 
             for box in input_boxes:
                 box.update_text()
@@ -193,7 +195,7 @@ class CreateVariablesView:
 
             if self.error:
                 error_font = pygame.font.Font(None, 18)
-                error_surface = error_font.render(self.error, True, (200, 0, 0))
+                error_surface = error_font.render(self.error, True, pygame.Color(self.settings["dangerColor"]))
                 screen.blit(error_surface,
                             (screen_height // 100 * 80, screen_width // 2 - (error_surface.get_width() // 2)))
 

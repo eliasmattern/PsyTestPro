@@ -13,6 +13,7 @@ from lib import text_screen
 from services import TranslateService, LanguageConfiguration, play_tasks
 from .create_date_picker import create_date_picker
 from .create_time_picker import create_time_picker
+from services import TeststarterConfig
 
 
 class CreateScheduleDisplay:
@@ -25,9 +26,15 @@ class CreateScheduleDisplay:
         self.schedule_page = 0
         self.language_config = LanguageConfiguration()
         self.translate_service = TranslateService(self.language_config)
-        self.black = (0, 0, 0)
-        self.light_grey = (192, 192, 192)
-        self.red = (255, 0, 0)
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
+        self.black = pygame.Color(self.settings["backgroundColor"])
+        self.light_grey = pygame.Color(self.settings["primaryColor"])
+        self.red = pygame.Color(self.settings["dangerColor"])
+        self.warning = pygame.Color(self.settings["warningColor"])
+        self.success = pygame.Color(self.settings["successColor"])
+        self.button_color = pygame.Color(self.settings["buttonColor"])
+        self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
 
     def display(self):
 
@@ -370,7 +377,7 @@ class CreateScheduleDisplay:
                         newtime_input_text_surface = newtime_input_box_font.render(time, True, self.light_grey)
                         screen.blit(newtime_input_text_surface, newtime_input_box_rect.move(5, 5))
 
-                todo_color = {'todo': self.light_grey, 'skip': (240, 230, 140), 'done': (0, 179, 113)}
+                todo_color = {'todo': self.light_grey, 'skip': self.warning, 'done': self.success}
                 if row in todo_input_values:
                     todo_input_value = todo_input_values[row]
                     todo_input_text_surface = todo_input_box_font.render(
@@ -439,7 +446,7 @@ class CreateScheduleDisplay:
             pygame.display.flip()  # Flip the display to update the screen
 
     def text_objects(self, text, font):
-        text_surface = font.render(text, True, self.black)
+        text_surface = font.render(text, True, self.button_text_color)
         return text_surface, text_surface.get_rect()
 
     def button_back(self):
@@ -541,22 +548,22 @@ class CreateScheduleDisplay:
 
             if edit_button_x + edit_button_width > mouse[0] > edit_button_x and edit_button_y + edit_button_height > \
                     mouse[1] > edit_button_y:
-                pygame.draw.rect(screen, self.light_grey,
+                pygame.draw.rect(screen, self.button_color,
                                  (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
                 if click[0] == 1:
                     self.display()  # Call display() when the button is clicked
             else:
-                pygame.draw.rect(screen, self.light_grey,
+                pygame.draw.rect(screen, self.button_color,
                                  (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
             if next_event:
                 if 75 + edit_button_width > mouse[0] > 75 and edit_button_y + edit_button_height > mouse[
                     1] > edit_button_y:
-                    pygame.draw.rect(screen, self.light_grey,
+                    pygame.draw.rect(screen, self.button_color,
                                      (75, edit_button_y, edit_button_width, edit_button_height))
                     if click[0] == 1:
                         play_next_task = True
                 else:
-                    pygame.draw.rect(screen, self.light_grey,
+                    pygame.draw.rect(screen, self.button_color,
                                      (75, edit_button_y, edit_button_width, edit_button_height))
 
             # Draw the text on the button

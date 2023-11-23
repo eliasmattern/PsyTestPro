@@ -2,18 +2,21 @@ from datetime import datetime
 
 import pygame
 from pygame.locals import *
+from services import TeststarterConfig
 
 
 class InputBox:
     def __init__(self, x, y, width, height, translation_key, translate_service=None, info='', initial_text='', desc='',
-                 allow_new_line=False, not_allowed_characters=[], is_active = True):
+                 allow_new_line=False, not_allowed_characters=[], is_active=True):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.color = pygame.Color('gray')
-        self.active_color = (218, 221, 220)
-        self.text_color = pygame.Color('black')
-        self.label_color = (0, 0, 0)
-        self.active_text_color = pygame.Color('black')
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
+        self.color = pygame.Color(self.settings["buttonColor"])
+        self.active_color = pygame.Color(self.settings["activeButtonColor"])
+        self.text_color = pygame.Color(self.settings["buttonTextColor"])
+        self.label_color = pygame.Color(self.settings["buttonTextColor"])
+        self.active_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.text = initial_text
         self.font = pygame.font.SysFont('Arial', 24)
         self.translation_key = translation_key
@@ -47,7 +50,7 @@ class InputBox:
         self.text_memory = []
         self.memory_index = 0
         self.is_active = is_active
-        self.inactive_color = (100, 100, 100)
+        self.inactive_color = pygame.Color(self.settings["inactiveButtonColor"])
 
     def set_active(self, active):
         self.is_active = active
@@ -87,7 +90,8 @@ class InputBox:
                         self.text_memory.append(self.text)
                         self.memory_index = 0
                         self.text += ' \\n '
-                    elif mods & KMOD_CTRL and event.key in {K_v, K_BACKSPACE, K_a, K_c, K_x, K_z, K_y, K_LEFT, K_RIGHT}:  # Check if Ctrl is pressed
+                    elif mods & KMOD_CTRL and event.key in {K_v, K_BACKSPACE, K_a, K_c, K_x, K_z, K_y, K_LEFT,
+                                                            K_RIGHT}:  # Check if Ctrl is pressed
                         if event.key == K_v:
                             clipboard_content = pygame.scrap.get(pygame.SCRAP_TEXT)
                             if clipboard_content is not None:
@@ -237,14 +241,14 @@ class InputBox:
             if self.is_selected:
                 self.label = self.font.render(
                     self.translate_service.get_translation(self.translation_key) + ' ' + self.info, True,
-                    (128, 128, 128))
+                    self.active_text_color)
             else:
                 self.label = self.font.render(
                     self.translate_service.get_translation(self.translation_key) + ' ' + self.info, True,
                     self.label_color)
         else:
             if self.is_selected:
-                self.label = self.font.render(self.translation_key + ' ' + self.info, True, (128, 128, 128))
+                self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.active_text_color)
             else:
                 self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
 
@@ -342,14 +346,14 @@ class InputBox:
             posX = self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0]
 
         if self.is_selected:
-            color = pygame.Color('black') if self.cursor_blink else self.active_color
+            color = self.active_text_color if self.cursor_blink else self.active_color
             pygame.draw.line(screen, color, (posX, self.rect.y + 5),
                              (posX, self.rect.y + self.rect.height - 5))
         if self.cursor_visible:
             if pygame.time.get_ticks() >= self.cursor_timer:
                 self.cursor_visible = False
             else:
-                color = pygame.Color('black') if self.cursor_blink else self.active_color
+                color = self.active_text_color if self.cursor_blink else self.active_color
                 pygame.draw.line(screen, color,
                                  (posX, self.rect.y + 5),
                                  (posX, self.rect.y + self.rect.height - 5))
@@ -365,12 +369,14 @@ class InputBox:
             screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
         if self.is_selected:
             info_font = pygame.font.SysFont('Arial', 12)
-            info_label = info_font.render(self.info, True, pygame.Color('gray'))
+            info_label = info_font.render(self.info, True, self.active_color if self.is_active else self.inactive_color)
             screen.blit(info_label, (self.rect.x + 5, self.rect.y + 40))
-            desc_label = info_font.render(self.desc, True, pygame.Color('gray'))
-            screen.blit(desc_label, (self.rect.x + 5, self.rect.y - 17))
 
-        if len(self.text) > 0:
-            desc_font = pygame.font.SysFont('Arial', 12)
-            desc_label = desc_font.render(self.desc, True, pygame.Color('gray'))
-            screen.blit(desc_label, (self.rect.x + 5, self.rect.y - 17))
+        desc_font = pygame.font.SysFont('Arial', 12)
+        desc_color = self.color
+        if self.is_selected:
+            desc_color = self.active_color
+        elif not self.is_active:
+            desc_color = self.inactive_color
+        desc_label = desc_font.render(self.desc, True, desc_color)
+        screen.blit(desc_label, (self.rect.x + 5, self.rect.y - 17))

@@ -44,6 +44,12 @@ class Teststarter:
         self.is_running = True
         self.start_time = None
         self.settings_view = SettingsView()
+        self.settings = self.teststarterConfig.get_settings()
+        self.background_color = pygame.Color(self.settings['backgroundColor'])
+        self.primary_color = pygame.Color(self.settings['primaryColor'])
+        self.inactive_button_color = pygame.Color(self.settings['inactiveButtonColor'])
+        self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
+        self.button_color = pygame.Color(self.settings["buttonColor"])
 
         while self.is_running:
             self.update_text()
@@ -192,7 +198,7 @@ class Teststarter:
                                                                     self.input_boxes.get('startTime').text)
 
     def clear_screen(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.fill(self.background_color)
 
     def draw(self):
         def validate_inputs(experiments):
@@ -238,7 +244,7 @@ class Teststarter:
             None, int(64)
         )  # Create font object for header
         text_surface = font.render(
-            self.translateService.get_translation('teststarter'), True, 'gray'
+            self.translateService.get_translation('teststarter'), True, self.primary_color
         )
         text_rect = text_surface.get_rect()
         self.screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -252,10 +258,10 @@ class Teststarter:
 
         if is_input_valid:
             self.buttons[3].set_active(True)
-            self.buttons[3].set_color('gray')
+            self.buttons[3].set_color(self.button_color)
         else:
             self.buttons[3].set_active(False)
-            self.buttons[3].set_color((100, 100, 100))
+            self.buttons[3].set_color(self.inactive_button_color)
 
         if self.teststarterConfig.error_msg == '':
             for item in self.errors:

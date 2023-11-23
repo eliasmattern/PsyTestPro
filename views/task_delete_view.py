@@ -12,6 +12,8 @@ class DeleteTaskView():
         self.page = 0
         self.removing = True
         self.experiment_name = ''
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
 
     def backToConfig(self):
         self.running = False
@@ -56,8 +58,8 @@ class DeleteTaskView():
 
         teststarter_config = TeststarterConfig()
         # Define colors
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()
@@ -198,8 +200,8 @@ class DeleteTaskView():
 
         teststarter_config = TeststarterConfig()
         # Define colors
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()

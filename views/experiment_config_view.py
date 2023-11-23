@@ -11,12 +11,15 @@ from .experiment_delete_view import DeleteExperimentView
 from .task_delete_view import DeleteTaskView
 from .variable_delete_view import DeleteVariableView
 from .task_config_view import TaskConfig
+from services import TeststarterConfig
 
 
 class ExperimentConfig():
     def __init__(self, translate_service):
         self.info_text = ''
         self.translate_service = translate_service
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
 
     def backToTeststarter(self, teststarter):
         teststarter()
@@ -62,8 +65,8 @@ class ExperimentConfig():
         os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
         # Define colors
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Initializing Pygame
         pygame.init()
@@ -302,8 +305,8 @@ class ExperimentConfig():
             pygame.display.flip()  # Flip the display to update the screen
 
     def show_setting_buttons(self, screen, buttons, label):
-        black = (0, 0, 0)
-        light_grey = (192, 192, 192)
+        black = pygame.Color(self.settings["backgroundColor"])
+        light_grey = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()

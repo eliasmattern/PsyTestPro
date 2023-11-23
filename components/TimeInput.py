@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 from tktimepicker import AnalogPicker, AnalogThemes
 from tktimepicker import constants
+from services import TeststarterConfig
 
 
 def create_time_picker(hour, minute, translate_service):
@@ -52,12 +53,14 @@ def create_time_picker(hour, minute, translate_service):
 class TimeInput:
     def __init__(self, x, y, width, height, translation_key, translate_service, info='', initial_time=''):
         self.translate_service = translate_service
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
         self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.color = pygame.Color('gray')
-        self.active_color = pygame.Color('gray')
-        self.text_color = pygame.Color('black')
-        self.label_color = pygame.Color('gray')
-        self.active_text_color = pygame.Color('black')
+        self.color = pygame.Color(self.settings["buttonColor"])
+        self.active_color = pygame.Color(self.settings["buttonColor"])
+        self.text_color = pygame.Color(self.settings["buttonTextColor"])
+        self.label_color = pygame.Color(self.settings["buttonTextColor"])
+        self.active_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.time = initial_time
         self.font = pygame.font.SysFont('Arial', 24)
         self.translation_key = translation_key
@@ -86,4 +89,5 @@ class TimeInput:
                                         self.active_text_color if self.is_selected else self.text_color)
 
         screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
-        screen.blit(self.label, (self.rect.x - self.label.get_width() - 10, self.rect.y + 5))
+        if len(self.time) == 0:
+            screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))

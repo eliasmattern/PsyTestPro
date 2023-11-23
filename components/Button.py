@@ -1,17 +1,24 @@
 import pygame
+from services import TeststarterConfig
 
 
 class Button:
-    def __init__(self, x, y, width, height, translation_key, action, translate_service=None, color='gray',
+    def __init__(self, x, y, width, height, translation_key, action, translate_service=None, color=None,
                  border_radius=8):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.color = pygame.Color(color)
         self.translation_key = translation_key
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
+        if color == None:
+            self.color = pygame.Color(self.settings["buttonColor"])
+        else:
+            self.color = pygame.Color(color)
+        self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.label = pygame.font.SysFont('Arial', 24).render(
             self.translate_service.get_translation(self.translation_key) if translate_service
             else self.translation_key,
-            True, pygame.Color('black'))
+            True, self.button_text_color)
         self.action = action
         self.is_active = True
         self.border_radius = border_radius
@@ -28,7 +35,7 @@ class Button:
         self.label = pygame.font.SysFont('Arial', 24).render(
             self.translate_service.get_translation(self.translation_key) if self.translate_service
             else self.translation_key,
-            True, pygame.Color('black'))
+            True, self.button_text_color)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect, border_radius=self.border_radius)
