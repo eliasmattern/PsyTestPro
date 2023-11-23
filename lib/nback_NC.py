@@ -96,8 +96,8 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
     white = (255, 255, 255)
 
     # Initialize the game window
-    screen = pygame.display.get_surface()  # Use pygame.FULLSCREEN flag
-
+    # screen = pygame.display.get_surface()  # Use pygame.FULLSCREEN flag
+    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
     pygame.display.set_caption("N-Back Task")
 
     clock = pygame.time.Clock()
@@ -309,6 +309,9 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
                                     elif event.key == pygame.K_l:
                                         response_time = (time.time() - reaction_start_time)
                                         user_input = "Match"
+                                    elif event.key == pygame.K_ESCAPE:
+                                        running = False
+                                        break
                                         
 
                     # Set the start time for the letter display
@@ -326,6 +329,7 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
                                 else: 
                                     user_input == "No Input"
                                     result = "No Input"
+                                    response_time = ""
                             else:  # If the current letter is different from the n-back letter
                                 if user_input == "No Match":
                                     result = "Correct"
@@ -334,6 +338,7 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
                                 else:
                                     user_input == "No Input"
                                     result = "No Input"
+                                    response_time = ""
 
                             result_list.append(result)
                             # Provide feedback based on the result
@@ -696,6 +701,9 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
                                         elif event.key == pygame.K_l:
                                             response_time = (time.time() - reaction_start_time)
                                             user_input = "Match"
+                                        elif event.key == pygame.K_ESCAPE:
+                                            running = False
+                                            break
                         
                         # Clear the screen
                         screen.fill(black)
@@ -721,6 +729,7 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
                                 else: 
                                     user_input == "No Input"
                                     result = "No Input"
+                                    response_time = ""
                             else:  # If the current letter is different from the n-back letter
                                 if user_input == "No Match":
                                     result = "Correct"
@@ -729,6 +738,7 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
                                 else:
                                     user_input == "No Input"
                                     result = "No Input"
+                                    response_time = ""
                         
                            
                                 
@@ -862,3 +872,5 @@ def start_real_nback(subject, week, experiment,):
         return False
 
 #########################################################################################
+
+start_real_nback("elias", 9, "elias")
