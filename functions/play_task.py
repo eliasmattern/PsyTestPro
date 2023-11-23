@@ -44,7 +44,7 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule):
             result = GoNoGo_Real(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], gonogo_number)
         case "nback_morn" | "nback":
             # study night se sr
-            result = start_real_nback(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], participant_info["experiment"])
+            result = start_real_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
         case "eeg_removal":
             text_screen("EEG entfernen", "Ein/e Versuchsleiter/in wird kommen und dir helfen.")
         case "breakfast_morn":
