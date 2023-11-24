@@ -16,6 +16,10 @@ from services import TranslateService, LanguageConfiguration
 from .play_task import play_tasks
 
 schedule_page = 0
+todo_input_values = {}
+newdate_input_values = {}
+newtime_input_values = {}
+
 
 def create_schedule_display(schedule, participant_info, teststarter, isHab = False):
     language_config = LanguageConfiguration()
@@ -168,6 +172,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             if edit_button_x + edit_button_width > mouse[0] > edit_button_x and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
                 if click[0] == 1:
+                    global schedule_page
+                    schedule_page = 0
                     create_schedule_display(schedule, participant_info, teststarter, isHab)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
@@ -344,6 +350,13 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     def page_update(schedule, increment):
         pythonTime.sleep(0.25)
         global schedule_page
+        global todo_input_values
+        todo_input_values = {}
+        global newdate_input_values
+        newdate_input_values = {}
+        global newtime_input_values
+        newtime_input_values = {}
+
         if increment:
             schedule_page = (schedule_page + 1) % len(splitted_schedule)
         else:
@@ -373,8 +386,11 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
     cursor_blink_interval = 500  # milliseconds
 
     # Create a dictionary to store the input values for each row
+    global newdate_input_values
     newdate_input_values = {}
+    global newtime_input_values
     newtime_input_values = {}
+    global todo_input_values
     todo_input_values = {}
     
     newdate_active_row = None  # Initialize the active row to None
@@ -422,7 +438,6 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                         row_height
                     )
                     if todo_input_box_rect.collidepoint(mouse_pos):
-                        todo_active_row = row
                         todo_input_values[row] = state_iterator[splitted_schedule[schedule_page][list(splitted_schedule[schedule_page])[row-1]]["state"]]
                         active_column = "todo"  # Set the active column
                         todo_input_active = True
@@ -432,7 +447,6 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                         newtimedate_input_active = False
                     if not isHab:
                         if newdate_input_box_rect.collidepoint(mouse_pos) and not isHab:
-                            newdate_active_row = row
                             newdate_input_values[row] = splitted_schedule[schedule_page][list(splitted_schedule[schedule_page])[row-1]]["datetime"].split(" ")[0]
                             active_column = "newdate"  # Set the active column
                             newtimedate_input_active = False
@@ -444,9 +458,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             splitted_date = newdate_input_values[row].split("/")
                             day,month,year = splitted_date[0], splitted_date[1], splitted_date[2]
                             date = create_date_picker(int(year), int(month), int(day))
-                            newdate_input_values[newdate_active_row] = date
+                            newdate_input_values[row] = date
                         elif newtime_input_box_rect.collidepoint(mouse_pos) and not isHab:
-                            newtime_active_row = row
                             newtime_input_values[row] = ""
                             active_column = "newtime"  # Set the active column
                             newtimedate_input_active = False
@@ -459,10 +472,10 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                             splitted_time = current_time.split(":")
                             time_picker = create_time_picker(splitted_time[0], splitted_time[1], translate_service)
                             formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ":" + str(time_picker.time()[1]).rjust(2, '0') +":00"
-                            if newtime_active_row in newtime_input_values:
-                                newtime_input_values[newtime_active_row] = formatted_time
+                            if row in newtime_input_values:
+                                newtime_input_values[row] = formatted_time
                             else: 
-                                newtime_input_values[newtime_active_row] = formatted_time
+                                newtime_input_values[row] = formatted_time
 
         screen.fill(black) # Fill the screen with the black color
         
