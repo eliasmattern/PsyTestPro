@@ -543,6 +543,7 @@ class CreateScheduleDisplay:
                 pygame.draw.rect(screen, self.button_color,
                                  (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
                 if click[0] == 1:
+                    self.schedule_page = 0
                     self.display()  # Call display() when the button is clicked
             else:
                 pygame.draw.rect(screen, self.button_color,
