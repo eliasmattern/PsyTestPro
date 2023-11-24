@@ -94,5 +94,6 @@
     "gridColor": "Grid Color",
     "invalidHex": "is not a hex colorcode",
     "save": "Save",
-    "contrastErrorMsg": "has too little contrast to the"
+    "contrastErrorMsg": "has too little contrast to the",
+    "updatedColors": "Colors updated"
 }

@@ -90,5 +90,6 @@
     "gridColor": "Rasterfarbe",
     "invalidHex": "ist kein hex Farbcode",
     "save": "Speichern",
-    "contrastErrorMsg": "hat zu wenig Kontrast zur"
+    "contrastErrorMsg": "hat zu wenig Kontrast zur",
+    "updatedColors": "Farben aktualisiert"
 }

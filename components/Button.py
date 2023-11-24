@@ -4,7 +4,7 @@ from services import TeststarterConfig
 
 class Button:
     def __init__(self, x, y, width, height, translation_key, action, translate_service=None, color=None,
-                 text_color=None, border_radius=8, hidden=False):
+                 text_color=None, active_button_color=None, border_radius=8, hidden=False):
         self.pos_x = x
         self.pos_y = y
         self.translate_service = translate_service
@@ -12,14 +12,18 @@ class Button:
         self.translation_key = translation_key
         self.teststarter_config = TeststarterConfig()
         self.settings = self.teststarter_config.get_settings()
-        if color == None:
+        if color is None:
             self.color = pygame.Color(self.settings["buttonColor"])
         else:
             self.color = pygame.Color(color)
-        if text_color == None:
+        if text_color is None:
             self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         else:
             self.button_text_color = pygame.Color(text_color)
+        if active_button_color is None:
+            self.active_button_color = pygame.Color(self.settings["activeButtonColor"])
+        else:
+            self.active_button_color = pygame.Color(active_button_color)
         self.label = pygame.font.SysFont('Arial', 24).render(
             self.translate_service.get_translation(self.translation_key) if translate_service
             else self.translation_key,
@@ -28,12 +32,22 @@ class Button:
         self.is_active = True
         self.border_radius = border_radius
         self.is_hidden = hidden
+        self.pressed = False
+        self.mouse_down = False
 
     def handle_event(self, event):
         if not self.is_hidden:
             if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
                 if self.is_active and event.button == 1:
                     self.action()
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+                if self.is_active:
+                    self.pressed = True
+            elif event.type == pygame.MOUSEMOTION and not self.rect.collidepoint(event.pos):
+                self.pressed = False
+            elif event.type == pygame.MOUSEMOTION and self.rect.collidepoint(event.pos):
+                if self.is_active:
+                    self.pressed = True
 
     def set_hidden(self, hidden):
         self.is_hidden = hidden
@@ -49,7 +63,8 @@ class Button:
 
     def draw(self, screen):
         if not self.is_hidden:
-            pygame.draw.rect(screen, self.color, self.rect, border_radius=self.border_radius)
+            pygame.draw.rect(screen, self.color if not self.pressed else self.active_button_color, self.rect,
+                             border_radius=self.border_radius)
             label_width, label_height = self.label.get_size()
             label_x = self.rect.x + (self.rect.width - label_width) // 2
             label_y = self.rect.y + (self.rect.height - label_height) // 2

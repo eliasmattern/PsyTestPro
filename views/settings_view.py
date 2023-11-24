@@ -16,6 +16,7 @@ class SettingsView:
         self.input_page = 0
         self.saving_errors = []
         self.translate_service = None
+        self.saved_msg = []
 
     def backToTeststarter(self, teststarter):
         teststarter()
@@ -66,6 +67,7 @@ class SettingsView:
         return has_contrast
 
     def save_colors(self, input_boxes):
+        self.saved_msg = []
         has_contrast = self.check_contrast(input_boxes)
         if has_contrast:
             self.teststarter_config.save_colors(input_boxes['backgroundColor'].text,
@@ -78,6 +80,7 @@ class SettingsView:
                                                 input_boxes['dangerColor'].text,
                                                 input_boxes['warningColor'].text,
                                                 input_boxes['gridColor'].text)
+            self.saved_msg.append(self.translate_service.get_translation('updatedColors'))
             self.refresh_view()
 
     def refresh_view(self):
@@ -101,10 +104,12 @@ class SettingsView:
 
         english_button = Button(x - 110, y, 180, 40, 'english',
                                 lambda: self.change_language('en', translate_service, language_config),
-                                translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+                                translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                                active_button_color=pygame.Color('#ACACAC'))
         german_button = Button(x + 110, y, 180, 40, 'german',
                                lambda: self.change_language('de', translate_service, language_config),
-                               translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+                               translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                               active_button_color=pygame.Color('#ACACAC'))
         y += 2 * spacing
         input_y_pos = y
         for label, initial_text in zip(labels, initial_texts):
@@ -116,13 +121,15 @@ class SettingsView:
                                  text_color=pygame.Color('#000000'), label_color=pygame.Color('#000000'),
                                  active_text_color=pygame.Color('#000000'), inactive_color=pygame.Color('#646464'))
             edit_button = Button(x + 275, y, 100, 40, 'edit', lambda name=label: input_boxes[name].set_active(True),
-                                 translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+                                 translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                                 active_button_color=pygame.Color('#ACACAC'))
             buttons[label] = edit_button
             input_boxes[label] = input_box
             y += spacing
 
         exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.backToTeststarter(teststarter),
-                             translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+                             translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                             active_button_color=pygame.Color('#ACACAC'))
         save_button = Button(
             x + 75,
             y + 100,
@@ -132,7 +139,8 @@ class SettingsView:
             lambda: self.save_colors(input_boxes),
             translate_service,
             color=pygame.Color('#C0C0C0'),
-            text_color=pygame.Color('Black')
+            text_color=pygame.Color('Black'),
+            active_button_color=pygame.Color('#ACACAC')
         )
 
         buttons['english'] = english_button
@@ -152,6 +160,7 @@ class SettingsView:
             if not self.is_hex_color_code(box.text):
                 is_valid = False
                 self.saving_errors = []
+                self.saved_msg = []
                 self.errors.append(box.text + ' ' + translate_service.get_translation('invalidHex'))
         if is_valid:
             self.errors.clear()
@@ -228,9 +237,11 @@ class SettingsView:
         )
 
         left_button = Button(page_x, page_y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
-                             border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+                             border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                             active_button_color=pygame.Color('#ACACAC'))
         right_button = Button(page_x + 150, page_y - 100, 40, 40, '>', lambda: self.page_update(splitted_inputs, True),
-                              border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+                              border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                              active_button_color=pygame.Color('#ACACAC'))
 
         for key, label in zip(input_boxes.keys(), initial_texts):
             iniitial_text_dict[key] = label
@@ -327,7 +338,7 @@ class SettingsView:
                                  float((screen_height - height) / 100 * 90) + spacing))
                     spacing += error_font.get_height()
 
-            if self.saving_errors:
+            if self.saving_errors or self.saved_msg:
                 error_font = pygame.font.Font(None, 18)
                 spacing = 0
                 height = len(self.errors) * error_font.get_height()
@@ -335,6 +346,15 @@ class SettingsView:
                     error_surface = error_font.render(error, True, (200, 0, 0))
                     screen.blit(error_surface,
                                 ((screen_width // 2 - (error_surface.get_width() // 2)),
+                                 float((screen_height - height) / 100 * 90) + spacing))
+                    spacing += error_font.get_height()
+
+                spacing = 0
+                height = len(self.errors) * error_font.get_height()
+                for msg in self.saved_msg:
+                    msg_surface = error_font.render(msg, True, (192, 192, 192))
+                    screen.blit(msg_surface,
+                                ((screen_width // 2 - (msg_surface.get_width() // 2)),
                                  float((screen_height - height) / 100 * 90) + spacing))
                     spacing += error_font.get_height()
 
