@@ -169,22 +169,16 @@ class SettingsView:
 
         iniitial_text_dict = {}
 
-        x = buttons['back'].pos_x
-        y = buttons['back'].pos_y
+        page_x = buttons['back'].pos_x
+        page_y = buttons['back'].pos_y
 
         font = pygame.font.Font(
             None, int(30 * width_scale_factor)
         )
 
-        page_surface = font.render(
-            str(self.input_page + 1) + '/' + str(len(splitted_inputs)), True, light_grey
-        )
-        page_rect = page_surface.get_rect()
-        page_rect.center = (x + 75, y - 80)
-
-        left_button = Button(x, y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
+        left_button = Button(page_x, page_y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
                              border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
-        right_button = Button(x + 150, y - 100, 40, 40, '>', lambda: self.page_update(splitted_inputs, True),
+        right_button = Button(page_x + 150, page_y - 100, 40, 40, '>', lambda: self.page_update(splitted_inputs, True),
                               border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
 
         for key, label in zip(input_boxes.keys(), initial_texts):
@@ -224,6 +218,12 @@ class SettingsView:
                 for key, button in buttons.items():
                     button.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
+
+            page_surface = font.render(
+                str(self.input_page + 1) + '/' + str(len(splitted_inputs)), True, light_grey
+            )
+            page_rect = page_surface.get_rect()
+            page_rect.center = (page_x + 75, page_y - 80)
 
             screen.blit(text_surface, (x - text_rect.width // 2, y - 30))
             screen.blit(color_surface, (x - color_rect.width // 2, y + 180))
