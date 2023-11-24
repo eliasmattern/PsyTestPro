@@ -93,5 +93,6 @@
     "inactiveButtonColor": "Inactive Button Color",
     "gridColor": "Grid Color",
     "invalidHex": "is not a hex colorcode",
-    "save": "Save"
+    "save": "Save",
+    "contrastErrorMsg": "has too little contrast to the"
 }

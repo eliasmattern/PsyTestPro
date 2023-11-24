@@ -14,22 +14,71 @@ class SettingsView:
         self.errors = []
         self.settings = self.teststarter_config.get_settings()
         self.input_page = 0
+        self.saving_errors = []
+        self.translate_service = None
 
     def backToTeststarter(self, teststarter):
         teststarter()
 
+    def check_contrast(self, input_boxes):
+        MINIMUN_CONTRAST = 60
+        has_contrast = True
+        background_color_group = {
+            'primaryColor': input_boxes['primaryColor'].text,
+            'buttonColor': input_boxes['buttonColor'].text,
+            'activeButtonColor': input_boxes['activeButtonColor'].text,
+            'inactiveButtonColor': input_boxes['inactiveButtonColor'].text,
+            'successColor': input_boxes['successColor'].text,
+            'dangerColor': input_boxes['dangerColor'].text,
+            'warningColor': input_boxes['warningColor'].text,
+            'gridColor': input_boxes['gridColor'].text
+        }
+
+        button_text_color_group = {
+            'buttonColor': input_boxes['buttonColor'].text,
+            'activeButtonColor': input_boxes['activeButtonColor'].text,
+            'inactiveButtonColor': input_boxes['inactiveButtonColor'].text,
+        }
+
+        background_color = pygame.Color(input_boxes['backgroundColor'].text)
+        button_text_color = pygame.Color(input_boxes['buttonTextColor'].text)
+
+        for key, entry in background_color_group.items():
+            entry_color = pygame.Color(entry)
+            check = abs(background_color[0] - entry_color[0]) + abs(background_color[1] - entry_color[1]) + abs(
+                background_color[2] - entry_color[2])
+            if not check > MINIMUN_CONTRAST:
+                self.saving_errors.append(
+                    self.translate_service.get_translation(key) + " " + self.translate_service.get_translation(
+                        'contrastErrorMsg') + " " + self.translate_service.get_translation('backgroundColor'))
+                has_contrast = False
+
+        for key, entry in button_text_color_group.items():
+            entry_color = pygame.Color(entry)
+            check = abs(button_text_color[0] - entry_color[0]) + abs(button_text_color[1] - entry_color[1]) + abs(
+                button_text_color[2] - entry_color[2])
+            if not check > MINIMUN_CONTRAST:
+                self.saving_errors.append(
+                    self.translate_service.get_translation(key) + " " + self.translate_service.get_translation(
+                        'contrastErrorMsg') + " " + self.translate_service.get_translation('buttonTextColor'))
+                has_contrast = False
+
+        return has_contrast
+
     def save_colors(self, input_boxes):
-        self.teststarter_config.save_colors(input_boxes['backgroundColor'].text,
-                                            input_boxes['primaryColor'].text,
-                                            input_boxes['buttonColor'].text,
-                                            input_boxes['buttonTextColor'].text,
-                                            input_boxes['activeButtonColor'].text,
-                                            input_boxes['inactiveButtonColor'].text,
-                                            input_boxes['successColor'].text,
-                                            input_boxes['dangerColor'].text,
-                                            input_boxes['warningColor'].text,
-                                            input_boxes['gridColor'].text)
-        self.refresh_view()
+        has_contrast = self.check_contrast(input_boxes)
+        if has_contrast:
+            self.teststarter_config.save_colors(input_boxes['backgroundColor'].text,
+                                                input_boxes['primaryColor'].text,
+                                                input_boxes['buttonColor'].text,
+                                                input_boxes['buttonTextColor'].text,
+                                                input_boxes['activeButtonColor'].text,
+                                                input_boxes['inactiveButtonColor'].text,
+                                                input_boxes['successColor'].text,
+                                                input_boxes['dangerColor'].text,
+                                                input_boxes['warningColor'].text,
+                                                input_boxes['gridColor'].text)
+            self.refresh_view()
 
     def refresh_view(self):
         self.running = False
@@ -102,6 +151,7 @@ class SettingsView:
         for key, box in input_boxes.items():
             if not self.is_hex_color_code(box.text):
                 is_valid = False
+                self.saving_errors = []
                 self.errors.append(box.text + ' ' + translate_service.get_translation('invalidHex'))
         if is_valid:
             self.errors.clear()
@@ -129,6 +179,7 @@ class SettingsView:
             )
 
     def display(self, teststarter, translate_service, language_config):
+        self.translate_service = translate_service
         # Define colors
         black = (0, 0, 0)
         light_grey = (192, 192, 192)
@@ -270,6 +321,17 @@ class SettingsView:
                 spacing = 0
                 height = len(self.errors) * error_font.get_height()
                 for error in self.errors:
+                    error_surface = error_font.render(error, True, (200, 0, 0))
+                    screen.blit(error_surface,
+                                ((screen_width // 2 - (error_surface.get_width() // 2)),
+                                 float((screen_height - height) / 100 * 90) + spacing))
+                    spacing += error_font.get_height()
+
+            if self.saving_errors:
+                error_font = pygame.font.Font(None, 18)
+                spacing = 0
+                height = len(self.errors) * error_font.get_height()
+                for error in self.saving_errors:
                     error_surface = error_font.render(error, True, (200, 0, 0))
                     screen.blit(error_surface,
                                 ((screen_width // 2 - (error_surface.get_width() // 2)),

@@ -89,5 +89,6 @@
     "warningColor":"Warning Farbe",
     "gridColor": "Rasterfarbe",
     "invalidHex": "ist kein hex Farbcode",
-    "save": "Speichern"
+    "save": "Speichern",
+    "contrastErrorMsg": "hat zu wenig Kontrast zur"
 }
