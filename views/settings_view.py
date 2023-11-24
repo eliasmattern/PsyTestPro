@@ -51,22 +51,25 @@ class SettingsView:
 
         english_button = Button(x - 110, y, 180, 40, 'english',
                                 lambda: self.change_language('en', translate_service, language_config),
-                                translate_service)
+                                translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
         german_button = Button(x + 110, y, 180, 40, 'german',
                                lambda: self.change_language('de', translate_service, language_config),
-                               translate_service)
+                               translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
         y += 2 * spacing
         for label, initial_text in zip(labels, initial_texts):
             input_box = InputBox(x, y, 400, 40, label, translate_service, is_active=False,
-                                 desc=translate_service.get_translation(label), initial_text=initial_text)
+                                 desc=translate_service.get_translation(label), initial_text=initial_text,
+                                 color=pygame.Color('#C0C0C0'), active_color=pygame.Color('#DADDDC'),
+                                 text_color=pygame.Color('#000000'), label_color=pygame.Color('#000000'),
+                                 active_text_color=pygame.Color('#000000'), inactive_color=pygame.Color('#646464'))
             edit_button = Button(x + 275, y, 100, 40, 'edit', lambda name=label: input_boxes[name].set_active(True),
-                                 translate_service)
+                                 translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
             buttons[label] = edit_button
             input_boxes[label] = input_box
             y += spacing
 
         exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.backToTeststarter(teststarter),
-                             translate_service)
+                             translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
         save_button = Button(
             x + 75,
             y + 60,
@@ -75,6 +78,8 @@ class SettingsView:
             'save',
             lambda: self.save_colors(input_boxes),
             translate_service,
+            color=pygame.Color('#C0C0C0'),
+            text_color=pygame.Color('Black')
         )
 
         buttons['english'] = english_button

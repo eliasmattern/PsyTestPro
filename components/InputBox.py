@@ -7,16 +7,36 @@ from services import TeststarterConfig
 
 class InputBox:
     def __init__(self, x, y, width, height, translation_key, translate_service=None, info='', initial_text='', desc='',
-                 allow_new_line=False, not_allowed_characters=[], is_active=True):
+                 allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None,
+                 text_color=None, label_color=None, active_text_color=None, inactive_color=None):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.teststarter_config = TeststarterConfig()
         self.settings = self.teststarter_config.get_settings()
-        self.color = pygame.Color(self.settings["buttonColor"])
-        self.active_color = pygame.Color(self.settings["activeButtonColor"])
-        self.text_color = pygame.Color(self.settings["buttonTextColor"])
-        self.label_color = pygame.Color(self.settings["buttonTextColor"])
-        self.active_text_color = pygame.Color(self.settings["buttonTextColor"])
+        if color is None:
+            self.color = pygame.Color(self.settings["buttonColor"])
+        else:
+            self.color = pygame.Color(color)
+        if active_color is None:
+            self.active_color = pygame.Color(self.settings["activeButtonColor"])
+        else:
+            self.active_color = pygame.Color(active_color)
+        if text_color is None:
+            self.text_color = pygame.Color(self.settings["buttonTextColor"])
+        else:
+            self.text_color = pygame.Color(text_color)
+        if label_color is None:
+            self.label_color = pygame.Color(self.settings["buttonTextColor"])
+        else:
+            self.label_color = pygame.Color(label_color)
+        if active_text_color is None:
+            self.active_text_color = pygame.Color(self.settings["buttonTextColor"])
+        else:
+            self.active_text_color = pygame.Color(active_text_color)
+        if inactive_color is None:
+            self.inactive_color = pygame.Color(self.settings["inactiveButtonColor"])
+        else:
+            self.inactive_color = pygame.Color(inactive_color)
         self.text = initial_text
         self.font = pygame.font.SysFont('Arial', 24)
         self.translation_key = translation_key
@@ -50,7 +70,6 @@ class InputBox:
         self.text_memory = []
         self.memory_index = 0
         self.is_active = is_active
-        self.inactive_color = pygame.Color(self.settings["inactiveButtonColor"])
 
     def set_active(self, active):
         self.is_active = active

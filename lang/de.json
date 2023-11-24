@@ -87,5 +87,7 @@
     "successColor":"Success Farbe",
     "dangerColor": "Danger Farbe",
     "warningColor":"Warning Farbe",
+    "gridColor": "Rasterfarbe",
+    "invalidHex": "ist kein hex Farbcode",
     "save": "Speichern"
 }

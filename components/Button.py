@@ -4,7 +4,7 @@ from services import TeststarterConfig
 
 class Button:
     def __init__(self, x, y, width, height, translation_key, action, translate_service=None, color=None,
-                 border_radius=8):
+                 text_color=None, border_radius=8):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.translation_key = translation_key
@@ -14,7 +14,10 @@ class Button:
             self.color = pygame.Color(self.settings["buttonColor"])
         else:
             self.color = pygame.Color(color)
-        self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
+        if text_color == None:
+            self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
+        else:
+            self.button_text_color = pygame.Color(text_color)
         self.label = pygame.font.SysFont('Arial', 24).render(
             self.translate_service.get_translation(self.translation_key) if translate_service
             else self.translation_key,
