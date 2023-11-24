@@ -91,5 +91,6 @@
     "invalidHex": "ist kein hex Farbcode",
     "save": "Speichern",
     "contrastErrorMsg": "hat zu wenig Kontrast zur",
-    "updatedColors": "Farben aktualisiert"
+    "updatedColors": "Farben aktualisiert",
+    "reset": "Reset"
 }

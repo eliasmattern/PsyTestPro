@@ -71,12 +71,16 @@ class InputBox:
         self.memory_index = 0
         self.is_active = is_active
         self.is_hidden = hidden
+        self.is_touched = False
 
     def set_active(self, active):
         self.is_active = active
 
     def set_hidden(self, hidden):
         self.is_hidden = hidden
+
+    def set_text(self, text):
+        self.text = text
 
     def handle_event(self, event):
         if self.is_active and not self.is_hidden:
@@ -89,6 +93,8 @@ class InputBox:
                 if self.imagePos.collidepoint(pygame.mouse.get_pos()) and event.button == 1:
                     pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
             elif event.type == KEYUP:
+                if not self.is_touched:
+                    self.is_touched = True
                 if self.is_selected:
                     if event.key == K_BACKSPACE:
                         self.started_removing = False
