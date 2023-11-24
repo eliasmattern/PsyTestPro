@@ -8,7 +8,7 @@ from services import TeststarterConfig
 class InputBox:
     def __init__(self, x, y, width, height, translation_key, translate_service=None, info='', initial_text='', desc='',
                  allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None,
-                 text_color=None, label_color=None, active_text_color=None, inactive_color=None):
+                 text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.teststarter_config = TeststarterConfig()
@@ -70,12 +70,16 @@ class InputBox:
         self.text_memory = []
         self.memory_index = 0
         self.is_active = is_active
+        self.is_hidden = hidden
 
     def set_active(self, active):
         self.is_active = active
 
+    def set_hidden(self, hidden):
+        self.is_hidden = hidden
+
     def handle_event(self, event):
-        if self.is_active:
+        if self.is_active and not self.is_hidden:
             if event.type == MOUSEBUTTONDOWN:
                 if self.rect.collidepoint(event.pos) and event.button == 1:
                     self.is_selected = True
@@ -272,130 +276,131 @@ class InputBox:
                 self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
 
     def draw(self, screen):
-        if not self.is_selected:
-            self.started_del = False
-            self.started_moving_l = False
-            self.started_removing = False
-            self.started_moving_r = False
-            self.delay = None
-            self.delayMultiplier = 0.4
-        if self.text == "" and self.is_selected and self.offset != 0:
-            self.offset = 0
-            self.cursor_pos = (0, 0)
-        if self.is_active:
-            pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
-        else:
-            pygame.draw.rect(screen, self.inactive_color, self.rect, border_radius=8)
+        if not self.is_hidden:
+            if not self.is_selected:
+                self.started_del = False
+                self.started_moving_l = False
+                self.started_removing = False
+                self.started_moving_r = False
+                self.delay = None
+                self.delayMultiplier = 0.4
+            if self.text == "" and self.is_selected and self.offset != 0:
+                self.offset = 0
+                self.cursor_pos = (0, 0)
+            if self.is_active:
+                pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
+            else:
+                pygame.draw.rect(screen, self.inactive_color, self.rect, border_radius=8)
 
-        input_text = self.text
-        text_bg_color = self.color
-        if self.is_selected:
-            text_bg_color = self.active_color
-        if self.is_highlighted:
-            text_bg_color = (102, 101, 221)
-        if not self.is_active:
-            text_bg_color = self.inactive_color
-
-        text_surface = self.font.render(input_text, True,
-                                        self.active_text_color if self.is_selected else self.text_color, text_bg_color)
-        count = 0
-        while text_surface.get_rect().width > self.rect.width // 100 * 85:
-            input_text = input_text[1:]
-            count += 1
-            text_surface = self.font.render(input_text, True,
-                                            self.active_text_color if self.is_selected else self.text_color,
-                                            text_bg_color)
-        diff = self.offset - (len(input_text) - 3)
-
-        if count > 0 and self.offset > len(input_text) - 3:
             input_text = self.text
-            input_text = input_text[count - diff if count - diff > 0 else 0: len(input_text) - abs(diff)]
+            text_bg_color = self.color
+            if self.is_selected:
+                text_bg_color = self.active_color
+            if self.is_highlighted:
+                text_bg_color = (102, 101, 221)
+            if not self.is_active:
+                text_bg_color = self.inactive_color
+
             text_surface = self.font.render(input_text, True,
-                                            self.active_text_color if self.is_selected else self.text_color,
-                                            text_bg_color)
+                                            self.active_text_color if self.is_selected else self.text_color, text_bg_color)
+            count = 0
+            while text_surface.get_rect().width > self.rect.width // 100 * 85:
+                input_text = input_text[1:]
+                count += 1
+                text_surface = self.font.render(input_text, True,
+                                                self.active_text_color if self.is_selected else self.text_color,
+                                                text_bg_color)
+            diff = self.offset - (len(input_text) - 3)
 
-        if self.is_selected and self.delay is not None and self.started_removing:
-            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
-                text_length = len(self.text)
-                if len(self.text[0:text_length - self.offset]) > 0:
-                    self.text = self.text[0:text_length - self.offset - 1] + self.text[
-                                                                             text_length - self.offset:text_length]
-                    self.delay = datetime.now().timestamp()
-                    self.delayMultiplier = 0.1
+            if count > 0 and self.offset > len(input_text) - 3:
+                input_text = self.text
+                input_text = input_text[count - diff if count - diff > 0 else 0: len(input_text) - abs(diff)]
+                text_surface = self.font.render(input_text, True,
+                                                self.active_text_color if self.is_selected else self.text_color,
+                                                text_bg_color)
 
-        if self.is_selected and self.delay is not None and self.started_moving_r:
-            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
-                text_length = len(self.text)
-                if self.offset > 0:
-                    self.offset -= 1
-                    self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
-                    self.delay = datetime.now().timestamp()
-                    self.delayMultiplier = 0.1
+            if self.is_selected and self.delay is not None and self.started_removing:
+                if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
+                    text_length = len(self.text)
+                    if len(self.text[0:text_length - self.offset]) > 0:
+                        self.text = self.text[0:text_length - self.offset - 1] + self.text[
+                                                                                 text_length - self.offset:text_length]
+                        self.delay = datetime.now().timestamp()
+                        self.delayMultiplier = 0.1
 
-        if self.is_selected and self.delay != None and self.started_moving_l:
-            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
-                text_length = len(self.text)
-                if self.offset < text_length:
-                    self.offset += 1
-                    self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
-                    self.delay = datetime.now().timestamp()
-                    self.delayMultiplier = 0.1
+            if self.is_selected and self.delay is not None and self.started_moving_r:
+                if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
+                    text_length = len(self.text)
+                    if self.offset > 0:
+                        self.offset -= 1
+                        self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
+                        self.delay = datetime.now().timestamp()
+                        self.delayMultiplier = 0.1
 
-        if self.is_selected and self.delay != None and self.started_del:
-            if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
-                text_length = len(self.text)
-                if len(self.text[text_length - self.offset:text_length]) > 0:
-                    self.text = self.text[0:text_length - self.offset] + self.text[
-                                                                         (text_length - self.offset) + 1:text_length]
-                    self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
-                    self.offset -= 1
-                    self.delay = datetime.now().timestamp()
-                    self.delayMultiplier = 0.1
+            if self.is_selected and self.delay != None and self.started_moving_l:
+                if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
+                    text_length = len(self.text)
+                    if self.offset < text_length:
+                        self.offset += 1
+                        self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
+                        self.delay = datetime.now().timestamp()
+                        self.delayMultiplier = 0.1
 
-        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
-        if count > 0 and count - diff >= 0:
-            posX = (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0]
-                    if self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0] >= self.posX - (
-                    self.rect.width // 2) + self.font.size(input_text[0:3])[0]
-                    else self.posX - (self.rect.width // 2) + self.font.size(input_text[0:3])[0] + 5)
-        elif count > 0 > count - diff:
-            last_chars = abs(count - diff)
-            posX = self.posX - (self.rect.width // 2) + self.font.size(input_text[0:3 - last_chars])[0] + 5
-        else:
-            posX = self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0]
+            if self.is_selected and self.delay != None and self.started_del:
+                if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
+                    text_length = len(self.text)
+                    if len(self.text[text_length - self.offset:text_length]) > 0:
+                        self.text = self.text[0:text_length - self.offset] + self.text[
+                                                                             (text_length - self.offset) + 1:text_length]
+                        self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
+                        self.offset -= 1
+                        self.delay = datetime.now().timestamp()
+                        self.delayMultiplier = 0.1
 
-        if self.is_selected:
-            color = self.active_text_color if self.cursor_blink else self.active_color
-            pygame.draw.line(screen, color, (posX, self.rect.y + 5),
-                             (posX, self.rect.y + self.rect.height - 5))
-        if self.cursor_visible:
-            if pygame.time.get_ticks() >= self.cursor_timer:
-                self.cursor_visible = False
+            screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
+            if count > 0 and count - diff >= 0:
+                posX = (self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0]
+                        if self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0] >= self.posX - (
+                        self.rect.width // 2) + self.font.size(input_text[0:3])[0]
+                        else self.posX - (self.rect.width // 2) + self.font.size(input_text[0:3])[0] + 5)
+            elif count > 0 > count - diff:
+                last_chars = abs(count - diff)
+                posX = self.posX - (self.rect.width // 2) + self.font.size(input_text[0:3 - last_chars])[0] + 5
             else:
+                posX = self.rect.x + text_surface.get_width() + 5 - self.cursor_pos[0]
+
+            if self.is_selected:
                 color = self.active_text_color if self.cursor_blink else self.active_color
-                pygame.draw.line(screen, color,
-                                 (posX, self.rect.y + 5),
+                pygame.draw.line(screen, color, (posX, self.rect.y + 5),
                                  (posX, self.rect.y + self.rect.height - 5))
-        self.imagePos = pygame.Rect(self.posX + (self.rect.width // 2) // 100 * 80, self.posY,
-                                    self.image.get_rect().width, self.image.get_rect().height)
-        screen.blit(self.image, (self.posX + (self.rect.width // 2) // 100 * 80, self.posY + 5))
-        if self.is_selected:
-            if ((pygame.time.get_ticks() // 500) % 2) == 0 or self.started_moving_r or self.started_moving_l:
-                self.cursor_blink = True
-            else:
-                self.cursor_blink = False
-        if len(self.text) == 0 and not self.is_selected:
-            screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
-        if self.is_selected:
-            info_font = pygame.font.SysFont('Arial', 12)
-            info_label = info_font.render(self.info, True, self.active_color if self.is_active else self.inactive_color)
-            screen.blit(info_label, (self.rect.x + 5, self.rect.y + 40))
+            if self.cursor_visible:
+                if pygame.time.get_ticks() >= self.cursor_timer:
+                    self.cursor_visible = False
+                else:
+                    color = self.active_text_color if self.cursor_blink else self.active_color
+                    pygame.draw.line(screen, color,
+                                     (posX, self.rect.y + 5),
+                                     (posX, self.rect.y + self.rect.height - 5))
+            self.imagePos = pygame.Rect(self.posX + (self.rect.width // 2) // 100 * 80, self.posY,
+                                        self.image.get_rect().width, self.image.get_rect().height)
+            screen.blit(self.image, (self.posX + (self.rect.width // 2) // 100 * 80, self.posY + 5))
+            if self.is_selected:
+                if ((pygame.time.get_ticks() // 500) % 2) == 0 or self.started_moving_r or self.started_moving_l:
+                    self.cursor_blink = True
+                else:
+                    self.cursor_blink = False
+            if len(self.text) == 0 and not self.is_selected:
+                screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
+            if self.is_selected:
+                info_font = pygame.font.SysFont('Arial', 12)
+                info_label = info_font.render(self.info, True, self.active_color if self.is_active else self.inactive_color)
+                screen.blit(info_label, (self.rect.x + 5, self.rect.y + 40))
 
-        desc_font = pygame.font.SysFont('Arial', 12)
-        desc_color = self.color
-        if self.is_selected:
-            desc_color = self.active_color
-        elif not self.is_active:
-            desc_color = self.inactive_color
-        desc_label = desc_font.render(self.desc, True, desc_color)
-        screen.blit(desc_label, (self.rect.x + 5, self.rect.y - 17))
+            desc_font = pygame.font.SysFont('Arial', 12)
+            desc_color = self.color
+            if self.is_selected:
+                desc_color = self.active_color
+            elif not self.is_active:
+                desc_color = self.inactive_color
+            desc_label = desc_font.render(self.desc, True, desc_color)
+            screen.blit(desc_label, (self.rect.x + 5, self.rect.y - 17))
