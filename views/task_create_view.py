@@ -346,10 +346,22 @@ class AddTaskView():
                 box.draw(screen)
             if command:
                 for box in command_inputs:
+                    box.set_hidden(False)
+                    box.update_text()
+                    box.draw(screen)
+            else:
+                for box in command_inputs:
+                    box.set_hidden(True)
                     box.update_text()
                     box.draw(screen)
             if text_screen:
                 for box in text_screen_inputs:
+                    box.set_hidden(False)
+                    box.draw(screen)
+                    box.update_text()
+            else:
+                for box in text_screen_inputs:
+                    box.set_hidden(True)
                     box.draw(screen)
                     box.update_text()
             for button in buttons:

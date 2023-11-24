@@ -13,6 +13,7 @@ class SettingsView:
         self.teststarter_config = TeststarterConfig()
         self.errors = []
         self.settings = self.teststarter_config.get_settings()
+        self.input_page = 0
 
     def backToTeststarter(self, teststarter):
         teststarter()
@@ -56,7 +57,10 @@ class SettingsView:
                                lambda: self.change_language('de', translate_service, language_config),
                                translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
         y += 2 * spacing
+        input_y_pos = y
         for label, initial_text in zip(labels, initial_texts):
+            if len(input_boxes) % 5 == 0:
+                y = input_y_pos
             input_box = InputBox(x, y, 400, 40, label, translate_service, is_active=False,
                                  desc=translate_service.get_translation(label), initial_text=initial_text,
                                  color=pygame.Color('#C0C0C0'), active_color=pygame.Color('#DADDDC'),
@@ -68,11 +72,11 @@ class SettingsView:
             input_boxes[label] = input_box
             y += spacing
 
-        exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.backToTeststarter(teststarter),
+        exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.backToTeststarter(teststarter),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
         save_button = Button(
             x + 75,
-            y + 60,
+            y + 100,
             100,
             40,
             'save',
@@ -102,6 +106,27 @@ class SettingsView:
         if is_valid:
             self.errors.clear()
         return is_valid
+
+    def split_dict(self, input_dict, chunk_size):
+        dict_list = [{}]
+        current_dict = 0
+
+        for key, value in input_dict.items():
+            dict_list[current_dict][key] = value
+            if len(dict_list[current_dict]) >= chunk_size:
+                dict_list.append({})
+                current_dict += 1
+        filtered_dict = [entry for entry in dict_list if entry]
+
+        return filtered_dict
+
+    def page_update(self, splitted_experiments, increment):
+        if increment:
+            self.input_page = (self.input_page + 1) % len(splitted_experiments)
+        else:
+            self.input_page = (
+                (self.input_page - 1) if self.input_page > 0 else len(splitted_experiments) - 1
+            )
 
     def display(self, teststarter, translate_service, language_config):
         # Define colors
@@ -140,7 +165,27 @@ class SettingsView:
             teststarter, translate_service, language_config, initial_texts
         )
 
+        splitted_inputs = self.split_dict(input_boxes, 5)
+
         iniitial_text_dict = {}
+
+        x = buttons['back'].pos_x
+        y = buttons['back'].pos_y
+
+        font = pygame.font.Font(
+            None, int(30 * width_scale_factor)
+        )
+
+        page_surface = font.render(
+            str(self.input_page + 1) + '/' + str(len(splitted_inputs)), True, light_grey
+        )
+        page_rect = page_surface.get_rect()
+        page_rect.center = (x + 75, y - 80)
+
+        left_button = Button(x, y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
+                             border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
+        right_button = Button(x + 150, y - 100, 40, 40, '>', lambda: self.page_update(splitted_inputs, True),
+                              border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'))
 
         for key, label in zip(input_boxes.keys(), initial_texts):
             iniitial_text_dict[key] = label
@@ -157,9 +202,6 @@ class SettingsView:
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
-        font = pygame.font.Font(
-            None, int(30 * width_scale_factor)
-        )
         language_surface = font.render(
             translate_service.get_translation('language'), True, light_grey
         )
@@ -169,14 +211,16 @@ class SettingsView:
             translate_service.get_translation('colors'), True, light_grey
         )
         color_rect = color_surface.get_rect()
-
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                left_button.handle_event(event)
+                right_button.handle_event(event)
                 for key, box in input_boxes.items():
-                    box.handle_event(event)
+                    if key in splitted_inputs[self.input_page].keys():
+                        box.handle_event(event)
                 for key, button in buttons.items():
                     button.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
@@ -184,8 +228,8 @@ class SettingsView:
             screen.blit(text_surface, (x - text_rect.width // 2, y - 30))
             screen.blit(color_surface, (x - color_rect.width // 2, y + 180))
             screen.blit(language_surface, (x - language_rect.width // 2, y + 60))
-
-            for key, box in input_boxes.items():
+            screen.blit(page_surface, page_rect)
+            for key, box in splitted_inputs[self.input_page].items():
                 if self.is_hex_color_code(box.text):
                     color = pygame.Color(box.text)
                     box_rect = pygame.Rect(box.posX - 225, box.posY + 10, 20, 20)
@@ -201,15 +245,25 @@ class SettingsView:
                 buttons['save'].set_color((100, 100, 100))
 
             for key, box in input_boxes.items():
-                box.update_text()
-                box.draw(screen)
+                if key in splitted_inputs[self.input_page].keys():
+                    box.set_hidden(False)
+                    box.update_text()
+                    box.draw(screen)
+                else:
+                    box.set_hidden(True)
 
             for key, button in buttons.items():
                 if key in input_boxes.keys():
-                    if not input_boxes[key].is_active:
+                    if not input_boxes[key].is_active and key in splitted_inputs[self.input_page].keys():
+                        button.set_hidden(False)
                         button.draw(screen)
+                    else:
+                        button.set_hidden(True)
                 else:
                     button.draw(screen)
+
+            left_button.draw(screen)
+            right_button.draw(screen)
 
             if self.errors:
                 error_font = pygame.font.Font(None, 18)
