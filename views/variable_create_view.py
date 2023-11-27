@@ -181,7 +181,7 @@ class CreateVariablesView:
 
             if self.validate_inputs(input_boxes):
                 buttons[1].set_active(True)
-                buttons[1].set_color('gray')
+                buttons[1].set_color(pygame.Color(self.settings["buttonColor"]))
             else:
                 buttons[1].set_active(False)
                 buttons[1].set_color(pygame.Color(self.settings["inactiveButtonColor"]))

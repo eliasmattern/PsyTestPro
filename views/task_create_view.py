@@ -329,9 +329,9 @@ class AddTaskView():
                     input_boxes, time_input, command_inputs, text_screen_inputs, command
             ):
                 buttons[2].set_active(True)
-                buttons[2].set_color('gray')
+                buttons[2].set_color(pygame.Color(self.settings["buttonColor"]))
                 buttons[3].set_active(True)
-                buttons[3].set_color('gray')
+                buttons[3].set_color(pygame.Color(self.settings["buttonColor"]))
             else:
                 buttons[2].set_active(False)
                 buttons[2].set_color(self.inactive_button_color)
