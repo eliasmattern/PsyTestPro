@@ -20,9 +20,7 @@ class AddTaskView():
         is_valid = False
 
         if input_boxes[0].text and time_input.time:
-            if is_command and command_inputs[0].text:
-                is_valid = True
-            if not is_command and text_screen_inputs[0].text:
+            if is_command and command_inputs[0].text or not is_command and text_screen_inputs[0].text:
                 is_valid = True
 
         return is_valid
