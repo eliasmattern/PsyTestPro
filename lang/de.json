@@ -92,5 +92,8 @@
     "save": "Speichern",
     "contrastErrorMsg": "hat zu wenig Kontrast zur",
     "updatedColors": "Farben aktualisiert",
-    "reset": "Reset"
+    "reset": "Reset",
+    "colorThemes": "Farbthemen",
+    "darkMode": "Darkmode",
+    "lightMode": "Lightmode"
 }

@@ -96,5 +96,8 @@
     "save": "Save",
     "contrastErrorMsg": "has too little contrast to the",
     "updatedColors": "Colors updated",
-    "reset": "Reset"
+    "reset": "Reset",
+    "colorThemes": "Color Themes",
+    "darkMode": "Darkmode",
+    "lightMode": "Lightmode"
 }

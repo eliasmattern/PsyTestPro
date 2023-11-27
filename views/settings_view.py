@@ -115,6 +115,9 @@ class SettingsView:
             input_boxes['activeButtonColor'].text = '#232B38'
             input_boxes['inactiveButtonColor'].text = '#646464'
             input_boxes['gridColor'].text = '#232B38'
+        for box in input_boxes.values():
+            box.is_touched = True
+
 
     def create_input_boxes(self, teststarter, translate_service, language_config, initial_texts):
         input_boxes = {}
