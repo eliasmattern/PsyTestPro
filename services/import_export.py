@@ -1,7 +1,8 @@
 import json
 import os
-import pandas as pd
 
+import pandas as pd
+import math
 
 class JSONToCSVConverter:
     def __init__(self, file1_path, file2_path, output_path):
@@ -20,11 +21,12 @@ class JSONToCSVConverter:
             os.makedirs(directory)
         file1_data = self.read_json(self.file1_path)
         file2_data = self.read_json(self.file2_path)
-
         # Create DataFrame for file2
         file2_rows = []
         for key, value in file2_data.items():
             tasks = value.get('tasks', {})
+            if len(tasks) == 0:
+                file2_rows.append([key])
             for task_key, task_value in tasks.items():
                 if 'value' in task_value and isinstance(task_value['value'], dict):
                     row = [key, task_key, task_value['value'].get('title', ''),
@@ -33,10 +35,8 @@ class JSONToCSVConverter:
                     row = [key, task_key, '', '']
                 row += [task_value['time'], task_value['state'], task_value['type'], task_value['value']]
                 file2_rows.append(row)
-
         file2_df = pd.DataFrame(file2_rows,
                                 columns=['Variable', 'Task', 'Title', 'Description', 'Time', 'State', 'Type', 'Value'])
-
         # Create DataFrame for file1
         file1_df = pd.DataFrame({'File 1': file1_data})
 
@@ -58,6 +58,15 @@ class CSVToJSONConverter:
 
         # Split DataFrames for file1 and file2
         file1_data = df[df['Variable'].isna()]['File 1'].tolist()
+        file1_result = []
+        for data in file1_data:
+            if isinstance(data, float):
+                if data.is_integer():
+                    file1_result.append(str(int(data)))
+                else:
+                    file1_result.append(str(data))
+            else:
+                file1_result.append(str(data))
         file2_df = df[~df['Variable'].isna()]
 
         # Convert file2 DataFrame to dictionary
@@ -99,10 +108,16 @@ class CSVToJSONConverter:
         for variable_data in file2_data.values():
             if not variable_data['tasks']:
                 variable_data.pop('tasks')
+        for key, value in file2_data.items():
+            experiment = file2_data.get(key, {})
+            tasks = experiment.get('tasks')
+            tasks_without_nan = {name: task for name, task in tasks.items() if
+                                 isinstance(name, float) and not math.isnan(name) or isinstance(name, str)}
+            file2_data[key]['tasks'] = tasks_without_nan
 
         # Write to file1.json
         with open(self.output_file1_path, 'w') as file:
-            json.dump(file1_data, file)
+            json.dump(file1_result, file)
 
         # Write to file2.json
         with open(self.output_file2_path, 'w') as file:

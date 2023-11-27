@@ -11,7 +11,9 @@ class TeststarterConfig:
     def load_experiments(self):
         try:
             with open(f'json/experimentConfig.json', 'r', encoding='utf-8') as file:
-                self.experiments = json.load(file)
+                experiments = json.load(file)
+                string = ','.join(str(e) for e in experiments)
+                self.experiments = string.split(',')
         except FileNotFoundError:
             raise Exception(f'File Error: ./json/experimentConfig.json not found ')
 
@@ -20,12 +22,12 @@ class TeststarterConfig:
         try:
             with open(f'json/taskConfig.json', 'r', encoding='utf-8') as file:
                 tasks = json.load(file)
-                if tasks.get(experiment + '_schedule') != None:
+                if tasks.get(str(experiment) + '_schedule') is not None:
                     self.current_tasks = tasks.get(experiment + '_schedule').get('tasks')
-                    self.current_experiment = experiment + '_schedule'
-                elif tasks.get(experiment + '_list') != None:
+                    self.current_experiment = str(experiment) + '_schedule'
+                elif tasks.get(str(experiment) + '_list') is not None:
                     self.current_tasks = tasks.get(experiment + '_list').get('tasks')
-                    self.current_experiment = experiment + '_list'
+                    self.current_experiment = str(experiment) + '_list'
                 else:
                     self.error_msg = 'experimentNotFound'
         except FileNotFoundError:
@@ -65,7 +67,7 @@ class TeststarterConfig:
         variable_names = data.keys()
         result = []
         for variable in variable_names:
-            result.append(variable)
+            result.append(str(variable))
 
         return result
 

@@ -72,7 +72,7 @@ class Teststarter:
         labels = ['participantId', 'experiment', 'startTime']
         experiments_string = ''
         for experiment in self.teststarterConfig.experiments:
-            experiments_string = experiments_string + experiment + ', '
+            experiments_string = experiments_string + str(experiment) + ', '
         if ',' in experiments_string:
             experiments_string = experiments_string[:-2]
         information = ['', '(' + experiments_string + ')', 'hh:mm']
