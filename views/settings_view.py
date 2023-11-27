@@ -92,6 +92,30 @@ class SettingsView:
     def backToTeststarter(self, teststarter):
         teststarter()
 
+    def change_theme(self, theme, input_boxes):
+        if theme == 'darkMode':
+            input_boxes['backgroundColor'].text = '#000000'
+            input_boxes['primaryColor'].text = '#C0C0C0'
+            input_boxes['buttonColor'].text = '#C0C0C0'
+            input_boxes['buttonTextColor'].text = '#000000'
+            input_boxes['successColor'].text = '#00B371'
+            input_boxes['dangerColor'].text = '#FF0000'
+            input_boxes['warningColor'].text = '#F0E68C'
+            input_boxes['activeButtonColor'].text = '#DADDDC'
+            input_boxes['inactiveButtonColor'].text = '#646464'
+            input_boxes['gridColor'].text = '#C0C0C0'
+        elif theme == 'lightMode':
+            input_boxes['backgroundColor'].text = '#faf9f9'
+            input_boxes['primaryColor'].text = '#000000'
+            input_boxes['buttonColor'].text = '#0e1116'
+            input_boxes['buttonTextColor'].text = '#faf9f9'
+            input_boxes['successColor'].text = '#00B371'
+            input_boxes['dangerColor'].text = '#FF0000'
+            input_boxes['warningColor'].text = '#9B9B28'
+            input_boxes['activeButtonColor'].text = '#232B38'
+            input_boxes['inactiveButtonColor'].text = '#646464'
+            input_boxes['gridColor'].text = '#232B38'
+
     def create_input_boxes(self, teststarter, translate_service, language_config, initial_texts):
         input_boxes = {}
         buttons = {}
@@ -111,6 +135,16 @@ class SettingsView:
                                translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                                active_button_color=pygame.Color('#ACACAC'))
         y += 2 * spacing
+        dark_mode = Button(x - 110, y, 180, 40, 'darkMode',
+                           lambda: self.change_theme('darkMode', input_boxes),
+                           translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                           active_button_color=pygame.Color('#ACACAC'))
+        light_mode = Button(x + 110, y, 180, 40, 'lightMode',
+                            lambda: self.change_theme('lightMode', input_boxes),
+                            translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
+                            active_button_color=pygame.Color('#ACACAC'))
+        y += 2 * spacing
+
         input_y_pos = y
         for label, initial_text in zip(labels, initial_texts):
             if len(input_boxes) % 5 == 0:
@@ -150,6 +184,8 @@ class SettingsView:
 
         buttons['english'] = english_button
         buttons['german'] = german_button
+        buttons['darkMode'] = dark_mode
+        buttons['lightMode'] = light_mode
         buttons['back'] = exit_button
         buttons['save'] = save_button
         return input_boxes, buttons
@@ -272,6 +308,11 @@ class SettingsView:
             translate_service.get_translation('colors'), True, light_grey
         )
         color_rect = color_surface.get_rect()
+
+        color_themes_surface = font.render(
+            translate_service.get_translation('colorThemes'), True, light_grey
+        )
+        color_themes_rect = color_themes_surface.get_rect()
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -293,7 +334,8 @@ class SettingsView:
             page_rect.center = (page_x + 75, page_y - 80)
 
             screen.blit(text_surface, (x - text_rect.width // 2, y - 30))
-            screen.blit(color_surface, (x - color_rect.width // 2, y + 180))
+            screen.blit(color_themes_surface, (x - color_themes_rect.width // 2, y + 180))
+            screen.blit(color_surface, (x - color_rect.width // 2, y + 300))
             screen.blit(language_surface, (x - language_rect.width // 2, y + 60))
             screen.blit(page_surface, page_rect)
             for key, box in splitted_inputs[self.input_page].items():
@@ -349,7 +391,7 @@ class SettingsView:
                     error_surface = error_font.render(error, True, (200, 0, 0))
                     screen.blit(error_surface,
                                 ((screen_width // 2 - (error_surface.get_width() // 2)),
-                                 float((screen_height - height) / 100 * 90) + spacing))
+                                 float((screen_height - height) / 100 * 95) + spacing))
                     spacing += error_font.get_height()
 
             if self.saving_errors or self.saved_msg:
