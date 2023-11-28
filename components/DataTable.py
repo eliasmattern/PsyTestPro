@@ -4,7 +4,7 @@ from services import TeststarterConfig
 
 class DataTable():
 
-    def __init__(self, columns, max_rows, start_pos, data=None):
+    def __init__(self, columns, max_rows, start_pos, data=None, max_cell_width=None):
         if data is None:
             data = [[]]
         self.data = data
@@ -17,6 +17,7 @@ class DataTable():
         self.settings = self.teststarter_config.get_settings()
         self.margin_left = 10
         self.margin_top = 5
+        self.max_cell_width = max_cell_width
         self.grid_color = pygame.Color(self.settings['gridColor'])
         self.table_width, self.table_height, self.row_width, self.row_height = self.get_table_proportions()
 
@@ -31,7 +32,8 @@ class DataTable():
             if header_width > max_header_width:
                 max_header_width = header_width
             width += 2 * self.margin_left
-
+        if self.max_cell_width != None and max_header_width > self.max_cell_width:
+            max_header_width = self.max_cell_width
         row_width = max_header_width + 2 * self.margin_left
         table_height = row_height * (len(self.data) + 1)
         table_width = width + max_header_width * len(self.columns)
@@ -46,6 +48,15 @@ class DataTable():
             header_surface = self.header_font.render(
                 header, True, self.grid_color
             )
+            word_to_split = 1
+            final_header = header
+            header_copy = header
+            if ' ' in header:
+                while self.font.size(header_copy)[0] > self.max_cell_width:
+                    split_text = header.rsplit(' ', word_to_split)
+                    header_copy = split_text[0]
+                    word_to_split += 1
+                    final_header = ''.join('\\n', split_text)
             screen.blit(header_surface,
                         (self.pos_x + self.margin_left + index * self.row_width, self.pos_y + self.margin_top))
             pygame.draw.line(screen, self.grid_color,
