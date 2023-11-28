@@ -370,7 +370,7 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
 
                             # Write the data to the CSV file
                             writer.writerow([subject, day , month, year, hour, minute, second, num_back, current_block, current_trial, current_letter, back_letter, response_time, user_input, result])
-
+                            response_time = ""
                             # Print variables
                             print(f"current block: {current_block} |no of trials: {num_trials} |current trial: {current_trial} | current letter: {current_letter} | back letter: {back_letter} | user input: {user_input} | result: {result} ") 
 
@@ -436,7 +436,7 @@ def practice_nback(subject, experiment, week, current_block, num_back, num_back_
 
                             # Write the data to the CSV file
                             writer.writerow([subject, day , month, year, hour, minute, second, num_back, current_block, current_trial, current_letter, back_letter, response_time, user_input, result])
-
+                            response_time = ""
                             # Print variables
                             print(f"current block: {current_block} |no of trials: {num_trials} |current trial: {current_trial} | current letter: {current_letter} | back letter: {back_letter} | user input: {user_input} | result: {result} ") 
 
@@ -713,11 +713,14 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
                         # Process user input during blank display
                         while pygame.time.get_ticks() < start_time + blank_duration:
                             if current_trial >= num_back:
+                                run_time = str((time.time_ns() - reaction_start_time) / 1e9)
                                 for event in pygame.event.get():
                                     if event.type == pygame.KEYDOWN:
                                         if event.key == pygame.K_a:
+                                            response_time = run_time
                                             user_input = "No Match"
                                         elif event.key == pygame.K_l:
+                                            response_time = run_time
                                             user_input = "Match"
 
                         if current_trial >= num_back:
@@ -762,7 +765,7 @@ def real_nback(subject, experiment, week, current_block, num_back, num_back_addi
 
                         # Write the data to the CSV file
                         writer.writerow([subject, day , month, year, hour, minute, second, num_back, current_block, current_trial, current_letter, back_letter, response_time, user_input, result])
-
+                        response_time = ""
                         # Print variables
                         print(f"current block: {current_block} |no of trials: {num_trials} |current trial: {current_trial} | current letter: {current_letter} | back letter: {back_letter} | user input: {user_input} | result: {result} ") 
 

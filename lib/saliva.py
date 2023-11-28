@@ -321,4 +321,31 @@ def saliva(subject, experiment,week_number, kss_number):
             speichelprobe_text_rendered = []  # Clear the text content list
 
     # Close the window
+    if not kss_completed and selected_option != None:  # if the KSS Fragebogen has not yet been completed
+        kss_result = selected_option.split('.')[0].strip() # Save the number (1st position) of the selected option to a variable kss_result
+        # Get the current date and time
+        current_date = time.strftime("%Y-%m-%d")
+        current_time = time.strftime("%H:%M:%S")
+
+        # prepare date and time to be saved
+        splitted_date = current_date.split("-")
+        day = splitted_date[2]
+        month = splitted_date[1]
+        year = splitted_date[0]
+
+        splitted_time = current_time.split(":")
+        hour = splitted_time[0]
+        minute = splitted_time[1]
+        second = splitted_time[2]
+        
+        csv_exists = os.path.isfile(output_filename)
+        # Open the CSV file
+        with open(output_filename, 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            # Write the header row if this is the first kss (kss number 1) of the night
+            if not csv_exists:
+                writer.writerow(["Day", "Month", "Year", "Start Hours", "Start Minutes", "Start Seconds", "End Hours", "End Minutes", "End Seconds", 'Subject ID', 'Block', 'KSS Number', 'müdigkeit'])
+            # Write the output to the csv
+            writer.writerow([day, month, year, start_hour, start_minute, start_second, hour, minute, second, subject, week_number_str, kss_number, kss_result])
+        kss_completed = True # Flag that the kss has now been completed
     return
