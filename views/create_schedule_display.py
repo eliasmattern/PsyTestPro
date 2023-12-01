@@ -101,7 +101,7 @@ class CreateScheduleDisplay:
                         self.schedule_page]) + 3) < max_row_height else max_row_height  # +1 for the header row
 
         self.data_table = DataTable(self.headers, 5,
-                                    (self.screen_width - 4 * self.column_width, self.screen_height / 100 * 5),
+                                    (self.screen_width - 4 * self.column_width - 50, self.screen_height / 100 * 5),
                                     data=self.get_table_data(),
                                     max_cell_width=self.column_width, actions=self.actions,
                                     translate_service=self.translate_service)
@@ -166,13 +166,14 @@ class CreateScheduleDisplay:
         buttons.append(help_button)
         buttons.append(english_button)
         buttons.append(german_button)
-
-        left_button = Button(column_start_x + 1.5 * self.column_width, 760 * height_scale_factor,
+        left_button = Button(self.data_table.pos_x + (self.data_table.table_width // 100 * 0),
+                             760 * height_scale_factor,
                              40 * width_scale_factor,
                              40 * height_scale_factor, '<',
                              lambda: self.page_update(self.splitted_schedule, False, self.data_table.data),
                              border_radius=90)
-        right_button = Button(column_start_x + 2.5 * self.column_width, 760 * height_scale_factor,
+        right_button = Button(self.data_table.pos_x + (self.data_table.table_width // 100 * 100),
+                              760 * height_scale_factor,
                               40 * width_scale_factor,
                               40 * height_scale_factor, '>',
                               lambda: self.page_update(self.splitted_schedule, True, self.data_table.data),
@@ -192,77 +193,7 @@ class CreateScheduleDisplay:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    mouse_pos = pygame.mouse.get_pos()
-                    # for row in range(1, len(self.splitted_schedule[self.schedule_page]) + 1):
-                    # if not self.isHab:
-                    #     newdate_input_box_rect = pygame.Rect(
-                    #         column_start_x + (self.column_width),
-                    #         row * row_height,
-                    #         self.column_width,
-                    #         row_height
-                    #     )
-                    #     newtime_input_box_rect = pygame.Rect(
-                    #         column_start_x + (2 * self.column_width),
-                    #         row * row_height,
-                    #         self.column_width,
-                    #         row_height
-                    #     )
-                    # todo_input_box_rect = pygame.Rect(
-                    #     column_start_x + (todo_row_multiplicator * self.column_width),
-                    #     row * row_height,
-                    #     self.column_width,
-                    #     row_height
-                    # )
-                    # if todo_input_box_rect.collidepoint(mouse_pos):
-                    #     self.todo_input_values[row] = state_iterator[
-                    #         self.splitted_schedule[self.schedule_page][
-                    #             list(self.splitted_schedule[self.schedule_page])[row - 1]][
-                    #             'state']]
-                    #     active_column = 'todo'  # Set the active column
-                    #     todo_input_active = False
-                    #     newtime_input_active = False
-                    #     newtime_active_row = None
-                    #     newtimedate_active_row = None  # Deactivate the other column
-                    #     newtimedate_input_active = False
-                    # if not self.isHab:
-                    #     if newdate_input_box_rect.collidepoint(mouse_pos) and not self.isHab:
-                    #         self.newdate_input_values[row] = \
-                    #             self.splitted_schedule[self.schedule_page][
-                    #                 list(self.splitted_schedule[self.schedule_page])[row - 1]][
-                    #                 'datetime'].split(' ')[0]
-                    #         active_column = 'newdate'  # Set the active column
-                    #         newtimedate_input_active = False
-                    #         todo_active_row = None  # Deactivate the other column
-                    #         todo_input_active = False
-                    #         newtime_active_row = None
-                    #         newtime_input_active = False
-                    #         splitted_date = self.newdate_input_values[row].split('/')
-                    #         day, month, year = splitted_date[0], splitted_date[1], splitted_date[2]
-                    #         date = create_date_picker(int(year), int(month), int(day))
-                    #         self.newdate_input_values[row] = date
-                    #     elif newtime_input_box_rect.collidepoint(mouse_pos) and not self.isHab:
-                    #         self.newtime_input_values[row] = ''
-                    #         active_column = 'newtime'  # Set the active column
-                    #         newtimedate_input_active = False
-                    #         newtime_input_active = True
-                    #         todo_active_row = None  # Deactivate the other column
-                    #         todo_input_active = False
-                    #         newdate_active_row = None
-                    #         newdate_input_active = False
-                    #         current_time = \
-                    #             self.splitted_schedule[self.schedule_page][
-                    #                 list(self.splitted_schedule[self.schedule_page])[row - 1]][
-                    #                 'datetime'].split(' ')[1]
-                    #         splitted_time = current_time.split(':')
-                    #         time_picker = create_time_picker(splitted_time[0], splitted_time[1],
-                    #                                          self.translate_service)
-                    #         formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ':' + str(
-                    #             time_picker.time()[1]).rjust(2, '0') + ':00'
-                    #         if row in self.newtime_input_values:
-                    #             self.newtime_input_values[row] = formatted_time
-                    #         else:
-                    #             self.newtime_input_values[row] = formatted_time
+
                 for button in buttons:
                     button.handle_event(event)
 
@@ -282,188 +213,20 @@ class CreateScheduleDisplay:
                 page_number_surface = font.render(str(self.schedule_page + 1) + '/' + str(len(self.splitted_schedule)),
                                                   True,
                                                   self.light_grey)
-                screen.blit(page_number_surface, (column_start_x + 2 * self.column_width, 775 * height_scale_factor))
-                for button in page_butons:
+                page_number_rect = page_number_surface.get_rect()
+                page_number_rect.center = (self.data_table.pos_x + (len(self.headers) // 2) * self.data_table.row_width - (page_number_rect.width // 2),
+                    self.data_table.table_height + width_scale_factor * 70)
+                screen.blit(page_number_surface, (page_number_rect.x + (page_number_rect.width), page_number_rect.y))
+
+                for index, button in enumerate(page_butons):
+                    button.rect.x = self.data_table.pos_x + self.data_table.table_width // 100 * 37.5
+                    button.rect.y = self.data_table.table_height + width_scale_factor * 50
+
+                    if index == 1:
+                        button.rect.x = self.data_table.pos_x + self.data_table.table_width // 100 * 67.5
                     button.draw(screen)
 
             self.data_table.draw(screen)
-
-            # # Display column headers with adjusted font size
-            # text_surface = font.render(' ' + self.translate_service.get_translation('task'), True,
-            #                            self.light_grey)  # Render the text 'Task' with the font and color light_grey
-            # screen.blit(text_surface,
-            #             (column_start_x, cellPadding))  # Blit the text surface to the screen at the specified position
-            # if not self.isHab:
-            #     text_surface = font.render(' ' + self.translate_service.get_translation('date'), True,
-            #                                self.light_grey)  # Render the text 'Time'
-            #     screen.blit(text_surface,
-            #                 (column_start_x + self.column_width, cellPadding))  # Blit the text surface to the screen
-            #     text_surface = font.render(' ' + self.translate_service.get_translation('time'), True,
-            #                                self.light_grey)  # Render the text 'Time'
-            #     screen.blit(text_surface,
-            #                 (column_start_x + (2 * self.column_width), cellPadding))  # Blit the text surface to the screen
-            # # text_surface = font.render('New Date and Time', True, light_grey) # Render the text 'New Date and Time'
-            # # screen.blit(text_surface, (column_start_x + (3 * self.column_width), cellPadding)) # Blit the text surface to the screen
-            # text_surface = font.render(' ' + self.translate_service.get_translation('skipDoneTodo'), True,
-            #                            self.light_grey)  # Render the text 'Skip/newtimedate'
-            # screen.blit(text_surface, (
-            #     column_start_x + (todo_row_multiplicator * self.column_width), cellPadding))  # Adjusted blitting position
-            #
-            # # Display each task with adjusted font size
-            # font = pygame.font.Font(None, int(16 * width_scale_factor))
-            # row = 1  # Initialize the row counter
-            # # Loop through each task and datetime in the schedule dictionary
-            #
-            # for task, info in self.splitted_schedule[self.schedule_page].items():
-            #     date = info['datetime'].split(' ')[0]
-            #     time = info['datetime'].split(' ')[1]
-            #     state = info['state']
-            #     # Replace underscores with spaces in the task name
-            #     task_name = task.replace('_', ' ')
-            #     task_name = ' ' + task_name
-            #
-            #     # Format the task and datetime strings
-            #     task_text = font.render(task_name, True, self.light_grey)  # Render the task name text
-            #
-            #     # Display the task details in each column with adjusted row height
-            #     screen.blit(task_text,
-            #                 (column_start_x, row * row_height + cellPadding))  # Blit the task_text to the screen
-            #     # Adjusted blitting position for the 'Skip/newtimedate' column
-            #     skip_newtimedate_text = font.render('To Do/Skip', True, self.light_grey)  # Render the text 'To Do/Skip'
-            #
-            #     # Render input boxes for 'New Date' and ' New Time' and 'Skip/ToDo' columns
-            #     if not self.isHab:
-            #         newdate_input_box_rect = pygame.Rect(
-            #             column_start_x + (self.column_width),
-            #             row * row_height,
-            #             self.column_width,
-            #             row_height
-            #         )
-            #
-            #         newtime_input_box_rect = pygame.Rect(
-            #             column_start_x + (2 * self.column_width),
-            #             row * row_height,
-            #             self.column_width,
-            #             row_height
-            #         )
-            #
-            #     todo_input_box_rect = pygame.Rect(
-            #         column_start_x + (todo_row_multiplicator * self.column_width),
-            #         row * row_height,
-            #         self.column_width,
-            #         row_height
-            #     )
-            #
-            #
-            #     # Render input value
-            #     if not self.isHab:
-            #         if row in self.newdate_input_values:
-            #             newdate_input_value = self.newdate_input_values[row]
-            #             newdate_input_text_surface = newdate_input_box_font.render(newdate_input_value, True,
-            #                                                                        self.light_grey)
-            #             if not self.is_valid_datetime_format(newdate_input_value + ' ' + time):
-            #                 newdate_input_text_surface = newdate_input_box_font.render(newdate_input_value, True,
-            #                                                                            self.red)
-            #             else:
-            #                 newdate_input_text_surface = newdate_input_box_font.render(newdate_input_value, True,
-            #                                                                            self.light_grey)
-            #                 self.splitted_schedule[self.schedule_page][list(self.splitted_schedule[self.schedule_page])[row - 1]][
-            #                     'datetime'] = newdate_input_value + ' ' + time
-            #             screen.blit(newdate_input_text_surface, newdate_input_box_rect.move(5, 5))
-            #         elif newdate_active_row == row:
-            #             newdate_input_text_surface = newdate_input_box_font.render(newdate_input_text, True,
-            #                                                                        self.light_grey)
-            #             screen.blit(newdate_input_text_surface, newdate_input_box_rect.move(5, 5))
-            #         elif newdate_active_row != row:
-            #             newdate_input_text_surface = newdate_input_box_font.render(date, True, self.light_grey)
-            #             screen.blit(newdate_input_text_surface, newdate_input_box_rect.move(5, 5))
-            #
-            #         if row in self.newtime_input_values:
-            #             newtime_input_value = self.newtime_input_values[row]
-            #             newtime_input_text_surface = newtime_input_box_font.render(newtime_input_value, True,
-            #                                                                        self.light_grey)
-            #             if not self.is_valid_datetime_format(date + ' ' + newtime_input_value):
-            #                 newtime_input_text_surface = newtime_input_box_font.render(newtime_input_value, True,
-            #                                                                            self.red)
-            #             else:
-            #                 newtime_input_text_surface = newtime_input_box_font.render(newtime_input_value, True,
-            #                                                                            self.light_grey)
-            #                 self.splitted_schedule[self.schedule_page][list(self.splitted_schedule[self.schedule_page])[row - 1]][
-            #                     'datetime'] = date + ' ' + newtime_input_value
-            #             screen.blit(newtime_input_text_surface, newtime_input_box_rect.move(5, 5))
-            #         elif newtime_active_row == row:
-            #             newtime_input_text_surface = newtime_input_box_font.render(newtime_input_text, True,
-            #                                                                        self.light_grey)
-            #             screen.blit(newtime_input_text_surface, newtime_input_box_rect.move(5, 5))
-            #         elif newtime_active_row != row:
-            #             newtime_input_text_surface = newtime_input_box_font.render(time, True, self.light_grey)
-            #             screen.blit(newtime_input_text_surface, newtime_input_box_rect.move(5, 5))
-            #
-            #     todo_color = {'todo': self.light_grey, 'skip': self.warning, 'done': self.success}
-            #     if row in self.todo_input_values:
-            #         todo_input_value = self.todo_input_values[row]
-            #         todo_input_text_surface = todo_input_box_font.render(
-            #             self.translate_service.get_translation(todo_input_value), True,
-            #             todo_color[todo_input_value.lower()])
-            #
-            #         if todo_input_value.lower() == 'todo' or todo_input_value.lower() == 'done' or todo_input_value.lower() == 'skip':
-            #             self.splitted_schedule[self.schedule_page][list(self.splitted_schedule[self.schedule_page])[row - 1]][
-            #                 'state'] = todo_input_value.lower()
-            #         else:
-            #             todo_input_text_surface = todo_input_box_font.render(todo_input_value, True, self.red)
-            #         screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
-            #     elif todo_active_row == row:
-            #         todo_input_text_surface = todo_input_box_font.render(todo_input_text, True,
-            #                                                              todo_color[self.todo_input_values[row].lower()])
-            #         screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
-            #     elif todo_active_row != row:
-            #         todo_input_text_surface = todo_input_box_font.render(self.translate_service.get_translation(state),
-            #                                                              True,
-            #                                                              todo_color[
-            #                                                                  self.splitted_schedule[self.schedule_page][
-            #                                                                      list(self.splitted_schedule[
-            #                                                                               self.schedule_page])[
-            #                                                                          row - 1]]['state'].lower()])
-            #         screen.blit(todo_input_text_surface, todo_input_box_rect.move(5, 5))
-            #
-            #     # Render the cursor
-            #     if (active_column == 'newdate' and newdate_active_row == row):
-            #         cursor_x = 0
-            #         cursor_y = 0
-            #         cursor_height = 0
-            #         input_text_surface = None
-            #
-            #         if active_column == 'newdate':
-            #             cursor_x = newdate_input_box_rect.left + newdate_input_text_surface.get_width() + 5
-            #             cursor_y = newdate_input_box_rect.top + 5
-            #             cursor_height = 14
-            #             input_text_surface = newdate_input_text_surface
-            #
-            #         pygame.draw.line(screen, cursor_color, (cursor_x, cursor_y), (cursor_x, cursor_y + cursor_height),
-            #                          cursor_width)
-            #
-            #     row += 1  # Increment the row counter
-            #
-            #     max_grid_rows = len(self.splitted_schedule[self.schedule_page])
-            #
-            #     final_y = (max_grid_rows + 1) * row_height
-            #
-            #     # Draw grid lines
-            #     grid_range = 5 if not self.isHab else 3
-            #     for i in range(grid_range):
-            #         x = column_start_x + (i * self.column_width)
-            #         pygame.draw.line(screen, self.grid_color, (x, 0), (x, final_y), 1)
-            #
-            #     for i in range(1, max_grid_rows + 2):
-            #         y = i * row_height
-            #         pygame.draw.line(screen, self.grid_color, (column_start_x, y),
-            #                          (column_start_x + ((grid_range - 1) * self.column_width), y), 1)
-            #
-            # # Update the cursor visibility
-            # current_time = pygame.time.get_ticks()
-            # if current_time - cursor_timer > cursor_blink_interval:
-            #     cursor_visible = not cursor_visible
-            #     cursor_timer = current_time
 
             pygame.display.flip()  # Flip the display to update the screen
 
@@ -759,7 +522,7 @@ class CreateScheduleDisplay:
             self.schedule_page = (self.schedule_page - 1) if self.schedule_page > 0 else len(schedule) - 1
 
         self.data_table = DataTable(self.headers, 5,
-                                    (self.screen_width - 4 * self.column_width, self.screen_height / 100 * 5),
+                                    (self.screen_width - 4 * self.column_width - 50, self.screen_height / 100 * 5),
                                     data=self.get_table_data(),
                                     max_cell_width=self.column_width, actions=self.actions,
                                     translate_service=self.translate_service)
@@ -798,6 +561,7 @@ class CreateScheduleDisplay:
         data = []
         for key, value in self.splitted_schedule[self.schedule_page].items():
             date, time = value['datetime'].split(' ')
-            data.append([key.replace('_', ' '), date, time, {'value': value['state'], 'color': states[value['state']]['color'],
-                                           'key': states[value['state']]['key']}])
+            data.append(
+                [key.replace('_', ' '), date, time, {'value': value['state'], 'color': states[value['state']]['color'],
+                                                     'key': states[value['state']]['key']}])
         return data

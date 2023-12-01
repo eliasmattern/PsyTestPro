@@ -17,7 +17,7 @@ class DataTable():
         self.settings = self.teststarter_config.get_settings()
         self.margin_left = 10
         self.margin_top = 5
-        self.max_cell_width = max_cell_width - 10
+        self.max_cell_width = max_cell_width - 10 if max_cell_width else None
         self.grid_color = pygame.Color(self.settings['gridColor'])
         self.primary_color = pygame.Color(self.settings['gridColor'])
         self.table_width, self.table_height, self.row_width, self.row_height, self.header_heigth = self.get_table_proportions()
@@ -25,6 +25,7 @@ class DataTable():
         self.actions = actions
         self.action_data = None
         self.translate_service = translate_service
+
 
     def set_action_data(self, data):
         self.action_data = data
@@ -51,38 +52,39 @@ class DataTable():
             final_header = header
             header_copy = header
 
-            if ' ' in header and self.max_cell_width != None:
+            if ' ' in header and row_width != None:
                 headers = []
                 split_text = None
-                while self.font.size(header_copy)[0] + self.margin_left > self.max_cell_width and ' ' in header_copy:
+                while self.header_font.size(header_copy)[0] + self.margin_left > row_width and ' ' in header_copy:
                     split_text = header.rsplit(' ', word_to_split)
                     header_copy = split_text[0]
                     word_to_split += 1
-                    if self.font.size(split_text[1])[0] > self.max_cell_width:
-                        split_text[1] = self.get_fromatted_text(split_text[1], self.max_cell_width)
-                    if len(headers) > 0 and self.font.size(split_text[1] + ' ' + headers[-1])[
-                        0] + self.margin_left < self.max_cell_width:
+                    if self.header_font.size(split_text[1])[0] > row_width:
+                        split_text[1] = self.get_fromatted_text(split_text[1], row_width, self.header_font)
+                    if len(headers) > 0 and self.header_font.size(split_text[1] + ' ' + headers[-1])[
+                        0] + self.margin_left < row_width:
                         split_text[1] = split_text[1] + ' ' + headers[-1]
                         del headers[len(headers) - 1]
                     headers.append(split_text[1])
                 if split_text:
-                    first_word = self.get_fromatted_text(split_text[0], self.max_cell_width)
+                    first_word = self.get_fromatted_text(split_text[0], row_width, self.header_font)
                 else:
                     first_word = header
                 final_header = '\\n'.join(map(str, [first_word, *headers]))
-            elif self.max_cell_width is not None:
-                final_header = self.get_fromatted_text(header, self.max_cell_width)
+            elif row_width is not None:
+                final_header = self.get_fromatted_text(header, row_width, self.header_font)
             split_header = final_header.split('\\n')
-            if row_height < self.font.get_height() * len(split_header) > header_height:
-                header_height = self.font.get_height() * (len(split_header) - 1)
-        table_height += header_height
+            if row_height < self.header_font.get_height() * len(split_header) > header_height:
+                header_height = self.header_font.get_height() * (len(split_header) - 1)
+            print(row_height, self.header_font.get_height(), split_header, header_height)
+        table_height += header_height + row_height
         return table_width, table_height, row_width, row_height, header_height
 
-    def get_fromatted_text(self, text, max_width):
+    def get_fromatted_text(self, text, max_width, font):
         texts = []
         index = 0
-        while self.font.size(text)[0] > max_width - self.margin_left:
-            if self.font.size(text[:index])[0] >= max_width - self.margin_left:
+        while font.size(text)[0] > max_width - self.margin_left:
+            if font.size(text[:index])[0] >= max_width - self.margin_left:
                 texts.append(text[:index - 2])
                 text = text[index - 2:]
                 index = 0
@@ -114,28 +116,28 @@ class DataTable():
             word_to_split = 1
             final_header = header
             header_copy = header
-            if ' ' in header and self.max_cell_width != None:
+            if ' ' in header and self.row_width != None:
                 headers = []
                 split_text = None
-                while self.font.size(header_copy)[0] > self.max_cell_width - self.margin_left and ' ' in header_copy:
+                while self.header_font.size(header_copy)[0] > self.row_width - self.margin_left and ' ' in header_copy:
                     split_text = header.rsplit(' ', word_to_split)
                     header_copy = split_text[0]
                     word_to_split += 1
-                    if self.font.size(split_text[1])[0] + self.margin_left > self.max_cell_width:
-                        split_text[1] = self.get_fromatted_text(split_text[1], self.max_cell_width)
-                    if len(headers) > 0 and self.font.size(split_text[1] + ' ' + headers[-1])[
-                        0] + self.margin_left < self.max_cell_width:
+                    if self.header_font.size(split_text[1])[0] + self.margin_left > self.row_width:
+                        split_text[1] = self.get_fromatted_text(split_text[1], self.row_width, self.header_font)
+                    if len(headers) > 0 and self.header_font.size(split_text[1] + ' ' + headers[-1])[
+                        0] + self.margin_left < self.row_width:
                         split_text[1] = split_text[1] + ' ' + headers[-1]
                         del headers[len(headers) - 1]
                     headers.append(split_text[1])
                 if split_text:
-                    first_word = self.get_fromatted_text(split_text[0], self.max_cell_width)
+                    first_word = self.get_fromatted_text(split_text[0], self.row_width, self.header_font)
                 else:
                     first_word = header
                 headers.reverse()
                 final_header = '\\n'.join(map(str, [first_word, *headers]))
-            elif self.max_cell_width != None:
-                final_header = self.get_fromatted_text(header, self.max_cell_width)
+            elif self.row_width != None:
+                final_header = self.get_fromatted_text(header, self.row_width, self.header_font)
             split_header = final_header.split('\\n')
 
             header_surfaces = []
@@ -146,7 +148,7 @@ class DataTable():
             for i, surface in enumerate(header_surfaces):
                 screen.blit(surface,
                             (self.pos_x + self.margin_left + index * self.row_width,
-                             self.pos_y + self.margin_top + (i * self.font.get_linesize())))
+                             self.pos_y + self.margin_top + (i * self.header_font.get_linesize())))
             pygame.draw.line(screen, self.grid_color,
                              (self.pos_x, self.pos_y),
                              (self.pos_x + self.table_width, self.pos_y))
@@ -157,6 +159,7 @@ class DataTable():
         # Render rows
         for count, row in enumerate(self.data):
             for index, cell in enumerate(row):
+                word_to_split = 1
                 if index >= len(self.columns):
                     continue
 
@@ -169,14 +172,42 @@ class DataTable():
                         cell = self.translate_service.get_translation(cell['key'])
                     else:
                         cell = cell['value']
+                cell_copy = cell
+                if ' ' in cell and self.row_width != None:
+                    cells = []
+                    split_text = None
+                    while self.font.size(cell_copy)[
+                        0] > self.row_width - self.margin_left and ' ' in cell_copy:
 
+                        split_text = cell.rsplit(' ', word_to_split)
+                        cell_copy = split_text[0]
+                        word_to_split += 1
+                        if self.font.size(split_text[1])[0] + self.margin_left > self.row_width:
+                            split_text[1] = self.get_fromatted_text(split_text[1], self.row_width, self.font)
+                        if len(cells) > 0 and self.font.size(split_text[1] + ' ' + cells[-1])[
+                            0] + self.margin_left < self.row_width:
+                            split_text[1] = split_text[1] + ' ' + cells[-1]
+                            del cells[len(cells) - 1]
+                        cells.append(split_text[1])
+                    if split_text:
+                        first_word = self.get_fromatted_text(split_text[0], self.row_width, self.font)
+                    else:
+                        first_word = cell
+                    cells.reverse()
+                    final_cells = '\\n'.join(map(str, [first_word, *cells]))
+                elif self.row_width != None:
+                    final_cells = self.get_fromatted_text(cell, self.row_width, self.font)
+                split_cell = final_cells.split('\\n')
+                cell_surfaces = []
+                for cell_text in split_cell:
+                    cell_surfaces.append(self.font.render(
+                        cell_text, True, color
+                    ))
 
-                cell_surface = self.font.render(
-                    str(cell), True, color
-                )
-                screen.blit(cell_surface,
-                            (self.pos_x + self.margin_left + index * self.row_width,
-                             self.pos_y + self.margin_top + ((count + 1) * self.row_height + self.header_heigth)))
+                for i, surface in enumerate(cell_surfaces):
+                    screen.blit(surface,
+                                (self.pos_x + self.margin_left + index * self.row_width,
+                                 self.pos_y + self.margin_top + ((count + 1) * self.row_height + self.header_heigth + (i * self.font.get_linesize()))))
                 self.event_areas[str(count) + '-' + str(index)] = pygame.Rect(self.pos_x + index * self.row_width,
                                                                               self.pos_y + (
                                                                                           count + 1) * self.row_height + self.header_heigth,
@@ -189,4 +220,4 @@ class DataTable():
 
         for count in range(len(self.columns) + 1):
             pygame.draw.line(screen, self.grid_color, (self.pos_x + count * self.row_width, self.pos_y),
-                             (self.pos_x + count * self.row_width, self.pos_y + self.table_height + self.row_height))
+                             (self.pos_x + count * self.row_width, self.pos_y + self.table_height))
