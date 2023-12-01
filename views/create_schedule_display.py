@@ -139,7 +139,6 @@ class CreateScheduleDisplay:
             todo_row_multiplicator = 1
 
         buttons = []
-        page_butons = []
 
         # Create buttons
         run_button = Button(150 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor,
@@ -179,11 +178,6 @@ class CreateScheduleDisplay:
                               lambda: self.page_update(self.splitted_schedule, True, self.data_table.data),
                               border_radius=90)
 
-        page_butons.append(left_button)
-        page_butons.append(right_button)
-
-        data = self.get_table_data()
-
         def update_text():
             for button in buttons:
                 button.update_text()
@@ -199,9 +193,6 @@ class CreateScheduleDisplay:
 
                 self.data_table.handle_events(event)
 
-                if len(self.splitted_schedule) > 1:
-                    for button in page_butons:
-                        button.handle_event(event)
 
             screen.fill(self.black)  # Fill the screen with the black color
             update_text()
@@ -209,22 +200,6 @@ class CreateScheduleDisplay:
                 button.draw(screen)
 
             font = pygame.font.Font(None, int(20 * width_scale_factor))  # Create font object for header
-            if len(self.splitted_schedule) > 1:
-                page_number_surface = font.render(str(self.schedule_page + 1) + '/' + str(len(self.splitted_schedule)),
-                                                  True,
-                                                  self.light_grey)
-                page_number_rect = page_number_surface.get_rect()
-                page_number_rect.center = (self.data_table.pos_x + (len(self.headers) // 2) * self.data_table.row_width - (page_number_rect.width // 2),
-                    self.data_table.table_height + width_scale_factor * 70)
-                screen.blit(page_number_surface, (page_number_rect.x + (page_number_rect.width), page_number_rect.y))
-
-                for index, button in enumerate(page_butons):
-                    button.rect.x = self.data_table.pos_x + self.data_table.table_width // 100 * 37.5
-                    button.rect.y = self.data_table.table_height + width_scale_factor * 50
-
-                    if index == 1:
-                        button.rect.x = self.data_table.pos_x + self.data_table.table_width // 100 * 67.5
-                    button.draw(screen)
 
             self.data_table.draw(screen)
 
@@ -549,8 +524,6 @@ class CreateScheduleDisplay:
 
     def save_data(self, data):
         for task in data:
-            self.splitted_schedule[self.schedule_page][task[0].replace(' ', '_')]['datetime'] = task[1] + ' ' + task[2]
-            self.splitted_schedule[self.schedule_page][task[0].replace(' ', '_')]['state'] = task[3]['value']
             self.schedule[task[0].replace(' ', '_')]['datetime'] = task[1] + ' ' + task[2]
             self.schedule[task[0].replace(' ', '_')]['state'] = task[3]['value']
 
@@ -559,7 +532,7 @@ class CreateScheduleDisplay:
                   'skip': {'value': 'skip', 'color': self.warning, 'key': 'skip'},
                   'done': {'value': 'done', 'color': self.success, 'key': 'done'}}
         data = []
-        for key, value in self.splitted_schedule[self.schedule_page].items():
+        for key, value in self.schedule.items():
             date, time = value['datetime'].split(' ')
             data.append(
                 [key.replace('_', ' '), date, time, {'value': value['state'], 'color': states[value['state']]['color'],

@@ -1,10 +1,14 @@
 import pygame.font
+
+from components import Button
 from services import TeststarterConfig
 
 
 class DataTable():
 
-    def __init__(self, columns, max_rows, start_pos, data=None, max_cell_width=None, actions=[], translate_service=None):
+    def __init__(self, columns, max_rows, start_pos, data=None, max_cell_width=None, actions=[],
+                 translate_service=None):
+        self.buttons = None
         if data is None:
             data = [[]]
         self.data = data
@@ -18,6 +22,7 @@ class DataTable():
         self.margin_left = 10
         self.margin_top = 5
         self.max_cell_width = max_cell_width - 10 if max_cell_width else None
+        self.page = 0
         self.grid_color = pygame.Color(self.settings['gridColor'])
         self.primary_color = pygame.Color(self.settings['gridColor'])
         self.table_width, self.table_height, self.row_width, self.row_height, self.header_heigth = self.get_table_proportions()
@@ -25,7 +30,6 @@ class DataTable():
         self.actions = actions
         self.action_data = None
         self.translate_service = translate_service
-
 
     def set_action_data(self, data):
         self.action_data = data
@@ -43,7 +47,8 @@ class DataTable():
         if self.max_cell_width != None and max_header_width > self.max_cell_width:
             max_header_width = self.max_cell_width
         row_width = max_header_width + 2 * self.margin_left
-        table_height = row_height * (len(self.data))
+        split_data = self.get_split_data()
+        table_height = row_height * (len(split_data[self.page]))
         table_width = width + max_header_width * len(self.columns)
 
         header_height = 0
@@ -76,7 +81,6 @@ class DataTable():
             split_header = final_header.split('\\n')
             if row_height < self.header_font.get_height() * len(split_header) > header_height:
                 header_height = self.header_font.get_height() * (len(split_header) - 1)
-            print(row_height, self.header_font.get_height(), split_header, header_height)
         table_height += header_height + row_height
         return table_width, table_height, row_width, row_height, header_height
 
@@ -94,12 +98,45 @@ class DataTable():
                 break
         return '\\n'.join(map(str, [*texts, text]))
 
+    def get_split_data(self):
+        result = [self.data[i:i + self.max_rows] for i in range(0, len(self.data), self.max_rows)]
+        return [sublist for sublist in result if sublist]
+
+    def create_page_button(self, data):
+        buttons = {}
+        left_button = Button(
+            self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 37.5) - 20,
+            self.table_height + self.row_height + 40,
+            40,
+            40, '<',
+            lambda: self.page_update(False, data),
+            border_radius=90)
+        right_button = Button(
+            self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 67.5) - 20,
+            self.table_height + self.row_height + 40,
+            40,
+            40, '>',
+            lambda: self.page_update(True, data),
+            border_radius=90)
+        buttons['left_button'] = left_button
+        buttons['right_button'] = right_button
+        return buttons
+
+    def page_update(self, increment, data):
+        if increment:
+            self.page = (self.page + 1) % len(data)
+        else:
+            self.page = (self.page - 1) if self.page > 0 else len(data) - 1
+
     def handle_events(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
+                print(self.event_areas)
                 for key, value in self.event_areas.items():
-                    row = int(key.split('-')[0])
+                    row = int(key.split('-')[0]) + self.page * self.max_rows
                     value_index = int(key.split('-')[1])
+                    if row >= len(self.data):
+                        continue
                     self.action_data = self.data[row][value_index]
                     action_data_copy = self.action_data
 
@@ -109,8 +146,12 @@ class DataTable():
 
                             if self.action_data != action_data_copy:
                                 self.data[row][value_index] = self.action_data
+        if self.buttons is not None:
+            for button in self.buttons.values():
+                button.handle_event(event)
 
     def draw(self, screen):
+        split_data = self.get_split_data()
         # Render headers
         for index, header in enumerate(self.columns):
             word_to_split = 1
@@ -157,7 +198,7 @@ class DataTable():
                              (self.pos_x + self.table_width, self.pos_y + self.row_height + self.header_heigth))
 
         # Render rows
-        for count, row in enumerate(self.data):
+        for count, row in enumerate(split_data[self.page]):
             for index, cell in enumerate(row):
                 word_to_split = 1
                 if index >= len(self.columns):
@@ -207,11 +248,13 @@ class DataTable():
                 for i, surface in enumerate(cell_surfaces):
                     screen.blit(surface,
                                 (self.pos_x + self.margin_left + index * self.row_width,
-                                 self.pos_y + self.margin_top + ((count + 1) * self.row_height + self.header_heigth + (i * self.font.get_linesize()))))
+                                 self.pos_y + self.margin_top + ((count + 1) * self.row_height + self.header_heigth + (
+                                         i * self.font.get_linesize()))))
                 self.event_areas[str(count) + '-' + str(index)] = pygame.Rect(self.pos_x + index * self.row_width,
                                                                               self.pos_y + (
-                                                                                          count + 1) * self.row_height + self.header_heigth,
+                                                                                      count + 1) * self.row_height + self.header_heigth,
                                                                               self.row_width, self.row_height)
+                print(count)
                 pygame.draw.line(screen, self.grid_color,
                                  (self.pos_x,
                                   self.pos_y + self.row_height * (count + 1) + self.row_height + self.header_heigth),
@@ -220,4 +263,17 @@ class DataTable():
 
         for count in range(len(self.columns) + 1):
             pygame.draw.line(screen, self.grid_color, (self.pos_x + count * self.row_width, self.pos_y),
-                             (self.pos_x + count * self.row_width, self.pos_y + self.table_height))
+                             (self.pos_x + count * self.row_width,
+                              self.pos_y + self.row_height * (len(split_data[self.page]) + 1)))
+
+        if len(split_data) > 0:
+            self.buttons = self.create_page_button(split_data)
+            if self.buttons is not None:
+                page_number_surface = self.font.render(str(self.page + 1) + '/' + str(len(split_data)),
+                                                       True,
+                                                       self.primary_color)
+                screen.blit(page_number_surface, (
+                    self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 50) - 20,
+                    self.table_height + self.row_height + 60))
+                for button in self.buttons.values():
+                    button.draw(screen)
