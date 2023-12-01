@@ -266,7 +266,7 @@ class DataTable():
                              (self.pos_x + count * self.row_width,
                               self.pos_y + self.row_height * (len(split_data[self.page]) + 1)))
 
-        if len(split_data) > 0:
+        if len(split_data) > 1:
             self.buttons = self.create_page_button(split_data)
             if self.buttons is not None:
                 page_number_surface = self.font.render(str(self.page + 1) + '/' + str(len(split_data)),

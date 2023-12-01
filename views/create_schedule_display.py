@@ -47,10 +47,18 @@ class CreateScheduleDisplay:
                         self.translate_service.get_translation('date'),
                         self.translate_service.get_translation('time'),
                         self.translate_service.get_translation('skipDoneTodo')]
+
+
         self.actions = [None,
                         lambda: self.data_table.set_action_data(self.open_date_picker(self.data_table.action_data)),
                         lambda: self.data_table.set_action_data(self.open_time_picker(self.data_table.action_data)),
                         lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data))]
+
+        if self.isHab:
+            self.headers = [self.translate_service.get_translation('task'),
+                            self.translate_service.get_translation('skipDoneTodo')]
+            self.actions = [None,
+                            lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data))]
         self.data_table = None
 
     def display(self):
@@ -100,43 +108,15 @@ class CreateScheduleDisplay:
                 len(self.splitted_schedule[
                         self.schedule_page]) + 3) < max_row_height else max_row_height  # +1 for the header row
 
-        self.data_table = DataTable(self.headers, 5,
-                                    (self.screen_width - 4 * self.column_width - 50, self.screen_height / 100 * 5),
+        max_rows = 17
+
+
+        self.data_table = DataTable(self.headers, max_rows,
+                                    (self.screen_width - len(self.headers) * self.column_width - 50, self.screen_height / 100 * 5),
                                     data=self.get_table_data(),
                                     max_cell_width=self.column_width, actions=self.actions,
                                     translate_service=self.translate_service)
 
-        # Padding for cell
-        cellPadding = 10
-
-        # Input box fonts
-        # todo_input_box_font = pygame.font.Font(None, int(16 * width_scale_factor))
-        # newtime_input_box_font = pygame.font.Font(None, int(16 * width_scale_factor))
-        # newdate_input_box_font = pygame.font.Font(None, int(16 * width_scale_factor))
-        #
-        # # Input text font and cursor settings
-        # todo_input_text_font = pygame.freetype.Font(None, int(10 * width_scale_factor))
-        # cursor_color = self.light_grey
-        # cursor_width = 2
-        # cursor_blink_interval = 500  # milliseconds
-        #
-        # newdate_active_row = None  # Initialize the active row to None
-        # newtime_active_row = None  # Initialize the active row to None
-        # todo_active_row = None  # Initialize the active row to None
-        # active_column = None
-        # cursor_visible = True  # Initialize cursor visibility
-        # cursor_timer = 0  # Initialize cursor timer
-        # newdate_input_text = ''  # Initialize the input text variable
-        # newtime_input_text = ''  # Initialize the input text variable
-        # todo_input_text = ''  # Initialize the input text variable
-        #
-        # newdate_input_active = False  # Initialize the text input variable
-        # newtime_input_active = False  # Initialize the text input variable
-        # todo_input_active = False  # Initialize the text input variable
-        # state_iterator = {'todo': 'skip', 'skip': 'done', 'done': 'todo'}
-        todo_row_multiplicator = 3
-        if self.isHab:
-            todo_row_multiplicator = 1
 
         buttons = []
 
@@ -496,12 +476,6 @@ class CreateScheduleDisplay:
         else:
             self.schedule_page = (self.schedule_page - 1) if self.schedule_page > 0 else len(schedule) - 1
 
-        self.data_table = DataTable(self.headers, 5,
-                                    (self.screen_width - 4 * self.column_width - 50, self.screen_height / 100 * 5),
-                                    data=self.get_table_data(),
-                                    max_cell_width=self.column_width, actions=self.actions,
-                                    translate_service=self.translate_service)
-
     def open_date_picker(self, date):
         split_date = date.split('/')
         day, month, year = split_date[0], split_date[1], split_date[2]
@@ -524,8 +498,12 @@ class CreateScheduleDisplay:
 
     def save_data(self, data):
         for task in data:
-            self.schedule[task[0].replace(' ', '_')]['datetime'] = task[1] + ' ' + task[2]
-            self.schedule[task[0].replace(' ', '_')]['state'] = task[3]['value']
+            if not self.isHab:
+                self.schedule[task[0].replace(' ', '_')]['datetime'] = task[1] + ' ' + task[2]
+                self.schedule[task[0].replace(' ', '_')]['state'] = task[3]['value']
+            else:
+                self.schedule[task[0].replace(' ', '_')]['state'] = task[1]['value']
+
 
     def get_table_data(self):
         states = {'todo': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
@@ -534,7 +512,12 @@ class CreateScheduleDisplay:
         data = []
         for key, value in self.schedule.items():
             date, time = value['datetime'].split(' ')
-            data.append(
-                [key.replace('_', ' '), date, time, {'value': value['state'], 'color': states[value['state']]['color'],
+            if self.isHab:
+                data.append(
+                    [key.replace('_', ' '), {'value': value['state'], 'color': states[value['state']]['color'],
+                                                     'key': states[value['state']]['key']}])
+            else:
+                data.append(
+                    [key.replace('_', ' '), date, time, {'value': value['state'], 'color': states[value['state']]['color'],
                                                      'key': states[value['state']]['key']}])
         return data
