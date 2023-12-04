@@ -48,11 +48,11 @@ class CreateScheduleDisplay:
                         self.translate_service.get_translation('time'),
                         self.translate_service.get_translation('skipDoneTodo')]
 
-
         self.actions = [None,
                         lambda: self.data_table.set_action_data(self.open_date_picker(self.data_table.action_data)),
                         lambda: self.data_table.set_action_data(self.open_time_picker(self.data_table.action_data)),
                         lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data))]
+        self.play_next_task = False
 
         if self.isHab:
             self.headers = [self.translate_service.get_translation('task'),
@@ -110,13 +110,12 @@ class CreateScheduleDisplay:
 
         max_rows = 17
 
-
         self.data_table = DataTable(self.headers, max_rows,
-                                    (self.screen_width - len(self.headers) * self.column_width - 50, self.screen_height / 100 * 5),
+                                    (self.screen_width - len(self.headers) * self.column_width - 50,
+                                     self.screen_height / 100 * 5),
                                     data=self.get_table_data(),
                                     max_cell_width=self.column_width, actions=self.actions,
                                     translate_service=self.translate_service)
-
 
         buttons = []
 
@@ -173,7 +172,6 @@ class CreateScheduleDisplay:
 
                 self.data_table.handle_events(event)
 
-
             screen.fill(self.black)  # Fill the screen with the black color
             update_text()
             for button in buttons:
@@ -206,10 +204,29 @@ class CreateScheduleDisplay:
             [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
              filtered_schedule.items()])
         check_for_old_tasks = True
-        play_next_task = False
+        self.play_next_task = False
         start_time = datetime.now()
+        # Store the original screen dimensions used to design this program
+        original_width = 1280
+        original_height = 800
+
+        # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
+        width_scale_factor = self.screen_width / original_width
+        height_scale_factor = self.screen_height / original_height
+        edit_button_x = self.screen_width - 250 * width_scale_factor
+        edit_button_y = self.screen_height - 80 * height_scale_factor
+        edit_button_width = 200 * width_scale_factor
+        edit_button_height = 50 * height_scale_factor
+        next_button = Button(75 + (edit_button_width / 2), edit_button_y + (edit_button_height / 2), 300, 50,
+                             'nextTask', lambda: self.play_task(), translate_service=self.translate_service)
+        edit_button = Button(edit_button_x + (edit_button_width / 2), edit_button_y + (edit_button_height / 2), 300, 50,
+                             'editTeststarter', lambda: self.edit_teststarter(),
+                             translate_service=self.translate_service)
         running = True
         while running:
+            for event in pygame.event.get():
+                next_button.handle_event(event)
+                edit_button.handle_event(event)
             pygame.mouse.set_visible(True)
 
             for event in pygame.event.get():
@@ -241,6 +258,16 @@ class CreateScheduleDisplay:
                     break
             # clear the screen before drawing the updated text
             screen.fill(self.black)
+            if next_event:
+                next_button.set_hidden(False)
+                next_button.set_active(True)
+                next_button.draw(screen)
+            else:
+                next_button.set_hidden(True)
+                next_button.set_active(False)
+                next_button.draw(screen)
+            edit_button.draw(screen)
+
             next_event_in_seconds = -1
             if self.isHab:
                 next_event_in_seconds = 0
@@ -270,58 +297,9 @@ class CreateScheduleDisplay:
             # Store the screen height in a new variable
             self.screen_height = screen_info.current_h
 
-            # Store the original screen dimensions used to design this program
-            original_width = 1280
-            original_height = 800
-
-            # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
-            width_scale_factor = self.screen_width / original_width
-            height_scale_factor = self.screen_height / original_height
-
-            edit_button_x = self.screen_width - 250 * width_scale_factor
-            edit_button_y = self.screen_height - 80 * height_scale_factor
-            edit_button_width = 200 * width_scale_factor
-            edit_button_height = 50 * height_scale_factor
-
-            mouse = pygame.mouse.get_pos()
-            click = pygame.mouse.get_pressed()
-
-            if edit_button_x + edit_button_width > mouse[0] > edit_button_x and edit_button_y + edit_button_height > \
-                    mouse[1] > edit_button_y:
-                pygame.draw.rect(screen, self.button_color,
-                                 (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
-                if click[0] == 1:
-                    self.schedule_page = 0
-                    self.display()  # Call display() when the button is clicked
-            else:
-                pygame.draw.rect(screen, self.button_color,
-                                 (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
-            if next_event:
-                if 75 + edit_button_width > mouse[0] > 75 and edit_button_y + edit_button_height > mouse[
-                    1] > edit_button_y:
-                    pygame.draw.rect(screen, self.button_color,
-                                     (75, edit_button_y, edit_button_width, edit_button_height))
-                    if click[0] == 1:
-                        play_next_task = True
-                else:
-                    pygame.draw.rect(screen, self.button_color,
-                                     (75, edit_button_y, edit_button_width, edit_button_height))
-
-            # Draw the text on the button
-            small_text = pygame.font.Font(None, 20)
-            text_surf, text_rect = self.text_objects(self.translate_service.get_translation('editTeststarter'),
-                                                     small_text)
-            text_rect.center = (
-                (edit_button_x + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
-            screen.blit(text_surf, text_rect)
-
-            next_surf, next_rect = self.text_objects(self.translate_service.get_translation('nextTask'), small_text)
-            next_rect.center = ((75 + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
-            if next_event:
-                screen.blit(next_surf, next_rect)
             # update the display
             pygame.display.flip()
-            if play_next_task:
+            if self.play_next_task:
                 check_for_old_tasks = True
                 upcoming_event = next_event[1]
                 beep_sound = pygame.mixer.Sound('./lib/beep.wav')
@@ -332,7 +310,7 @@ class CreateScheduleDisplay:
                 self.schedule[upcoming_event]['state'] = 'done'
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
                 print(sorted_schedule)
-                play_next_task = False
+                self.play_next_task = False
 
             if not self.isHab or next_event_in_seconds == -1:
                 if round(next_event_in_seconds) == 1:
@@ -504,7 +482,6 @@ class CreateScheduleDisplay:
             else:
                 self.schedule[task[0].replace(' ', '_')]['state'] = task[1]['value']
 
-
     def get_table_data(self):
         states = {'todo': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
                   'skip': {'value': 'skip', 'color': self.warning, 'key': 'skip'},
@@ -515,9 +492,19 @@ class CreateScheduleDisplay:
             if self.isHab:
                 data.append(
                     [key.replace('_', ' '), {'value': value['state'], 'color': states[value['state']]['color'],
-                                                     'key': states[value['state']]['key']}])
+                                             'key': states[value['state']]['key']}])
             else:
                 data.append(
-                    [key.replace('_', ' '), date, time, {'value': value['state'], 'color': states[value['state']]['color'],
-                                                     'key': states[value['state']]['key']}])
+                    [key.replace('_', ' '), date, time,
+                     {'value': value['state'], 'color': states[value['state']]['color'],
+                      'key': states[value['state']]['key']}])
         return data
+
+    def edit_teststarter(self):
+        self.play_next_task = False
+        self.schedule_page = 0
+        self.display()
+
+    def play_task(self):
+        print("#######################################################################")
+        self.play_next_task = True
