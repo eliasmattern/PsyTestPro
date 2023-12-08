@@ -25,7 +25,6 @@ def create_time_picker(hour, minute, translate_service):
             break
         posX += display[0]
         count += 1
-    print(posY)
     root.geometry('+' + str(posX) + '+' + str(posY))
     root.configure(background='black')
 
