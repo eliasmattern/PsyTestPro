@@ -100,5 +100,6 @@
     "colorThemes": "Color Themes",
     "darkMode": "Darkmode",
     "lightMode": "Lightmode",
-    "noData": "Datatable has no data"
+    "noData": "Datatable has no data",
+    "error": "Error"
 }

@@ -1,4 +1,5 @@
 # Add buttons to the left side of the screen
+import os.path
 
 # Script updated to add input entry to relevant columns
 
@@ -10,6 +11,7 @@ from components import InputBox, Button
 from views import CreateScheduleDisplay, ExperimentConfig, SettingsView
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
+import pandas as pd
 
 
 class Teststarter:
@@ -102,8 +104,10 @@ class Teststarter:
 
         exit_button = Button(x - 75, y + 60, 100, 40, 'exit', self.exit, self.translateService)
         submit_button = Button(x + 75, y + 60, 100, 40, 'submit', self.save_details, self.translateService)
-        settings_button = Button(self.width - 175, 100, 250, 40, 'settings', lambda: self.settings_view.display(Teststarter, self.translateService, self.language_config),
-                               self.translateService)
+        settings_button = Button(self.width - 175, 100, 250, 40, 'settings',
+                                 lambda: self.settings_view.display(Teststarter, self.translateService,
+                                                                    self.language_config),
+                                 self.translateService)
         create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureExperiment',
                                           lambda: self.experiment_config_display.display(Teststarter),
                                           self.translateService)
@@ -179,7 +183,7 @@ class Teststarter:
                     self.input_boxes.get('startTime').text = '0' + self.input_boxes.get('startTime').text
                 if len(self.input_boxes.get('startTime').text) == 2 and self.input_boxes.get(
                         'startTime').text[1].isnumeric() and int(self.input_boxes.get(
-                        'startTime').text) > 23:
+                    'startTime').text) > 23:
                     self.input_boxes.get('startTime').text = self.input_boxes.get('startTime').text[0]
                 if len(self.input_boxes.get('startTime').text) == 3:
                     if self.input_boxes.get('startTime').text[2] != ":":
@@ -195,7 +199,7 @@ class Teststarter:
                                                                  :3] + '0' + self.input_boxes.get('startTime').text[
                                                                              3:4]
                 self.input_boxes.get('startTime').text = re.sub("[^0-9:]", "",
-                                                                    self.input_boxes.get('startTime').text)
+                                                                self.input_boxes.get('startTime').text)
 
     def clear_screen(self):
         self.screen.fill(self.background_color)
@@ -327,7 +331,10 @@ class Teststarter:
 
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         print('ee = ', edited_schedule)
-        CreateScheduleDisplay(schedule, participant_info, Teststarter, custom_variables, isHab).display()
+
+        file_name = self.save_experiment_info(participant_info)
+
+        CreateScheduleDisplay(schedule, participant_info, Teststarter, custom_variables, isHab, file_name).display()
         self.input_boxes = {}
 
     def save_details(self):
@@ -350,5 +357,28 @@ class Teststarter:
         self.teststarterConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info, variables)
 
+    def save_experiment_info(self, participant_info):
+        if not os.path.exists('./experiments'):
+            os.makedirs('./experiments')
+        table = {}
+        names = []
+        values = []
+        for key, value in participant_info.items():
+            names.append(key)
+            values.append(value)
+
+        table['info'] = names
+        table['value'] = values
+
+        datetime_string = str(participant_info['start_time'])
+
+        filename = participant_info['participant_id'] + '_' + participant_info[
+            'experiment'] + '_' + datetime_string + '_log' + '.xlsx'
+        filename = filename.replace(' ', '_')
+        filename = filename.replace('-', '_')
+        filename = filename.replace(':', '_')
+        df = pd.DataFrame(data=table)
+        df.to_excel('./experiments/' + filename, index=False)
+        return filename
 
 Teststarter()

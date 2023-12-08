@@ -17,12 +17,13 @@ from services import TeststarterConfig
 
 
 class CreateScheduleDisplay:
-    def __init__(self, schedule, participant_info, teststarter, custom_variables, isHab=False):
+    def __init__(self, schedule, participant_info, teststarter, custom_variables, isHab=False, file_name=''):
         self.schedule = schedule
         self.participant_info = participant_info
         self.teststarter = teststarter
         self.custom_variables = custom_variables
         self.isHab = isHab
+        self.file_name = file_name
         self.schedule_page = 0
         self.language_config = LanguageConfiguration()
         self.translate_service = TranslateService(self.language_config)
@@ -215,10 +216,14 @@ class CreateScheduleDisplay:
                 for item in filtered_dict:
                     upcoming_event = item
 
-                    play_tasks(self.participant_info, upcoming_event, self.schedule, self.translate_service,
-                               self.custom_variables)
+                    state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
+                                       self.translate_service,
+                                       self.custom_variables)
                     pygame.mouse.set_visible(True)
-                    self.schedule[upcoming_event]['state'] = 'done'
+                    if state:
+                        self.schedule[upcoming_event]['state'] = 'done'
+                    else:
+                        self.schedule[upcoming_event]['state'] = 'error'
                 check_for_old_tasks = False
 
             # get the current time
@@ -277,10 +282,14 @@ class CreateScheduleDisplay:
                 upcoming_event = next_event[1]
                 beep_sound = pygame.mixer.Sound('./lib/beep.wav')
                 beep_sound.play()
-                play_tasks(self.participant_info, upcoming_event, self.schedule, self.translate_service,
-                           self.custom_variables)
+                state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
+                                   self.translate_service,
+                                   self.custom_variables)
                 pygame.mouse.set_visible(True)
-                self.schedule[upcoming_event]['state'] = 'done'
+                if state:
+                    self.schedule[upcoming_event]['state'] = 'done'
+                else:
+                    self.schedule[upcoming_event]['state'] = 'error'
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
                 print(sorted_schedule)
                 self.play_next_task = False
@@ -292,10 +301,14 @@ class CreateScheduleDisplay:
                     pythonTime.sleep(1.1)
                     beep_sound = pygame.mixer.Sound('./lib/beep.wav')
                     beep_sound.play()
-                    play_tasks(self.participant_info, upcoming_event, self.schedule, self.translate_service,
-                               self.custom_variables)
+                    state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
+                                       self.translate_service,
+                                       self.custom_variables)
                     pygame.mouse.set_visible(True)
-                    self.schedule[upcoming_event]['state'] = 'done'
+                    if state:
+                        self.schedule[upcoming_event]['state'] = 'done'
+                    else:
+                        self.schedule[upcoming_event]['state'] = 'error'
             elif len(sorted_schedule) > 0:
                 for task in self.schedule.items():
                     if self.schedule[task[0]]['state'] == 'todo':
@@ -444,7 +457,8 @@ class CreateScheduleDisplay:
     def switch_state(self, state):
         state_iterator = {'todo': {'value': 'skip', 'color': self.warning, 'key': 'skip'},
                           'skip': {'value': 'done', 'color': self.success, 'key': 'done'},
-                          'done': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'}}
+                          'done': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
+                          'error': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'}}
         return state_iterator[state['value']]
 
     def save_data(self, data):
@@ -458,7 +472,8 @@ class CreateScheduleDisplay:
     def get_table_data(self):
         states = {'todo': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
                   'skip': {'value': 'skip', 'color': self.warning, 'key': 'skip'},
-                  'done': {'value': 'done', 'color': self.success, 'key': 'done'}}
+                  'done': {'value': 'done', 'color': self.success, 'key': 'done'},
+                  'error': {'value': 'error', 'color': self.red, 'key': 'error'}}
         data = []
         for key, value in self.schedule.items():
             date, time = value['datetime'].split(' ')

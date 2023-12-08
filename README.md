@@ -77,6 +77,7 @@ pip install tk
 pip install tktimepicker
 pip install tkcalendar
 pip install pandas
+pip install openpyxl
 ```
 
 ## :arrow_forward: How to run Teststarter

@@ -96,5 +96,6 @@
     "colorThemes": "Farbthemen",
     "darkMode": "Darkmode",
     "lightMode": "Lightmode",
-    "noData": "Tabelle hat keine Einträge"
+    "noData": "Tabelle hat keine Einträge",
+    "error": "Fehler"
 }
