@@ -9,6 +9,7 @@ class DataTable:
 
     def __init__(self, columns, max_rows, start_pos, data=None, max_cell_width=None, actions=[], max_height=None,
                  translate_service=None):
+        self.split_data = None
         self.buttons = None
         if data is None:
             data = [[]]
@@ -84,8 +85,8 @@ class DataTable:
             if row_height < self.header_font.get_height() * len(split_header) > header_height:
                 header_height = self.header_font.get_height() * (len(split_header) - 1)
 
-        split_data = self.get_split_data(row_height, max_row_height, header_height)
-        table_height = row_height * (len(split_data[self.page]))
+        self.get_split_data(row_height, max_row_height, header_height)
+        table_height = row_height * (len(self.split_data[self.page]))
         table_width = width + max_header_width * len(self.columns)
 
         table_height += header_height + max_row_height
@@ -119,14 +120,14 @@ class DataTable:
                 self.table_height = row_height * 2
             self.max_rows = max_fields
         result = [self.data[i:i + max_fields] for i in range(0, len(self.data), max_fields)]
-        test = [sublist for sublist in result if sublist]
+        trimmed_data = [sublist for sublist in result if sublist]
         max_fields_old = max_fields
         val = 0
-        old_size = len(test)
+        old_size = len(trimmed_data)
         size = 0
         while size != old_size:
-            old_size = len(test)
-            for index, page in zip(range(len(test)), test):
+            old_size = len(trimmed_data)
+            for index, page in zip(range(len(trimmed_data)), trimmed_data):
 
                 max_fields = len(page)
                 val += 1
@@ -141,18 +142,18 @@ class DataTable:
                     elif total_height + self.header_heigth > self.max_height - 120:
                         max_fields -= 1
                         last = page[- 1]
-                        del test[index][- 1]
-                        if index + 1 < len(test):
-                            test[index + 1].insert(0, last)
+                        del trimmed_data[index][- 1]
+                        if index + 1 < len(trimmed_data):
+                            trimmed_data[index + 1].insert(0, last)
                         else:
-                            test.append([last])
+                            trimmed_data.append([last])
                     else:
                         editing = False
                         max_fields = max_fields_old
-            size = len(test)
-        for page in test:
+            size = len(trimmed_data)
+        for page in trimmed_data:
             self.entries_per_page.append(len(page))
-        return test
+        self.split_data = trimmed_data
 
     def create_page_button(self, data):
         buttons = {}
@@ -258,7 +259,6 @@ class DataTable:
 
     def draw(self, screen):
         if len(self.data) > 0:
-            split_data = self.get_split_data(self.row_height, self.get_max_row_height(self.row_width))
             # Render headers
             for index, header in enumerate(self.columns):
                 word_to_split = 1
@@ -307,7 +307,7 @@ class DataTable:
             cell_y = self.pos_y + self.header_heigth
 
             # Render rows
-            for count, row in enumerate(split_data[self.page]):
+            for count, row in enumerate(self.split_data[self.page]):
                 row_height = self.get_row_height(row)
                 cell_y += self.get_row_height(row)
                 for index, cell in enumerate(row):
@@ -374,10 +374,10 @@ class DataTable:
                 pygame.draw.line(screen, self.grid_color, (self.pos_x + count * self.row_width, self.pos_y),
                                  (self.pos_x + count * self.row_width,
                                   cell_y + self.row_height))
-            if len(split_data) > 1:
-                self.buttons = self.create_page_button(split_data)
+            if len(self.split_data) > 1:
+                self.buttons = self.create_page_button(self.split_data)
                 if self.buttons is not None:
-                    page_number_surface = self.font.render(str(self.page + 1) + '/' + str(len(split_data)),
+                    page_number_surface = self.font.render(str(self.page + 1) + '/' + str(len(self.split_data)),
                                                            True,
                                                            self.primary_color)
                     screen.blit(page_number_surface, (
