@@ -90,38 +90,24 @@ class CreateScheduleDisplay:
         # Setting the window caption
         pygame.display.set_caption('Schedule Editor')
 
-        # Creating a Pygame clock object
-        clock = pygame.time.Clock()
-
         # Calculate column widths and row height based on screen size
         self.column_width = self.screen_width // 9
-        column_start_x = self.screen_width - (
-                self.column_width * 4) - 50  # Calculate column positions based on screen size (adjusted for right alignment)
-        if self.isHab:
-            column_start_x = self.screen_width - (
-                    self.column_width * 2) - 50  # Hab night Calculate column positions based on screen size (adjusted for right alignment)
 
-        max_row_height = 75
-
-        row_height = self.screen_height // (
-                len(self.splitted_schedule[self.schedule_page]) + 3) if self.screen_height // (
-                len(self.splitted_schedule[
-                        self.schedule_page]) + 3) < max_row_height else max_row_height  # +1 for the header row
-
-        max_rows = 17
+        max_rows = 30
 
         self.data_table = DataTable(self.headers, max_rows,
                                     (self.screen_width - len(self.headers) * self.column_width - 50,
                                      self.screen_height / 100 * 5),
                                     data=self.get_table_data(),
                                     max_cell_width=self.column_width, actions=self.actions,
-                                    translate_service=self.translate_service)
+                                    translate_service=self.translate_service,
+                                    max_height=self.screen_height // 100 * 80)
 
         buttons = []
 
         # Create buttons
         run_button = Button(150 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor,
-                            50 * height_scale_factor, 'runTeststarter', self.button_back, self.translate_service)
+                            50 * height_scale_factor, 'runTeststarter', self.run_teststarter, self.translate_service)
         settings_button = Button(150 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor,
                                  50 * height_scale_factor, 'changeSettings', self.change_settings,
                                  self.translate_service)
@@ -144,18 +130,6 @@ class CreateScheduleDisplay:
         buttons.append(help_button)
         buttons.append(english_button)
         buttons.append(german_button)
-        left_button = Button(self.data_table.pos_x + (self.data_table.table_width // 100 * 0),
-                             760 * height_scale_factor,
-                             40 * width_scale_factor,
-                             40 * height_scale_factor, '<',
-                             lambda: self.page_update(self.splitted_schedule, False, self.data_table.data),
-                             border_radius=90)
-        right_button = Button(self.data_table.pos_x + (self.data_table.table_width // 100 * 100),
-                              760 * height_scale_factor,
-                              40 * width_scale_factor,
-                              40 * height_scale_factor, '>',
-                              lambda: self.page_update(self.splitted_schedule, True, self.data_table.data),
-                              border_radius=90)
 
         def update_text():
             for button in buttons:
@@ -187,7 +161,7 @@ class CreateScheduleDisplay:
         text_surface = font.render(text, True, self.button_text_color)
         return text_surface, text_surface.get_rect()
 
-    def button_back(self):
+    def run_teststarter(self):
         self.save_data(self.data_table.data)
         # set the display mode to fullscreen
         screen = pygame.display.get_surface()
@@ -238,7 +212,6 @@ class CreateScheduleDisplay:
                     if value['state'] == 'todo'
                        and start_time < datetime.strptime(value['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now()
                 }
-                # Print the filtered list
                 for item in filtered_dict:
                     upcoming_event = item
 
@@ -506,5 +479,4 @@ class CreateScheduleDisplay:
         self.display()
 
     def play_task(self):
-        print("#######################################################################")
         self.play_next_task = True
