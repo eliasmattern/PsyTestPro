@@ -99,5 +99,6 @@
     "reset": "Reset",
     "colorThemes": "Color Themes",
     "darkMode": "Darkmode",
-    "lightMode": "Lightmode"
+    "lightMode": "Lightmode",
+    "noData": "Datatable has no data"
 }
