@@ -8,7 +8,7 @@ import webbrowser
 from datetime import datetime, timedelta
 from tkinter import messagebox
 import pygame
-from components import Button, DataTable
+from components import Button, DataTable, QuestionDialog
 from lib import text_screen
 from services import TranslateService, LanguageConfiguration, play_tasks
 from .create_date_picker import create_date_picker
@@ -40,6 +40,7 @@ class CreateScheduleDisplay:
         self.todo_input_values = {}
         self.newdate_input_values = {}
         self.newtime_input_values = {}
+        self.show_help_dialog = False
         self.screen_width = None
         self.screen_height = None
         self.column_width = None
@@ -63,7 +64,6 @@ class CreateScheduleDisplay:
         self.data_table = None
 
     def display(self):
-
         # Open the pygame window at front of all windows open on screen
         os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
@@ -132,6 +132,7 @@ class CreateScheduleDisplay:
         buttons.append(english_button)
         buttons.append(german_button)
 
+        help_dialog = QuestionDialog(500, 200, 'help', 'help', 'helpText', self.translate_service, lambda: print("Hi"))
         def update_text():
             for button in buttons:
                 button.update_text()
@@ -142,10 +143,13 @@ class CreateScheduleDisplay:
                     pygame.quit()
                     sys.exit()
 
-                for button in buttons:
-                    button.handle_event(event)
+                if self.show_help_dialog:
+                    help_dialog.handle_events(event)
+                else:
+                    for button in buttons:
+                        button.handle_event(event)
 
-                self.data_table.handle_events(event)
+                    self.data_table.handle_events(event)
 
             screen.fill(self.black)  # Fill the screen with the black color
             update_text()
@@ -155,6 +159,8 @@ class CreateScheduleDisplay:
             font = pygame.font.Font(None, int(20 * width_scale_factor))  # Create font object for header
 
             self.data_table.draw(screen)
+            if self.show_help_dialog:
+                help_dialog.draw(screen)
 
             pygame.display.flip()  # Flip the display to update the screen
 
@@ -394,28 +400,29 @@ class CreateScheduleDisplay:
         root.destroy()
 
     def button_help(self):
-        root = tk.Tk()
-        root.withdraw()
-        screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
-        count = 0
-        posX, posY = pygame.mouse.get_pos()
-        posX -= 150
-        for display in pygame.display.get_desktop_sizes():
-            if count == screenIndex:
-                break
-            posX += display[0]
-            count += 1
-        root.geometry('+' + str(posX) + '+' + str(posY))
-        # Show a messagebox asking for confirmation
-        response = messagebox.askyesno(self.translate_service.get_translation('help'),
-                                       self.translate_service.get_translation('helpText'))
-
-        # If the user clicked 'Yes', then open browser
-        if response == True:
-            webbrowser.open('https://github.com/eliasmattern/teststarter')
-
-            # Destroy the root window
-        root.destroy()
+        self.show_help_dialog = True
+        # root = tk.Tk()
+        # root.withdraw()
+        # screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
+        # count = 0
+        # posX, posY = pygame.mouse.get_pos()
+        # posX -= 150
+        # for display in pygame.display.get_desktop_sizes():
+        #     if count == screenIndex:
+        #         break
+        #     posX += display[0]
+        #     count += 1
+        # root.geometry('+' + str(posX) + '+' + str(posY))
+        # # Show a messagebox asking for confirmation
+        # response = messagebox.askyesno(self.translate_service.get_translation('help'),
+        #                                self.translate_service.get_translation('helpText'))
+        #
+        # # If the user clicked 'Yes', then open browser
+        # if response == True:
+        #     webbrowser.open('https://github.com/eliasmattern/teststarter')
+        #
+        #     # Destroy the root window
+        # root.destroy()
 
     def split_dict(self, input_dict, chunk_size):
         dict_list = [{}]
