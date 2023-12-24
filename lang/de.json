@@ -69,7 +69,7 @@
     "noExperiments": "Keine Experimente",
     "createWithSchedule": "Experiment mit Zeitplan erstellen",
     "for": "für",
-    "escToReturn": "Bitte drücke 'ESC' um zurückzukehren",
+    "escToReturn": "Bitte drücke 'ESC' oder 'SPACE' um zurückzukehren",
     "configureVariable": "Variabeln konfigurieren",
     "createVar": "Variabel erstrellen",
     "deleteVar": "Variabel löschen",

@@ -71,7 +71,7 @@
     "noExperiments": "No experiments",
     "createWithSchedule": "Create experiment with a schedule",
     "for": "for",
-    "escToReturn": "Please press 'ESC' to return.",
+    "escToReturn": "Please press 'ESC' or 'SPACE' to return.",
     "configureVariable": "Configure Variables",
     "createVar": "Create Variable",
     "deleteVar": "Delete Variable",
