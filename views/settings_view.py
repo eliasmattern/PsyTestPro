@@ -1,13 +1,14 @@
 import sys
 import re
 import pygame
-
+import math
 from components import InputBox, Button
 from services import TeststarterConfig
 
 
 class SettingsView:
     def __init__(self):
+        self.chunk_size = math.floor((pygame.display.get_surface().get_height() / 100 * 40) / 100)
         self.running = True
         self.refresh = False
         self.teststarter_config = TeststarterConfig()
@@ -150,7 +151,7 @@ class SettingsView:
 
         input_y_pos = y
         for label, initial_text in zip(labels, initial_texts):
-            if len(input_boxes) % 5 == 0:
+            if len(input_boxes) % self.chunk_size == 0:
                 y = input_y_pos
             input_box = InputBox(x, y, 400, 40, label, translate_service, is_active=False,
                                  desc=translate_service.get_translation(label), initial_text=initial_text,
@@ -269,7 +270,7 @@ class SettingsView:
             teststarter, translate_service, language_config, initial_texts
         )
 
-        splitted_inputs = self.split_dict(input_boxes, 5)
+        splitted_inputs = self.split_dict(input_boxes, self.chunk_size)
 
         iniitial_text_dict = {}
 
