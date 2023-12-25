@@ -1,6 +1,6 @@
 import pygame
 from components import Button
-
+from services import TeststarterConfig
 
 class QuestionDialog:
     def __init__(self, width, height, window_key, title_key, desc_key, translate_service, action=None, action_key=''):
@@ -13,11 +13,14 @@ class QuestionDialog:
         self.title_bar = pygame.Rect((screen_width / 2) - width // 2, (screen_height / 2) - height / 2, width, 30)
         self.font = pygame.font.Font(None, 24)
         self.title_font = pygame.font.Font(None, 30)
-        self.background_color = (255, 255, 255)
-        self.primary_color = (0, 0, 0)
+        self.teststarter_config = TeststarterConfig()
+        self.settings = self.teststarter_config.get_settings()
+        self.background_color = pygame.Color(self.settings["backgroundColor"])
+        self.primary_color = pygame.Color(self.settings["primaryColor"])
+        self.highlight_color = (min(self.primary_color[0] + 25, 255), min(self.primary_color[1] + 25, 255), min(self.primary_color[2] + 25, 255))
+        self.danger_color = pygame.Color(self.settings["dangerColor"])
         self.is_open = True
         self.move = False
-        self.line_angle = 0
         self.quit_rect = None
         self.action_key = action_key
         self.action_button = Button(self.window.x + self.width - 60, self.window.y + self.height - 35, 100, 25,
@@ -61,14 +64,14 @@ class QuestionDialog:
                                             'back', lambda: self.close(),
                                             translate_service=self.translate_service)
 
-        pygame.draw.rect(screen, (0, 0, 0), self.window)
-        pygame.draw.rect(screen, self.background_color, self.window, width=2)
-        pygame.draw.rect(screen, (255, 0, 255) if not self.move else (0, 255, 0), self.title_bar)
+        pygame.draw.rect(screen, self.background_color, self.window)
+        pygame.draw.rect(screen, self.primary_color if not self.move else self.highlight_color, self.window, width=2)
+        pygame.draw.rect(screen, self.primary_color if not self.move else self.highlight_color, self.title_bar)
 
-        title_bar_surface = self.font.render(self.translate_service.get_translation(self.window_key), True, (0, 0, 0))
+        title_bar_surface = self.font.render(self.translate_service.get_translation(self.window_key), True, self.background_color)
         title_bar_pos = (self.title_bar.x + 10, self.title_bar.y + (self.title_bar.height // 4))
 
-        quit_surface = self.font.render('X', True, (0, 0, 0))
+        quit_surface = self.font.render('X', True, self.background_color)
         quit_bar_pos = (self.title_bar.x + self.width - 22.5, self.title_bar.y + (self.title_bar.height // 4))
         self.quit_rect = quit_surface.get_rect()
 
@@ -78,13 +81,13 @@ class QuestionDialog:
                                  quit_bar_pos[1] + self.quit_rect.height / 4)
 
         if self.quit_rect.collidepoint((left, top)):
-            pygame.draw.rect(screen, (255, 0, 0), self.quit_rect)
+            pygame.draw.rect(screen, self.danger_color, self.quit_rect)
 
         title_surface = self.title_font.render(self.translate_service.get_translation(self.title_key), True,
-                                               (255, 255, 255))
+                                               self.primary_color)
         title_pos = (self.window.x + 10, self.window.y + (self.window.height // 4))
 
-        desc_surface = self.font.render(self.translate_service.get_translation(self.desc_key), True, (255, 255, 255))
+        desc_surface = self.font.render(self.translate_service.get_translation(self.desc_key), True, self.primary_color)
         desc_pos = (self.window.x + 10, self.window.y + (self.window.height // 4) + self.title_font.get_linesize())
         screen.blit(title_bar_surface, title_bar_pos)
         screen.blit(title_surface, title_pos)
