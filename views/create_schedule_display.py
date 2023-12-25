@@ -3,10 +3,8 @@ import re
 import subprocess
 import sys
 import time as pythonTime
-import tkinter as tk
 import webbrowser
 from datetime import datetime, timedelta
-from tkinter import messagebox
 import pygame
 from components import Button, DataTable, QuestionDialog
 from lib import text_screen
@@ -41,6 +39,7 @@ class CreateScheduleDisplay:
         self.newdate_input_values = {}
         self.newtime_input_values = {}
         self.show_help_dialog = False
+        self.show_quit_dialog = False
         self.screen_width = None
         self.screen_height = None
         self.column_width = None
@@ -132,7 +131,12 @@ class CreateScheduleDisplay:
         buttons.append(english_button)
         buttons.append(german_button)
 
-        help_dialog = QuestionDialog(500, 200, 'help', 'help', 'helpText', self.translate_service, lambda: print("Hi"))
+        help_dialog = QuestionDialog(500, 200, 'help', 'help', 'helpText', self.translate_service,
+                                     lambda: self.help_action(), action_key='github')
+
+        quit_dialog = QuestionDialog(500, 200, 'confirmExit', 'confirmExit', 'confirmExitText', self.translate_service,
+                                     lambda: self.quit_action(), action_key='quit')
+
         def update_text():
             for button in buttons:
                 button.update_text()
@@ -145,6 +149,8 @@ class CreateScheduleDisplay:
 
                 if self.show_help_dialog:
                     help_dialog.handle_events(event)
+                if self.show_quit_dialog:
+                    quit_dialog.handle_events(event)
                 else:
                     for button in buttons:
                         button.handle_event(event)
@@ -156,11 +162,18 @@ class CreateScheduleDisplay:
             for button in buttons:
                 button.draw(screen)
 
-            font = pygame.font.Font(None, int(20 * width_scale_factor))  # Create font object for header
-
             self.data_table.draw(screen)
             if self.show_help_dialog:
                 help_dialog.draw(screen)
+            if not help_dialog.is_open:
+                self.show_help_dialog = False
+                help_dialog.is_open = True
+
+            if self.show_quit_dialog:
+                quit_dialog.draw(screen)
+            if not quit_dialog.is_open:
+                self.show_quit_dialog = False
+                quit_dialog.is_open = True
 
             pygame.display.flip()  # Flip the display to update the screen
 
@@ -373,56 +386,17 @@ class CreateScheduleDisplay:
                         self.translate_service.get_translation('skipDoneTodo')]
 
     def button_quit_teststarter(self):
-        # Create a root window and hide it
-        root = tk.Tk()
-        root.withdraw()
-        screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
-        count = 0
-        posX, posY = pygame.mouse.get_pos()
-        posX -= 150
-        posY -= 150
-        for display in pygame.display.get_desktop_sizes():
-            if count == screenIndex:
-                break
-            posX += display[0]
-            count += 1
-        root.geometry('+' + str(posX) + '+' + str(posY))
-        # Show a messagebox asking for confirmation
-        response = messagebox.askyesno(self.translate_service.get_translation('confirmExit'),
-                                       self.translate_service.get_translation('confirmExitText'))
+        self.show_quit_dialog = True
 
-        # If the user clicked 'Yes', then close the program
-        if response == True:
-            pygame.quit()
-            quit()
-
-        # Destroy the root window
-        root.destroy()
+    def quit_action(self):
+        pygame.quit()
+        quit()
 
     def button_help(self):
         self.show_help_dialog = True
-        # root = tk.Tk()
-        # root.withdraw()
-        # screenIndex = pygame.display.get_desktop_sizes().index(pygame.display.get_surface().get_size())
-        # count = 0
-        # posX, posY = pygame.mouse.get_pos()
-        # posX -= 150
-        # for display in pygame.display.get_desktop_sizes():
-        #     if count == screenIndex:
-        #         break
-        #     posX += display[0]
-        #     count += 1
-        # root.geometry('+' + str(posX) + '+' + str(posY))
-        # # Show a messagebox asking for confirmation
-        # response = messagebox.askyesno(self.translate_service.get_translation('help'),
-        #                                self.translate_service.get_translation('helpText'))
-        #
-        # # If the user clicked 'Yes', then open browser
-        # if response == True:
-        #     webbrowser.open('https://github.com/eliasmattern/teststarter')
-        #
-        #     # Destroy the root window
-        # root.destroy()
+
+    def help_action(self):
+        webbrowser.open('https://github.com/eliasmattern/teststarter')
 
     def split_dict(self, input_dict, chunk_size):
         dict_list = [{}]

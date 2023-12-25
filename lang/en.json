@@ -13,7 +13,7 @@
     "saveTime": "Save Time",
     "runTeststarter": "Run Teststarter",
     "changeSettings": "Change start settings",
-    "quit": "Quit Teststarter", 
+    "quit": "Quit",
     "help": "Help",
     "task": "Task",
     "date": "Date",
@@ -101,5 +101,6 @@
     "darkMode": "Darkmode",
     "lightMode": "Lightmode",
     "noData": "Datatable has no data",
-    "error": "Error"
+    "error": "Error",
+    "github": "GitHub"
 }
