@@ -380,10 +380,17 @@ class CreateScheduleDisplay:
     def change_language(self, translateService, language_config, lang):
         translateService.set_language(lang)
         language_config.update_language_config(lang)
-        self.headers = [self.translate_service.get_translation('task'),
-                        self.translate_service.get_translation('date'),
-                        self.translate_service.get_translation('time'),
-                        self.translate_service.get_translation('skipDoneTodo')]
+        if not self.isHab:
+            self.headers = [self.translate_service.get_translation('task'),
+                            self.translate_service.get_translation('date'),
+                            self.translate_service.get_translation('time'),
+                            self.translate_service.get_translation('skipDoneTodo')]
+        else:
+            self.headers = [self.translate_service.get_translation('task'),
+                            self.translate_service.get_translation('skipDoneTodo')]
+        self.data_table.columns = self.headers
+        if len(self.data_table.data) > 0:
+            self.data_table.table_width, self.data_table.table_height, self.data_table.row_width, self.data_table.row_height, self.data_table.header_heigth = self.data_table.get_table_proportions()
 
     def button_quit_teststarter(self):
         self.show_quit_dialog = True
