@@ -231,7 +231,7 @@ class CreateScheduleDisplay:
         next_button = Button(75 + (edit_button_width / 2), edit_button_y + (edit_button_height / 2), 300, 50,
                              'nextTask', lambda: self.play_task(), translate_service=self.translate_service)
         edit_button = Button(edit_button_x + (edit_button_width / 2), edit_button_y + (edit_button_height / 2), 300, 50,
-                             'editTeststarter', lambda: self.edit_schedule(),
+                             'editSchedule', lambda: self.edit_schedule(),
                              translate_service=self.translate_service)
         running = True
         while running:

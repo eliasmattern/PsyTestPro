@@ -60,7 +60,7 @@
     "importSuccessfully": "Experimente wurden erfolgreich importiert",
     "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: CSV",
     "commandFailedToExecute": "Befehl konnte nicht ausgeführt werden",
-    "editTeststarter": "Teststarter bearbeiten",
+    "editSchedule": "Zeitplan bearbeiten",
     "nextTask": "Nächste Aufgabe starten",
     "until": "bis",
     "importExport": "Importieren / Exportieren",
