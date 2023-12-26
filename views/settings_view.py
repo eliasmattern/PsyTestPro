@@ -121,7 +121,7 @@ class SettingsView:
             box.is_touched = True
 
 
-    def create_input_boxes(self, psy_test_pro, translate_service, language_config, initial_texts):
+    def create_input_boxes(self, psy_test_pro, translate_service, language_config, initial_texts, check_box_initial_value):
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
@@ -171,7 +171,7 @@ class SettingsView:
             input_boxes[label] = input_box
             y += spacing
         y = input_y_pos + spacing * self.chunk_size
-        check_box = CheckBox('showTaskAndTime', x, y + 60, active=True, translate_service=self.translate_service, font_size=24)
+        check_box = CheckBox('showTaskAndTime', x, y + 60, active=check_box_initial_value, translate_service=self.translate_service, font_size=24)
 
         exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.back_to_psy_test_pro(psy_test_pro),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
@@ -268,9 +268,10 @@ class SettingsView:
                          settings['buttonTextColor'], settings['activeButtonColor'], settings['inactiveButtonColor'],
                          settings['successColor'], settings['dangerColor'], settings['warningColor'],
                          settings['gridColor']]
+        check_box_initial_value = settings['showNextTask']
 
         input_boxes, buttons, check_box = self.create_input_boxes(
-            psy_test_pro, translate_service, language_config, initial_texts
+            psy_test_pro, translate_service, language_config, initial_texts, check_box_initial_value
         )
 
         splitted_inputs = self.split_dict(input_boxes, self.chunk_size)

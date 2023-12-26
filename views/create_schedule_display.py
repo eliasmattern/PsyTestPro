@@ -34,6 +34,7 @@ class CreateScheduleDisplay:
         self.button_color = pygame.Color(self.settings["buttonColor"])
         self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.grid_color = pygame.Color(self.settings["gridColor"])
+        self.showTasks = self.settings["showNextTask"]
         self.todo_input_values = {}
         self.newdate_input_values = {}
         self.newtime_input_values = {}
@@ -289,11 +290,16 @@ class CreateScheduleDisplay:
                 next_event_in_seconds = (next_event[0] - now).total_seconds()
                 # calculate the time until the next event
                 if next_event is not None:
-                    event_message = ' ' + self.translate_service.get_translation('until') + f' {next_event[1]}'
+                    if self.showTasks:
+                        event_message = ' ' + self.translate_service.get_translation('until') + f' {next_event[1]}'
+                        countdown = str(timedelta(seconds=round(next_event_in_seconds)))
+                    else:
+                        event_message = ''
+                        countdown = ''
+
                 else:
                     event_message = 'No more events today'
 
-                countdown = str(timedelta(seconds=round(next_event_in_seconds)))
 
             # Display the message on screen
             if self.isHab or not next_event:

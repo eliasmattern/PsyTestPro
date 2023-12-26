@@ -9,5 +9,6 @@
   "warningColor": "#F0E68C",
   "activeButtonColor": "#DADDDC",
   "inactiveButtonColor": "#646464",
-  "gridColor": "#C0C0C0"
+  "gridColor": "#C0C0C0",
+  "showNextTask": true
 }
