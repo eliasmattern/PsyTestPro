@@ -169,7 +169,7 @@ class SettingsView:
             buttons[label + "Reset"] = reset_button
             input_boxes[label] = input_box
             y += spacing
-
+        y = input_y_pos + spacing * self.chunk_size
         exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.backToTeststarter(teststarter),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                              active_button_color=pygame.Color('#ACACAC'))
