@@ -4,6 +4,7 @@ from services import PsyTestProConfig
 
 class CheckBox():
     def __init__(self, label, posX, posY, active=False, translate_service=None, font_size=18) -> None:
+        self.text = label
         self.translate_service = translate_service
         self.font = pygame.font.Font(None, font_size)
         self.psy_test_pro_config = PsyTestProConfig()
@@ -27,6 +28,20 @@ class CheckBox():
         self.tick_box_rect = None
         self.label_rect = None
         pass
+
+    def update_text(self):
+        if self.translate_service:
+            self.label = self.font.render(
+                self.translate_service.get_translation(self.text),
+                True,
+                self.primary_color,
+            )
+        else:
+            self.label = self.font.render(
+                self.text,
+                True,
+                self.primary_color,
+            )
 
     def handle_event(self, event):
         if self.tick_box_rect:

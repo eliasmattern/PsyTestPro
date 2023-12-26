@@ -95,7 +95,7 @@
     "invalidHex": "is not a hex colorcode",
     "save": "Save",
     "contrastErrorMsg": "has too little contrast to the",
-    "updatedColors": "Colors updated",
+    "updatedSettings": "Settings updated",
     "reset": "Reset",
     "colorThemes": "Color Themes",
     "darkMode": "Darkmode",
@@ -115,5 +115,6 @@
     "october": "October",
     "november": "November",
     "december": "December",
-    "datepicker": "Time Picker"
+    "datepicker": "Time Picker",
+    "showTaskAndTime": "Show upcoming Task / Timer"
 }

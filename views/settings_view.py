@@ -2,7 +2,7 @@ import sys
 import re
 import pygame
 import math
-from components import InputBox, Button
+from components import InputBox, Button, CheckBox
 from services import PsyTestProConfig
 
 
@@ -64,7 +64,7 @@ class SettingsView:
 
         return has_contrast
 
-    def save_colors(self, input_boxes):
+    def save_colors(self, input_boxes, check_box_value):
         self.saved_msg = []
         has_contrast = self.check_contrast(input_boxes)
         if has_contrast:
@@ -77,8 +77,9 @@ class SettingsView:
                                                  input_boxes['successColor'].text,
                                                  input_boxes['dangerColor'].text,
                                                  input_boxes['warningColor'].text,
-                                                 input_boxes['gridColor'].text)
-            self.saved_msg.append(self.translate_service.get_translation('updatedColors'))
+                                                 input_boxes['gridColor'].text,
+                                                 check_box_value)
+            self.saved_msg.append(self.translate_service.get_translation('updatedSettings'))
             self.refresh_view()
 
     def refresh_view(self):
@@ -170,6 +171,8 @@ class SettingsView:
             input_boxes[label] = input_box
             y += spacing
         y = input_y_pos + spacing * self.chunk_size
+        check_box = CheckBox('showTaskAndTime', x, y + 60, active=True, translate_service=self.translate_service, font_size=24)
+
         exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.back_to_psy_test_pro(psy_test_pro),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                              active_button_color=pygame.Color('#ACACAC'))
@@ -179,7 +182,7 @@ class SettingsView:
             100,
             40,
             'save',
-            lambda: self.save_colors(input_boxes),
+            lambda: self.save_colors(input_boxes, check_box.active),
             translate_service,
             color=pygame.Color('#C0C0C0'),
             text_color=pygame.Color('Black'),
@@ -192,7 +195,7 @@ class SettingsView:
         buttons['lightMode'] = light_mode
         buttons['back'] = exit_button
         buttons['save'] = save_button
-        return input_boxes, buttons
+        return input_boxes, buttons, check_box
 
     def is_hex_color_code(self, code):
         hex_color_pattern = re.compile(r'^#([A-Fa-f0-9]{6})$')
@@ -266,7 +269,7 @@ class SettingsView:
                          settings['successColor'], settings['dangerColor'], settings['warningColor'],
                          settings['gridColor']]
 
-        input_boxes, buttons = self.create_input_boxes(
+        input_boxes, buttons, check_box = self.create_input_boxes(
             psy_test_pro, translate_service, language_config, initial_texts
         )
 
@@ -329,6 +332,7 @@ class SettingsView:
                         box.handle_event(event)
                 for key, button in buttons.items():
                     button.handle_event(event)
+                check_box.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
             page_surface = font.render(
@@ -336,6 +340,10 @@ class SettingsView:
             )
             page_rect = page_surface.get_rect()
             page_rect.center = (page_x + 75, page_y - 80)
+
+            check_box.update_text()
+            check_box.draw(screen)
+
 
             screen.blit(text_surface, (x - text_rect.width // 2, y - 30))
             screen.blit(color_themes_surface, (x - color_themes_rect.width // 2, y + 180))

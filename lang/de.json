@@ -91,7 +91,7 @@
     "invalidHex": "ist kein hex Farbcode",
     "save": "Speichern",
     "contrastErrorMsg": "hat zu wenig Kontrast zur",
-    "updatedColors": "Farben aktualisiert",
+    "updatedSettings": "Einstellungen aktualisiert",
     "reset": "Reset",
     "colorThemes": "Farbthemen",
     "darkMode": "Darkmode",
@@ -110,5 +110,6 @@
     "october": "Oktober",
     "november": "November",
     "december": "Dezember",
-    "datepicker": "Datumpicker"
+    "datepicker": "Datumpicker",
+    "showTaskAndTime": "Nächste Augabe / Timer anzeigen"
 }
