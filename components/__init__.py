@@ -4,3 +4,4 @@ from .TimeInput import TimeInput
 from .CheckBox import CheckBox
 from .DataTable import DataTable
 from .QuestionDialog import QuestionDialog
+from .DatePicker import DatePickerComponent

@@ -42,12 +42,14 @@ class QuestionDialog:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.quit_rect and self.quit_rect.collidepoint(event.pos):
-                    self.is_open = False
+                    pass
                 elif self.title_bar.collidepoint(event.pos):
                     self.move = True
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 self.move = False
+                if self.quit_rect and self.quit_rect.collidepoint(event.pos):
+                    self.is_open = False
 
     def draw(self, screen):
         left, top = pygame.mouse.get_pos()

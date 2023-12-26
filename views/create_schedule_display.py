@@ -4,9 +4,9 @@ import subprocess
 import sys
 import time as pythonTime
 import webbrowser
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date as python_date
 import pygame
-from components import Button, DataTable, QuestionDialog
+from components import Button, DataTable, QuestionDialog, DatePickerComponent
 from lib import text_screen
 from services import TranslateService, LanguageConfiguration, play_tasks
 from .create_date_picker import create_date_picker
@@ -40,6 +40,7 @@ class CreateScheduleDisplay:
         self.newtime_input_values = {}
         self.show_help_dialog = False
         self.show_quit_dialog = False
+        self.show_date_picker = False
         self.screen_width = None
         self.screen_height = None
         self.column_width = None
@@ -48,18 +49,21 @@ class CreateScheduleDisplay:
                         self.translate_service.get_translation('date'),
                         self.translate_service.get_translation('time'),
                         self.translate_service.get_translation('skipDoneTodo')]
+        self.date_picker = None
 
         self.actions = [None,
-                        lambda: self.data_table.set_action_data(self.open_date_picker(self.data_table.action_data)),
-                        lambda: self.data_table.set_action_data(self.open_time_picker(self.data_table.action_data)),
-                        lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data))]
+                        lambda: self.open_date_picker(self.data_table.action_data["data"]),
+                        lambda: self.data_table.set_action_data(
+                            self.open_time_picker(self.data_table.action_data["data"])),
+                        lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data["data"]))]
         self.play_next_task = False
 
         if self.isHab:
             self.headers = [self.translate_service.get_translation('task'),
                             self.translate_service.get_translation('skipDoneTodo')]
             self.actions = [None,
-                            lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data))]
+                            lambda: self.data_table.set_action_data(
+                                self.switch_state(self.data_table.action_data["data"]))]
         self.data_table = None
 
     def display(self):
@@ -137,6 +141,12 @@ class CreateScheduleDisplay:
         quit_dialog = QuestionDialog(500, 200, 'confirmExit', 'confirmExit', 'confirmExitText', self.translate_service,
                                      lambda: self.quit_action(), action_key='quit')
 
+        self.date_picker = DatePickerComponent('26/12/2023', 'datepicker', self.translate_service,
+                                               lambda: self.data_table.set_action_data(
+                                                   '/'.join([str(self.date_picker.day), str(self.date_picker.month),
+                                                             str(self.date_picker.year)]))
+                                               , action_key='save')
+
         def update_text():
             for button in buttons:
                 button.update_text()
@@ -149,7 +159,9 @@ class CreateScheduleDisplay:
 
                 if self.show_help_dialog:
                     help_dialog.handle_events(event)
-                if self.show_quit_dialog:
+                elif self.show_date_picker:
+                    self.date_picker.handle_events(event)
+                elif self.show_quit_dialog:
                     quit_dialog.handle_events(event)
                 else:
                     for button in buttons:
@@ -174,6 +186,12 @@ class CreateScheduleDisplay:
             if not quit_dialog.is_open:
                 self.show_quit_dialog = False
                 quit_dialog.is_open = True
+
+            if self.show_date_picker:
+                self.date_picker.draw(screen)
+            if not self.date_picker.is_open:
+                self.show_date_picker = False
+                self.date_picker.is_open = True
 
             pygame.display.flip()  # Flip the display to update the screen
 
@@ -429,10 +447,14 @@ class CreateScheduleDisplay:
             self.schedule_page = (self.schedule_page - 1) if self.schedule_page > 0 else len(schedule) - 1
 
     def open_date_picker(self, date):
-        split_date = date.split('/')
-        day, month, year = split_date[0], split_date[1], split_date[2]
-        date = create_date_picker(int(year), int(month), int(day))
-        return date
+        self.show_date_picker = True
+        self.date_picker.day, self.date_picker.month, self.date_picker.year = date.split('/')
+        self.date_picker.create_calendar(int(self.date_picker.year), int(self.date_picker.month),
+                                         int(self.date_picker.day))
+        # split_date = date.split('/')
+        # day, month, year = split_date[0], split_date[1], split_date[2]
+        # date = create_date_picker(int(year), int(month), int(day))
+        # return date
 
     def open_time_picker(self, time):
         split_time = time.split(':')

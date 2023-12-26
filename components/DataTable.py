@@ -38,7 +38,7 @@ class DataTable:
             self.table_width, self.table_height, self.row_width, self.row_height, self.header_heigth = self.get_table_proportions()
 
     def set_action_data(self, data):
-        self.action_data = data
+        self.data[self.action_data["info"][0]][self.action_data["info"][1]] = data
 
     def get_table_proportions(self):
         width = 0
@@ -244,15 +244,12 @@ class DataTable:
                     value_index = int(key.split('-')[1])
                     if row >= len(self.data):
                         continue
-                    self.action_data = self.data[row][value_index]
-                    action_data_copy = self.action_data
 
                     if value.collidepoint(event.pos):
                         if len(self.actions) - 1 >= value_index and self.actions[value_index]:
+                            self.action_data = {"data": self.data[row][value_index], "info": (row, value_index)}
                             self.actions[value_index]()
 
-                            if self.action_data != action_data_copy:
-                                self.data[row][value_index] = self.action_data
         if self.buttons is not None:
             for button in self.buttons.values():
                 button.handle_event(event)
