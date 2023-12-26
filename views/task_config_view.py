@@ -1,7 +1,7 @@
 import sys
 import pygame
 from components import Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 from .task_create_view import AddTaskView
 
 
@@ -13,8 +13,8 @@ class TaskConfig:
         self.page = 0
         self.error = ''
         self.add_task = AddTaskView()
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
     def backToConfig(self):
         self.running = False
@@ -31,11 +31,11 @@ class TaskConfig:
                 (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
             )
 
-    def add_task_config_display(self, teststarter, translate_service):
+    def add_task_config_display(self, psy_test_pro, translate_service):
         self.page = 0
         self.running = True
 
-        teststarter_config = TeststarterConfig()
+        psy_test_pro_config = PsyTestProConfig()
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -62,7 +62,7 @@ class TaskConfig:
         pygame.display.set_caption('Add task')
 
         experiments_and_day_of_times = (
-            teststarter_config.get_experiments()
+            psy_test_pro_config.get_experiments()
         )
         splitted_experiments = list(self.split_dict(experiments_and_day_of_times, 5))
 
@@ -88,7 +88,7 @@ class TaskConfig:
                         40,
                         experiment.split('_')[0],
                         lambda exp=experiment: self.add_task.add(
-                            teststarter,
+                            psy_test_pro,
                             translate_service,
                             False,
                             exp

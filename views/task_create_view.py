@@ -3,7 +3,7 @@ import sys
 import pygame
 from components import InputBox, Button, TimeInput
 from lib import text_screen
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class AddTaskView():
@@ -12,8 +12,8 @@ class AddTaskView():
         self.selected_multiple = False
         self.error = ''
         self.is_task_working = False
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.inactive_button_color = pygame.Color(self.settings["inactiveButtonColor"])
 
     def validate_task_inputs(self, input_boxes, time_input, command_inputs, text_screen_inputs, is_command):
@@ -26,7 +26,7 @@ class AddTaskView():
         return is_valid
 
     def preview(self, translate_service, command, command_inputs, text_screen_inputs):
-        custom_variables = TeststarterConfig().load_custom_variables()
+        custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
             'experiment': 'VARIABLE_EXPERMENT',
@@ -93,8 +93,8 @@ class AddTaskView():
         value = (
             {'title': title, 'description': description} if not is_command else command
         )
-        teststarter_Config = TeststarterConfig()
-        teststarter_Config.save_task(variable, name, time, type, value)
+        psy_test_pro_config = PsyTestProConfig()
+        psy_test_pro_config.save_task(variable, name, time, type, value)
         if create_continously:
             self.is_task_working = False
             self.error = ''
@@ -116,7 +116,7 @@ class AddTaskView():
 
     def add(
             self,
-            teststarter,
+            psy_test_pro,
             translate_service,
             create_continously,
             experiment,

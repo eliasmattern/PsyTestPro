@@ -11,21 +11,21 @@ from .experiment_delete_view import DeleteExperimentView
 from .task_delete_view import DeleteTaskView
 from .variable_delete_view import DeleteVariableView
 from .task_config_view import TaskConfig
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class ExperimentConfig():
     def __init__(self, translate_service):
         self.info_text = ''
         self.translate_service = translate_service
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
-    def backToTeststarter(self, teststarter):
-        teststarter()
+    def back_to_psy_test_pro(self, psy_test_pro):
+        psy_test_pro()
 
-    def back(self, teststarter):
-        self.display(teststarter, self.translate_service)
+    def back(self, psy_test_pro):
+        self.display(psy_test_pro, self.translate_service)
 
     def import_config(self):
         try:
@@ -60,7 +60,8 @@ class ExperimentConfig():
             self.info_text = 'exportFailed'
             print(f'An error occurred: {e}')
 
-    def display(self, teststarter, create_continously=False):
+    def display(self, psy_test_pro, create_continously=False):
+        self.info_text = ''
         # Open the pygame window at front of all windows open on screen
         os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
@@ -117,7 +118,7 @@ class ExperimentConfig():
             40,
             'createExperiment',
             lambda: create_experiment_config.create_experiment_config_display(
-                teststarter, self.translate_service, create_continously
+                psy_test_pro, self.translate_service, create_continously
             ),
             self.translate_service,
         )
@@ -128,7 +129,7 @@ class ExperimentConfig():
             40,
             'deleteExperiment',
             lambda: delete_experiment_config.delete_experiment_config_display(
-                teststarter, self.translate_service
+                psy_test_pro, self.translate_service
             ),
             self.translate_service,
         )
@@ -138,7 +139,7 @@ class ExperimentConfig():
             400,
             40,
             'createTask',
-            lambda: task_config.add_task_config_display(teststarter, self.translate_service),
+            lambda: task_config.add_task_config_display(psy_test_pro, self.translate_service),
             self.translate_service,
         )
         delete_task_button = Button(
@@ -177,7 +178,7 @@ class ExperimentConfig():
             400,
             40,
             'createVar',
-            lambda: create_variables_config.display(teststarter, self.translate_service),
+            lambda: create_variables_config.display(psy_test_pro, self.translate_service),
             self.translate_service,
         )
 
@@ -187,7 +188,7 @@ class ExperimentConfig():
             400,
             40,
             'deleteVar',
-            lambda: delete_variables_config.display(teststarter, self.translate_service),
+            lambda: delete_variables_config.display(psy_test_pro, self.translate_service),
             self.translate_service,
         )
 
@@ -197,7 +198,7 @@ class ExperimentConfig():
             100,
             40,
             'back',
-            lambda: self.display(teststarter, create_continously),
+            lambda: self.display(psy_test_pro, create_continously),
             self.translate_service,
         )
 
@@ -262,7 +263,7 @@ class ExperimentConfig():
             100,
             40,
             'back',
-            lambda: self.backToTeststarter(teststarter),
+            lambda: self.back_to_psy_test_pro(psy_test_pro),
             self.translate_service,
         )
         buttons.append(experiment_config_button)

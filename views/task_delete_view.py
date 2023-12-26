@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 import pygame
 from components import Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class DeleteTaskView():
@@ -12,8 +12,8 @@ class DeleteTaskView():
         self.page = 0
         self.removing = True
         self.experiment_name = ''
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
     def backToConfig(self):
         self.running = False
@@ -34,7 +34,7 @@ class DeleteTaskView():
             )
 
     def delete_task_from_config(self, translate_service, experiment, task):
-        config = TeststarterConfig()
+        config = PsyTestProConfig()
         root = tk.Tk()
         root.withdraw()
 
@@ -56,7 +56,7 @@ class DeleteTaskView():
         self.page = 0
         self.running = True
 
-        teststarter_config = TeststarterConfig()
+        psy_test_pro_config = PsyTestProConfig()
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -83,7 +83,7 @@ class DeleteTaskView():
         pygame.display.set_caption('Delete task')
         full_experiment_name = experiment_name
         tasks = (
-            teststarter_config.load_tasks_of_experiment(full_experiment_name)
+            psy_test_pro_config.load_tasks_of_experiment(full_experiment_name)
         )
         chunk_size = 5
         splitted_tasks = [tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)]
@@ -198,7 +198,7 @@ class DeleteTaskView():
         self.page = 0
         self.running = True
 
-        teststarter_config = TeststarterConfig()
+        psy_test_pro_config = PsyTestProConfig()
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -225,7 +225,7 @@ class DeleteTaskView():
         pygame.display.set_caption('Delete task')
 
         experiments_and_day_of_times = (
-            teststarter_config.get_experiments()
+            psy_test_pro_config.get_experiments()
         )
         splitted_experiments = list(self.split_dict(experiments_and_day_of_times, 5))
 

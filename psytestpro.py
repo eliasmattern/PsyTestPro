@@ -10,11 +10,11 @@ from datetime import datetime, timedelta
 from components import InputBox, Button
 from views import CreateScheduleDisplay, ExperimentConfig, SettingsView
 import re
-from services import TranslateService, LanguageConfiguration, TeststarterConfig
+from services import TranslateService, LanguageConfiguration, PsyTestProConfig
 import pandas as pd
 
 
-class Teststarter:
+class PsyTestPro:
     def __init__(self, id='', experiment='', time='', custom_variables={}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
@@ -22,10 +22,10 @@ class Teststarter:
             self.screen = pygame.display.set_mode((0, 0))
             pygame.display.toggle_fullscreen()
         self.width, self.height = pygame.display.get_surface().get_rect().size
-        pygame.display.set_caption('Teststarter')
+        pygame.display.set_caption('PsyTestPro')
         pygame.scrap.init()
-        self.teststarterConfig = TeststarterConfig()
-        self.teststarterConfig.load_experiments()
+        self.psyTestProConfig = PsyTestProConfig()
+        self.psyTestProConfig.load_experiments()
         self.lang = 'en'
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont('Arial', 24)
@@ -46,7 +46,7 @@ class Teststarter:
         self.is_running = True
         self.start_time = None
         self.settings_view = SettingsView()
-        self.settings = self.teststarterConfig.get_settings()
+        self.settings = self.psyTestProConfig.get_settings()
         self.background_color = pygame.Color(self.settings['backgroundColor'])
         self.primary_color = pygame.Color(self.settings['primaryColor'])
         self.inactive_button_color = pygame.Color(self.settings['inactiveButtonColor'])
@@ -70,10 +70,10 @@ class Teststarter:
         return re.match(pattern, datetime_str) is not None
 
     def create_input_boxes(self):
-        custom_variables = self.teststarterConfig.load_custom_variables()
+        custom_variables = self.psyTestProConfig.load_custom_variables()
         labels = ['participantId', 'experiment', 'startTime']
         experiments_string = ''
-        for experiment in self.teststarterConfig.experiments:
+        for experiment in self.psyTestProConfig.experiments:
             experiments_string = experiments_string + str(experiment) + ', '
         if ',' in experiments_string:
             experiments_string = experiments_string[:-2]
@@ -105,11 +105,11 @@ class Teststarter:
         exit_button = Button(x - 75, y + 60, 100, 40, 'exit', self.exit, self.translateService)
         submit_button = Button(x + 75, y + 60, 100, 40, 'submit', self.save_details, self.translateService)
         settings_button = Button(self.width - 175, 100, 250, 40, 'settings',
-                                 lambda: self.settings_view.display(Teststarter, self.translateService,
+                                 lambda: self.settings_view.display(PsyTestPro, self.translateService,
                                                                     self.language_config),
                                  self.translateService)
         create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureExperiment',
-                                          lambda: self.experiment_config_display.display(Teststarter),
+                                          lambda: self.experiment_config_display.display(PsyTestPro),
                                           self.translateService)
 
         self.buttons.append(exit_button)
@@ -137,7 +137,7 @@ class Teststarter:
 
     def handle_events(self):
         def get_input_index(step):
-            custom_variables = self.teststarterConfig.load_custom_variables()
+            custom_variables = self.psyTestProConfig.load_custom_variables()
             index_to_key = {0: 'participantId', 1: 'experiment', 2: 'startTime'}
             key_to_index = {'participantId': 0, 'experiment': 1, 'startTime': 2}
             count = 3
@@ -213,7 +213,7 @@ class Teststarter:
             # Define validation checks and corresponding error messages
             index_to_key = {0: 'participantId', 1: 'experiment', 2: 'startTime'}
 
-            custom_variables = self.teststarterConfig.load_custom_variables()
+            custom_variables = self.psyTestProConfig.load_custom_variables()
             count = 3
             for value in custom_variables:
                 index_to_key[count] = value
@@ -248,14 +248,14 @@ class Teststarter:
             None, int(64)
         )  # Create font object for header
         text_surface = font.render(
-            self.translateService.get_translation('teststarter'), True, self.primary_color
+            self.translateService.get_translation('psytestpro'), True, self.primary_color
         )
         text_rect = text_surface.get_rect()
         self.screen.blit(text_surface, (x - text_rect.width // 2, y))
 
         for key, box in self.input_boxes.items():
             box.draw(self.screen)
-        is_input_valid = validate_inputs(self.teststarterConfig.experiments)
+        is_input_valid = validate_inputs(self.psyTestProConfig.experiments)
 
         for button in self.buttons:
             button.draw(self.screen)
@@ -267,7 +267,7 @@ class Teststarter:
             self.buttons[3].set_active(False)
             self.buttons[3].set_color(self.inactive_button_color)
 
-        if self.teststarterConfig.error_msg == '':
+        if self.psyTestProConfig.error_msg == '':
             for item in self.errors:
                 if self.translateService.get_translation('experimentNotFound') in item:
                     self.errors.remove(item)
@@ -297,12 +297,12 @@ class Teststarter:
 
     def start_experiment(self, start_time, participant_info, custom_variables):
         global schedule
-        print(self.teststarterConfig.current_experiment)
-        isHab = '_list' in self.teststarterConfig.current_experiment
+        print(self.psyTestProConfig.current_experiment)
+        isHab = '_list' in self.psyTestProConfig.current_experiment
         print(isHab)
         schedule = {}
-        current_tasks = self.teststarterConfig.current_tasks
-        if len(self.teststarterConfig.error_msg) > 0:
+        current_tasks = self.psyTestProConfig.current_tasks
+        if len(self.psyTestProConfig.error_msg) > 0:
             return
         tasks = []
         types = {}
@@ -334,7 +334,7 @@ class Teststarter:
 
         file_name = self.save_experiment_info(participant_info)
 
-        CreateScheduleDisplay(schedule, participant_info, Teststarter, custom_variables, isHab, file_name).display()
+        CreateScheduleDisplay(schedule, participant_info, PsyTestPro, custom_variables, isHab, file_name).display()
         self.input_boxes = {}
 
     def save_details(self):
@@ -346,7 +346,7 @@ class Teststarter:
 
         participant_info = {'participant_id': participant_id, 'experiment': experiment, 'start_time': start_time}
 
-        custom_variables = self.teststarterConfig.load_custom_variables()
+        custom_variables = self.psyTestProConfig.load_custom_variables()
 
         variables = {}
 
@@ -354,7 +354,7 @@ class Teststarter:
             participant_info[value] = self.input_boxes[value].text
             variables[value] = self.input_boxes[value].text
 
-        self.teststarterConfig.load_experiment_tasks(experiment)
+        self.psyTestProConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info, variables)
 
     def save_experiment_info(self, participant_info):
@@ -381,4 +381,4 @@ class Teststarter:
         df.to_excel('./experiments/' + filename, index=False)
         return filename
 
-Teststarter()
+PsyTestPro()

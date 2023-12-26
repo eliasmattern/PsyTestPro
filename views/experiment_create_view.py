@@ -3,28 +3,28 @@ import sys
 import pygame
 from pygame.locals import *
 from components import InputBox, Button, CheckBox
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class CreateExperimentView:
     def __init__(self):
         self.running = True
         self.selected_multiple = False
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
-    def backToTeststarter(self, teststarter):
+    def back_to_psy_test_pro(self, psy_test_pro):
         self.selected_multiple = False
-        teststarter()
+        psy_test_pro()
 
     def back(self):
         self.running = False
 
     def save_experiment(
-            self, teststarter, experiment_name, input_boxes, check_box
+            self, psy_test_pro, experiment_name, input_boxes, check_box
     ):
-        teststarter_config = TeststarterConfig()
-        teststarter_config.save_experiment(experiment_name, check_box.active)
+        psy_test_pro_config = PsyTestProConfig()
+        psy_test_pro_config.save_experiment(experiment_name, check_box.active)
 
         if self.selected_multiple:
             check_box.active = True
@@ -32,9 +32,9 @@ class CreateExperimentView:
                 input_box.text = ''
             return
         else:
-            self.backToTeststarter(teststarter)
+            self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, teststarter, translate_service, selected_multiple):
+    def create_input_boxes(self, psy_test_pro_config, translate_service, selected_multiple):
         input_boxes = []
         buttons = []
         labels = ['experimentName']
@@ -55,7 +55,7 @@ class CreateExperimentView:
             40,
             'submit',
             lambda: self.save_experiment(
-                teststarter, input_boxes[0].text, input_boxes, check_box
+                psy_test_pro_config, input_boxes[0].text, input_boxes, check_box
             ),
             translate_service,
         )
@@ -78,7 +78,7 @@ class CreateExperimentView:
             return False
 
     def create_experiment_config_display(
-            self, teststarter, translate_service, create_continously=False
+            self, psy_test_pro_config, translate_service, create_continously=False
     ):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
@@ -108,7 +108,7 @@ class CreateExperimentView:
         self.selected_multiple = create_continously
 
         input_boxes, buttons, check_box = self.create_input_boxes(
-            teststarter, translate_service, self.selected_multiple
+            psy_test_pro_config, translate_service, self.selected_multiple
         )
 
         def get_input_index():

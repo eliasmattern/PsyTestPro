@@ -1,6 +1,6 @@
 import pygame
 from components import Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 class QuestionDialog:
     def __init__(self, width, height, window_key, title_key, desc_key, translate_service, action=None, action_key=''):
@@ -13,8 +13,8 @@ class QuestionDialog:
         self.title_bar = pygame.Rect((screen_width / 2) - width // 2, (screen_height / 2) - height / 2, width, 30)
         self.font = pygame.font.Font(None, 24)
         self.title_font = pygame.font.Font(None, 30)
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.background_color = pygame.Color(self.settings["backgroundColor"])
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         self.highlight_color = (min(self.primary_color[0] + 25, 255), min(self.primary_color[1] + 25, 255), min(self.primary_color[2] + 25, 255))

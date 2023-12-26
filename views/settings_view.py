@@ -3,7 +3,7 @@ import re
 import pygame
 import math
 from components import InputBox, Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class SettingsView:
@@ -11,9 +11,9 @@ class SettingsView:
         self.chunk_size = math.floor((pygame.display.get_surface().get_height() / 100 * 40) / 100)
         self.running = True
         self.refresh = False
-        self.teststarter_config = TeststarterConfig()
+        self.psy_test_pro_config = PsyTestProConfig()
         self.errors = []
-        self.settings = self.teststarter_config.get_settings()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.input_page = 0
         self.saving_errors = []
         self.translate_service = None
@@ -68,16 +68,16 @@ class SettingsView:
         self.saved_msg = []
         has_contrast = self.check_contrast(input_boxes)
         if has_contrast:
-            self.teststarter_config.save_colors(input_boxes['backgroundColor'].text,
-                                                input_boxes['primaryColor'].text,
-                                                input_boxes['buttonColor'].text,
-                                                input_boxes['buttonTextColor'].text,
-                                                input_boxes['activeButtonColor'].text,
-                                                input_boxes['inactiveButtonColor'].text,
-                                                input_boxes['successColor'].text,
-                                                input_boxes['dangerColor'].text,
-                                                input_boxes['warningColor'].text,
-                                                input_boxes['gridColor'].text)
+            self.psy_test_pro_config.save_colors(input_boxes['backgroundColor'].text,
+                                                 input_boxes['primaryColor'].text,
+                                                 input_boxes['buttonColor'].text,
+                                                 input_boxes['buttonTextColor'].text,
+                                                 input_boxes['activeButtonColor'].text,
+                                                 input_boxes['inactiveButtonColor'].text,
+                                                 input_boxes['successColor'].text,
+                                                 input_boxes['dangerColor'].text,
+                                                 input_boxes['warningColor'].text,
+                                                 input_boxes['gridColor'].text)
             self.saved_msg.append(self.translate_service.get_translation('updatedColors'))
             self.refresh_view()
 
@@ -90,8 +90,8 @@ class SettingsView:
         language_config.update_language_config(lang)
         self.refresh_view()
 
-    def backToTeststarter(self, teststarter):
-        teststarter()
+    def back_to_psy_test_pro(self, psy_test_pro):
+        psy_test_pro()
 
     def change_theme(self, theme, input_boxes):
         if theme == 'darkMode':
@@ -120,7 +120,7 @@ class SettingsView:
             box.is_touched = True
 
 
-    def create_input_boxes(self, teststarter, translate_service, language_config, initial_texts):
+    def create_input_boxes(self, psy_test_pro, translate_service, language_config, initial_texts):
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
@@ -170,7 +170,7 @@ class SettingsView:
             input_boxes[label] = input_box
             y += spacing
         y = input_y_pos + spacing * self.chunk_size
-        exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.backToTeststarter(teststarter),
+        exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.back_to_psy_test_pro(psy_test_pro),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                              active_button_color=pygame.Color('#ACACAC'))
         save_button = Button(
@@ -232,7 +232,7 @@ class SettingsView:
                 (self.input_page - 1) if self.input_page > 0 else len(splitted_experiments) - 1
             )
 
-    def display(self, teststarter, translate_service, language_config):
+    def display(self, psy_test_pro, translate_service, language_config):
         self.translate_service = translate_service
         # Define colors
         black = (0, 0, 0)
@@ -259,7 +259,7 @@ class SettingsView:
         # Setting the window caption
         pygame.display.set_caption('Settings')
 
-        settings = self.teststarter_config.get_settings()
+        settings = self.psy_test_pro_config.get_settings()
 
         initial_texts = [settings['backgroundColor'], settings['primaryColor'], settings['buttonColor'],
                          settings['buttonTextColor'], settings['activeButtonColor'], settings['inactiveButtonColor'],
@@ -267,7 +267,7 @@ class SettingsView:
                          settings['gridColor']]
 
         input_boxes, buttons = self.create_input_boxes(
-            teststarter, translate_service, language_config, initial_texts
+            psy_test_pro, translate_service, language_config, initial_texts
         )
 
         splitted_inputs = self.split_dict(input_boxes, self.chunk_size)
@@ -421,4 +421,4 @@ class SettingsView:
             pygame.display.flip()  # Flip the display to update the screen
         self.running = True
         if self.refresh:
-            self.display(teststarter, translate_service, language_config)
+            self.display(psy_test_pro, translate_service, language_config)

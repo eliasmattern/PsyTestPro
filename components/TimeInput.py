@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 from tktimepicker import AnalogPicker, AnalogThemes
 from tktimepicker import constants
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 def create_time_picker(hour, minute, translate_service):
@@ -52,8 +52,8 @@ def create_time_picker(hour, minute, translate_service):
 class TimeInput:
     def __init__(self, x, y, width, height, translation_key, translate_service, info='', initial_time=''):
         self.translate_service = translate_service
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.color = pygame.Color(self.settings["buttonColor"])
         self.active_color = pygame.Color(self.settings["buttonColor"])

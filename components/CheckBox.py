@@ -1,13 +1,13 @@
 import pygame
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class CheckBox():
     def __init__(self, label, posX, posY, active=False, translate_service=None, font_size=18) -> None:
         self.translate_service = translate_service
         self.font = pygame.font.Font(None, font_size)
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         if translate_service:
             self.label = self.font.render(

@@ -9,24 +9,23 @@ import pygame
 from components import Button, DataTable, QuestionDialog, DatePickerComponent
 from lib import text_screen
 from services import TranslateService, LanguageConfiguration, play_tasks
-from .create_date_picker import create_date_picker
 from .create_time_picker import create_time_picker
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class CreateScheduleDisplay:
-    def __init__(self, schedule, participant_info, teststarter, custom_variables, isHab=False, file_name=''):
+    def __init__(self, schedule, participant_info, psy_test_pro, custom_variables, isHab=False, file_name=''):
         self.schedule = schedule
         self.participant_info = participant_info
-        self.teststarter = teststarter
+        self.psy_test_pro = psy_test_pro
         self.custom_variables = custom_variables
         self.isHab = isHab
         self.file_name = file_name
         self.schedule_page = 0
         self.language_config = LanguageConfiguration()
         self.translate_service = TranslateService(self.language_config)
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.black = pygame.Color(self.settings["backgroundColor"])
         self.light_grey = pygame.Color(self.settings["primaryColor"])
         self.red = pygame.Color(self.settings["dangerColor"])
@@ -111,12 +110,12 @@ class CreateScheduleDisplay:
 
         # Create buttons
         run_button = Button(150 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor,
-                            50 * height_scale_factor, 'runTeststarter', self.run_teststarter, self.translate_service)
+                            50 * height_scale_factor, 'runExperiment', self.run_psy_test_pro, self.translate_service)
         settings_button = Button(150 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor,
                                  50 * height_scale_factor, 'changeSettings', self.change_settings,
                                  self.translate_service)
         quit_button = Button(150 * width_scale_factor, 300 * height_scale_factor, 200 * width_scale_factor,
-                             50 * height_scale_factor, 'quit', self.button_quit_teststarter, self.translate_service)
+                             50 * height_scale_factor, 'quit', self.quit_psy_test_pro, self.translate_service)
         help_button = Button(150 * width_scale_factor, 400 * height_scale_factor, 200 * width_scale_factor,
                              50 * height_scale_factor, 'help', self.button_help, self.translate_service)
         english_button = Button(85 * width_scale_factor, 500 * height_scale_factor, 70 * width_scale_factor,
@@ -199,7 +198,7 @@ class CreateScheduleDisplay:
         text_surface = font.render(text, True, self.button_text_color)
         return text_surface, text_surface.get_rect()
 
-    def run_teststarter(self):
+    def run_psy_test_pro(self):
         self.save_data(self.data_table.data)
         # set the display mode to fullscreen
         screen = pygame.display.get_surface()
@@ -232,7 +231,7 @@ class CreateScheduleDisplay:
         next_button = Button(75 + (edit_button_width / 2), edit_button_y + (edit_button_height / 2), 300, 50,
                              'nextTask', lambda: self.play_task(), translate_service=self.translate_service)
         edit_button = Button(edit_button_x + (edit_button_width / 2), edit_button_y + (edit_button_height / 2), 300, 50,
-                             'editTeststarter', lambda: self.edit_teststarter(),
+                             'editTeststarter', lambda: self.edit_schedule(),
                              translate_service=self.translate_service)
         running = True
         while running:
@@ -307,7 +306,7 @@ class CreateScheduleDisplay:
 
             screen_info = pygame.display.Info()
 
-            # Draw the 'Edit Teststarter' button in the bottom right corner
+            # Draw the 'Edit Schedule' button in the bottom right corner
             self.screen_width = screen_info.current_w
             # Store the screen height in a new variable
             self.screen_height = screen_info.current_h
@@ -392,8 +391,8 @@ class CreateScheduleDisplay:
         time = str(self.participant_info['start_time']).split(' ')[1]
         splittedTime = time.split(':')
         formattedTime = splittedTime[0] + ':' + splittedTime[1]
-        self.teststarter(self.participant_info['participant_id'], self.participant_info['experiment'], formattedTime,
-                         self.custom_variables)
+        self.psy_test_pro(self.participant_info['participant_id'], self.participant_info['experiment'], formattedTime,
+                          self.custom_variables)
 
     def change_language(self, translateService, language_config, lang):
         translateService.set_language(lang)
@@ -410,7 +409,7 @@ class CreateScheduleDisplay:
         if len(self.data_table.data) > 0:
             self.data_table.table_width, self.data_table.table_height, self.data_table.row_width, self.data_table.row_height, self.data_table.header_heigth = self.data_table.get_table_proportions()
 
-    def button_quit_teststarter(self):
+    def quit_psy_test_pro(self):
         self.show_quit_dialog = True
 
     def quit_action(self):
@@ -421,7 +420,7 @@ class CreateScheduleDisplay:
         self.show_help_dialog = True
 
     def help_action(self):
-        webbrowser.open('https://github.com/eliasmattern/teststarter')
+        webbrowser.open('https://github.com/eliasmattern/PsyTestPro')
 
     def split_dict(self, input_dict, chunk_size):
         dict_list = [{}]
@@ -498,7 +497,7 @@ class CreateScheduleDisplay:
                       'key': states[value['state']]['key']}])
         return data
 
-    def edit_teststarter(self):
+    def edit_schedule(self):
         self.play_next_task = False
         self.schedule_page = 0
         self.display()

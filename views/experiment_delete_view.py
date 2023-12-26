@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 import pygame
 from components import Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class DeleteExperimentView:
@@ -12,13 +12,13 @@ class DeleteExperimentView:
         self.page = 0
         self.running = True
         self.update = False
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
     def back(self):
         self.running = False
 
-    def delete_experiment(self, teststarter, translate_service, experiment_name):
+    def delete_experiment(self, psy_test_pro, translate_service, experiment_name):
         root = tk.Tk()
         root.withdraw()
 
@@ -67,8 +67,8 @@ class DeleteExperimentView:
                 (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
             )
 
-    def delete_experiment_config_display(self, teststarter, translate_service):
-        teststarter_config = TeststarterConfig()
+    def delete_experiment_config_display(self, psy_test_pro, translate_service):
+        psy_test_pro_config = PsyTestProConfig()
 
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
@@ -95,8 +95,8 @@ class DeleteExperimentView:
         # Setting the window caption
         pygame.display.set_caption('Delete Experiment')
 
-        teststarter_config.load_experiments()
-        experiments = teststarter_config.experiments
+        psy_test_pro_config.load_experiments()
+        experiments = psy_test_pro_config.experiments
 
         splitted_experiments = [
             experiments[i: i + 5] for i in range(0, len(experiments), 5)
@@ -127,7 +127,7 @@ class DeleteExperimentView:
                         40,
                         experiment,
                         lambda exp=experiment: self.delete_experiment(
-                            teststarter, translate_service, exp
+                            psy_test_pro, translate_service, exp
                         ),
                     )
                     buttons.append(exp_button)
@@ -210,4 +210,4 @@ class DeleteExperimentView:
         self.running = True
         if (self.update):
             self.update = False
-            self.delete_experiment_config_display(teststarter, translate_service)
+            self.delete_experiment_config_display(psy_test_pro, translate_service)

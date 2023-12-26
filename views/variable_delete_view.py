@@ -3,20 +3,20 @@ import tkinter as tk
 from tkinter import messagebox
 import pygame
 from components import Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class DeleteVariableView:
     def __init__(self):
         self.running = True
         self.update = False
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
     def back(self):
         self.running = False
 
-    def delete_var(self, teststarter, translate_service, name):
+    def delete_var(self, psy_test_pro, translate_service, name):
         root = tk.Tk()
         root.withdraw()
 
@@ -28,12 +28,12 @@ class DeleteVariableView:
 
         # If the user clicked 'Yes', then open browser
         if response == True:
-            TeststarterConfig().delete_var(name)
+            PsyTestProConfig().delete_var(name)
         else:
             root.destroy()
 
-    def display(self, teststarter, translate_service):
-        teststarter_config = TeststarterConfig()
+    def display(self, psy_test_pro, translate_service):
+        psy_test_pro_config = PsyTestProConfig()
 
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
@@ -73,7 +73,7 @@ class DeleteVariableView:
 
             x = width // 2
             y = height // 2 - 150
-            variables = teststarter_config.load_custom_variables()
+            variables = psy_test_pro_config.load_custom_variables()
 
             if len(variables) > 0:
                 for var in variables:
@@ -84,7 +84,7 @@ class DeleteVariableView:
                         40,
                         var,
                         lambda var=var: self.delete_var(
-                            teststarter, translate_service, var
+                            psy_test_pro, translate_service, var
                         ),
                     )
                     buttons.append(exp_button)

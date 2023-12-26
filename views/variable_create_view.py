@@ -2,7 +2,7 @@ import sys
 import pygame
 from pygame.locals import *
 from components import InputBox, Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class CreateVariablesView:
@@ -10,23 +10,23 @@ class CreateVariablesView:
         self.running = True
         self.selected_multiple = False
         self.error = ''
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
 
-    def backToTeststarter(self, teststarter):
+    def back_to_psy_test_pro(self, psy_test_pro):
         self.selected_multiple = False
         self.error = ''
-        teststarter()
+        psy_test_pro()
 
     def back(self):
         self.running = False
         self.error = ''
 
     def save_var(
-            self, teststarter, var_name, input_boxes
+            self, psy_test_pro, var_name, input_boxes
     ):
-        teststarter_config = TeststarterConfig()
-        result = teststarter_config.save_var(var_name)
+        psy_test_pro_config = PsyTestProConfig()
+        result = psy_test_pro_config.save_var(var_name)
 
         if not result:
             self.error = 'dsafj'
@@ -36,9 +36,9 @@ class CreateVariablesView:
                 input_box.text = ''
             return
         else:
-            self.backToTeststarter(teststarter)
+            self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, teststarter, translate_service, selected_multiple):
+    def create_input_boxes(self, psy_test_pro, translate_service, selected_multiple):
         input_boxes = []
         buttons = []
         labels = ['varName']
@@ -58,7 +58,7 @@ class CreateVariablesView:
             40,
             'submit',
             lambda: self.save_var(
-                teststarter, input_boxes[0].text, input_boxes
+                psy_test_pro, input_boxes[0].text, input_boxes
             ),
             translate_service,
         )
@@ -80,7 +80,7 @@ class CreateVariablesView:
         else:
             return False
 
-    def display(self, teststarter, translate_service, create_continously=False):
+    def display(self, psy_test_pro, translate_service, create_continously=False):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -109,7 +109,7 @@ class CreateVariablesView:
         self.selected_multiple = create_continously
 
         input_boxes, buttons = self.create_input_boxes(
-            teststarter, translate_service, self.selected_multiple
+            psy_test_pro, translate_service, self.selected_multiple
         )
 
         def get_input_index():

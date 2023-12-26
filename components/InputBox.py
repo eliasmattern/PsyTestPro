@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pygame
 from pygame.locals import *
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class InputBox:
@@ -11,8 +11,8 @@ class InputBox:
                  text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         if color is None:
             self.color = pygame.Color(self.settings["buttonColor"])
         else:

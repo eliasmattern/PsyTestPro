@@ -1,7 +1,7 @@
 import json
 
 
-class TeststarterConfig:
+class PsyTestProConfig:
     def __init__(self):
         self.experiments = None
         self.current_experiment = None

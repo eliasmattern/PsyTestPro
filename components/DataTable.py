@@ -2,7 +2,7 @@ import pygame.font
 import math
 
 from components import Button
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class DataTable:
@@ -19,8 +19,8 @@ class DataTable:
         self.pos_x, self.pos_y = start_pos
         self.font = pygame.font.Font(None, 24)
         self.header_font = pygame.font.Font(None, 30)
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         self.margin_left = 10
         self.margin_top = 5
         self.max_cell_width = max_cell_width - 10 if max_cell_width else None

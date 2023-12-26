@@ -1,10 +1,10 @@
 import pygame
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 def text_screen(title, description, info):
-    teststarter_config = TeststarterConfig()
-    settings = teststarter_config.get_settings()
+    psy_test_pro_config = PsyTestProConfig()
+    settings = psy_test_pro_config.get_settings()
     title = title.replace(r' \n ', '\n')
     title = title.replace(r'\n', '\n')
     description = description.replace(r' \n ', '\n')

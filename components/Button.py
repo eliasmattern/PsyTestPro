@@ -1,5 +1,5 @@
 import pygame
-from services import TeststarterConfig
+from services import PsyTestProConfig
 
 
 class Button:
@@ -10,8 +10,8 @@ class Button:
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.translation_key = translation_key
-        self.teststarter_config = TeststarterConfig()
-        self.settings = self.teststarter_config.get_settings()
+        self.psy_test_pro_config = PsyTestProConfig()
+        self.settings = self.psy_test_pro_config.get_settings()
         if color is None:
             self.color = pygame.Color(self.settings["buttonColor"])
         else:
