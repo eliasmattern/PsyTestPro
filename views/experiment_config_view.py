@@ -96,7 +96,7 @@ class ExperimentConfig():
         create_experiment_config = CreateExperimentView()
         delete_experiment_config = DeleteExperimentView(self.translate_service)
         task_config = TaskConfig()
-        delte_task_config = DeleteTaskView()
+        delte_task_config = DeleteTaskView(self.translate_service)
         create_variables_config = CreateVariablesView()
         delete_variables_config = DeleteVariableView()
 

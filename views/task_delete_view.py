@@ -2,18 +2,24 @@ import sys
 import tkinter as tk
 from tkinter import messagebox
 import pygame
-from components import Button
+from components import Button, QuestionDialog
 from services import PsyTestProConfig
 
 
 class DeleteTaskView():
-    def __init__(self):
+    def __init__(self, translate_service):
         self.running = True
         self.page = 0
         self.removing = True
         self.experiment_name = ''
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.experiment= None
+        self.task = None
+        self.translate_service = translate_service
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'delete', 'deleteTaskMsg', self.translate_service,
+                                            lambda: self.delete_action(), action_key='delete')
+        self.show_delete_dialog = False
 
     def backToConfig(self):
         self.running = False
@@ -33,26 +39,14 @@ class DeleteTaskView():
                 (self.page - 1) if self.page > 0 else len(splitted_tasks) - 1
             )
 
-    def delete_task_from_config(self, translate_service, experiment, task):
-        config = PsyTestProConfig()
-        root = tk.Tk()
-        root.withdraw()
-
-        # Show a messagebox asking for confirmation
-        response = messagebox.askyesno(
-            translate_service.get_translation('delete'),
-            translate_service.get_translation('deleteTaskMsg') + task,
-        )
-
-        # If the user clicked 'Yes', then open browser
-        if response == True:
-            config.delete_task(experiment, task)
-
-        root.destroy()
-        self.delete_task(translate_service, self.experiment_name)
+    def delete_task_from_config(self, experiment, task):
+        self.experiment = experiment
+        self.task = task
+        self.delete_dialog.info = self.translate_service.get_translation('task') + ': ' + task
+        self.show_delete_dialog = True
 
     def delete_task(self, translate_service, experiment_name):
-        self.experiment_name = experiment_name
+        self.experiment = experiment_name
         self.page = 0
         self.running = True
 
@@ -110,7 +104,6 @@ class DeleteTaskView():
                         40,
                         task,
                         lambda t=task: self.delete_task_from_config(
-                            translate_service,
                             full_experiment_name,
                             t
                         ),
@@ -186,13 +179,22 @@ class DeleteTaskView():
             for button in buttons:
                 button.draw(screen)
 
+            if self.show_delete_dialog:
+                self.delete_dialog.draw(screen)
+            if not self.delete_dialog.is_open:
+                self.show_delete_dialog = False
+                self.delete_dialog.is_open = True
+            print(self.show_delete_dialog)
             pygame.display.flip()  # Flip the display to update the screen
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                for button in buttons:
-                    button.handle_event(event)
+                if self.show_delete_dialog:
+                    self.delete_dialog.handle_events(event)
+                else:
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    for button in buttons:
+                        button.handle_event(event)
 
     def delete_task_config_display(self, translate_service):
         self.page = 0
@@ -342,3 +344,9 @@ class DeleteTaskView():
                 for button in buttons:
                     button.handle_event(event)
         self.running = True
+
+    def delete_action(self):
+        config = PsyTestProConfig()
+        config.delete_task(self.experiment, self.task)
+        self.show_delete_dialog = False
+        self.delete_task(self.translate_service, self.experiment)
