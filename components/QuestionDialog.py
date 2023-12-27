@@ -3,9 +3,9 @@ from components import Button
 from services import PsyTestProConfig
 
 class QuestionDialog:
-    def __init__(self, width, height, window_key, title_key, desc_key, translate_service, action=None, action_key=''):
+    def __init__(self, width, height, window_key, title_key, desc_key, translate_service, action=None, action_key='', info=''):
         screen_width, screen_height = pygame.display.get_surface().get_width(),pygame.display.get_surface().get_height()
-        self.window_key, self.title_key, self.desc_key = window_key, title_key, desc_key
+        self.window_key, self.title_key, self.desc_key, self.info = window_key, title_key, desc_key, info
         self.translate_service = translate_service
         self.action = action
         self.width, self.height = width, height
@@ -91,9 +91,15 @@ class QuestionDialog:
 
         desc_surface = self.font.render(self.translate_service.get_translation(self.desc_key), True, self.primary_color)
         desc_pos = (self.window.x + 10, self.window.y + (self.window.height // 4) + self.title_font.get_linesize())
+
+        info_surface = self.font.render(self.info, True,
+                                        self.primary_color)
+        info_pos = (self.window.x + 10, self.window.y + (self.window.height // 4) + self.title_font.get_linesize() + desc_surface.get_height())
+
         screen.blit(title_bar_surface, title_bar_pos)
         screen.blit(title_surface, title_pos)
         screen.blit(desc_surface, desc_pos)
+        screen.blit(info_surface, info_pos)
         screen.blit(quit_surface, quit_bar_pos)
 
         self.action_button.update_text()

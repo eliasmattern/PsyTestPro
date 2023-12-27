@@ -1,35 +1,33 @@
 import json
 import sys
-import tkinter as tk
-from tkinter import messagebox
 import pygame
-from components import Button
+from components import Button, QuestionDialog
 from services import PsyTestProConfig
 
 
 class DeleteExperimentView:
-    def __init__(self):
+    def __init__(self, translate_service):
+        self.translate_service = translate_service
         self.page = 0
         self.running = True
         self.update = False
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.experiment_name = None
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'delete', 'deleteExperimentMsg', self.translate_service,
+                                            lambda: self.delete_action(self.experiment_name), action_key='delete')
+        self.show_delete_dialog = False
 
     def back(self):
         self.running = False
 
-    def delete_experiment(self, psy_test_pro, translate_service, experiment_name):
-        root = tk.Tk()
-        root.withdraw()
+    def delete_experiment(self, experiment_name):
+        self.experiment_name = experiment_name
+        self.delete_dialog.info = self.translate_service.get_translation('experiment') + ' ' + experiment_name
+        self.show_delete_dialog = True
 
-        # Show a messagebox asking for confirmation
-        response = messagebox.askyesno(
-            translate_service.get_translation('delete'),
-            translate_service.get_translation('deleteExperimentMsg') + experiment_name,
-        )
-
-        # If the user clicked 'Yes', then open browser
-        if response == True:
+    def delete_action(self, experiment_name):
+        if experiment_name:
             # Load the original JSON from the file
             with open('json/taskConfig.json', 'r') as file:
                 original_tasks = json.load(file)
@@ -51,13 +49,10 @@ class DeleteExperimentView:
             # Save the updated JSON back to the file
             with open('json/taskConfig.json', 'w') as file:
                 json.dump(original_tasks, file, indent=4)
-            # Destroy the root window
-            root.destroy()
             self.update = True
             self.running = False
-            return
-        else:
-            root.destroy()
+            self.experiment_name = None
+        return
 
     def page_update(self, increment, splitted_experiments):
         if increment:
@@ -97,6 +92,7 @@ class DeleteExperimentView:
 
         psy_test_pro_config.load_experiments()
         experiments = psy_test_pro_config.experiments
+        experiments = list(filter(None, experiments))
 
         splitted_experiments = [
             experiments[i: i + 5] for i in range(0, len(experiments), 5)
@@ -117,7 +113,6 @@ class DeleteExperimentView:
 
             x = width // 2
             y = height // 2 - 150
-
             if len(splitted_experiments) > 0:
                 for experiment in splitted_experiments[self.page]:
                     exp_button = Button(
@@ -127,7 +122,7 @@ class DeleteExperimentView:
                         40,
                         experiment,
                         lambda exp=experiment: self.delete_experiment(
-                            psy_test_pro, translate_service, exp
+                            exp
                         ),
                     )
                     buttons.append(exp_button)
@@ -200,13 +195,22 @@ class DeleteExperimentView:
             for button in buttons:
                 button.draw(screen)
 
+            if self.show_delete_dialog:
+                self.delete_dialog.draw(screen)
+            if not self.delete_dialog.is_open:
+                self.show_delete_dialog = False
+                self.delete_dialog.is_open = True
+
             pygame.display.flip()  # Flip the display to update the screen
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                for button in buttons:
-                    button.handle_event(event)
+                if self.show_delete_dialog:
+                    self.delete_dialog.handle_events(event)
+                else:
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    for button in buttons:
+                        button.handle_event(event)
         self.running = True
         if (self.update):
             self.update = False

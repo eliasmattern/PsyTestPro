@@ -37,7 +37,7 @@
     "createExperiment": "Create Experiment",
     "deleteExperiment": "Delete Experiment",
     "experimentName": "Experiment name",
-    "deleteExperimentMsg": "Do you want to delete this experiment? \n Experiment: ",
+    "deleteExperimentMsg": "Do you want to delete this experiment?",
     "deleteTasktMsg": "Do you want to delete this task? \n Task: ",
     "delete": "Delete",
     "deleteMultipleExperimentMsg": "This experiment has different tasks for different times of day!\nDo you want to delete them all? ",

@@ -94,7 +94,7 @@ class ExperimentConfig():
         pygame.display.set_caption('Configure Experiment')
 
         create_experiment_config = CreateExperimentView()
-        delete_experiment_config = DeleteExperimentView()
+        delete_experiment_config = DeleteExperimentView(self.translate_service)
         task_config = TaskConfig()
         delte_task_config = DeleteTaskView()
         create_variables_config = CreateVariablesView()
