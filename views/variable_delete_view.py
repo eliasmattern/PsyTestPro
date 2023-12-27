@@ -1,36 +1,34 @@
 import sys
-import tkinter as tk
-from tkinter import messagebox
+
 import pygame
-from components import Button
+
+from components import Button, QuestionDialog
 from services import PsyTestProConfig
 
 
 class DeleteVariableView:
-    def __init__(self):
+    def __init__(self, translate_service):
         self.running = True
         self.update = False
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.variable_name = None
+        self.translate_service = translate_service
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteVarMsg', '', self.translate_service,
+                                            lambda: self.delete_action(), action_key='delete')
+        self.show_delete_dialog = False
 
     def back(self):
         self.running = False
 
-    def delete_var(self, psy_test_pro, translate_service, name):
-        root = tk.Tk()
-        root.withdraw()
+    def delete_var(self, name):
+        self.variable_name = name
+        self.delete_dialog.info = self.translate_service.get_translation('variable') + ' ' + name
+        self.show_delete_dialog = True
 
-        # Show a messagebox asking for confirmation
-        response = messagebox.askyesno(
-            translate_service.get_translation('delete'),
-            translate_service.get_translation('deleteVarMsg') + name,
-        )
-
-        # If the user clicked 'Yes', then open browser
-        if response == True:
-            PsyTestProConfig().delete_var(name)
-        else:
-            root.destroy()
+    def delete_action(self):
+        PsyTestProConfig().delete_var(self.variable_name)
+        self.show_delete_dialog = False
 
     def display(self, psy_test_pro, translate_service):
         psy_test_pro_config = PsyTestProConfig()
@@ -83,8 +81,8 @@ class DeleteVariableView:
                         400,
                         40,
                         var,
-                        lambda var=var: self.delete_var(
-                            psy_test_pro, translate_service, var
+                        lambda v=var: self.delete_var(
+                            v
                         ),
                     )
                     buttons.append(exp_button)
@@ -121,11 +119,20 @@ class DeleteVariableView:
             for button in buttons:
                 button.draw(screen)
 
+            if self.show_delete_dialog:
+                self.delete_dialog.draw(screen)
+            if not self.delete_dialog.is_open:
+                self.show_delete_dialog = False
+                self.delete_dialog.is_open = True
+
             pygame.display.flip()  # Flip the display to update the screen
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                for button in buttons:
-                    button.handle_event(event)
+                if self.show_delete_dialog:
+                    self.delete_dialog.handle_events(event)
+                else:
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    for button in buttons:
+                        button.handle_event(event)
         self.running = True

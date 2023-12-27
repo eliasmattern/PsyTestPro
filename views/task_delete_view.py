@@ -1,7 +1,7 @@
 import sys
-import tkinter as tk
-from tkinter import messagebox
+
 import pygame
+
 from components import Button, QuestionDialog
 from services import PsyTestProConfig
 
@@ -17,7 +17,7 @@ class DeleteTaskView():
         self.experiment= None
         self.task = None
         self.translate_service = translate_service
-        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'delete', 'deleteTaskMsg', self.translate_service,
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteTaskMsg', '', self.translate_service,
                                             lambda: self.delete_action(), action_key='delete')
         self.show_delete_dialog = False
 
@@ -184,8 +184,9 @@ class DeleteTaskView():
             if not self.delete_dialog.is_open:
                 self.show_delete_dialog = False
                 self.delete_dialog.is_open = True
-            print(self.show_delete_dialog)
+
             pygame.display.flip()  # Flip the display to update the screen
+
             for event in pygame.event.get():
                 if self.show_delete_dialog:
                     self.delete_dialog.handle_events(event)

@@ -1,6 +1,8 @@
 import json
 import sys
+
 import pygame
+
 from components import Button, QuestionDialog
 from services import PsyTestProConfig
 
@@ -14,7 +16,7 @@ class DeleteExperimentView:
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
         self.experiment_name = None
-        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'delete', 'deleteExperimentMsg', self.translate_service,
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteExperimentMsg', '', self.translate_service,
                                             lambda: self.delete_action(self.experiment_name), action_key='delete')
         self.show_delete_dialog = False
 

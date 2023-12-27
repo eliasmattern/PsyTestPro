@@ -98,7 +98,7 @@ class ExperimentConfig():
         task_config = TaskConfig()
         delte_task_config = DeleteTaskView(self.translate_service)
         create_variables_config = CreateVariablesView()
-        delete_variables_config = DeleteVariableView()
+        delete_variables_config = DeleteVariableView(self.translate_service)
 
         buttons = []
         experiment_buttons = []
