@@ -112,5 +112,6 @@
     "november": "November",
     "december": "Dezember",
     "datepicker": "Datumpicker",
-    "showTaskAndTime": "Nächste Augabe / Timer anzeigen"
+    "showTaskAndTime": "Nächste Augabe / Timer anzeigen",
+    "variableError": "Es können nur 3 Variablen erstellt werden"
 }

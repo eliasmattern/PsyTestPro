@@ -30,7 +30,7 @@ class DeleteVariableView:
         PsyTestProConfig().delete_var(self.variable_name)
         self.show_delete_dialog = False
 
-    def display(self, psy_test_pro, translate_service):
+    def display(self):
         psy_test_pro_config = PsyTestProConfig()
 
         # Define colors
@@ -97,7 +97,7 @@ class DeleteVariableView:
                 40,
                 'back',
                 lambda: self.back(),
-                translate_service,
+                self.translate_service,
             )
             buttons.append(back_button)
 
@@ -111,7 +111,7 @@ class DeleteVariableView:
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation('deleteVar'), True, light_grey
+                self.translate_service.get_translation('deleteVar'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

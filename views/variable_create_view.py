@@ -6,12 +6,13 @@ from services import PsyTestProConfig
 
 
 class CreateVariablesView:
-    def __init__(self):
+    def __init__(self, translate_service):
         self.running = True
         self.selected_multiple = False
         self.error = ''
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.translate_service = translate_service
 
     def back_to_psy_test_pro(self, psy_test_pro):
         self.selected_multiple = False
@@ -29,7 +30,8 @@ class CreateVariablesView:
         result = psy_test_pro_config.save_var(var_name)
 
         if not result:
-            self.error = 'dsafj'
+            self.error = self.translate_service.get_translation('variableError')
+            return
 
         if self.selected_multiple:
             for input_box in input_boxes:
@@ -38,7 +40,7 @@ class CreateVariablesView:
         else:
             self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, psy_test_pro, translate_service, selected_multiple):
+    def create_input_boxes(self, psy_test_pro, selected_multiple):
         input_boxes = []
         buttons = []
         labels = ['varName']
@@ -47,10 +49,10 @@ class CreateVariablesView:
         x = width // 2
         y = height // 2 - 100
         for label in labels:
-            input_box = InputBox(x, y, 400, 40, label, translate_service, not_allowed_characters=['_'])
+            input_box = InputBox(x, y, 400, 40, label, self.translate_service, not_allowed_characters=['_'])
             input_boxes.append(input_box)
             y += spacing
-        exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), translate_service)
+        exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), self.translate_service)
         submit_button = Button(
             x + 75,
             y + 60,
@@ -60,7 +62,7 @@ class CreateVariablesView:
             lambda: self.save_var(
                 psy_test_pro, input_boxes[0].text, input_boxes
             ),
-            translate_service,
+            self.translate_service,
         )
 
         buttons.append(exit_button)
@@ -80,7 +82,7 @@ class CreateVariablesView:
         else:
             return False
 
-    def display(self, psy_test_pro, translate_service, create_continously=False):
+    def display(self, psy_test_pro, create_continously=False):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -109,7 +111,7 @@ class CreateVariablesView:
         self.selected_multiple = create_continously
 
         input_boxes, buttons = self.create_input_boxes(
-            psy_test_pro, translate_service, self.selected_multiple
+            psy_test_pro, self.selected_multiple
         )
 
         def get_input_index():
@@ -132,7 +134,7 @@ class CreateVariablesView:
             None, int(24 * width_scale_factor)
         )  # Create font object for header
         option_text_rendered = question_font.render(
-            translate_service.get_translation('createMultipleVars'),
+            self.translate_service.get_translation('createMultipleVars'),
             True,
             light_grey,
         )
@@ -148,7 +150,7 @@ class CreateVariablesView:
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            translate_service.get_translation('createVar'), True, light_grey
+            self.translate_service.get_translation('createVar'), True, light_grey
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 

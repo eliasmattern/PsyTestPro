@@ -64,7 +64,7 @@ class DeleteExperimentView:
                 (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
             )
 
-    def delete_experiment_config_display(self, psy_test_pro, translate_service):
+    def delete_experiment_config_display(self, psy_test_pro):
         psy_test_pro_config = PsyTestProConfig()
 
         # Define colors
@@ -139,7 +139,7 @@ class DeleteExperimentView:
                 40,
                 'back',
                 lambda: self.back(),
-                translate_service,
+                self.translate_service,
             )
             buttons.append(back_button)
 
@@ -189,7 +189,7 @@ class DeleteExperimentView:
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation('deleteExperiment'), True, light_grey
+                self.translate_service.get_translation('deleteExperiment'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -216,4 +216,4 @@ class DeleteExperimentView:
         self.running = True
         if (self.update):
             self.update = False
-            self.delete_experiment_config_display(psy_test_pro, translate_service)
+            self.delete_experiment_config_display(psy_test_pro)

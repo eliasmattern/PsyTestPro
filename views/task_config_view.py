@@ -6,7 +6,7 @@ from .task_create_view import AddTaskView
 
 
 class TaskConfig:
-    def __init__(self):
+    def __init__(self, translate_service):
         self.running = True
         self.adding = True
         self.selected_multiple = False
@@ -15,6 +15,7 @@ class TaskConfig:
         self.add_task = AddTaskView()
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.translate_service = translate_service
 
     def backToConfig(self):
         self.running = False
@@ -31,7 +32,7 @@ class TaskConfig:
                 (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
             )
 
-    def add_task_config_display(self, psy_test_pro, translate_service):
+    def add_task_config_display(self, psy_test_pro):
         self.page = 0
         self.running = True
 
@@ -89,7 +90,7 @@ class TaskConfig:
                         experiment.split('_')[0],
                         lambda exp=experiment: self.add_task.add(
                             psy_test_pro,
-                            translate_service,
+                            self.translate_service,
                             False,
                             exp
                         ),
@@ -99,7 +100,7 @@ class TaskConfig:
             else:
                 font = pygame.font.Font(None, int(24))  # Create font object for header
                 text_surface = font.render(
-                    translate_service.get_translation('noExperiments'), True, 'gray'
+                    self.translate_service.get_translation('noExperiments'), True, 'gray'
                 )
                 text_rect = text_surface.get_rect()
                 screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
@@ -114,7 +115,7 @@ class TaskConfig:
                 40,
                 'back',
                 lambda: self.backToConfig(),
-                translate_service,
+                self.translate_service,
             )
             buttons.append(back_button)
 
@@ -164,7 +165,7 @@ class TaskConfig:
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation('createTask'), True, light_grey
+                self.translate_service.get_translation('createTask'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

@@ -45,7 +45,7 @@ class DeleteTaskView():
         self.delete_dialog.info = self.translate_service.get_translation('task') + ': ' + task
         self.show_delete_dialog = True
 
-    def delete_task(self, translate_service, experiment_name):
+    def delete_task(self, experiment_name):
         self.experiment = experiment_name
         self.page = 0
         self.running = True
@@ -120,7 +120,7 @@ class DeleteTaskView():
                 40,
                 'back',
                 lambda: self.backToConfig(),
-                translate_service,
+                self.translate_service,
             )
             buttons.append(back_button)
 
@@ -170,7 +170,7 @@ class DeleteTaskView():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation('deleteTaskFrom') + ' ' + experiment_name.split('_')[0], True,
+                self.translate_service.get_translation('deleteTaskFrom') + ' ' + experiment_name.split('_')[0], True,
                 light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
@@ -197,7 +197,7 @@ class DeleteTaskView():
                     for button in buttons:
                         button.handle_event(event)
 
-    def delete_task_config_display(self, translate_service):
+    def delete_task_config_display(self):
         self.page = 0
         self.running = True
 
@@ -255,7 +255,6 @@ class DeleteTaskView():
                         40,
                         experiment.split('_')[0],
                         lambda exp=experiment: self.delete_task(
-                            translate_service,
                             exp
                         ),
                     )
@@ -264,7 +263,7 @@ class DeleteTaskView():
             else:
                 font = pygame.font.Font(None, int(24))  # Create font object for header
                 text_surface = font.render(
-                    translate_service.get_translation('noExperiments'), True, 'gray'
+                    self.translate_service.get_translation('noExperiments'), True, 'gray'
                 )
                 text_rect = text_surface.get_rect()
                 screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
@@ -279,7 +278,7 @@ class DeleteTaskView():
                 40,
                 'back',
                 lambda: self.backToConfig(),
-                translate_service,
+                self.translate_service,
             )
             buttons.append(back_button)
 
@@ -329,7 +328,7 @@ class DeleteTaskView():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                translate_service.get_translation('chooseExperiment'), True, light_grey
+                self.translate_service.get_translation('chooseExperiment'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
@@ -350,4 +349,4 @@ class DeleteTaskView():
         config = PsyTestProConfig()
         config.delete_task(self.experiment, self.task)
         self.show_delete_dialog = False
-        self.delete_task(self.translate_service, self.experiment)
+        self.delete_task(self.experiment)

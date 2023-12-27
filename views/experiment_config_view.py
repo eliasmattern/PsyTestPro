@@ -93,11 +93,11 @@ class ExperimentConfig():
         # Setting the window caption
         pygame.display.set_caption('Configure Experiment')
 
-        create_experiment_config = CreateExperimentView()
+        create_experiment_config = CreateExperimentView(self.translate_service)
         delete_experiment_config = DeleteExperimentView(self.translate_service)
-        task_config = TaskConfig()
+        task_config = TaskConfig(self.translate_service)
         delte_task_config = DeleteTaskView(self.translate_service)
-        create_variables_config = CreateVariablesView()
+        create_variables_config = CreateVariablesView(self.translate_service)
         delete_variables_config = DeleteVariableView(self.translate_service)
 
         buttons = []
@@ -118,7 +118,7 @@ class ExperimentConfig():
             40,
             'createExperiment',
             lambda: create_experiment_config.create_experiment_config_display(
-                psy_test_pro, self.translate_service, create_continously
+                psy_test_pro, create_continously
             ),
             self.translate_service,
         )
@@ -129,7 +129,7 @@ class ExperimentConfig():
             40,
             'deleteExperiment',
             lambda: delete_experiment_config.delete_experiment_config_display(
-                psy_test_pro, self.translate_service
+                psy_test_pro
             ),
             self.translate_service,
         )
@@ -139,7 +139,7 @@ class ExperimentConfig():
             400,
             40,
             'createTask',
-            lambda: task_config.add_task_config_display(psy_test_pro, self.translate_service),
+            lambda: task_config.add_task_config_display(psy_test_pro),
             self.translate_service,
         )
         delete_task_button = Button(
@@ -148,7 +148,7 @@ class ExperimentConfig():
             400,
             40,
             'deleteTask',
-            lambda: delte_task_config.delete_task_config_display(self.translate_service),
+            lambda: delte_task_config.delete_task_config_display(),
             self.translate_service,
         )
 
@@ -188,7 +188,7 @@ class ExperimentConfig():
             400,
             40,
             'deleteVar',
-            lambda: delete_variables_config.display(psy_test_pro, self.translate_service),
+            lambda: delete_variables_config.display(),
             self.translate_service,
         )
 

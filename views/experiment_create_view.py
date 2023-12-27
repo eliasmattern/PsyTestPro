@@ -7,11 +7,12 @@ from services import PsyTestProConfig
 
 
 class CreateExperimentView:
-    def __init__(self):
+    def __init__(self, translate_service):
         self.running = True
         self.selected_multiple = False
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.translate_service = translate_service
 
     def back_to_psy_test_pro(self, psy_test_pro):
         self.selected_multiple = False
@@ -34,7 +35,7 @@ class CreateExperimentView:
         else:
             self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, psy_test_pro_config, translate_service, selected_multiple):
+    def create_input_boxes(self, psy_test_pro_config, selected_multiple):
         input_boxes = []
         buttons = []
         labels = ['experimentName']
@@ -43,11 +44,11 @@ class CreateExperimentView:
         x = width // 2
         y = height // 2 - 100
         for label in labels:
-            input_box = InputBox(x, y, 400, 40, label, translate_service, not_allowed_characters=['_'])
+            input_box = InputBox(x, y, 400, 40, label, self.translate_service, not_allowed_characters=['_'])
             input_boxes.append(input_box)
             y += spacing
-        check_box = CheckBox('createWithSchedule', x, y, active=True, translate_service=translate_service, font_size=24)
-        exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), translate_service)
+        check_box = CheckBox('createWithSchedule', x, y, active=True, translate_service=self.translate_service, font_size=24)
+        exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), self.translate_service)
         submit_button = Button(
             x + 75,
             y + 60,
@@ -57,7 +58,7 @@ class CreateExperimentView:
             lambda: self.save_experiment(
                 psy_test_pro_config, input_boxes[0].text, input_boxes, check_box
             ),
-            translate_service,
+            self.translate_service,
         )
 
         buttons.append(exit_button)
@@ -78,7 +79,7 @@ class CreateExperimentView:
             return False
 
     def create_experiment_config_display(
-            self, psy_test_pro_config, translate_service, create_continously=False
+            self, psy_test_pro_config, create_continously=False
     ):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
@@ -108,7 +109,7 @@ class CreateExperimentView:
         self.selected_multiple = create_continously
 
         input_boxes, buttons, check_box = self.create_input_boxes(
-            psy_test_pro_config, translate_service, self.selected_multiple
+            psy_test_pro_config, self.selected_multiple
         )
 
         def get_input_index():
@@ -131,7 +132,7 @@ class CreateExperimentView:
             None, int(24 * width_scale_factor)
         )  # Create font object for header
         option_text_rendered = question_font.render(
-            translate_service.get_translation('createMultipleExperiments'),
+            self.translate_service.get_translation('createMultipleExperiments'),
             True,
             light_grey,
         )
@@ -147,7 +148,7 @@ class CreateExperimentView:
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            translate_service.get_translation('createExperiment'), True, light_grey
+            self.translate_service.get_translation('createExperiment'), True, light_grey
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 

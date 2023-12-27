@@ -120,7 +120,7 @@ class PsyTestProConfig:
     def save_var(self, name):
         with open('json/customVariables.json', 'r') as file:
             data = json.load(file)
-        if len(data) >= 5:
+        if len(data) >= 3:
             return False
         else:
             data.append(name)
