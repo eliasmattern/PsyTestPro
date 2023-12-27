@@ -1,11 +1,11 @@
-# :test_tube: Teststarter
+# :test_tube: PsyTestPro
 
-Teststarter is a Python program developed using the Pygame library that allows users to create and manage experiments.
-With Teststarter, users can define experiments, each of which consists of a series of tasks. These tasks can be
+PsyTestPro is a Python program developed using the Pygame library that allows users to create and manage experiments.
+With PsyTestPro, users can define experiments, each of which consists of a series of tasks. These tasks can be
 customized to suit specific requirements.
 
-The user interface of Teststarter is intentionally designed to be predominantly black. This deliberate choice is driven
-by its primary application in sleep studies. By minimizing light emission, Teststarter ensures a conducive environment
+The user interface of PsyTestPro is intentionally designed to be predominantly black. This deliberate choice is driven
+by its primary application in sleep studies. By minimizing light emission, PsyTestPro ensures a conducive environment
 for conducting experiments, where even the slightest disruptions from external sources of light are mitigated.
 
 ## :gem: Key Features
@@ -22,17 +22,17 @@ experimental designs and functionalities.
 
 ### :calendar: Schedule Management:
 
-Teststarter provides a scheduling system that displays the upcoming tasks and their respective execution times. This
+PsyTestPro provides a scheduling system that displays the upcoming tasks and their respective execution times. This
 allows users to have a clear overview of the experiment's timeline.
 
 ### :rocket: Automated Execution:
 
-Once an experiment is started, Teststarter will automatically manage the execution of tasks according to the predefined
-schedule. When a task's scheduled time arrives, Teststarter will launch the corresponding script.
+Once an experiment is started, PsyTestPro will automatically manage the execution of tasks according to the predefined
+schedule. When a task's scheduled time arrives, PsyTestPro will launch the corresponding script.
 
 ## :books: Table of Contents
 
-- [:test\_tube: Teststarter](#test_tube-teststarter)
+- [:test\_tube: PsyTestPro](#test_tube-psytestpro)
   - [:gem: Key Features](#gem-key-features)
     - [:microscope: Experiment Creation:](#microscope-experiment-creation)
     - [:wrench: Customizable Tasks:](#wrench-customizable-tasks)
@@ -40,11 +40,11 @@ schedule. When a task's scheduled time arrives, Teststarter will launch the corr
     - [:rocket: Automated Execution:](#rocket-automated-execution)
   - [:books: Table of Contents](#books-table-of-contents)
   - [:inbox\_tray: Installation](#inbox_tray-installation)
-  - [:arrow\_forward: How to run Teststarter](#arrow_forward-how-to-run-teststarter)
+  - [:arrow\_forward: How to run PsyTestPro](#arrow_forward-how-to-run-psytestpro)
     - [:gear: Start Settings](#gear-start-settings)
     - [:clock1: Schedule](#clock1-schedule)
     - [:running: Run tasks](#running-run-tasks)
-  - [:nut\_and\_bolt: Configure Teststarter](#nut_and_bolt-configure-teststarter)
+  - [:nut\_and\_bolt: Configure PsyTestPro](#nut_and_bolt-configure-psytestpro)
     - [:heavy\_plus\_sign: Create experiment](#heavy_plus_sign-create-experiment)
     - [:x: Delete experiment](#x-delete-experiment)
     - [:heavy\_plus\_sign: Add Task](#heavy_plus_sign-add-task)
@@ -58,14 +58,14 @@ schedule. When a task's scheduled time arrives, Teststarter will launch the corr
 
 ## :inbox_tray: Installation
 
-To install Teststarter you can either download this GitHub project as a ZIP and unpack it, or you can clone the
+To install PsyTestPro you can either download this GitHub project as a ZIP and unpack it, or you can clone the
 repository using git:
 
 ```git
-git clone https://github.com/eliasmattern/teststarter
+git clone https://github.com/eliasmattern/PsyTestPro
 ```
 
-To use Teststarter python must be installed:
+To use PsyTestPro python must be installed:
 [Download here](https://www.python.org/downloads/)
 
 There are also some dependencies that must be installed using pip:
@@ -80,9 +80,9 @@ pip install pandas
 pip install openpyxl
 ```
 
-## :arrow_forward: How to run Teststarter
+## :arrow_forward: How to run PsyTestPro
 
-To start Teststarter simply execute the `testarter.py` in the root directory.
+To start PsyTestPro simply execute the `testarter.py` in the root directory.
 
 ### :gear: Start Settings
 
@@ -104,7 +104,7 @@ You can change the Date, Time and State. The State shows if a Task is todo, shou
 
 ### :running: Run tasks
 
-Use the button `Run Teststarter` to start the Teststarter with your schedule.
+Use the button `Run Experiment` to start the PsyTestPro with your schedule.
 When it starts, there will be a timer until the next Task. When it reaches 0 it
 plays the task and sets it to `done`.
 
@@ -113,7 +113,7 @@ You can always press `Play next task` to start the next task without waiting for
 If a task takes longer than expected and another task should have already started, it will be executed as soon as the
 previous task is finished.
 
-## :nut_and_bolt: Configure Teststarter
+## :nut_and_bolt: Configure PsyTestPro
 
 To set up an experiment, you will have to go to `Configure Experiment`.
 From there, you can do the following actions:
@@ -130,7 +130,7 @@ From there, you can do the following actions:
 ### :heavy_plus_sign: Create experiment
 
 The experiments you create will have a schedule with tasks for the user. You can also declare that an experiment should
-not have a schedule. If you do this, all tasks will immediately start when Teststarter begins.
+not have a schedule. If you do this, all tasks will immediately start when PsyTestPro begins.
 
 ### :x: Delete experiment
 
@@ -139,7 +139,7 @@ Here you can delete your experiments. Once deleted, the experiment and its tasks
 ### :heavy_plus_sign: Add Task
 
 A task can be either a screen with text or your own script. To create a task, you have to assign a name and a time.
-The time is relative to the start time, which you define when you start the teststarter.
+The time is relative to the start time, which you define when you start an experiment.
 
 Task properties
 
@@ -155,11 +155,11 @@ Task properties
 * Use relative paths instead of absolute paths to execute a file. <br /> 
 A relative path starts in the directory you are in. An absolute path has the entire file path. This can be a problem when you use the schedule on a different computer. <br />
 Example: <br />
- C:\users\[username]\Desktop\teststarter\scripts\your_own.script <br />
+ C:\users\[username]\Desktop\psytestpro\scripts\your_own.script <br />
  Because of the username in your path, it will only work on your computer. <br>
  Instead use: <br />
  .\scripts\your_own.script <br />
- This will go from the Teststarter folder into the script folder to access your script. 
+ This will go from the PsyTestPro folder into the script folder to access your script. 
  Therefore, it would work on any computer which has the script at this location.</p>
 
 #### Variables
@@ -192,7 +192,7 @@ Here you can create custom variables. You can use them like the other variables:
 
 Usage: ```{CustomVariableName}```
 
-For each variable, an input box will be created on the start page of Teststarter
+For each variable, an input box will be created on the start page of PsyTestPro
 
 <strong>What are custom variables good for? </strong><br />
 To provide specific information in your script, perhaps to save data, you can provide this information with a custom
@@ -215,16 +215,16 @@ This allows you to choose a CSV on your computer to import Experiments and their
 
 ## Citation
 
-Use the following to cite Teststarter :
-Mattern, E., Capdevila, N., & Lane, L. Teststarter [Computer software]. https://github.com/eliasmattern/teststarter
+Use the following to cite PsyTestPro :
+Mattern, E., Capdevila, N., & Lane, L. PsyTestPro [Computer software]. https://github.com/eliasmattern/PsyTestPro
 
 ## :question: FAQ
 
 <strong>What scripts are supported?</strong><br /> Any scripts, which you can execute from the console are supported by
-Teststarter
+PsyTestPro
 
 <strong>I found a bug/problem. How can I report it?</strong><br />
-You are welcome to create an Issue [here](https://github.com/eliasmattern/teststarter/issues)
+You are welcome to create an Issue [here](https://github.com/eliasmattern/psytestpro/issues)
 
 <strong>How can I contribute?</strong><br />
 Yes, you can! Follow these steps to find out how: [here](./information/contribute.md)
