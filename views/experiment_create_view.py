@@ -13,6 +13,7 @@ class CreateExperimentView:
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
         self.translate_service = translate_service
+        self.create_multiple_check_box = None
 
     def back_to_psy_test_pro(self, psy_test_pro):
         self.selected_multiple = False
@@ -27,7 +28,7 @@ class CreateExperimentView:
         psy_test_pro_config = PsyTestProConfig()
         psy_test_pro_config.save_experiment(experiment_name, check_box.active)
 
-        if self.selected_multiple:
+        if self.create_multiple_check_box.active:
             check_box.active = True
             for input_box in input_boxes:
                 input_box.text = ''
@@ -47,7 +48,8 @@ class CreateExperimentView:
             input_box = InputBox(x, y, 400, 40, label, self.translate_service, not_allowed_characters=['_'])
             input_boxes.append(input_box)
             y += spacing
-        check_box = CheckBox('createWithSchedule', x, y, active=True, translate_service=self.translate_service, font_size=24)
+        option_check_box = CheckBox('createWithSchedule', x, y, active=True, translate_service=self.translate_service,
+                                    font_size=24)
         exit_button = Button(x - 75, y + 60, 100, 40, 'back', lambda: self.back(), self.translate_service)
         submit_button = Button(
             x + 75,
@@ -56,14 +58,18 @@ class CreateExperimentView:
             40,
             'submit',
             lambda: self.save_experiment(
-                psy_test_pro_config, input_boxes[0].text, input_boxes, check_box
+                psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box
             ),
             self.translate_service,
         )
 
+        text_width = pygame.font.Font(None, int(24)).size(self.translate_service.get_translation('createWithSchedule'))
+        self.create_multiple_check_box = CheckBox('createWithSchedule', x + 160 + text_width[0] / 2, y + 75, active=True,
+                                                  translate_service=self.translate_service, font_size=24)
+
         buttons.append(exit_button)
         buttons.append(submit_button)
-        return input_boxes, buttons, check_box
+        return input_boxes, buttons, option_check_box
 
     def validate_inputs(self, input_boxes):
         is_valid = False
@@ -106,11 +112,8 @@ class CreateExperimentView:
         # Setting the window caption
         pygame.display.set_caption('Create Experiment')
 
-        self.selected_multiple = create_continously
-
-        input_boxes, buttons, check_box = self.create_input_boxes(
-            psy_test_pro_config, self.selected_multiple
-        )
+        input_boxes, buttons, option_check_box = self.create_input_boxes(psy_test_pro_config, self.selected_multiple)
+        self.create_multiple_check_box.active = create_continously
 
         def get_input_index():
             index = 0
@@ -128,22 +131,6 @@ class CreateExperimentView:
         x = width // 2
         y = height // 2 - 150
 
-        question_font = pygame.font.Font(
-            None, int(24 * width_scale_factor)
-        )  # Create font object for header
-        option_text_rendered = question_font.render(
-            self.translate_service.get_translation('createMultipleExperiments'),
-            True,
-            light_grey,
-        )
-        option_text_rect = option_text_rendered.get_rect(left=x + 180, top=y + 180)
-        tick_box_rect = pygame.Rect(
-            x + 170 - 20 * height_scale_factor,
-            y + 180,
-            20 * width_scale_factor,
-            20 * height_scale_factor,
-        )
-
         font = pygame.font.Font(
             None, int(30 * width_scale_factor)
         )  # Create font object for header
@@ -154,6 +141,7 @@ class CreateExperimentView:
 
         while self.running:
             for event in pygame.event.get():
+                self.create_multiple_check_box.handle_event(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -161,23 +149,13 @@ class CreateExperimentView:
                     if event.key == K_TAB:
                         index = get_input_index()
                         input_boxes[index].is_selected = True
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:  # If the left mouse button clicked
-                        mouse_pos = (
-                            pygame.mouse.get_pos()
-                        )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
-                        if tick_box_rect.collidepoint(
-                                mouse_pos
-                        ):  # If the cursor position has collided with the start timer button
-                            self.selected_multiple = not self.selected_multiple
                 for box in input_boxes:
                     box.handle_event(event)
                 for button in buttons:
                     button.handle_event(event)
-                check_box.handle_event(event)
+                option_check_box.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
-            screen.blit(option_text_rendered, option_text_rect)
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
             if self.validate_inputs(input_boxes):
@@ -194,29 +172,7 @@ class CreateExperimentView:
             for button in buttons:
                 button.draw(screen)
 
-            check_box.draw(screen)
-
-            # draw the tick box rectangle on the window surface
-            pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
-            # if the selected_multiple variable is equal to the option currently being processed in the loop
-            if self.selected_multiple:
-                # create a list of points that define the shape of the tick mark
-                tick_mark_points = [
-                    (
-                        x + 180 - 25 * height_scale_factor,
-                        y + 180 + 10 * height_scale_factor,
-                    ),
-                    (
-                        x + 180 - 20 * height_scale_factor,
-                        y + 180 + 15 * height_scale_factor,
-                    ),
-                    (
-                        x + 180 - 15 * height_scale_factor,
-                        y + 180 + 5 * width_scale_factor,
-                    ),
-                ]
-                # draw lines connecting the points defined above (draw the tick)
-                pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
-
+            option_check_box.draw(screen)
+            self.create_multiple_check_box.draw(screen)
             pygame.display.flip()  # Flip the display to update the screen
         self.running = True
