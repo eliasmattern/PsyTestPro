@@ -282,7 +282,7 @@ class SettingsView:
         page_y = buttons['back'].pos_y
 
         font = pygame.font.Font(
-            None, int(30 * width_scale_factor)
+            None, int(16 * width_scale_factor)
         )
 
         left_button = Button(page_x, page_y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
