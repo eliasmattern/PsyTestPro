@@ -3,6 +3,7 @@ from datetime import datetime
 import pygame
 from pygame.locals import *
 from services import PsyTestProConfig
+from pandas.io import clipboard
 
 
 class InputBox:
@@ -91,7 +92,7 @@ class InputBox:
                     self.is_selected = False
                     self.is_highlighted = False
                 if self.imagePos.collidepoint(pygame.mouse.get_pos()) and event.button == 1:
-                    pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
+                    clipboard.copy(self.text)
             elif event.type == KEYUP:
                 if not self.is_touched:
                     self.is_touched = True
@@ -122,23 +123,14 @@ class InputBox:
                     elif mods & KMOD_CTRL and event.key in {K_v, K_BACKSPACE, K_a, K_c, K_x, K_z, K_y, K_LEFT,
                                                             K_RIGHT}:  # Check if Ctrl is pressed
                         if event.key == K_v:
-                            clipboard_content = pygame.scrap.get(pygame.SCRAP_TEXT)
-                            if clipboard_content is not None:
-                                try:
-                                    decoded_content = clipboard_content.decode('utf-8')
-                                    cleaned_content = decoded_content.replace('\x00', '')
-                                    self.text_memory.append(self.text)
-                                    self.memory_index = 0
-                                    if self.is_highlighted:
-                                        self.text = ''
-                                        self.offset = 0
-                                        self.cursor_pos = (0, 0)
-                                    self.text += cleaned_content
-                                    self.is_highlighted = False
-                                except UnicodeDecodeError:
-                                    print('Error: Unable to decode clipboard content.')
-                            else:
-                                print('Error: Unable to retrieve clipboard content.')
+                            self.text_memory.append(self.text)
+                            self.memory_index = 0
+                            if self.is_highlighted:
+                                self.text = ''
+                                self.offset = 0
+                                self.cursor_pos = (0, 0)
+                            self.text += clipboard.paste()
+                            self.is_highlighted = False
                         elif event.key == K_BACKSPACE:
                             self.text_memory.append(self.text)
                             self.memory_index = 0
@@ -149,7 +141,7 @@ class InputBox:
                         elif event.key == K_c:
                             if self.is_highlighted:
                                 self.is_highlighted = False
-                                pygame.scrap.put(pygame.SCRAP_TEXT, self.text.encode('utf-8'))
+                                clipboard.copy(self.text)
                             else:
                                 pass
                         elif event.key == K_x:
