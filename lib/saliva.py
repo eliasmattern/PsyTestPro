@@ -188,13 +188,23 @@ def saliva(subject, experiment,week_number, kss_number):
             remaining_time = max(timer_duration * 1000 - elapsed_time, 0)
             minutes = int(remaining_time / 1000 // 60)
             seconds = int(remaining_time / 1000 % 60)
-            timer_text = f"{minutes:02d}:{seconds:02d}"
-            timer_text_rendered = timer_font.render(timer_text, True, timer_color)
-            timer_text_rect = timer_text_rendered.get_rect(center=(timer_x, timer_y))
-            window.blit(timer_text_rendered, timer_text_rect)
+            if elapsed_time < timer_duration * 1000:
+                timer_text = f"{minutes:02d}:{seconds:02d}"
+                timer_text_rendered = timer_font.render(timer_text, True, timer_color)
+                timer_text_rect = timer_text_rendered.get_rect(center=(timer_x, timer_y))
+                window.blit(timer_text_rendered, timer_text_rect)
 
             if elapsed_time >= timer_duration * 1000:
-                running = False  # Timer reached 0, end the program
+                if not kss_completed:
+                    error = font.render('Bitte fülle den Fragebogen aus', True, timer_color)
+                    error_rect = error.get_rect(center=(timer_x, timer_y))
+                    window.blit(error, error_rect)
+                    error = font.render('und drücke danach die Leertaste', True,
+                                        timer_color)
+                    error_rect = error.get_rect(center=(timer_x, timer_y + font.get_linesize()))
+                    window.blit(error, error_rect)
+                if kss_completed:
+                    running = False  # Timer reached 0, end the program
 
         
         # Render and display the right side content
@@ -348,4 +358,5 @@ def saliva(subject, experiment,week_number, kss_number):
             # Write the output to the csv
             writer.writerow([day, month, year, start_hour, start_minute, start_second, hour, minute, second, subject, week_number_str, kss_number, kss_result])
         kss_completed = True # Flag that the kss has now been completed
+
     return
