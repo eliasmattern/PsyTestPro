@@ -358,5 +358,6 @@ def saliva(subject, experiment,week_number, kss_number):
             # Write the output to the csv
             writer.writerow([day, month, year, start_hour, start_minute, start_second, hour, minute, second, subject, week_number_str, kss_number, kss_result])
         kss_completed = True # Flag that the kss has now been completed
-
-    return
+    if not kss_completed and selected_option == None:
+        return False
+    return True

@@ -110,7 +110,9 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
             try:
                 # kss = wie viele mal
                 salivaNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                saliva(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], salivaNumber)
+                result = saliva(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], salivaNumber)
+                if not result:
+                    raise Exception('KSS wurde abgebrochen ohne den Fragebogen auszufüllen')
                 task_end_time = str(datetime.now())
                 save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
             except Exception as e:
