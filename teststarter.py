@@ -11,6 +11,8 @@ from classes import InputBox, Button
 from functions import create_schedule_display, ExperimentConfigDisplay
 import re
 from services import TranslateService, LanguageConfiguration, TeststarterConfig
+import pandas as pd
+import os
 
 class Teststarter:
     def __init__(self, id="", experiment = "", time_of_day = "", week_number = "", time = ""):
@@ -222,7 +224,7 @@ class Teststarter:
     def custom_sort(self, item):
         return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
         
-    def start_experiment(self, start_time, participant_info):
+    def start_experiment(self, start_time, participant_info, filename):
         global schedule
         isHab = self.teststarterConfig.current_experiment == "hab"
         schedule = {}
@@ -253,7 +255,7 @@ class Teststarter:
             edited_schedule.update({key: {"datetime": value, "state": states[key], "type": types[key], "value": values[key]}})
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         print("ee = ", edited_schedule)
-        create_schedule_display(schedule, participant_info, Teststarter, isHab)
+        create_schedule_display(schedule, participant_info, Teststarter, isHab, filename)
         self.input_boxes = {}
 
     def save_details(self):
@@ -263,19 +265,38 @@ class Teststarter:
         week_no = self.input_boxes["weekNumber"].text
         start_time = self.input_boxes["startTime"].text
 
-        with open("experiment_details.txt", "w") as file:
-            file.write(f"Participant ID: {participant_id}\n")
-            file.write(f"Experiment: {experiment}\n")
-            file.write(f"Time of Day: {time_of_day}\n")
-            file.write(f"Week No: {week_no}\n")
-            file.write(f"Start Time: {start_time}\n")
 
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, "%H:%M").time())
 
         participant_info={"participant_id": participant_id, "experiment": experiment, "time_of_day": time_of_day, "week_no": week_no, "start_time": start_time}
-    
+
+        filename = self.save_experiment_info(participant_info)
         self.teststarterConfig.load_experiment_tasks(experiment, time_of_day)
-        self.start_experiment(start_time, participant_info)
+        self.start_experiment(start_time, participant_info, filename)
+
+    def save_experiment_info(self, participant_info):
+        if not os.path.exists('./experiments'):
+            os.makedirs('./experiments')
+        table = {}
+        names = []
+        values = []
+        for key, value in participant_info.items():
+            names.append(key)
+            values.append(value)
+
+        table['info'] = names
+        table['value'] = values
+
+        datetime_string = str(participant_info['start_time'])
+
+        filename = participant_info['participant_id'] + '_' + participant_info[
+            'experiment'] + '_' + datetime_string + '_log' + '.xlsx'
+        filename = filename.replace(' ', '_')
+        filename = filename.replace('-', '_')
+        filename = filename.replace(':', '_')
+        df = pd.DataFrame(data=table)
+        df.to_excel('./experiments/' + filename, index=False)
+        return filename
        
 
 

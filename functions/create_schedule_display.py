@@ -21,7 +21,7 @@ newdate_input_values = {}
 newtime_input_values = {}
 
 
-def create_schedule_display(schedule, participant_info, teststarter, isHab = False):
+def create_schedule_display(schedule, participant_info, teststarter, isHab = False, filename=''):
     language_config = LanguageConfiguration()
     translate_service = TranslateService(language_config)
 
@@ -121,7 +121,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 for item in filtered_dict:
                     upcoming_event = item
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    result = play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    result = play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                     pygame.mouse.set_visible(True)
                     if result:
                         schedule[upcoming_event]["state"]= "done"
@@ -201,7 +201,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                 beep_sound.play()
                 eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                result = play_tasks(eventName, participant_info, upcoming_event, schedule)
+                result = play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                 pygame.mouse.set_visible(True)
                 if result:
                     schedule[upcoming_event]["state"]= "done"
@@ -220,7 +220,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                     beep_sound.play()
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    play_tasks(eventName, participant_info, upcoming_event, schedule)
+                    play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                     pygame.mouse.set_visible(True)
                     if result:
                         schedule[upcoming_event]["state"]= "done"
