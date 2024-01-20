@@ -1,13 +1,14 @@
 import subprocess
 import sys
 import pygame
-from components import InputBox, Button, TimeInput
+from components import InputBox, Button, TimePicker
 from lib import text_screen
 from services import PsyTestProConfig
 
 
 class AddTaskView():
-    def __init__(self) -> None:
+    def __init__(self, translate_service) -> None:
+        self.translate_service = translate_service
         self.adding = True
         self.selected_multiple = False
         self.error = ''
@@ -15,17 +16,22 @@ class AddTaskView():
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
         self.inactive_button_color = pygame.Color(self.settings["inactiveButtonColor"])
+        self.timepicker = TimePicker(300, 200, 'timeForTask', self.translate_service, action_key='save')
+        self.show_time_picker = False
 
     def validate_task_inputs(self, input_boxes, time_input, command_inputs, text_screen_inputs, is_command):
         is_valid = False
 
-        if input_boxes[0].text and time_input.time:
+        if input_boxes[0].text and time_input:
             if is_command and command_inputs[0].text or not is_command and text_screen_inputs[0].text:
                 is_valid = True
 
         return is_valid
 
-    def preview(self, translate_service, command, command_inputs, text_screen_inputs):
+    def open_time_picker(self):
+        self.show_time_picker = True
+
+    def preview(self, command, command_inputs, text_screen_inputs):
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
@@ -51,7 +57,7 @@ class AddTaskView():
                 self.is_task_working = True
             except Exception as e:
                 print(e)
-                self.error = translate_service.get_translation('commandFailedToExecute')
+                self.error = self.translate_service.get_translation('commandFailedToExecute')
                 self.is_task_working = False
         else:
             try:
@@ -67,7 +73,7 @@ class AddTaskView():
                                                                 timestamp=participant_info['timestamp'],
                                                                 **variables)
 
-                text_screen(title, description, translate_service.get_translation('escToReturn'))
+                text_screen(title, description, self.translate_service.get_translation('escToReturn'))
                 self.is_task_working = True
             except Exception as e:
                 print(e)
@@ -80,7 +86,6 @@ class AddTaskView():
             name,
             time,
             input_boxes,
-            time_input,
             command_inputs,
             text_screen_inputs,
             command=None,
@@ -104,20 +109,21 @@ class AddTaskView():
                 input_box.text = ''
             for input_box in text_screen_inputs:
                 input_box.text = ''
-            time_input.time = ''
+            self.timepicker.set_time('')
             return
         else:
             self.adding = False
             self.is_task_working = False
             self.error = ''
+            self.timepicker.set_time('')
 
     def backToAddTask(self):
         self.adding = False
+        self.timepicker.set_time('')
 
     def add(
             self,
             psy_test_pro,
-            translate_service,
             create_continously,
             experiment,
     ):
@@ -160,29 +166,38 @@ class AddTaskView():
         x = width // 2
         y = height // 2 - 100
         input_box = InputBox(
-            x, y, 400, 40, 'taskName', translate_service, allow_new_line=False
+            x, y, 400, 40, 'taskName', self.translate_service, allow_new_line=False
         )
         input_boxes.append(input_box)
         y += spacing
-        time_input = TimeInput(x, y, 400, 40, 'timeForTask', translate_service)
+        choose_time_button = Button(
+            x,
+            y,
+            400,
+            40,
+            'timeForTask',
+            lambda: self.open_time_picker(),
+            self.translate_service,
+            align='left'
+        )
         y += spacing + spacing
         for label in text_labels:
             input_box = InputBox(
-                x, y, 400, 40, label, translate_service, allow_new_line=True
+                x, y, 400, 40, label, self.translate_service, allow_new_line=True
             )
             text_screen_inputs.append(input_box)
             y += spacing
         y = height // 2 - 100 + 3 * spacing
         for label in command_labels:
             input_box = InputBox(
-                x, y, 400.1, 40, label, translate_service, allow_new_line=False
+                x, y, 400.1, 40, label, self.translate_service, allow_new_line=False
             )
             command_inputs.append(input_box)
             y += spacing
         y += spacing
 
         exit_button = Button(
-            x - 150, y + 60, 100, 40, 'back', self.backToAddTask, translate_service
+            x - 150, y + 60, 100, 40, 'back', self.backToAddTask, self.translate_service
         )
         submit_button = Button(
             x + 150,
@@ -194,9 +209,8 @@ class AddTaskView():
                 self.selected_multiple,
                 variable,
                 input_boxes[0].text,
-                time_input.time,
+                self.timepicker.time,
                 input_boxes,
-                time_input,
                 command_inputs,
                 text_screen_inputs,
                 command_inputs[0].text,
@@ -204,7 +218,7 @@ class AddTaskView():
                 text_screen_inputs[1].text,
                 command,
             ),
-            translate_service,
+            self.translate_service,
         )
         error_y = y + 60
         preview_button = Button(
@@ -213,11 +227,11 @@ class AddTaskView():
             100,
             40,
             'preview',
-            lambda: self.preview(translate_service, command, command_inputs, text_screen_inputs),
-            translate_service,
+            lambda: self.preview(command, command_inputs, text_screen_inputs),
+            self.translate_service,
         )
 
-        buttons.append(time_input)
+        buttons.append(choose_time_button)
         buttons.append(exit_button)
         buttons.append(submit_button)
         buttons.append(preview_button)
@@ -230,7 +244,7 @@ class AddTaskView():
             None, int(24 * width_scale_factor)
         )  # Create font object for header
         option_text_rendered = question_font.render(
-            translate_service.get_translation('createMultipleTasks'), True, light_grey
+            self.translate_service.get_translation('createMultipleTasks'), True, light_grey
         )
         option_text_rect = option_text_rendered.get_rect(left=x + 285, top=y + 420)
         tick_box_rect = pygame.Rect(
@@ -244,8 +258,8 @@ class AddTaskView():
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            translate_service.get_translation('createTask')
-            + ' ' + translate_service.get_translation('for') + ' '
+            self.translate_service.get_translation('createTask')
+            + ' ' + self.translate_service.get_translation('for') + ' '
             + experiment.split('_')[0],
             True,
             light_grey,
@@ -256,7 +270,7 @@ class AddTaskView():
         command = False
 
         text_screen_rendered = question_font.render(
-            translate_service.get_translation('textScreen'), True, light_grey
+            self.translate_service.get_translation('textScreen'), True, light_grey
         )
         text_screen_rect = text_screen_rendered.get_rect(left=x - 300, top=y + 180)
         text_tick_box_rect = pygame.Rect(
@@ -267,7 +281,7 @@ class AddTaskView():
         )
 
         command_screen_rendered = question_font.render(
-            translate_service.get_translation('command'), True, light_grey
+            self.translate_service.get_translation('command'), True, light_grey
         )
         command_screen_rect = command_screen_rendered.get_rect(
             left=x + 100, top=y + 180
@@ -281,45 +295,48 @@ class AddTaskView():
         self.adding = True
         while self.adding:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:  # If the left mouse button clicked
-                        mouse_pos = (
-                            pygame.mouse.get_pos()
-                        )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
-                        if tick_box_rect.collidepoint(
-                                mouse_pos
-                        ):  # If the cursor position has collided with the start timer button
-                            self.selected_multiple = not self.selected_multiple
-                        if text_tick_box_rect.collidepoint(
-                                mouse_pos
-                        ):  # If the cursor position has collided with the start timer button
-                            text_screen = not text_screen
-                            command = not command
-                            self.error = ''
-                        if command_tick_box_rect.collidepoint(
-                                mouse_pos
-                        ):  # If the cursor position has collided with the start timer button
-                            text_screen = not text_screen
-                            command = not command
-                            self.error = ''
-                for box in input_boxes:
-                    box.handle_event(event)
-                for box in text_screen_inputs:
-                    box.handle_event(event)
-                for box in command_inputs:
-                    box.handle_event(event)
-                for button in buttons:
-                    button.handle_event(event)
+                if self.show_time_picker:
+                    self.timepicker.handle_events(event)
+                else:
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:  # If the left mouse button clicked
+                            mouse_pos = (
+                                pygame.mouse.get_pos()
+                            )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
+                            if tick_box_rect.collidepoint(
+                                    mouse_pos
+                            ):  # If the cursor position has collided with the start timer button
+                                self.selected_multiple = not self.selected_multiple
+                            if text_tick_box_rect.collidepoint(
+                                    mouse_pos
+                            ):  # If the cursor position has collided with the start timer button
+                                text_screen = not text_screen
+                                command = not command
+                                self.error = ''
+                            if command_tick_box_rect.collidepoint(
+                                    mouse_pos
+                            ):  # If the cursor position has collided with the start timer button
+                                text_screen = not text_screen
+                                command = not command
+                                self.error = ''
+                    for box in input_boxes:
+                        box.handle_event(event)
+                    for box in text_screen_inputs:
+                        box.handle_event(event)
+                    for box in command_inputs:
+                        box.handle_event(event)
+                    for button in buttons:
+                        button.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
             screen.blit(option_text_rendered, option_text_rect)
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
             if self.validate_task_inputs(
-                    input_boxes, time_input, command_inputs, text_screen_inputs, command
+                    input_boxes, self.timepicker.time, command_inputs, text_screen_inputs, command
             ):
                 buttons[2].set_active(True)
                 buttons[2].set_color(pygame.Color(self.settings["buttonColor"]))
@@ -333,6 +350,14 @@ class AddTaskView():
             if not self.is_task_working:
                 buttons[2].set_active(False)
                 buttons[2].set_color(self.inactive_button_color)
+
+            if self.timepicker.time and len(self.timepicker.time) > 0:
+                choose_time_button.translate_service = None
+                choose_time_button.translation_key = self.timepicker.time
+            else:
+                choose_time_button.translate_service = self.translate_service
+                choose_time_button.translation_key = 'timeForTask'
+            choose_time_button.update_text()
 
             for box in input_boxes:
                 box.update_text()
@@ -441,4 +466,11 @@ class AddTaskView():
                 screen.blit(
                     error_text_surface,
                     (x - error_rect.width // 2, error_y + spacing))
+
+            if self.show_time_picker:
+                self.timepicker.draw(screen)
+            if not self.timepicker.is_open:
+                self.show_time_picker = False
+                self.timepicker.is_open = True
+
             pygame.display.flip()  # Flip the display to update the screen

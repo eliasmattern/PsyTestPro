@@ -4,9 +4,10 @@ from services import PsyTestProConfig
 
 class Button:
     def __init__(self, x, y, width, height, translation_key, action, translate_service=None, color=None,
-                 text_color=None, active_button_color=None, border_radius=8, hidden=False):
+                 text_color=None, active_button_color=None, border_radius=8, hidden=False, align='center'):
         self.pos_x = x
         self.pos_y = y
+        self.align = align
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.translation_key = translation_key
@@ -66,8 +67,9 @@ class Button:
             pygame.draw.rect(screen, self.color if not self.pressed else self.active_button_color, self.rect,
                              border_radius=self.border_radius)
             label_width, label_height = self.label.get_size()
-            label_x = self.rect.x + (self.rect.width - label_width) // 2
-            label_y = self.rect.y + (self.rect.height - label_height) // 2
+            alignmentX = (self.rect.width - label_width) / 2 if self.align == 'center' else 5
+            label_x = self.rect.x + alignmentX
+            label_y = self.rect.y + (self.rect.height - label_height) / 2
             screen.blit(self.label, (label_x, label_y))
 
     def set_color(self, color):

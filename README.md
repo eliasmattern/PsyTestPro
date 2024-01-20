@@ -72,9 +72,6 @@ There are also some dependencies that must be installed using pip:
 
 ```python
 pip install pygame
-pip install tk
-pip install tktimepicker
-pip install tkcalendar
 pip install pandas
 pip install openpyxl
 pip install pygame_widgets # optional (Required by chronobiology basel tasks )

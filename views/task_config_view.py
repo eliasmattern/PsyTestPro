@@ -12,10 +12,10 @@ class TaskConfig:
         self.selected_multiple = False
         self.page = 0
         self.error = ''
-        self.add_task = AddTaskView()
+        self.translate_service = translate_service
+        self.add_task = AddTaskView(self.translate_service)
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
-        self.translate_service = translate_service
 
     def backToConfig(self):
         self.running = False
@@ -90,7 +90,6 @@ class TaskConfig:
                         experiment.split('_')[0],
                         lambda exp=experiment: self.add_task.add(
                             psy_test_pro,
-                            self.translate_service,
                             False,
                             exp
                         ),

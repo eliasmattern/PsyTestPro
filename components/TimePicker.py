@@ -64,16 +64,20 @@ class TimePicker:
 
     def set_time(self, time):
         self.time = time
-        self.hour, self.minute, self.second = time.split(':')
-        self.hour_input = InputBox(self.window.x + self.width / 2 - 55, self.window.y + self.height / 4, 40, 40,
-                                   'hour_short', translate_service=self.translate_service, icon=False,
-                                   initial_text=self.hour if self.time else '')
-        self.minute_input = InputBox(self.window.x + self.width / 2, self.window.y + self.height / 4, 40, 40,
-                                     'minute_short', translate_service=self.translate_service, icon=False,
-                                     initial_text=self.minute if self.time else '')
-        self.second_input = InputBox(self.window.x + self.width / 2 + 55, self.window.y + self.height / 4, 40, 40,
-                                     'second_short', translate_service=self.translate_service, icon=False,
-                                     initial_text=self.second if self.time else '')
+        if len(self.time) > 0:
+            self.hour, self.minute, self.second = time.split(':')
+            self.hour_input = InputBox(self.window.x + self.width / 2 - 55, self.window.y + self.height / 4, 40, 40,
+                                       'hour_short', translate_service=self.translate_service, icon=False,
+                                       initial_text=self.hour if self.time else '')
+            self.minute_input = InputBox(self.window.x + self.width / 2, self.window.y + self.height / 4, 40, 40,
+                                         'minute_short', translate_service=self.translate_service, icon=False,
+                                         initial_text=self.minute if self.time else '')
+            self.second_input = InputBox(self.window.x + self.width / 2 + 55, self.window.y + self.height / 4, 40, 40,
+                                         'second_short', translate_service=self.translate_service, icon=False,
+                                         initial_text=self.second if self.time else '')
+        else:
+            self.hour, self.minute, self.second = '', '', ''
+            self.hour_input.text, self.minute_input.text, self.second_input.text = '', '', ''
 
     def is_valid_datetime_format(self, datetime_str):
         # This pattern strictly matches DD/MM/YYYY HH:MM:SS
@@ -252,6 +256,7 @@ class TimePicker:
     def execute_action(self):
         if self.action_button.is_active:
             self.time = ':'.join((self.hour_input.text, self.minute_input.text, self.second_input.text))
-            self.action()
+            if self.action:
+                self.action()
             self.is_open = False
             self.active_input = -1
