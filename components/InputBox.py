@@ -9,7 +9,7 @@ from pandas.io import clipboard
 class InputBox:
     def __init__(self, x, y, width, height, translation_key, translate_service=None, info='', initial_text='', desc='',
                  allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None,
-                 text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False):
+                 text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False, icon=True):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.psy_test_pro_config = PsyTestProConfig()
@@ -73,6 +73,7 @@ class InputBox:
         self.is_active = is_active
         self.is_hidden = hidden
         self.is_touched = False
+        self.icon = icon
 
     def set_active(self, active):
         self.is_active = active
@@ -91,7 +92,7 @@ class InputBox:
                 else:
                     self.is_selected = False
                     self.is_highlighted = False
-                if self.imagePos.collidepoint(pygame.mouse.get_pos()) and event.button == 1:
+                if self.imagePos.collidepoint(pygame.mouse.get_pos()) and event.button == 1 and self.icon:
                     clipboard.copy(self.text)
             elif event.type == KEYUP:
                 if not self.is_touched:
@@ -302,7 +303,8 @@ class InputBox:
             text_surface = self.font.render(input_text, True,
                                             self.active_text_color if self.is_selected else self.text_color, text_bg_color)
             count = 0
-            while text_surface.get_rect().width > self.rect.width // 100 * 85:
+            text_max_width = 85 if self.icon else 100
+            while text_surface.get_rect().width > self.rect.width / 100 * text_max_width:
                 input_text = input_text[1:]
                 count += 1
                 text_surface = self.font.render(input_text, True,
@@ -379,9 +381,10 @@ class InputBox:
                     pygame.draw.line(screen, color,
                                      (posX, self.rect.y + 5),
                                      (posX, self.rect.y + self.rect.height - 5))
-            self.imagePos = pygame.Rect(self.posX + (self.rect.width // 2) // 100 * 80, self.posY,
-                                        self.image.get_rect().width, self.image.get_rect().height)
-            screen.blit(self.image, (self.posX + (self.rect.width // 2) // 100 * 80, self.posY + 5))
+            if self.icon:
+                self.imagePos = pygame.Rect(self.posX + (self.rect.width // 2) // 100 * 80, self.posY,
+                                            self.image.get_rect().width, self.image.get_rect().height)
+                screen.blit(self.image, (self.posX + (self.rect.width // 2) // 100 * 80, self.posY + 5))
             if self.is_selected:
                 if ((pygame.time.get_ticks() // 500) % 2) == 0 or self.started_moving_r or self.started_moving_l:
                     self.cursor_blink = True

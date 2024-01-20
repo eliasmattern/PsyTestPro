@@ -6,10 +6,9 @@ import time as pythonTime
 import webbrowser
 from datetime import datetime, timedelta, date as python_date
 import pygame
-from components import Button, DataTable, QuestionDialog, DatePickerComponent
+from components import Button, DataTable, QuestionDialog, DatePickerComponent, TimePicker
 from lib import text_screen
 from services import TranslateService, LanguageConfiguration, play_tasks
-from .create_time_picker import create_time_picker
 from services import PsyTestProConfig
 
 
@@ -41,6 +40,7 @@ class CreateScheduleDisplay:
         self.show_help_dialog = False
         self.show_quit_dialog = False
         self.show_date_picker = False
+        self.show_time_picker = False
         self.screen_width = None
         self.screen_height = None
         self.column_width = None
@@ -50,11 +50,11 @@ class CreateScheduleDisplay:
                         self.translate_service.get_translation('time'),
                         self.translate_service.get_translation('skipDoneTodo')]
         self.date_picker = None
+        self.timepicker = None
 
         self.actions = [None,
                         lambda: self.open_date_picker(self.data_table.action_data["data"]),
-                        lambda: self.data_table.set_action_data(
-                            self.open_time_picker(self.data_table.action_data["data"])),
+                        lambda: self.open_timepicker(self.data_table.action_data["data"]),
                         lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data["data"]))]
         self.play_next_task = False
 
@@ -146,6 +146,9 @@ class CreateScheduleDisplay:
                                                    '/'.join([str(self.date_picker.day), str(self.date_picker.month),
                                                              str(self.date_picker.year)]))
                                                , action_key='save')
+        self.timepicker = TimePicker(300, 200, 'timepicker', self.translate_service, time='12:34:21', action=lambda: self.data_table.set_action_data(
+                                                   str(self.timepicker.time)), action_key='save')
+
 
         def update_text():
             for button in buttons:
@@ -161,6 +164,8 @@ class CreateScheduleDisplay:
                     help_dialog.handle_events(event)
                 elif self.show_date_picker:
                     self.date_picker.handle_events(event)
+                elif self.show_time_picker:
+                    self.timepicker.handle_events(event)
                 elif self.show_quit_dialog:
                     quit_dialog.handle_events(event)
                 else:
@@ -192,6 +197,12 @@ class CreateScheduleDisplay:
             if not self.date_picker.is_open:
                 self.show_date_picker = False
                 self.date_picker.is_open = True
+
+            if self.show_time_picker:
+                self.timepicker.draw(screen)
+            if not self.timepicker.is_open:
+                self.show_time_picker = False
+                self.timepicker.is_open = True
 
             pygame.display.flip()  # Flip the display to update the screen
 
@@ -456,18 +467,11 @@ class CreateScheduleDisplay:
         self.date_picker.day, self.date_picker.month, self.date_picker.year = date.split('/')
         self.date_picker.create_calendar(int(self.date_picker.year), int(self.date_picker.month),
                                          int(self.date_picker.day))
-        # split_date = date.split('/')
-        # day, month, year = split_date[0], split_date[1], split_date[2]
-        # date = create_date_picker(int(year), int(month), int(day))
-        # return date
 
-    def open_time_picker(self, time):
-        split_time = time.split(':')
-        time_picker = create_time_picker(split_time[0], split_time[1],
-                                         self.translate_service)
-        formatted_time = str(time_picker.time()[0]).rjust(2, '0') + ':' + str(
-            time_picker.time()[1]).rjust(2, '0') + ':00'
-        return formatted_time
+    def open_timepicker(self, time):
+        self.show_time_picker = True
+        self.timepicker.set_time(time)
+
 
     def switch_state(self, state):
         state_iterator = {'todo': {'value': 'skip', 'color': self.warning, 'key': 'skip'},

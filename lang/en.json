@@ -116,7 +116,8 @@
     "october": "October",
     "november": "November",
     "december": "December",
-    "datepicker": "Time Picker",
+    "datepicker": "Date Picker",
     "showTaskAndTime": "Show upcoming Task / Timer",
-    "variableError": "You can only create 3 variables"
+    "variableError": "You can only create 3 variables",
+    "timepicker": "Time Picker"
 }
