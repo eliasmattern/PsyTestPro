@@ -105,9 +105,9 @@ def pvt(subject, experiment, block, number):
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    return False
+                    return (False, output_filename)
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                    return False
+                    return (False, output_filename)
                 elif event.type == KEYDOWN and event.key == K_SPACE:
                     intro_spacebar_pressed = True
                     break
@@ -143,10 +143,10 @@ def pvt(subject, experiment, block, number):
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         running = False
-                        return False
+                        return (False, output_filename)
                     elif event.type == KEYDOWN and event.key == K_ESCAPE:
                         running = False
-                        return False
+                        return (False, output_filename)
 
             # Reset variables for the new counter
             counter = 0
@@ -160,7 +160,7 @@ def pvt(subject, experiment, block, number):
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         running = False
-                        return False
+                        return (False, output_filename)
                     elif event.type == KEYDOWN and event.key == K_SPACE:
                         if not spacebar_pressed:
                             spacebar_pressed = True
@@ -169,7 +169,7 @@ def pvt(subject, experiment, block, number):
                         beep_sound.stop()
                     elif event.type == KEYDOWN and event.key == K_ESCAPE:
                         running = False
-                        return False
+                        return (False, output_filename)
 
                 screen.fill(pygame.Color("black"))  # Clear the screen
 
@@ -243,4 +243,4 @@ def pvt(subject, experiment, block, number):
     time.sleep(3)  # Pause for 2 seconds
 
     # Quit Pygame
-    return True
+    return (True, output_filename)

@@ -1,13 +1,33 @@
-
+import os.path
+import csv
 from lib import GoNoGo_Real, start_real_nback, pvt, saliva, waking_eeg, text_screen, leeds, moodscales
 import subprocess
 import pandas as pd
 from datetime import datetime
 
-def save_task_info(filename, task_name, task_start_time, task_end_time, state):
+
+def save_task_info(filename, task_name, task_start_time, task_end_time, state, output_path=''):
     df = pd.read_excel('./experiments/' + filename)
     new_df = {}
-
+    output_path_result = ''
+    output_state_result = ''
+    if output_path != '':
+        output_file_exists = os.path.exists(output_path)
+        if output_file_exists:
+            output_path_result = output_path
+            with open(output_path, 'r', newline='') as file:
+                reader = csv.reader(file)
+                rows_count = len(list(reader))
+                print(rows_count)
+                print(output_path)
+                if rows_count == 1:
+                    output_state_result = 'ERROR Datei beinhaltet nur eine Zeile (Wahrscheinlich nur den Header)'
+                elif rows_count > 1:
+                    output_state_result = 'Datei beinhaltet Daten'
+                else:
+                    output_state_result = 'ERROR: Datei beinhaltet KEINE Daten'
+        else:
+            output_path_result = 'ERROR: Es wurde keine Datei für diesen Test erstellt'
     if 'task' in df:
         info_df = pd.DataFrame(data=df['info'])
         info_df.insert(1, 'value', df['value'])
@@ -16,16 +36,20 @@ def save_task_info(filename, task_name, task_start_time, task_end_time, state):
         task_df.insert(1, 'start_time', df['start_time'])
         task_df.insert(2, 'end_time', df['end_time'])
         task_df.insert(3, 'state', df['state'])
+        task_df.insert(4, 'output_file_path', df['output_file_path'])
+        task_df.insert(5, 'output_file_state', df['output_file_state'])
         task_df = task_df.dropna(how='all', )
         task_df = task_df.reset_index()
         task_df = task_df.drop(columns=['index'], axis=1)
-        task_df.loc[len(task_df)] = [task_name, task_start_time, task_end_time, state]
+        task_df.loc[len(task_df)] = [task_name, task_start_time, task_end_time, state, output_path_result, output_state_result]
         final_df = pd.concat([info_df, task_df], axis=1)
     else:
         new_df['task'] = [task_name]
         new_df['start_time'] = [task_start_time]
         new_df['end_time'] = [task_end_time]
         new_df['state'] = [state]
+        new_df['output_file_path'] = [output_path_result]
+        new_df['output_file_state'] = [output_state_result]
         new_df = pd.DataFrame(data=new_df)
         final_df = pd.concat([df, new_df], axis=1)
     final_df.to_excel('./experiments/' + filename, index=False)
@@ -54,7 +78,8 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
                 save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
         case "morn_sleep_diary" | "sleep_diary_expe":
             try:
-                text_screen("Schlaftagebuch", "Es ist Zeit für das Schlaftagebuch! Ein/e Versuchsleiter/in wird dir helfen, das Schlaftagebuch auszfüllen.")
+                text_screen("Schlaftagebuch",
+                            "Es ist Zeit für das Schlaftagebuch! Ein/e Versuchsleiter/in wird dir helfen, das Schlaftagebuch auszfüllen.")
                 task_end_time = str(datetime.now())
                 save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
             except Exception as e:
@@ -62,7 +87,8 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
                 save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
         case "expectancy_questionnaire":
             try:
-                text_screen("Erwartungsfrabogen", "Bitte fülle auch noch diesen Erwartungs-Fragebogen aus. Ein/e Versuchsleiter/in kommt gleich.")
+                text_screen("Erwartungsfrabogen",
+                            "Bitte fülle auch noch diesen Erwartungs-Fragebogen aus. Ein/e Versuchsleiter/in kommt gleich.")
                 task_end_time = str(datetime.now())
                 save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
             except Exception as e:
@@ -70,14 +96,16 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
                 save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
         case "leeds":
             try:
-                result = leeds(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
-                if not result:
+                result = leeds(participant_info["participant_id"], participant_info["week_no"],
+                               participant_info["experiment"])
+                if not result[0]:
                     raise Exception('Task wurde abgebrochen')
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success', result[1])
             except Exception as e:
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+                file = result[1] if result[1] else ''
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e, file)
         case "break_morn" | "breaktime":
             try:
                 text_screen("Pause", "Es ist Zeit für eine Pause.")
@@ -98,26 +126,30 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
             try:
                 # block = week number number = pvt number
                 pvtNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                result = pvt(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], pvtNumber)
-                if not result:
+                result = pvt(participant_info["participant_id"], participant_info["experiment"],
+                             participant_info["week_no"], pvtNumber)
+                if not result[0]:
                     raise Exception('Task wurde abgebrochen')
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success', result[1])
             except Exception as e:
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+                file = result[1] if result[1] else ''
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e, file)
         case "saliva_morn" | "saliva":
             try:
                 # kss = wie viele mal
                 salivaNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                result = saliva(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], salivaNumber)
-                if not result:
+                result = saliva(participant_info["participant_id"], participant_info["experiment"],
+                                participant_info["week_no"], salivaNumber)
+                if not result[0]:
                     raise Exception('KSS wurde abgebrochen ohne den Fragebogen auszufüllen')
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success', result[1])
             except Exception as e:
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+                file = result[1] if result[1] else ''
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e, file)
         case "teethbrushing":
             try:
                 text_screen("Zähneputzen", "Du kannst jetzt deine Zähne in deinem Zimmer putzen.")
@@ -129,14 +161,16 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
         case "mood_morn" | "mood":
             try:
                 moodscaleNumber = ''.join([i for i in upcoming_event if i.isdigit()])
-                result = moodscales(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"], moodscaleNumber)
-                if not result:
+                result = moodscales(participant_info["participant_id"], participant_info["week_no"],
+                                    participant_info["experiment"], moodscaleNumber)
+                if not result[0]:
                     raise Exception('Task wurde abgebrochen')
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success', result[1])
             except Exception as e:
+                file = result[1] if result[1] else ''
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e, file)
         case "wof_morn" | "wof":
             try:
                 text_screen("Glücksrad", "Ein/e Versuchsleiter/in wird kommen und dir helfen.")
@@ -157,25 +191,29 @@ def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
             try:
                 # block = week number number = gonogo number
                 gonogo_number = ''.join([i for i in upcoming_event if i.isdigit()])
-                result = GoNoGo_Real(participant_info["participant_id"], participant_info["experiment"], participant_info["week_no"], gonogo_number)
-                if not result:
+                result = GoNoGo_Real(participant_info["participant_id"], participant_info["experiment"],
+                                     participant_info["week_no"], gonogo_number)
+                if not result[0]:
                     raise Exception('Task wurde abgebrochen')
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success', result[1])
             except Exception as e:
+                file = result[1] if result[1] else ''
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e, file)
         case "nback_morn" | "nback":
             try:
                 # study night se sr
-                result = start_real_nback(participant_info["participant_id"], participant_info["week_no"], participant_info["experiment"])
-                if not result:
+                result = start_real_nback(participant_info["participant_id"], participant_info["week_no"],
+                                          participant_info["experiment"])
+                if not result[0]:
                     raise Exception('Task wurde abgebrochen')
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success', result[1])
             except Exception as e:
                 task_end_time = str(datetime.now())
-                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+                file = result[1] if result[1] else ''
+                save_task_info(filename, upcoming_event, task_start_time, task_end_time, e, file)
         case "eeg_removal":
             try:
                 text_screen("EEG entfernen", "Ein/e Versuchsleiter/in wird kommen und dir helfen.")

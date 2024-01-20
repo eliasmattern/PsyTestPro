@@ -106,7 +106,7 @@ def moodscales(subject, block, experiment, number):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                    return False
+                    return (False, outdir)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if button_rect.collidepoint(mouse_pos):
@@ -153,4 +153,4 @@ def moodscales(subject, block, experiment, number):
                 [day, month, year, start_hour, start_minute, start_second, hour, minute, second, subject, block, number,
                  *slider_data])
     slider.hide()
-    return True
+    return (True, outdir)
