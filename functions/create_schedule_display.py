@@ -174,14 +174,14 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 if click[0] == 1:
                     global schedule_page
                     schedule_page = 0
-                    create_schedule_display(schedule, participant_info, teststarter, isHab)  # Call create_schedule_display() when the button is clicked
+                    create_schedule_display(schedule, participant_info, teststarter, isHab, filename)  # Call create_schedule_display() when the button is clicked
             else:
                 pygame.draw.rect(screen, light_grey, (edit_button_x, edit_button_y, edit_button_width, edit_button_height))
             if 75 + edit_button_width > mouse[0] > 75 and edit_button_y + edit_button_height > mouse[1] > edit_button_y:
                 pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
-                if click[0] == 1:
+                if click[0] == 1 and next_event:
                     play_next_task = True
-            else:
+            elif next_event:
                 pygame.draw.rect(screen, light_grey, (75, edit_button_y, edit_button_width, edit_button_height))
 
             # Draw the text on the button
@@ -192,7 +192,8 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
             
             next_surf, next_rect = text_objects(translate_service.get_translation("nextTask"), small_text)
             next_rect.center = ((75 + (edit_button_width / 2)), (edit_button_y + (edit_button_height / 2)))
-            screen.blit(next_surf, next_rect)
+            if next_event:
+                screen.blit(next_surf, next_rect)
             # update the display
             pygame.display.flip()
             if play_next_task:
