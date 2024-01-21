@@ -51,6 +51,7 @@ class TimePicker:
         self.active_input = -1
         self.hour_input.is_selected = True
         self.hour_input.is_highlighted = True
+        self.is_typing_hours, self.is_typing_minutes = False, False
 
     def open(self):
         self.is_open = True
@@ -84,6 +85,32 @@ class TimePicker:
         pattern = r"^\d{2}:\d{2}:\d{2}$"
         return re.match(pattern, datetime_str) is not None
 
+    def next_input(self):
+        if self.hour_input.is_selected:
+            self.active_input = 0
+        if self.minute_input.is_selected:
+            self.active_input = 1
+        if self.second_input.is_selected:
+            self.active_input = 2
+        self.hour_input.is_selected = False
+        self.minute_input.is_selected = False
+        self.second_input.is_selected = False
+        self.hour_input.is_highlighted = False
+        self.minute_input.is_highlighted = False
+        self.second_input.is_highlighted = False
+        self.active_input += 1
+        if self.active_input > 2:
+            self.active_input = 0
+        if self.active_input == 0:
+            self.hour_input.is_selected = True
+            self.hour_input.is_highlighted = True
+        elif self.active_input == 1:
+            self.minute_input.is_selected = True
+            self.minute_input.is_highlighted = True
+        elif self.active_input == 2:
+            self.second_input.is_selected = True
+            self.second_input.is_highlighted = True
+
     def handle_events(self, event):
         self.action_button.handle_event(event)
         self.close_button.handle_event(event)
@@ -99,20 +126,34 @@ class TimePicker:
         # hour validation
         if len(self.hour_input.text) > 2:
             self.hour_input.text = self.hour_input.text[:2]
+        if len(self.hour_input.text) == 1:
+            self.is_typing_hours = True
         if len(self.hour_input.text) == 1 and int(self.hour_input.text) > 2:
+            self.is_typing_hours = True
             self.hour_input.text = '0%s' % self.hour_input.text
         if len(self.hour_input.text) == 2 and int(self.hour_input.text[0]) > 2:
             self.hour_input.text = self.hour_input.text[1:2]
-        if len(self.hour_input.text) == 2 and int(self.hour_input.text) > 24:
+        if len(self.hour_input.text) == 2 and int(self.hour_input.text) >= 24:
             self.hour_input.text = self.hour_input.text[:1]
+        if len(self.hour_input.text) == 2:
+            if self.is_typing_hours:
+                self.is_typing_hours = False
+                self.next_input()
 
         # minute validation
         if len(self.minute_input.text) > 2:
             self.minute_input.text = self.minute_input.text[:2]
+        if len(self.minute_input.text) == 1:
+            self.is_typing_minutes = True
         if len(self.minute_input.text) == 1 and int(self.minute_input.text) > 5:
+            self.is_typing_minutes = True
             self.minute_input.text = '0%s' % self.minute_input.text
         if len(self.minute_input.text) == 2 and int(self.minute_input.text[0]) > 5:
             self.minute_input.text = self.minute_input.text[1:2]
+        if len(self.minute_input.text) == 2:
+            if self.is_typing_minutes:
+                self.is_typing_minutes = False
+                self.next_input()
 
         # second validation
         if len(self.second_input.text) > 2:
@@ -139,30 +180,7 @@ class TimePicker:
                     self.second_input.is_selected = False
         elif event.type == KEYUP:
             if event.key == pygame.K_TAB:
-                if self.hour_input.is_selected:
-                    self.active_input = 0
-                if self.minute_input.is_selected:
-                    self.active_input = 1
-                if self.second_input.is_selected:
-                    self.active_input = 2
-                self.hour_input.is_selected = False
-                self.minute_input.is_selected = False
-                self.second_input.is_selected = False
-                self.hour_input.is_highlighted = False
-                self.minute_input.is_highlighted = False
-                self.second_input.is_highlighted = False
-                self.active_input += 1
-                if self.active_input > 2:
-                    self.active_input = 0
-                if self.active_input == 0:
-                    self.hour_input.is_selected = True
-                    self.hour_input.is_highlighted = True
-                elif self.active_input == 1:
-                    self.minute_input.is_selected = True
-                    self.minute_input.is_highlighted = True
-                elif self.active_input == 2:
-                    self.second_input.is_selected = True
-                    self.second_input.is_highlighted = True
+                self.next_input()
 
             elif event.key == pygame.K_RETURN:
                 self.execute_action()
