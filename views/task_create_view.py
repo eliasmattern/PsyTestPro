@@ -4,7 +4,7 @@ import pygame
 from components import InputBox, Button, TimePicker
 from lib import text_screen
 from services import PsyTestProConfig
-
+import shlex
 
 class AddTaskView():
     def __init__(self, translate_service) -> None:
@@ -51,8 +51,9 @@ class AddTaskView():
                                                         startTime=participant_info['start_time'],
                                                         timestamp=participant_info['timestamp'],
                                                         **variables)
-                process = subprocess.Popen(command)
-                process.communicate()
+                process = subprocess.Popen(shlex.split(command))
+                output, error = process.communicate()
+                return_code = process.wait()
                 self.error = ''
                 self.is_task_working = True
             except Exception as e:

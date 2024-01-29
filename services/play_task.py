@@ -2,7 +2,7 @@ import subprocess
 from datetime import datetime
 from lib import text_screen
 import pandas as pd
-
+import shlex
 
 def save_task_info(filename, task_name, task_start_time, task_end_time, state):
         df = pd.read_excel('./experiments/' + filename)
@@ -73,8 +73,12 @@ def play_tasks(filename, participant_info, upcoming_event, schedule, translate_s
                                      startTime=participant_info['start_time'],
                                      timestamp=formatted_timestamp,
                                      **custom_variables)
-            process = subprocess.Popen(command)
-            process.communicate()
+            process = subprocess.Popen(shlex.split(command))
+            output, error = process.communicate()
+            return_code = process.wait()
+
+            if return_code != 0:
+                raise Exception(f"Command failed with return code {return_code}, Error: {error}")
             task_end_time = str(datetime.now())
 
             save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
