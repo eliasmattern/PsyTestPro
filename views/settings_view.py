@@ -171,7 +171,7 @@ class SettingsView:
             input_boxes[label] = input_box
             y += spacing
         y = input_y_pos + spacing * self.chunk_size
-        check_box = CheckBox('showTaskAndTime', x, y + 60, active=check_box_initial_value, translate_service=self.translate_service, font_size=24)
+        check_box = CheckBox('showTaskAndTime', x, y + 60, active=check_box_initial_value, translate_service=self.translate_service, font_size=24, color=pygame.Color('#C0C0C0'))
 
         exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.back_to_psy_test_pro(psy_test_pro),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
