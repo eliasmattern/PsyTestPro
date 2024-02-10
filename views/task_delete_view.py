@@ -125,7 +125,7 @@ class DeleteTaskView():
             buttons.append(back_button)
 
             if len(splitted_tasks) > 1:
-                page_font = pygame.font.Font(None, int(24 * width_scale_factor))
+                page_font = pygame.font.Font(None, int(24))
                 page_text_surface = page_font.render(
                     str(self.page + 1) + '/' + str(len(splitted_tasks)),
                     True,
@@ -167,7 +167,7 @@ class DeleteTaskView():
             x = width // 2
             y = height // 2 - 150
             font = pygame.font.Font(
-                None, int(30 * width_scale_factor)
+                None, int(32)
             )  # Create font object for header
             text_surface = font.render(
                 self.translate_service.get_translation('deleteTaskFrom') + ' ' + experiment_name.split('_')[0], True,
@@ -283,7 +283,7 @@ class DeleteTaskView():
             buttons.append(back_button)
 
             if len(splitted_experiments) > 1:
-                page_font = pygame.font.Font(None, int(24 * width_scale_factor))
+                page_font = pygame.font.Font(None, int(24))
                 page_text_surface = page_font.render(
                     str(self.page + 1) + '/' + str(len(splitted_experiments)),
                     True,
@@ -325,7 +325,7 @@ class DeleteTaskView():
             x = width // 2
             y = height // 2 - 150
             font = pygame.font.Font(
-                None, int(30 * width_scale_factor)
+                None, int(32)
             )  # Create font object for header
             text_surface = font.render(
                 self.translate_service.get_translation('chooseExperiment'), True, light_grey

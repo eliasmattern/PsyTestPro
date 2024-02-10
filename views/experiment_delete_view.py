@@ -144,7 +144,7 @@ class DeleteExperimentView:
             buttons.append(back_button)
 
             if len(splitted_experiments) > 1:
-                page_font = pygame.font.Font(None, int(24 * width_scale_factor))
+                page_font = pygame.font.Font(None, int(24))
                 page_text_surface = page_font.render(
                     str(self.page + 1) + '/' + str(len(splitted_experiments)),
                     True,
@@ -186,7 +186,7 @@ class DeleteExperimentView:
             x = width // 2
             y = height // 2 - 150
             font = pygame.font.Font(
-                None, int(30 * width_scale_factor)
+                None, int(30)
             )  # Create font object for header
             text_surface = font.render(
                 self.translate_service.get_translation('deleteExperiment'), True, light_grey

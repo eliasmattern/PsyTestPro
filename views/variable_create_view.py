@@ -131,7 +131,7 @@ class CreateVariablesView:
         y = height // 2 - 150
 
         question_font = pygame.font.Font(
-            None, int(24 * width_scale_factor)
+            None, int(24)
         )  # Create font object for header
         option_text_rendered = question_font.render(
             self.translate_service.get_translation('createMultipleVars'),
@@ -147,7 +147,7 @@ class CreateVariablesView:
         )
 
         font = pygame.font.Font(
-            None, int(30 * width_scale_factor)
+            None, int(32)
         )  # Create font object for header
         text_surface = font.render(
             self.translate_service.get_translation('createVar'), True, light_grey

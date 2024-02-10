@@ -108,7 +108,7 @@ class DeleteVariableView:
             x = width // 2
             y = height // 2 - 150
             font = pygame.font.Font(
-                None, int(30 * width_scale_factor)
+                None, int(32)
             )  # Create font object for header
             text_surface = font.render(
                 self.translate_service.get_translation('deleteVar'), True, light_grey

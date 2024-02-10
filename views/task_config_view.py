@@ -3,6 +3,7 @@ import pygame
 from components import Button
 from services import PsyTestProConfig
 from .task_create_view import AddTaskView
+from .task_manual_import_view import TaskManualImportView
 
 
 class TaskConfig:
@@ -14,6 +15,7 @@ class TaskConfig:
         self.error = ''
         self.translate_service = translate_service
         self.add_task = AddTaskView(self.translate_service)
+        self.task_manual_import_view = TaskManualImportView(self.translate_service, self, self.add_task)
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
 
@@ -88,7 +90,7 @@ class TaskConfig:
                         400,
                         40,
                         experiment.split('_')[0],
-                        lambda exp=experiment: self.add_task.add(
+                        lambda exp=experiment: self.task_manual_import_view.show(
                             psy_test_pro,
                             False,
                             exp
@@ -119,7 +121,7 @@ class TaskConfig:
             buttons.append(back_button)
 
             if len(splitted_experiments) > 1:
-                page_font = pygame.font.Font(None, int(24 * width_scale_factor))
+                page_font = pygame.font.Font(None, int(24))
                 page_text_surface = page_font.render(
                     str(self.page + 1) + '/' + str(len(splitted_experiments)),
                     True,
@@ -161,7 +163,7 @@ class TaskConfig:
             x = width // 2
             y = height // 2 - 150
             font = pygame.font.Font(
-                None, int(30 * width_scale_factor)
+                None, int(32)
             )  # Create font object for header
             text_surface = font.render(
                 self.translate_service.get_translation('createTask'), True, light_grey

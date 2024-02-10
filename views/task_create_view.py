@@ -242,7 +242,7 @@ class AddTaskView():
         y = height // 2 - 150
 
         question_font = pygame.font.Font(
-            None, int(24 * width_scale_factor)
+            None, int(24)
         )  # Create font object for header
         option_text_rendered = question_font.render(
             self.translate_service.get_translation('createMultipleTasks'), True, light_grey
@@ -457,7 +457,7 @@ class AddTaskView():
                 )
 
             if self.error:
-                error_font = pygame.font.Font(None, int(24 * width_scale_factor))
+                error_font = pygame.font.Font(None, int(24))
                 error_text_surface = error_font.render(
                     self.error,
                     True,

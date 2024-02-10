@@ -282,7 +282,7 @@ class SettingsView:
         page_y = buttons['back'].pos_y
 
         font = pygame.font.Font(
-            None, int(16 * width_scale_factor)
+            None, int(28)
         )
 
         left_button = Button(page_x, page_y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
@@ -300,7 +300,7 @@ class SettingsView:
         y = height // 4 - 150
 
         title_font = pygame.font.Font(
-            None, int(40 * width_scale_factor)
+            None, int(40)
         )  # Create font object for header
         text_surface = title_font.render(
             translate_service.get_translation('settings'), True, light_grey
