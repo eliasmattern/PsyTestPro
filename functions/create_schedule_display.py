@@ -221,7 +221,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     beep_sound = pygame.mixer.Sound("./lib/beep.wav")
                     beep_sound.play()
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
-                    play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
+                    result = play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                     pygame.mouse.set_visible(True)
                     if result:
                         schedule[upcoming_event]["state"]= "done"
