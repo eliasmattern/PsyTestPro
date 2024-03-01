@@ -119,7 +119,6 @@ def pvt(subject, experiment, block, number):
         absolute_start_time = None
         start_time = time.time()  # set the start_time as the current time
         while running:
-            print(time.time() - start_time)
             if absolute_start_time == None:
                 absolute_start_time = time.time()
             # Check if the duration has elapsed
