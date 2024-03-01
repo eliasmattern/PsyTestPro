@@ -56,7 +56,7 @@ def save_task_info(filename, task_name, task_start_time, task_end_time, state, o
 
 
 def play_tasks(eventName, participant_info, upcoming_event, schedule, filename):
-    result = True
+    result = (True, None)
     task_start_time = str(datetime.now())
 
     match eventName:

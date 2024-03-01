@@ -123,7 +123,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                     result = play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                     pygame.mouse.set_visible(True)
-                    if result:
+                    if result[0]:
                         schedule[upcoming_event]["state"]= "done"
                     else:
                         schedule[upcoming_event]["state"]= "error"
@@ -204,7 +204,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                 eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                 result = play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                 pygame.mouse.set_visible(True)
-                if result:
+                if result[0]:
                     schedule[upcoming_event]["state"]= "done"
                 else:
                     schedule[upcoming_event]["state"]= "error"
@@ -223,7 +223,7 @@ def create_schedule_display(schedule, participant_info, teststarter, isHab = Fal
                     eventName = ''.join([i for i in upcoming_event if not i.isdigit()])
                     result = play_tasks(eventName, participant_info, upcoming_event, schedule, filename)
                     pygame.mouse.set_visible(True)
-                    if result:
+                    if result[0]:
                         schedule[upcoming_event]["state"]= "done"
                     else:
                         schedule[upcoming_event]["state"]= "error"
