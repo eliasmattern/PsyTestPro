@@ -64,7 +64,6 @@ def pvt(subject, experiment, block, number):
 
     # Set the duration of the fix/counter presentation in seconds
     duration = 600  # 10 minutes/600 seconds
-    start_time = time.time()  # set the start_time as the current time
 
     # Output file name
     output_filename = f"PVT_{subject_str}_{experiment}_{block_str}_{number_str}.csv"
@@ -118,7 +117,9 @@ def pvt(subject, experiment, block, number):
                 break       
         
         absolute_start_time = None
+        start_time = time.time()  # set the start_time as the current time
         while running:
+            print(time.time() - start_time)
             if absolute_start_time == None:
                 absolute_start_time = time.time()
             # Check if the duration has elapsed
