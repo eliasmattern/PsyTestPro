@@ -90,7 +90,7 @@ class PsyTestProConfig:
         with open('json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
 
-    def save_task(self, variable, name, time, type, value):
+    def save_task(self, variable, name: str, time, type, value):
 
         # Load the JSON data from a file
         with open('json/taskConfig.json', 'r') as file:
@@ -105,7 +105,7 @@ class PsyTestProConfig:
                 'value': value
             }
             json_data[object_name]['tasks'][task_name] = new_task
-
+        name = name.replace(' ', '_')
         # Example usage
         add_task_to_object(json_data, variable, name, time, type, value)
 

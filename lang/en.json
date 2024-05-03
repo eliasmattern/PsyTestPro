@@ -119,5 +119,7 @@
     "datepicker": "Date Picker",
     "showTaskAndTime": "Show upcoming Task / Timer",
     "variableError": "You can only create 3 variables",
-    "timepicker": "Time Picker"
+    "timepicker": "Time Picker",
+    "importTasks": "Import Task",
+    "showPreview": "Show Preview"
 }

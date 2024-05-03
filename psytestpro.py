@@ -1,5 +1,6 @@
 # Add buttons to the left side of the screen
 import os.path
+import webbrowser
 
 # Script updated to add input entry to relevant columns
 
@@ -23,6 +24,8 @@ class PsyTestPro:
             pygame.display.toggle_fullscreen()
         self.width, self.height = pygame.display.get_surface().get_rect().size
         pygame.display.set_caption('PsyTestPro')
+        app_icon = pygame.image.load('./img/logo.png')
+        pygame.display.set_icon(app_icon)
         pygame.scrap.init()
         self.psyTestProConfig = PsyTestProConfig()
         self.psyTestProConfig.load_experiments()
@@ -52,6 +55,7 @@ class PsyTestPro:
         self.inactive_button_color = pygame.Color(self.settings['inactiveButtonColor'])
         self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.button_color = pygame.Color(self.settings["buttonColor"])
+        self.logo_image = pygame.image.load('./img/logo.png')
 
         while self.is_running:
             self.update_text()
@@ -177,6 +181,9 @@ class PsyTestPro:
                 elif event.key == K_RETURN:
                     if self.buttons[3].is_active:
                         self.save_details()
+            elif event.type == pygame.MOUSEBUTTONUP and self.logo_image.get_rect().collidepoint(event.pos):
+                if event.button == 1:
+                    webbrowser.open('https://github.com/eliasmattern/PsyTestPro')
             else:
                 if len(self.input_boxes.get('startTime').text) == 1 and self.input_boxes.get(
                         'startTime').text.isnumeric() and 2 < int(self.input_boxes.get('startTime').text) < 10:
@@ -252,6 +259,7 @@ class PsyTestPro:
         )
         text_rect = text_surface.get_rect()
         self.screen.blit(text_surface, (x - text_rect.width // 2, y))
+        self.screen.blit(self.logo_image, (20, 20))
 
         for key, box in self.input_boxes.items():
             box.draw(self.screen)

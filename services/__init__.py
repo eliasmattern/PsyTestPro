@@ -1,5 +1,5 @@
 from .TranslateService import TranslateService
 from .LanguageConfiguration import LanguageConfiguration
 from .configuration import PsyTestProConfig
-from .import_export import CSVToJSONConverter, JSONToCSVConverter
+from .import_export import CSVToJSONConverter, JSONToCSVConverter, ImportTasksService
 from .play_task import play_tasks

@@ -3,6 +3,12 @@ import os
 
 import pandas as pd
 import math
+import subprocess
+
+from lib import text_screen
+from services import PsyTestProConfig
+import shlex
+
 
 class JSONToCSVConverter:
     def __init__(self, file1_path, file2_path, output_path):
@@ -122,3 +128,114 @@ class CSVToJSONConverter:
         # Write to file2.json
         with open(self.output_file2_path, 'w') as file:
             json.dump(file2_data, file, indent=4)
+
+
+class ImportTasksService:
+    def __init__(self, translate_service):
+        self.translate_service = translate_service
+
+    def save_tasks(self, df, experiment_name, show_preview):
+        errors = []
+        if show_preview:
+            for index, row in df.iterrows():
+                if not isinstance(row['command'], float):
+                    result = self.preview_task(command=row['command'])
+                    if not result:
+                        errors.append(row["task_name"])
+                elif not isinstance(row['title'], float):
+                    result = self.preview_task(title=row['title'], description=row['description'])
+                    if not result:
+                        errors.append(row["task_name"])
+            if len(errors) > 0:
+                return errors
+        with open('./json/taskConfig.json', 'r') as file:
+            data = json.load(file)
+        if experiment_name in data.keys():
+            last_minute = None
+            for index, row in df.iterrows():
+                task_name = str(row["task_name"]).replace(' ', '_')
+                minutes = row['minutes'] + last_minute if last_minute is not None else 0
+                print(minutes)
+                last_minute = last_minute + row['minutes'] if last_minute is not None else minutes
+                hours = minutes // 60
+                minutes %= 60
+                time = '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
+                if not isinstance(row['command'], float):
+                    data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'command',
+                                                       'value': row['command']}
+                elif not isinstance(row['title'], float):
+                    description = row['description'] if not isinstance(row['description'], float) else ''
+                    data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
+                                                       'value': {'title': row['title'], 'description': description}}
+        else:
+            return errors
+
+        with open('./json/taskConfig.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+    def preview_task(self, command=None, title=None, description=None):
+        custom_variables = PsyTestProConfig().load_custom_variables()
+        participant_info = {
+            'participant_id': 'VARIABLE_ID',
+            'experiment': 'VARIABLE_EXPERMENT',
+            'start_time': 'VARIABLE_STARTTIME',
+            'timestamp': 'VARIABLE_TIMESTAMP'
+        }
+
+        variables = {}
+
+        for value in custom_variables:
+            variables[value] = 'CUSTOM_VARIABLE'
+        if command:
+            try:
+                formatted_command = command.format(id=participant_info['participant_id'],
+                                                   experiment=participant_info['experiment'],
+                                                   startTime=participant_info['start_time'],
+                                                   timestamp=participant_info['timestamp'],
+                                                   **variables)
+                process = subprocess.Popen(shlex.split(formatted_command))
+                output, error = process.communicate()
+                return_code = process.wait()
+                print(return_code)
+                if return_code != 0:
+                    raise Exception(f"Command failed with return code {return_code}, Error: {error}")
+                return True
+            except Exception as e:
+                print(e)
+                return False
+        else:
+            try:
+                title = title.format(id=participant_info['participant_id'],
+                                     experiment=participant_info['experiment'],
+                                     startTime=participant_info['start_time'],
+                                     timestamp=participant_info['timestamp'],
+                                     **variables)
+
+                if isinstance(description, float):
+                    description = ''
+
+                description = description.format(id=participant_info['participant_id'],
+                                                 experiment=participant_info['experiment'],
+                                                 startTime=participant_info['start_time'],
+                                                 timestamp=participant_info['timestamp'],
+                                                 **variables)
+
+                text_screen(title, description, self.translate_service.get_translation('escToReturn'))
+                return True
+            except Exception as e:
+                print(e)
+                return False
+
+    def import_tasks(self, experiment_name, file_path, show_preview):
+        try:
+            file_name, file_extension = os.path.splitext(file_path)
+            if file_extension == '.csv':
+                df = pd.read_csv(file_path)
+                self.save_tasks(df, experiment_name, show_preview)
+            elif file_extension == '.xlsx':
+                df = pd.read_excel(file_path)
+                self.save_tasks(df, experiment_name, show_preview)
+            else:
+                raise Exception('Wrong file format. Only .csv and .xlsx files are supported.')
+        except FileNotFoundError as e:
+            print(e)

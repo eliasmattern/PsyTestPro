@@ -148,16 +148,16 @@ Task properties
 | Title       | Title of the screen with text                              |
 | Description | Description of the screen with text                        |
 
-<p style="color: #d7ba7d; font-size: 0.8em; line-height: 1.1em;">
-* Use relative paths instead of absolute paths to execute a file. <br /> 
-A relative path starts in the directory you are in. An absolute path has the entire file path. This can be a problem when you use the schedule on a different computer. <br />
-Example: <br />
- C:\users\[username]\Desktop\psytestpro\scripts\your_own.script <br />
- Because of the username in your path, it will only work on your computer. <br>
- Instead use: <br />
- .\scripts\your_own.script <br />
- This will go from the PsyTestPro folder into the script folder to access your script. 
- Therefore, it would work on any computer which has the script at this location.</p>
+> <p style="color: #d7ba7d; font-size: 0.8em; line-height: 1.1em;">
+> * Use relative paths instead of absolute paths to execute a file. <br /> 
+> A relative path starts in the directory you are in. An absolute path has the entire file path. This can be a problem when you use the schedule on a different computer. <br />
+>Example: <br />
+ >C:\users\[username]\Desktop\psytestpro\scripts\your_own.script <br />
+ >Because of the username in your path, it will only work on your computer. <br>
+ >Instead use: <br />
+ >.\scripts\your_own.script <br />
+ >This will go from the PsyTestPro folder into the script folder to access your script. 
+ >Therefore, it would work on any computer which has the script at this location.</p>
 
 #### Variables
 
@@ -171,7 +171,7 @@ have the value you provide when you start an experiment
 | {startTime}  | Time when the experiment started                |
 | {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss |
 
-NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at
+> NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at
 this moment.
 
 Example command:
@@ -203,8 +203,8 @@ Example command of a task: ```python ./path/to/your_script.py {CustomVariableNam
 This will export all your experiments, their tasks and schedule.
 It will create a CSV in the `./exports/` folder.
 You can use this CSV to Import the experiments again.
-<p style="color: #CC7F7F; font-size: 0.8em; line-height: 1.1em;">
-NOTE: This will not export your own scripts. You will have to transfer these by yourself.</p>
+><p style="color: #CC7F7F; font-size: 0.8em; line-height: 1.1em;">
+>NOTE: This will not export your own scripts. You will have to transfer these by yourself.</p>
 
 ### :inbox_tray: Import experiments
 
@@ -212,7 +212,7 @@ This allows you to choose a CSV on your computer to import Experiments and their
 
 ## Citation
 
-Use the following to cite PsyTestPro :
+Use the following to cite PsyTestPro:
 Mattern, E., Capdevila, N., & Lane, L. PsyTestPro [Computer software]. https://github.com/eliasmattern/PsyTestPro
 
 ## :question: FAQ
