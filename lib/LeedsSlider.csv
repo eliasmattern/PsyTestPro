@@ -1,12 +1,13 @@
-Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?, Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?, Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?, Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?, Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?, Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?, Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?, Wie fühltest du dich beim Aufwachen?, Wie fühlst du dich JETZT?, Wie würdest du deinen Schlaf insgesamt beurteilen?
-Number,Item,Answer1,Answer2,Buttontext
-5,Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?,Schwerer als gewöhnlich, Leichter als gewöhnlich,Weiter
-6,Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?,Langsamer als gewöhnlich, Schneller als gewöhnlich,Weiter
-7,Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?,Fühlte mich weniger schläfrig als gewöhnlich, Fühlte mich schläfriger als gewöhnlich,Weiter
-8,Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?,Unruhiger als gewöhnlich, Ruhiger als gewöhnlich,Weiter
-9,Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?,Mehr Wachphasen als gewöhnlich, Weniger Wachphasen als gewöhnlich,Weiter
-10,Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?,Schwieriger als gewöhnlich, Leichter als gewöhnlich,Weiter
-11,Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?,Dauerte länger als gewöhnlich, Dauerte kürzer als gewöhnlich,Weiter
-12,Wie fühltest du dich beim Aufwachen?,Müde, Frisch,Weiter
-13,Wie fühlst du dich JETZT?,Müde, Frisch,Weiter
-14,Wie würdest du deinen Schlaf insgesamt beurteilen?,Der schlechteste Schlaf, Der beste Schlaf,Absenden
+Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?, Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?, Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?, Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?, Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?, Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?, Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?, Wie fühltest du dich beim Aufwachen?, Wie fühlst du dich JETZT?, Wie würdest du deinen Schlaf insgesamt beurteilen?,Wie waren dein Gleichgewichtssinn und deine Kontrolle über deine Bewegungen beim Aufstehen?
+Number,Item,Answer1,Answer2,Buttontext,,,,,,
+5,Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?,Schwerer als gewöhnlich, Leichter als gewöhnlich,Weiter,,,,,,
+6,Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?,Langsamer als gewöhnlich, Schneller als gewöhnlich,Weiter,,,,,,
+7,Wie würdest du dein Einschlafen in der letzten Nacht im Vergleich zum gewöhnlichen Einschlafen einschätzen?,Fühlte mich weniger schläfrig als gewöhnlich, Fühlte mich schläfriger als gewöhnlich,Weiter,,,,,,
+8,Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?,Unruhiger als gewöhnlich, Ruhiger als gewöhnlich,Weiter,,,,,,
+9,Wie würdest du die Qualität des Schlafes im Vergleich zu deinem gewöhlichen Schlaf einschätzen?,Mehr Wachphasen als gewöhnlich, Weniger Wachphasen als gewöhnlich,Weiter,,,,,,
+10,Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?,Schwieriger als gewöhnlich, Leichter als gewöhnlich,Weiter,,,,,,
+11,Wie würdest du das Aufwachen im Vergleich zu deinem gewöhnlichen Aufwachen bezeichnen?,Dauerte länger als gewöhnlich, Dauerte kürzer als gewöhnlich,Weiter,,,,,,
+12,Wie fühltest du dich beim Aufwachen?,Müde, Frisch,Weiter,,,,,,
+13,Wie fühlst du dich JETZT?,Müde, Frisch,Weiter,,,,,,
+14,Wie würdest du deinen Schlaf insgesamt beurteilen?,Der schlechteste Schlaf, Der beste Schlaf,Weiter,,,,,,
+15,Wie waren dein Gleichgewichtssinn und deine Kontrolle über deine Bewegungen beim Aufstehen?,Weniger unbeholfen als gewöhnlich,Unbeholfener als gewöhnlich,Absenden,,,,,,

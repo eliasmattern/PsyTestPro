@@ -63,7 +63,8 @@ def leeds(subject, block, experiment):
     "länger",
     "frisch",
     "müde",
-    "Qualität",
+    "Qualität"
+    "Gleichgewicht",
     ]
     keyboard_filename = os.path.join("./lib", "LeedsKeyboard.csv")
     slider_filename = os.path.join("./lib", "LeedsSlider.csv")
