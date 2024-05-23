@@ -63,8 +63,8 @@ def leeds(subject, block, experiment):
     "länger",
     "frisch",
     "müde",
-    "Qualität"
     "Gleichgewicht",
+    "Qualität"
     ]
     keyboard_filename = os.path.join("./lib", "LeedsKeyboard.csv")
     slider_filename = os.path.join("./lib", "LeedsSlider.csv")
@@ -98,6 +98,8 @@ def leeds(subject, block, experiment):
         for text in labels:
             text_surface = font.render(text, True, font_color)
             text_rect = text_surface.get_rect(center=(text_x, multiplicator * 40 + text_y))
+            # Adjust the position of the rectangle to add padding
+            text_rect.inflate_ip(20, 10)
             text_surfaces.append(text_surface)
             text_rects.append(text_rect)
             multiplicator += 1
@@ -109,10 +111,12 @@ def leeds(subject, block, experiment):
         if len(inputs) > 1:
             input_x = percent_screen_width * 40
 
-        # render continue buttion
+        # render continue button
         button_surface = font.render("  Weiter  ", True, (0,0,0))
         button_rect = button_surface.get_rect(center=(percent_screen_width * 50, screen_height /100 * 80))
-        
+        button_rect.center = (percent_screen_width * 50, screen_height / 100 * 80)
+
+
         running = True
     
         while running:
@@ -200,9 +204,9 @@ def leeds(subject, block, experiment):
     line_spacing = 100
     text_y = (screen_height // 6)
 
-    slider = Slider(window, percent_screen_width * 20, round(screen_height / 2), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
+    slider = Slider(window, percent_screen_width * 20, round(screen_height / 2.1), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
     slider_rect = pygame.Rect(0, 0, percent_screen_width * 65, 60)
-    slider_rect.center = (percent_screen_width * 50, round(screen_height / 2) + 17)
+    slider_rect.center = (percent_screen_width * 50, round(screen_height / 2.1) + 17)
     isTouched = False
 
     # Main loop
@@ -219,12 +223,35 @@ def leeds(subject, block, experiment):
             text_surfaces.append(text_surface)
             text_rects.append(text_rect)
             multiplicator += 1
+        
+        left_text = row[2].split(" ")
+        left_labels = [" ".join(left_text[i:i + 3]) for i in range(0, len(left_text), 3)]
+        left_surfaces = []
+        left_rects = []
 
-        left_text = row[2]
-        left_surface = font.render(left_text, True, font_color)
+        multiplicator = 0
+        for left_text in left_labels:
+            left_surface = font.render(left_text, True, font_color)
+            left_rect = left_surface.get_rect(center=(percent_screen_width * 20, screen_height // 1.4 - line_spacing + multiplicator * 30))
+            left_surfaces.append(left_surface)
+            left_rects.append(left_rect)
+            multiplicator += 1
 
-        right_text = row[3]
-        right_surface = font.render(right_text, True, font_color)
+        right_text = row[3].split(" ")
+        right_labels = [" ".join(right_text[i:i + 3]) for i in range(0, len(right_text), 3)]
+        right_surfaces = []
+        right_rects = []
+
+        multiplicator = 0
+        for right_text in right_labels:
+            right_surface = font.render(right_text, True, font_color)
+            right_rect = right_surface.get_rect(center=(percent_screen_width * 80, screen_height // 1.4 - line_spacing + multiplicator * 30))
+            right_surfaces.append(right_surface)
+            right_rects.append(right_rect)
+            multiplicator += 1        
+
+        #right_text = row[3]
+        #right_surface = font.render(right_text, True, font_color)
         # render continue buttion
         button_surface = font.render("  " + row[4] + "  ", True, (0,0,0))
         button_rect = button_surface.get_rect(center=(percent_screen_width * 50,
@@ -247,8 +274,11 @@ def leeds(subject, block, experiment):
             if isTouched:
                 pygame.draw.rect(window, font_color, button_rect)
                 window.blit(button_surface, button_rect)
-            window.blit(left_surface, (left_pos, screen_height / 2 - line_spacing))
-            window.blit(right_surface, (right_pos, screen_height / 2 - line_spacing))
+            
+            for i in range(len(left_surfaces)):
+                window.blit(left_surfaces[i], left_rects[i])
+            for i in range(len(right_surfaces)):
+                window.blit(right_surfaces[i], right_rects[i])
             # update screen
             slider.draw()
             pygame.display.flip()
@@ -267,7 +297,7 @@ def leeds(subject, block, experiment):
                         isTouched = False
                         running = False
                         # update screen
-                        slider = Slider(window, percent_screen_width * 20, round(screen_height / 2), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
+                        slider = Slider(window, percent_screen_width * 20, round(screen_height / 2.1), percent_screen_width * 60, 40, min=0, max=100, step=1, handleColour = grey)
                 slider.listen(event)
                 # Calculate slider position
                 mouse_pos = pygame.mouse.get_pos()
