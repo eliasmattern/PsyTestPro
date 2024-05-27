@@ -1,5 +1,3 @@
-from tkinter import filedialog
-
 import pygame
 
 from components import Button, CheckBox

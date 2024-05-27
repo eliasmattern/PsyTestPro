@@ -32,10 +32,10 @@ class ExperimentConfig():
             filepath = filedialog.askopenfilename(
                 initialdir='./',  # The initial directory (you can change this)
                 title=self.translate_service.get_translation('selectFile'),
-                filetypes=(('CSV files', '*.csv'), ('All files', '*.*'))  # Add more file types if needed
+                filetypes=(('Excel files', '*.xslx'), ('All files', '*.*'))  # Add more file types if needed
             )
             if filepath:
-                converter = CSVToJSONConverter(filepath, './json/experimentConfig.json', './json/taskConfig.json')
+                converter = CSVToJSONConverter(filepath)
                 converter.convert_to_json()
                 self.info_text = 'importSuccessfully'
         except Exception as e:
@@ -51,8 +51,7 @@ class ExperimentConfig():
             formatted_time = current_time.strftime('%Y-%m-%dT%H%M%S')
 
             # Usage
-            converter = JSONToCSVConverter('./json/experimentConfig.json', './json/taskConfig.json',
-                                           './exports/Experiments_export_' + formatted_time + '.csv')
+            converter = JSONToCSVConverter('./exports/Experiments_export_' + formatted_time + '.csv')
             converter.export_to_csv()
             self.info_text = 'exportSuccessfully'
 

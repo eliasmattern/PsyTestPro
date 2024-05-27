@@ -1,20 +1,21 @@
 import json
 import os
+import shlex
+import subprocess
 
 import pandas as pd
-import math
-import subprocess
 
 from lib import text_screen
 from services import PsyTestProConfig
-import shlex
 
 
 class JSONToCSVConverter:
-    def __init__(self, file1_path, file2_path, output_path):
-        self.file1_path = file1_path
-        self.file2_path = file2_path
+    def __init__(self, output_path):
         self.output_path = output_path
+        self.experiment_config_path = './json/experimentConfig.json'
+        self.task_config_path = './json/taskConfig.json'
+        self.settings_path = './json/settings.json'
+        self.custom_variables_path = './json/customVariables.json'
 
     def read_json(self, file_path):
         with open(file_path, 'r') as file:
@@ -25,109 +26,96 @@ class JSONToCSVConverter:
         directory = self.output_path.split(os.path.basename(self.output_path))[0]
         if not os.path.exists(directory):
             os.makedirs(directory)
-        file1_data = self.read_json(self.file1_path)
-        file2_data = self.read_json(self.file2_path)
-        # Create DataFrame for file2
-        file2_rows = []
-        for key, value in file2_data.items():
-            tasks = value.get('tasks', {})
-            if len(tasks) == 0:
-                file2_rows.append([key])
-            for task_key, task_value in tasks.items():
-                if 'value' in task_value and isinstance(task_value['value'], dict):
-                    row = [key, task_key, task_value['value'].get('title', ''),
-                           task_value['value'].get('description', '')]
-                else:
-                    row = [key, task_key, '', '']
-                row += [task_value['time'], task_value['state'], task_value['type'], task_value['value']]
-                file2_rows.append(row)
-        file2_df = pd.DataFrame(file2_rows,
-                                columns=['Variable', 'Task', 'Title', 'Description', 'Time', 'State', 'Type', 'Value'])
-        # Create DataFrame for file1
-        file1_df = pd.DataFrame({'File 1': file1_data})
+        experiment_config_data = self.read_json(self.experiment_config_path)
+        task_config_data = self.read_json(self.task_config_path)
+        settings = self.read_json(self.settings_path)
+        custom_variables = self.read_json(self.custom_variables_path)
 
-        # Concatenate DataFrames
-        result_df = pd.concat([file1_df, file2_df], ignore_index=True)
+        setting_df = pd.DataFrame()
+        setting_df['settings_keys'] = settings.keys()
+        setting_df['settings_values'] = settings.values()
 
-        # Write to CSV
-        result_df.to_csv(self.output_path, index=False)
+        custom_variables_df = pd.DataFrame()
+        custom_variables_df['custom_variables'] = custom_variables
+
+        experiment_config_df = pd.DataFrame()
+        experiment_config_df['experiment_config'] = experiment_config_data
+
+        task_config_df = pd.DataFrame()
+        tasks = []
+        for experiment_name, value in task_config_data.items():
+            for task_name, task_settings in value['tasks'].items():
+                time = task_settings['time']
+                state = task_settings['state']
+                task_type = task_settings['type']
+                value = task_settings['value'] + '|' if task_settings['type'] == 'command' \
+                    else task_settings['value']['title'] + '|' + task_settings['value']['description']
+                tasks.append('|'.join([experiment_name, task_name, time, state, task_type, value]))
+
+        task_config_df['task_config'] = tasks
+
+        final_df = pd.concat([setting_df, custom_variables_df, experiment_config_df, task_config_df], axis=1)
+        final_df.to_excel(self.output_path, index=False)
 
 
 class CSVToJSONConverter:
-    def __init__(self, input_csv_path, output_file1_path, output_file2_path):
-        self.input_csv_path = input_csv_path
-        self.output_file1_path = output_file1_path
-        self.output_file2_path = output_file2_path
+    def __init__(self, input_excel_path):
+        self.input_excel_path = input_excel_path
+        self.experiment_config_path = './json/experimentConfig.json'
+        self.task_config_path = './json/taskConfig.json'
+        self.settings_path = './json/settings.json'
+        self.custom_variables_path = './json/customVariables.json'
 
     def convert_to_json(self):
-        df = pd.read_csv(self.input_csv_path)
+        df = pd.read_excel(self.input_excel_path)
+        headers = ['settings_keys', 'settings_values', 'custom_variables', 'experiment_config', 'task_config']
+        if not all(header in df.keys() for header in headers):
+            raise Exception('Invalid Excel file')
 
-        # Split DataFrames for file1 and file2
-        file1_data = df[df['Variable'].isna()]['File 1'].tolist()
-        file1_result = []
-        for data in file1_data:
-            if isinstance(data, float):
-                if data.is_integer():
-                    file1_result.append(str(int(data)))
-                else:
-                    file1_result.append(str(data))
+        settings = {}
+        for setting_key, setting_value in zip(df['settings_keys'], df['settings_values']):
+            if any(pd.isna(val) for val in [setting_key, setting_value]):
+                break
+            settings[setting_key] = setting_value
+
+        with open(self.settings_path, 'w') as file:
+            json.dump(settings, file, indent=2)
+
+        custom_variables = []
+        for custom_variable in df['custom_variables']:
+            if any(pd.isna(val) for val in [custom_variable]):
+                break
+            custom_variables.append(custom_variable)
+
+        with open(self.custom_variables_path, 'w') as file:
+            json.dump(custom_variables, file)
+
+        experiments = []
+        for experiment in df['experiment_config']:
+            if any(pd.isna(val) for val in [experiment]):
+                break
+            experiments.append(experiment)
+
+        with open(self.experiment_config_path, 'w') as file:
+            json.dump(experiments, file)
+
+        tasks = {}
+
+        for task in df['task_config']:
+            experiment_name, task_name, time, state, task_type, value, desc = task.split('|')
+
+            if experiment_name not in tasks.keys():
+                tasks[experiment_name] = {'tasks': {}}
+
+            if task_type == 'command':
+                task_value = value
             else:
-                file1_result.append(str(data))
-        file2_df = df[~df['Variable'].isna()]
+                task_value = {'title': value, 'description': desc}
+            tasks[experiment_name]['tasks'][task_name] = {'time': time, 'state': state, 'type': task_type,
+                                                          "value": task_value}
 
-        # Convert file2 DataFrame to dictionary
-        file2_data = {}
-        for _, row in file2_df.iterrows():
-            variable = row['Variable']
-            task_key = row.get('Task')
-
-            time = row['Time']
-            state = row['State']
-            task_type = row['Type'] if not pd.isna(row['Type']) else ''
-            title = row['Title']
-            description = row['Description']
-            value = row['Value'] if not pd.isna(row['Value']) else ''
-
-            if variable not in file2_data:
-                file2_data[variable] = {'tasks': {}}
-
-            if task_key:  # Ensure task_key is not empty
-                task_info = {
-                    'time': time,
-                    'state': state,
-                    'type': task_type
-                }
-
-                if task_type == 'text':
-                    task_info['value'] = {
-                        'title': title,
-                        'description': description
-                    }
-                elif task_type == 'command':
-                    task_info['value'] = value
-                else:
-                    task_info['value'] = ''
-
-                file2_data[variable]['tasks'][task_key] = task_info
-
-        # Remove empty 'tasks' entries
-        for variable_data in file2_data.values():
-            if not variable_data['tasks']:
-                variable_data.pop('tasks')
-        for key, value in file2_data.items():
-            experiment = file2_data.get(key, {})
-            tasks = experiment.get('tasks')
-            tasks_without_nan = {name: task for name, task in tasks.items() if
-                                 isinstance(name, float) and not math.isnan(name) or isinstance(name, str)}
-            file2_data[key]['tasks'] = tasks_without_nan
-
-        # Write to file1.json
-        with open(self.output_file1_path, 'w') as file:
-            json.dump(file1_result, file)
-
-        # Write to file2.json
-        with open(self.output_file2_path, 'w') as file:
-            json.dump(file2_data, file, indent=4)
+        with open(self.task_config_path, 'w') as file:
+            json.dump(tasks, file, indent=4)
 
 
 class ImportTasksService:
@@ -162,11 +150,12 @@ class ImportTasksService:
                 time = '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
                 if not isinstance(row['command'], float):
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'command',
-                                                       'value': row['command']}
+                                                                 'value': row['command']}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
-                                                       'value': {'title': row['title'], 'description': description}}
+                                                                 'value': {'title': row['title'],
+                                                                           'description': description}}
         else:
             return errors
 
