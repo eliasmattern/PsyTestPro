@@ -13,6 +13,13 @@ class TaskManualImportView:
         self.is_running = True
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.primary_color = pygame.Color(self.settings["primaryColor"])
+        self.danger_color = pygame.Color(self.settings["dangerColor"])
+        self.successMsg = None
+        self.errorMsg = None
+        self.font = pygame.font.Font(None, 18)
+
+
 
     def back(self):
         self.is_running = False
@@ -60,7 +67,7 @@ class TaskManualImportView:
 
         back_to_task_manual_import_button = Button(
             x,
-            y + 60 + 3 * spacing,
+            y + 4 * spacing,
             100,
             40,
             'back',
@@ -86,6 +93,17 @@ class TaskManualImportView:
 
             show_preview_check_box.draw(screen)
 
+            if self.successMsg:
+                message = self.font.render(self.successMsg, True, self.primary_color)
+                message_rect = message.get_rect()
+                message_rect.center = (x, y + spacing * 3 + self.font.get_linesize() * 2)
+                screen.blit(message, message_rect)
+            if self.errorMsg:
+                message = self.font.render(self.errorMsg, True, self.danger_color)
+                message_rect = message.get_rect()
+                message_rect.center = (x, y + spacing * 3 + self.font.get_linesize() * 2)
+                screen.blit(message, message_rect)
+
             pygame.display.flip()  # Flip the display to update the screen
         self.is_running = True
 
@@ -94,10 +112,19 @@ class TaskManualImportView:
             filepath = filedialog.askopenfilename(
                 initialdir='./',
                 title=self.translate_service.get_translation('selectFile'),
-                filetypes=(('Excel files', '*.xslx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
+                filetypes=(('Excel files', '*.xlsx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
             )
             if filepath:
                 import_tasks_service = ImportTasksService(self.translate_service)
-                import_tasks_service.import_tasks(experiment_name, filepath, show_preview)
+                result = import_tasks_service.import_tasks(experiment_name, filepath, show_preview)
+                self.successMsg = None
+                self.errorMsg = None
+                if result[0]:
+                    self.successMsg = self.translate_service.get_translation(result[1])
+                else:
+                    self.errorMsg = self.translate_service.get_translation(result[1])
+                    if len(result) == 3:
+                        self.errorMsg = ' '.join((self.errorMsg, result[2]))
+
         except Exception as e:
             print(f'An error occurred: {e}')

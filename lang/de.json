@@ -116,5 +116,9 @@
     "variableError": "Es können nur 3 Variablen erstellt werden",
     "timepicker": "Zeitpicker",
     "importTasks": "Aufgabe importieren",
-    "showPreview": "Vorschau Anzeigen"
+    "showPreview": "Vorschau Anzeigen",
+    "importTasksFailed": "Beim Importieren ist ein Fehler aufgetreten",
+    "wrongFileFormatForTaskImport": "Falsches Dateiformat. Nur .csv und .xlsx Dateien sind kompatibel.",
+    "importTaskFailed": "Import der Task fehlgeschlagen:",
+    "taskImportSuccessful": "Tasks erfolgreich importiert"
 }

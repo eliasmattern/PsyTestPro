@@ -125,19 +125,21 @@ class ImportTasksService:
         self.translate_service = translate_service
 
     def save_tasks(self, df, experiment_name, show_preview):
-        errors = []
+        error = ''
         if show_preview:
             for index, row in df.iterrows():
                 if not isinstance(row['command'], float):
                     result = self.preview_task(command=row['command'])
                     if not result:
-                        errors.append(row["task_name"])
+                        error = row["task_name"]
+                        break
                 elif not isinstance(row['title'], float):
                     result = self.preview_task(title=row['title'], description=row['description'])
                     if not result:
-                        errors.append(row["task_name"])
-            if len(errors) > 0:
-                return errors
+                        error = row["task_name"]
+                        break
+            if len(error) > 0:
+                return False, 'importTaskFailed', error
         with open('./json/taskConfig.json', 'r') as file:
             data = json.load(file)
         if experiment_name in data.keys():
@@ -158,8 +160,9 @@ class ImportTasksService:
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
                                                                  'value': {'title': row['title'],
                                                                            'description': description}}
+            return True, 'taskImportSuccessful'
         else:
-            return errors
+            return False, 'importTasksFailed'
 
         with open('./json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
@@ -223,11 +226,16 @@ class ImportTasksService:
             print(file_path)
             if file_extension == '.csv':
                 df = pd.read_csv(file_path)
-                self.save_tasks(df, experiment_name, show_preview)
+                result = self.save_tasks(df, experiment_name, show_preview)
+                return result
             elif file_extension == '.xlsx':
                 df = pd.read_excel(file_path)
-                self.save_tasks(df, experiment_name, show_preview)
+                result = self.save_tasks(df, experiment_name, show_preview)
+                return result
             else:
-                raise Exception('Wrong file format. Only .csv and .xlsx files are supported.')
+                print('Wrong file format. Only .csv and .xlsx files are supported.')
+                return False, 'wrongFileFormatForTaskImport'
+
         except FileNotFoundError as e:
             print(e)
+            return False, 'importTasksFailed'
