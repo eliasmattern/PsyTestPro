@@ -58,7 +58,7 @@
     "exportSuccessfully": "Export war erfolgreich",
     "exportFailed": "Export ist fehlgeschlagen",
     "importSuccessfully": "Experimente wurden erfolgreich importiert",
-    "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: CSV",
+    "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: Excel (.xlsx)",
     "commandFailedToExecute": "Befehl konnte nicht ausgeführt werden",
     "editSchedule": "Zeitplan bearbeiten",
     "nextTask": "Nächste Aufgabe starten",

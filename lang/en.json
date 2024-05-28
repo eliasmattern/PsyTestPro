@@ -60,7 +60,7 @@
     "exportSuccessfully": "Export was successful",
     "exportFailed": "Export failed",
     "importSuccessfully": "Experiments were imported successfully",
-    "importFailed": "Import failed. Allowed file formats: CSV",
+    "importFailed": "Import failed. Allowed file formats: Excel (.xlsx)",
     "commandFailedToExecute": "Command failed to execute",
     "editSchedule": "Edit Schedule",
     "nextTask": "Play Next Task",

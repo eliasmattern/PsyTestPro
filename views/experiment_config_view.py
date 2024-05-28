@@ -32,7 +32,7 @@ class ExperimentConfig():
             filepath = filedialog.askopenfilename(
                 initialdir='./',  # The initial directory (you can change this)
                 title=self.translate_service.get_translation('selectFile'),
-                filetypes=(('Excel files', '*.xslx'), ('All files', '*.*'))  # Add more file types if needed
+                filetypes=(('Excel files', '*.xlsx'), ('All files', '*.*'))  # Add more file types if needed
             )
             if filepath:
                 converter = CSVToJSONConverter(filepath)
@@ -51,7 +51,7 @@ class ExperimentConfig():
             formatted_time = current_time.strftime('%Y-%m-%dT%H%M%S')
 
             # Usage
-            converter = JSONToCSVConverter('./exports/Experiments_export_' + formatted_time + '.csv')
+            converter = JSONToCSVConverter('./exports/Experiments_export_' + formatted_time + '.xlsx')
             converter.export_to_csv()
             self.info_text = 'exportSuccessfully'
 

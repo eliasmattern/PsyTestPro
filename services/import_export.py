@@ -102,6 +102,8 @@ class CSVToJSONConverter:
         tasks = {}
 
         for task in df['task_config']:
+            if pd.isna(task):
+                break
             experiment_name, task_name, time, state, task_type, value, desc = task.split('|')
 
             if experiment_name not in tasks.keys():
@@ -218,6 +220,7 @@ class ImportTasksService:
     def import_tasks(self, experiment_name, file_path, show_preview):
         try:
             file_name, file_extension = os.path.splitext(file_path)
+            print(file_path)
             if file_extension == '.csv':
                 df = pd.read_csv(file_path)
                 self.save_tasks(df, experiment_name, show_preview)

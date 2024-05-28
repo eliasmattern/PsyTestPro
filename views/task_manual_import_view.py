@@ -1,4 +1,5 @@
 import pygame
+from tkinter import filedialog
 
 from components import Button, CheckBox
 from services import PsyTestProConfig, ImportTasksService
@@ -90,13 +91,13 @@ class TaskManualImportView:
 
     def import_task(self, experiment_name, show_preview):
         try:
-            # filepath = filedialog.askopenfilename(
-            #     initialdir='./',
-            #     title=self.translate_service.get_translation('selectFile'),
-            #     filetypes=(('CSV files', '*.csv'), ('Excel files', '*.xlsx;*.xls'), ('All files', '*.*'))
-            # )
-            # if filepath:
-            import_tasks_service = ImportTasksService(self.translate_service)
-            import_tasks_service.import_tasks(experiment_name, "/Users/elias/Documents/tasks.xlsx", show_preview)
+            filepath = filedialog.askopenfilename(
+                initialdir='./',
+                title=self.translate_service.get_translation('selectFile'),
+                filetypes=(('Excel files', '*.xslx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
+            )
+            if filepath:
+                import_tasks_service = ImportTasksService(self.translate_service)
+                import_tasks_service.import_tasks(experiment_name, filepath, show_preview)
         except Exception as e:
             print(f'An error occurred: {e}')
