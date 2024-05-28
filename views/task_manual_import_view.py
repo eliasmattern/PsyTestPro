@@ -3,7 +3,7 @@ from tkinter import filedialog
 
 from components import Button, CheckBox
 from services import PsyTestProConfig, ImportTasksService
-
+import webbrowser
 
 class TaskManualImportView:
     def __init__(self, translate_service, task_config, task_create_view):
@@ -75,9 +75,20 @@ class TaskManualImportView:
             self.translate_service,
         )
 
+        get_template_button = Button(
+            screen.get_width() - 150,
+            40,
+            250,
+            40,
+            'getImportTemplate',
+            lambda: self.download_template(),
+            self.translate_service,
+        )
+
         buttons.append(create_task_button)
         buttons.append(import_task_button)
         buttons.append(back_to_task_manual_import_button)
+        buttons.append(get_template_button)
 
         while self.is_running:
             for event in pygame.event.get():
@@ -128,3 +139,6 @@ class TaskManualImportView:
 
         except Exception as e:
             print(f'An error occurred: {e}')
+
+    def download_template(self):
+        webbrowser.open('https://github.com/eliasmattern/PsyTestPro/raw/main/information/taskImportTemplate.xlsx')
