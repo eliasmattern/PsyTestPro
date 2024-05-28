@@ -151,7 +151,8 @@ class PsyTestProConfig:
                     danger_color,
                     warning_color,
                     grid_color,
-                    check_box_value):
+                    show_next_task_and_time, 
+                    show_play_task):
         with open(f'json/settings.json', 'r', encoding='utf-8') as file:
             settings = json.load(file)
 
@@ -165,7 +166,8 @@ class PsyTestProConfig:
         settings["dangerColor"] = danger_color
         settings["warningColor"] = warning_color
         settings["gridColor"] = grid_color
-        settings["showNextTask"] = check_box_value
+        settings["showNextTask"] = show_next_task_and_time
+        settings["showPlayTaskButton"] = show_play_task
 
         with open('json/settings.json', 'w') as file:
             json.dump(settings, file)

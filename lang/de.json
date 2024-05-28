@@ -113,6 +113,7 @@
     "december": "Dezember",
     "datepicker": "Datumpicker",
     "showTaskAndTime": "Nächste Aufgabe / Timer anzeigen",
+    "showPlayTaskButton": "Nächste Aufgabe abspielen button anzeigen",
     "variableError": "Es können nur 3 Variablen erstellt werden",
     "timepicker": "Zeitpicker",
     "importTasks": "Aufgabe importieren",

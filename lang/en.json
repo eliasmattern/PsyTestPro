@@ -118,6 +118,7 @@
     "december": "December",
     "datepicker": "Date Picker",
     "showTaskAndTime": "Show upcoming Task / Timer",
+    "showPlayTaskButton": "Show play task button",
     "variableError": "You can only create 3 variables",
     "timepicker": "Time Picker",
     "importTasks": "Import Task",

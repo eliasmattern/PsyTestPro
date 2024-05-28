@@ -64,7 +64,7 @@ class SettingsView:
 
         return has_contrast
 
-    def save_colors(self, input_boxes, check_box_value):
+    def save_colors(self, input_boxes, show_next_task_and_time, show_play_task):
         self.saved_msg = []
         has_contrast = self.check_contrast(input_boxes)
         if has_contrast:
@@ -78,7 +78,8 @@ class SettingsView:
                                                  input_boxes['dangerColor'].text,
                                                  input_boxes['warningColor'].text,
                                                  input_boxes['gridColor'].text,
-                                                 check_box_value)
+                                                 show_next_task_and_time,
+                                                 show_play_task)
             self.saved_msg.append(self.translate_service.get_translation('updatedSettings'))
             self.refresh_view()
 
@@ -121,7 +122,7 @@ class SettingsView:
             box.is_touched = True
 
 
-    def create_input_boxes(self, psy_test_pro, translate_service, language_config, initial_texts, check_box_initial_value):
+    def create_input_boxes(self, psy_test_pro, translate_service, language_config, initial_texts, show_next_task_initial_value, show_play_taks_initial_value):
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
@@ -171,7 +172,8 @@ class SettingsView:
             input_boxes[label] = input_box
             y += spacing
         y = input_y_pos + spacing * self.chunk_size
-        check_box = CheckBox('showTaskAndTime', x, y + 60, active=check_box_initial_value, translate_service=self.translate_service, font_size=24, color=pygame.Color('#C0C0C0'))
+        task_and_time_check_box = CheckBox('showTaskAndTime', x, y + 30, active=show_next_task_initial_value, translate_service=self.translate_service, font_size=24, color=pygame.Color('#C0C0C0'))
+        play_task_check_box = CheckBox('showPlayTaskButton', x, y + 30 + 30, active=show_play_taks_initial_value, translate_service=self.translate_service, font_size=24, color=pygame.Color('#C0C0C0'))
 
         exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.back_to_psy_test_pro(psy_test_pro),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
@@ -182,7 +184,7 @@ class SettingsView:
             100,
             40,
             'save',
-            lambda: self.save_colors(input_boxes, check_box.active),
+            lambda: self.save_colors(input_boxes, task_and_time_check_box.active, play_task_check_box.active),
             translate_service,
             color=pygame.Color('#C0C0C0'),
             text_color=pygame.Color('Black'),
@@ -195,7 +197,7 @@ class SettingsView:
         buttons['lightMode'] = light_mode
         buttons['back'] = exit_button
         buttons['save'] = save_button
-        return input_boxes, buttons, check_box
+        return input_boxes, buttons, task_and_time_check_box, play_task_check_box
 
     def is_hex_color_code(self, code):
         hex_color_pattern = re.compile(r'^#([A-Fa-f0-9]{6})$')
@@ -268,10 +270,11 @@ class SettingsView:
                          settings['buttonTextColor'], settings['activeButtonColor'], settings['inactiveButtonColor'],
                          settings['successColor'], settings['dangerColor'], settings['warningColor'],
                          settings['gridColor']]
-        check_box_initial_value = settings['showNextTask']
+        show_next_task_initial_value = settings['showNextTask']
+        show_play_taks_initial_value = settings['showPlayTaskButton']
 
-        input_boxes, buttons, check_box = self.create_input_boxes(
-            psy_test_pro, translate_service, language_config, initial_texts, check_box_initial_value
+        input_boxes, buttons, task_and_time_check_box, play_task_check_box = self.create_input_boxes(
+            psy_test_pro, translate_service, language_config, initial_texts, show_next_task_initial_value, show_play_taks_initial_value
         )
 
         splitted_inputs = self.split_dict(input_boxes, self.chunk_size)
@@ -285,10 +288,10 @@ class SettingsView:
             None, int(28)
         )
 
-        left_button = Button(page_x, page_y - 100, 40, 40, '<', lambda: self.page_update(splitted_inputs, False),
+        left_button = Button(page_x, page_y - 110, 30, 30, '<', lambda: self.page_update(splitted_inputs, False),
                              border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                              active_button_color=pygame.Color('#ACACAC'))
-        right_button = Button(page_x + 150, page_y - 100, 40, 40, '>', lambda: self.page_update(splitted_inputs, True),
+        right_button = Button(page_x + 150, page_y - 110, 30, 30, '>', lambda: self.page_update(splitted_inputs, True),
                               border_radius=90, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                               active_button_color=pygame.Color('#ACACAC'))
 
@@ -333,18 +336,21 @@ class SettingsView:
                         box.handle_event(event)
                 for key, button in buttons.items():
                     button.handle_event(event)
-                check_box.handle_event(event)
+                task_and_time_check_box.handle_event(event)
+                play_task_check_box.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
             page_surface = font.render(
                 str(self.input_page + 1) + '/' + str(len(splitted_inputs)), True, light_grey
             )
             page_rect = page_surface.get_rect()
-            page_rect.center = (page_x + 75, page_y - 80)
+            page_rect.center = (page_x + 75, left_button.rect.centery)
 
-            check_box.update_text()
-            check_box.draw(screen)
+            task_and_time_check_box.update_text()
+            task_and_time_check_box.draw(screen)
 
+            play_task_check_box.update_text()
+            play_task_check_box.draw(screen)
 
             screen.blit(text_surface, (x - text_rect.width // 2, y - 30))
             screen.blit(color_themes_surface, (x - color_themes_rect.width // 2, y + 180))

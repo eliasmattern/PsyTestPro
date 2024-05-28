@@ -33,7 +33,8 @@ class CreateScheduleDisplay:
         self.button_color = pygame.Color(self.settings["buttonColor"])
         self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.grid_color = pygame.Color(self.settings["gridColor"])
-        self.showTasks = self.settings["showNextTask"]
+        self.show_task = self.settings["showNextTask"]
+        self.show_play_next_task = self.settings["showPlayTaskButton"]
         self.todo_input_values = {}
         self.newdate_input_values = {}
         self.newtime_input_values = {}
@@ -284,7 +285,7 @@ class CreateScheduleDisplay:
                     break
             # clear the screen before drawing the updated text
             screen.fill(self.black)
-            if next_event:
+            if next_event and self.show_play_next_task:
                 next_button.set_hidden(False)
                 next_button.set_active(True)
                 next_button.draw(screen)
@@ -301,7 +302,7 @@ class CreateScheduleDisplay:
                 next_event_in_seconds = (next_event[0] - now).total_seconds()
                 # calculate the time until the next event
                 if next_event is not None:
-                    if self.showTasks:
+                    if self.show_task:
                         event_message = ' ' + self.translate_service.get_translation('until') + f' {next_event[1]}'
                         countdown = str(timedelta(seconds=round(next_event_in_seconds)))
                     else:

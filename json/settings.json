@@ -1,14 +1,15 @@
 {
-  "language": "en",
-  "backgroundColor": "#000000",
-  "primaryColor": "#C0C0C0",
-  "buttonColor": "#C0C0C0",
-  "buttonTextColor": "#000000",
-  "successColor": "#00B371",
-  "dangerColor": "#FF0000",
-  "warningColor": "#F0E68C",
-  "activeButtonColor": "#DADDDC",
-  "inactiveButtonColor": "#646464",
-  "gridColor": "#C0C0C0",
-  "showNextTask": true
+    "language": "en",
+    "backgroundColor": "#000000",
+    "primaryColor": "#C0C0C0",
+    "buttonColor": "#C0C0C0",
+    "buttonTextColor": "#000000",
+    "successColor": "#00B371",
+    "dangerColor": "#FF0000",
+    "warningColor": "#F0E68C",
+    "activeButtonColor": "#DADDDC",
+    "inactiveButtonColor": "#646464",
+    "gridColor": "#C0C0C0",
+    "showNextTask": true,
+    "showPlayTaskButton": true
 }
