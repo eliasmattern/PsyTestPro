@@ -93,7 +93,7 @@
     "activeButtonColor": "Active Button Color",
     "inactiveButtonColor": "Inactive Button Color",
     "gridColor": "Grid Color",
-    "invalidHex": "is not a hex colorcode",
+    "invalidHex": "is not a hex color code",
     "save": "Save",
     "contrastErrorMsg": "has too little contrast to the",
     "updatedSettings": "Settings updated",
