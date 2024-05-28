@@ -146,8 +146,7 @@ class ImportTasksService:
             last_minute = None
             for index, row in df.iterrows():
                 task_name = str(row["task_name"]).replace(' ', '_')
-                minutes = row['minutes'] + last_minute if last_minute is not None else 0
-                print(minutes)
+                minutes = row['minutes'] + last_minute if last_minute is not None else row['minutes']
                 last_minute = last_minute + row['minutes'] if last_minute is not None else minutes
                 hours = minutes // 60
                 minutes %= 60
@@ -160,12 +159,13 @@ class ImportTasksService:
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
                                                                  'value': {'title': row['title'],
                                                                            'description': description}}
-            return True, 'taskImportSuccessful'
         else:
             return False, 'importTasksFailed'
 
         with open('./json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
+        return True, 'taskImportSuccessful'
+        
 
     def preview_task(self, command=None, title=None, description=None):
         custom_variables = PsyTestProConfig().load_custom_variables()
