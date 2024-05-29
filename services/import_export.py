@@ -6,18 +6,18 @@ import subprocess
 import pandas as pd
 
 from lib import text_screen
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 
 
 class JSONToCSVConverter:
-    def __init__(self, output_path):
+    def __init__(self, output_path: str):
         self.output_path = output_path
         self.experiment_config_path = './json/experimentConfig.json'
         self.task_config_path = './json/taskConfig.json'
         self.settings_path = './json/settings.json'
         self.custom_variables_path = './json/customVariables.json'
 
-    def read_json(self, file_path):
+    def read_json(self, file_path: str):
         with open(file_path, 'r') as file:
             data = json.load(file)
         return data
@@ -59,7 +59,7 @@ class JSONToCSVConverter:
 
 
 class CSVToJSONConverter:
-    def __init__(self, input_excel_path):
+    def __init__(self, input_excel_path: str):
         self.input_excel_path = input_excel_path
         self.experiment_config_path = './json/experimentConfig.json'
         self.task_config_path = './json/taskConfig.json'
@@ -121,7 +121,7 @@ class CSVToJSONConverter:
 
 
 class ImportTasksService:
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.translate_service = translate_service
 
     def save_tasks(self, df, experiment_name, show_preview):
@@ -220,7 +220,7 @@ class ImportTasksService:
                 print(e)
                 return False
 
-    def import_tasks(self, experiment_name, file_path, show_preview):
+    def import_tasks(self, experiment_name: str, file_path: str, show_preview: bool):
         try:
             file_name, file_extension = os.path.splitext(file_path)
             print(file_path)

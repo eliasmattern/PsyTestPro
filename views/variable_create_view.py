@@ -3,10 +3,11 @@ import pygame
 from pygame.locals import *
 from components import InputBox, Button
 from services import PsyTestProConfig
+from services import TranslateService
 
 
 class CreateVariablesView:
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.running = True
         self.selected_multiple = False
         self.error = ''
@@ -23,9 +24,7 @@ class CreateVariablesView:
         self.running = False
         self.error = ''
 
-    def save_var(
-            self, psy_test_pro, var_name, input_boxes
-    ):
+    def save_var(self, psy_test_pro, var_name: str, input_boxes: list):
         psy_test_pro_config = PsyTestProConfig()
         result = psy_test_pro_config.save_var(var_name)
 
@@ -40,7 +39,7 @@ class CreateVariablesView:
         else:
             self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, psy_test_pro, selected_multiple):
+    def create_input_boxes(self, psy_test_pro):
         input_boxes = []
         buttons = []
         labels = ['varName']
@@ -110,9 +109,7 @@ class CreateVariablesView:
 
         self.selected_multiple = create_continously
 
-        input_boxes, buttons = self.create_input_boxes(
-            psy_test_pro, self.selected_multiple
-        )
+        input_boxes, buttons = self.create_input_boxes(psy_test_pro)
 
         def get_input_index():
             index = 0
@@ -149,9 +146,7 @@ class CreateVariablesView:
         font = pygame.font.Font(
             None, int(32)
         )  # Create font object for header
-        text_surface = font.render(
-            self.translate_service.get_translation('createVar'), True, light_grey
-        )  # Render the text 'Task' with the font and color light_grey
+        text_surface = font.render(self.translate_service.get_translation('createVar'), True, light_grey)  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
         while self.running:

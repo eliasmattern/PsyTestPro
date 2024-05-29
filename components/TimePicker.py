@@ -2,12 +2,12 @@ import pygame
 from pygame.locals import *
 
 from components import Button, InputBox
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 import re
 
 
 class TimePicker:
-    def __init__(self, width, height, window_key, translate_service, time=None, action=None, action_key=''):
+    def __init__(self, width: int, height: int, window_key: str, translate_service: TranslateService, time=None, action=None, action_key=''):
         screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
         self.time = time
         if time is not None:
@@ -63,7 +63,7 @@ class TimePicker:
         self.minute_input.is_selected = False
         self.second_input.is_selected = False
 
-    def set_time(self, time):
+    def set_time(self, time: str):
         self.time = time
         if len(self.time) > 0:
             self.hour, self.minute, self.second = time.split(':')
@@ -111,7 +111,7 @@ class TimePicker:
             self.second_input.is_selected = True
             self.second_input.is_highlighted = True
 
-    def handle_events(self, event):
+    def handle_events(self, event: pygame.event):
         self.action_button.handle_event(event)
         self.close_button.handle_event(event)
         self.hour_input.handle_event(event)
@@ -185,7 +185,7 @@ class TimePicker:
             elif event.key == pygame.K_RETURN:
                 self.execute_action()
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         left, top = pygame.mouse.get_pos()
         if self.move:
             if -10 < top < screen.get_height() + 10 and -10 < left < screen.get_width() + 10:

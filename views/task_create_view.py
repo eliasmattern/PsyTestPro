@@ -5,9 +5,11 @@ from components import InputBox, Button, TimePicker
 from lib import text_screen
 from services import PsyTestProConfig
 import shlex
+from services import TranslateService
+
 
 class AddTaskView():
-    def __init__(self, translate_service) -> None:
+    def __init__(self, translate_service: TranslateService) -> None:
         self.translate_service = translate_service
         self.adding = True
         self.selected_multiple = False
@@ -19,7 +21,7 @@ class AddTaskView():
         self.timepicker = TimePicker(300, 200, 'timeForTask', self.translate_service, action_key='save')
         self.show_time_picker = False
 
-    def validate_task_inputs(self, input_boxes, time_input, command_inputs, text_screen_inputs, is_command):
+    def validate_task_inputs(self, input_boxes: list, time_input: str, command_inputs: list, text_screen_inputs: list, is_command: bool):
         is_valid = False
 
         if input_boxes[0].text and time_input:
@@ -31,7 +33,7 @@ class AddTaskView():
     def open_time_picker(self):
         self.show_time_picker = True
 
-    def preview(self, command, command_inputs, text_screen_inputs):
+    def preview(self, command: bool, command_inputs: list, text_screen_inputs: list):
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
@@ -82,17 +84,17 @@ class AddTaskView():
 
     def save_task(
             self,
-            create_continously,
-            variable,
-            name,
-            time,
-            input_boxes,
-            command_inputs,
-            text_screen_inputs,
+            create_continously: bool,
+            variable: str,
+            name: str,
+            time: str,
+            input_boxes: list,
+            command_inputs: list,
+            text_screen_inputs: list,
             command=None,
             title=None,
             description=None,
-            is_command=False,
+            is_command: bool=False,
 
     ):
         type = 'text' if not is_command else 'command'
@@ -125,8 +127,8 @@ class AddTaskView():
     def add(
             self,
             psy_test_pro,
-            create_continously,
-            experiment,
+            create_continously: bool,
+            experiment: str
     ):
         variable = experiment
         # Define colors
@@ -156,8 +158,8 @@ class AddTaskView():
 
         self.selected_multiple = create_continously
 
-        input_boxes = []
-        buttons = []
+        input_boxes: list[InputBox] = []
+        buttons: list[Button] = []
         text_screen_inputs = []
         command_inputs = []
         command_labels = ['command']

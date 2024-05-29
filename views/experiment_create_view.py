@@ -4,10 +4,11 @@ import pygame
 from pygame.locals import *
 from components import InputBox, Button, CheckBox
 from services import PsyTestProConfig
+from services import TranslateService
 
 
 class CreateExperimentView:
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.running = True
         self.selected_multiple = False
         self.psy_test_pro_config = PsyTestProConfig()
@@ -23,7 +24,7 @@ class CreateExperimentView:
         self.running = False
 
     def save_experiment(
-            self, psy_test_pro, experiment_name, input_boxes, check_box
+            self, psy_test_pro, experiment_name: str, input_boxes: list[InputBox], check_box: CheckBox
     ):
         psy_test_pro_config = PsyTestProConfig()
         psy_test_pro_config.save_experiment(experiment_name, check_box.active)
@@ -36,7 +37,7 @@ class CreateExperimentView:
         else:
             self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, psy_test_pro_config, selected_multiple):
+    def create_input_boxes(self, psy_test_pro_config: PsyTestProConfig, selected_multiple):
         input_boxes = []
         buttons = []
         labels = ['experimentName']
@@ -85,7 +86,7 @@ class CreateExperimentView:
             return False
 
     def create_experiment_config_display(
-            self, psy_test_pro_config, create_continously=False
+            self, psy_test_pro_config: PsyTestProConfig, create_continously=False
     ):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])

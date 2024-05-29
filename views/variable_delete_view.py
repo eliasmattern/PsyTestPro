@@ -4,10 +4,10 @@ import pygame
 
 from components import Button, QuestionDialog
 from services import PsyTestProConfig
-
+from services import TranslateService
 
 class DeleteVariableView:
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.running = True
         self.update = False
         self.psy_test_pro_config = PsyTestProConfig()
@@ -21,7 +21,7 @@ class DeleteVariableView:
     def back(self):
         self.running = False
 
-    def delete_var(self, name):
+    def delete_var(self, name: str):
         self.variable_name = name
         self.delete_dialog.info = self.translate_service.get_translation('variable') + ' ' + name
         self.show_delete_dialog = True

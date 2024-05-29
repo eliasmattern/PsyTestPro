@@ -1,9 +1,9 @@
 import pygame
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 
 
 class Button:
-    def __init__(self, x, y, width, height, translation_key, action, translate_service=None, color=None,
+    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, action: function, translate_service: TranslateService=None, color=None,
                  text_color=None, active_button_color=None, border_radius=8, hidden=False, align='center', font_size=24):
         self.pos_x = x
         self.pos_y = y
@@ -37,7 +37,7 @@ class Button:
         self.pressed = False
         self.mouse_down = False
 
-    def handle_event(self, event):
+    def handle_event(self, event: pygame.event):
         if not self.is_hidden:
             if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
                 if self.is_active and event.button == 1:
@@ -51,10 +51,10 @@ class Button:
                 if self.is_active:
                     self.pressed = True
 
-    def set_hidden(self, hidden):
+    def set_hidden(self, hidden: bool):
         self.is_hidden = hidden
 
-    def set_active(self, active):
+    def set_active(self, active: bool):
         self.is_active = active
 
     def update_text(self):
@@ -63,7 +63,7 @@ class Button:
             else self.translation_key,
             True, self.button_text_color)
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         if not self.is_hidden:
             label_width, label_height = self.label.get_size()
             if label_width > self.rect.width:
@@ -82,5 +82,5 @@ class Button:
             label_y = self.rect.y + (self.rect.height - label_height) / 2
             screen.blit(self.label, (label_x, label_y))
 
-    def set_color(self, color):
+    def set_color(self, color: pygame.Color):
         self.color = color

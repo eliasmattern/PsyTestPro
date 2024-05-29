@@ -4,12 +4,13 @@ from tkinter import filedialog
 from components import Button, CheckBox
 from services import PsyTestProConfig, ImportTasksService
 import webbrowser
+from services import TranslateService
+from .task_create_view import AddTaskView
 
 class TaskManualImportView:
-    def __init__(self, translate_service, task_config, task_create_view):
+    def __init__(self, translate_service: TranslateService, task_create_view: AddTaskView):
         self.translate_service = translate_service
         self.add_task = task_create_view
-        self.task_config = task_config
         self.is_running = True
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
@@ -24,7 +25,7 @@ class TaskManualImportView:
     def back(self):
         self.is_running = False
 
-    def show(self, psy_test_pro, create_continuously, experiment_name):
+    def show(self, psy_test_pro, create_continuously: bool, experiment_name: str):
         screen = pygame.display.get_surface()
 
         spacing = 60
@@ -118,7 +119,7 @@ class TaskManualImportView:
             pygame.display.flip()  # Flip the display to update the screen
         self.is_running = True
 
-    def import_task(self, experiment_name, show_preview):
+    def import_task(self, experiment_name: str, show_preview: bool):
         try:
             filepath = filedialog.askopenfilename(
                 initialdir='./',

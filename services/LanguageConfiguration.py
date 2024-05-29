@@ -15,7 +15,7 @@ class LanguageConfiguration:
             print(e)
             print('not able to access ./json/settings.json!')
 
-    def update_language_config(self, new_language):
+    def update_language_config(self, new_language: str):
         try:
             with open(f'json/settings.json', 'r', encoding='utf-8') as file:
                 settings = json.load(file)

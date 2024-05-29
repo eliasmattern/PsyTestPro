@@ -4,10 +4,11 @@ from components import Button
 from services import PsyTestProConfig
 from .task_create_view import AddTaskView
 from .task_manual_import_view import TaskManualImportView
+from services import TranslateService
 
 
 class TaskConfig:
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.running = True
         self.adding = True
         self.selected_multiple = False
@@ -15,18 +16,18 @@ class TaskConfig:
         self.error = ''
         self.translate_service = translate_service
         self.add_task = AddTaskView(self.translate_service)
-        self.task_manual_import_view = TaskManualImportView(self.translate_service, self, self.add_task)
+        self.task_manual_import_view = TaskManualImportView(self.translate_service, self.add_task)
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
 
     def backToConfig(self):
         self.running = False
 
-    def split_dict(self, input_list, chunk_size):
+    def split_dict(self, input_list: list, chunk_size: int):
         for i in range(0, len(input_list), chunk_size):
             yield input_list[i:i + chunk_size]
 
-    def page_update(self, increment, splitted_experiments):
+    def page_update(self, increment: bool, splitted_experiments: list):
         if increment:
             self.page = (self.page + 1) % len(splitted_experiments)
         else:

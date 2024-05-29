@@ -16,7 +16,7 @@ import pandas as pd
 
 
 class PsyTestPro:
-    def __init__(self, id='', experiment='', time='', custom_variables={}):
+    def __init__(self, id:str='', experiment:str='', time:str='', custom_variables:dict={}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
             pygame.init()
@@ -68,7 +68,7 @@ class PsyTestPro:
         pygame.quit()
         sys.exit()
 
-    def is_valid_time_format(slef, datetime_str):
+    def is_valid_time_format(slef, datetime_str: str):
         # This pattern strictly matches DD/MM/YYYY HH:MM:SS
         pattern = r'^(?:[01]\d|2[0-3]):[0-5]\d$'
         return re.match(pattern, datetime_str) is not None
@@ -212,7 +212,7 @@ class PsyTestPro:
         self.screen.fill(self.background_color)
 
     def draw(self):
-        def validate_inputs(experiments):
+        def validate_inputs(experiments: list):
             is_id_valid = len(self.input_boxes['participantId'].text) != 0
             is_experiment_valid = self.input_boxes['experiment'].text in experiments
             is_start_time_valid = self.is_valid_time_format(self.input_boxes['startTime'].text)
@@ -303,7 +303,7 @@ class PsyTestPro:
     def custom_sort(self, item):
         return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
 
-    def start_experiment(self, start_time, participant_info, custom_variables):
+    def start_experiment(self, start_time: str, participant_info: dict, custom_variables: dict):
         global schedule
         print(self.psyTestProConfig.current_experiment)
         isHab = '_list' in self.psyTestProConfig.current_experiment
@@ -365,7 +365,7 @@ class PsyTestPro:
         self.psyTestProConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info, variables)
 
-    def save_experiment_info(self, participant_info):
+    def save_experiment_info(self, participant_info: dict):
         if not os.path.exists('./experiments'):
             os.makedirs('./experiments')
         table = {}

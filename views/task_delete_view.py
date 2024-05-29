@@ -4,10 +4,11 @@ import pygame
 
 from components import Button, QuestionDialog
 from services import PsyTestProConfig
+from services import TranslateService
 
 
 class DeleteTaskView():
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.running = True
         self.page = 0
         self.removing = True
@@ -27,11 +28,11 @@ class DeleteTaskView():
     def backToAddTask(self):
         self.removing = False
 
-    def split_dict(self, input_list, chunk_size):
+    def split_dict(self, input_list: list, chunk_size: int):
         for i in range(0, len(input_list), chunk_size):
             yield input_list[i:i + chunk_size]
 
-    def page_update(self, increment, splitted_tasks):
+    def page_update(self, increment: bool, splitted_tasks: list):
         if increment:
             self.page = (self.page + 1) % len(splitted_tasks)
         else:
@@ -39,13 +40,13 @@ class DeleteTaskView():
                 (self.page - 1) if self.page > 0 else len(splitted_tasks) - 1
             )
 
-    def delete_task_from_config(self, experiment, task):
+    def delete_task_from_config(self, experiment: str, task: str):
         self.experiment = experiment
         self.task = task
         self.delete_dialog.info = self.translate_service.get_translation('task') + ': ' + task
         self.show_delete_dialog = True
 
-    def delete_task(self, experiment_name):
+    def delete_task(self, experiment_name: str):
         self.experiment = experiment_name
         self.page = 0
         self.running = True

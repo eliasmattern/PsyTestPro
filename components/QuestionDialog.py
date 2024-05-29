@@ -1,9 +1,9 @@
 import pygame
 from components import Button
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 
 class QuestionDialog:
-    def __init__(self, width, height, window_key, title_key, desc_key, translate_service, action=None, action_key='', info=''):
+    def __init__(self, width: int, height: int, window_key: str, title_key: str, desc_key: str, translate_service: TranslateService, action=None, action_key='', info=''):
         screen_width, screen_height = pygame.display.get_surface().get_width(),pygame.display.get_surface().get_height()
         self.window_key, self.title_key, self.desc_key, self.info = window_key, title_key, desc_key, info
         self.translate_service = translate_service
@@ -51,7 +51,7 @@ class QuestionDialog:
                 if self.quit_rect and self.quit_rect.collidepoint(event.pos):
                     self.is_open = False
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         left, top = pygame.mouse.get_pos()
         if self.move:
             if -10 < top < screen.get_height() + 10 and -10 < left < screen.get_width() + 10:

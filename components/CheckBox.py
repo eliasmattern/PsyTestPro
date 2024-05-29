@@ -1,9 +1,9 @@
 import pygame
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 
 
 class CheckBox():
-    def __init__(self, label, posX, posY, active=False, translate_service=None, font_size=18, color=None) -> None:
+    def __init__(self, label: str, posX: int, posY: int, active=False, translate_service: TranslateService=None, font_size=18, color=None) -> None:
         self.text = label
         self.translate_service = translate_service
         self.font = pygame.font.Font(None, font_size)
@@ -43,14 +43,14 @@ class CheckBox():
                 self.primary_color if not self.color else self.color,
             )
 
-    def handle_event(self, event):
+    def handle_event(self, event: pygame.event):
         if self.tick_box_rect:
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.tick_box_rect.collidepoint(event.pos) or self.label_rect.collidepoint(event.pos):
                     if event.button == 1:
                         self.active = not self.active
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         screen_info = pygame.display.Info()
 
         # Store the screen width in a new variable

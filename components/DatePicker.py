@@ -1,13 +1,13 @@
 import pygame
 from components import Button
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 from datetime import date, timedelta
 import calendar
 from dateutil.relativedelta import relativedelta
 
 
 class DatePickerComponent():
-    def __init__(self, date, window_key, translate_service, action=None, action_key=''):
+    def __init__(self, date: str, window_key: str, translate_service: TranslateService, action=None, action_key=''):
         screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
         self.window_key= window_key
         self.translate_service = translate_service
@@ -44,11 +44,11 @@ class DatePickerComponent():
     def close(self):
         self.is_open = False
 
-    def set_date(self, new_date):
+    def set_date(self, new_date: str):
         self.day, self.month, self.year = new_date.split('/')
         self.create_calendar(int(self.year), int(self.month), int(self.day))
 
-    def handle_events(self, event):
+    def handle_events(self, event: pygame.event):
         self.action_button.handle_event(event)
         if self.prev_month and self.next_month:
             self.prev_month.handle_event(event)
@@ -68,7 +68,7 @@ class DatePickerComponent():
             if self.quit_rect and self.quit_rect.collidepoint(event.pos):
                 self.is_open = False
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         left, top = pygame.mouse.get_pos()
         if self.move:
             if -10 < top < screen.get_height() + 10 and -10 < left < screen.get_width() + 10:
@@ -127,7 +127,7 @@ class DatePickerComponent():
         self.action()
         self.is_open = False
 
-    def create_calendar(self, year, month, day):
+    def create_calendar(self, year: int, month: int, day: int):
         month_days = calendar.monthrange(year, month)[1]
 
         first_day = date(year, month, 1)
@@ -157,7 +157,7 @@ class DatePickerComponent():
                                '/'.join([str(d), str(m), str(y)])), border_radius=0,
                            color=color))
 
-    def switch_month(self, next):
+    def switch_month(self, next: bool):
         new_date = date(int(self.year), int(self.month), 1) + relativedelta(months=1) if next \
             else date(int(self.year), int(self.month), 1) + relativedelta(months=-1)
         self.day, self.month, self.year = str(new_date.day), str(new_date.month), str(new_date.year)

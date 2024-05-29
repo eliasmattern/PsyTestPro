@@ -5,10 +5,11 @@ import pygame
 
 from components import Button, QuestionDialog
 from services import PsyTestProConfig
+from services import TranslateService
 
 
 class DeleteExperimentView:
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.translate_service = translate_service
         self.page = 0
         self.running = True
@@ -23,12 +24,12 @@ class DeleteExperimentView:
     def back(self):
         self.running = False
 
-    def delete_experiment(self, experiment_name):
+    def delete_experiment(self, experiment_name: str):
         self.experiment_name = experiment_name
         self.delete_dialog.info = self.translate_service.get_translation('experiment') + ' ' + experiment_name
         self.show_delete_dialog = True
 
-    def delete_action(self, experiment_name):
+    def delete_action(self, experiment_name: str):
         if experiment_name:
             # Load the original JSON from the file
             with open('json/taskConfig.json', 'r') as file:
@@ -56,7 +57,7 @@ class DeleteExperimentView:
             self.experiment_name = None
         return
 
-    def page_update(self, increment, splitted_experiments):
+    def page_update(self, increment: bool, splitted_experiments: list):
         if increment:
             self.page = (self.page + 1) % len(splitted_experiments)
         else:

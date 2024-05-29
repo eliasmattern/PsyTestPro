@@ -7,7 +7,7 @@ from pandas.io import clipboard
 
 
 class InputBox:
-    def __init__(self, x, y, width, height, translation_key, translate_service=None, info='', initial_text='', desc='',
+    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, translate_service=None, info='', initial_text='', desc='',
                  allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None,
                  text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False, icon=True):
         self.translate_service = translate_service
@@ -75,16 +75,16 @@ class InputBox:
         self.is_touched = False
         self.icon = icon
 
-    def set_active(self, active):
+    def set_active(self, active: bool):
         self.is_active = active
 
-    def set_hidden(self, hidden):
+    def set_hidden(self, hidden: bool):
         self.is_hidden = hidden
 
-    def set_text(self, text):
+    def set_text(self, text: str):
         self.text = text
 
-    def handle_event(self, event):
+    def handle_event(self, event: pygame.event):
         if self.is_active and not self.is_hidden:
             if event.type == MOUSEBUTTONDOWN:
                 if self.rect.collidepoint(event.pos) and event.button == 1:
@@ -274,7 +274,7 @@ class InputBox:
             else:
                 self.label = self.font.render(self.translation_key + ' ' + self.info, True, self.label_color)
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         if not self.is_hidden:
             if not self.is_selected:
                 self.started_del = False

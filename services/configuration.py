@@ -17,7 +17,7 @@ class PsyTestProConfig:
         except FileNotFoundError:
             raise Exception(f'File Error: ./json/experimentConfig.json not found ')
 
-    def load_experiment_tasks(self, experiment):
+    def load_experiment_tasks(self, experiment: str):
         self.error_msg = ''
         try:
             with open(f'json/taskConfig.json', 'r', encoding='utf-8') as file:
@@ -33,7 +33,7 @@ class PsyTestProConfig:
         except FileNotFoundError:
             raise Exception(f'File Error: ./json/taskConfig.json not found')
 
-    def save_experiment(self, experiment_name, schedule):
+    def save_experiment(self, experiment_name: str, schedule: bool):
         with open('json/experimentConfig.json', 'r') as file:
             original_experiments = json.load(file)
 
@@ -71,7 +71,7 @@ class PsyTestProConfig:
 
         return result
 
-    def load_tasks_of_experiment(self, experiment):
+    def load_tasks_of_experiment(self, experiment: str):
 
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
@@ -79,7 +79,7 @@ class PsyTestProConfig:
 
         return tasks
 
-    def delete_task(self, experiment, task):
+    def delete_task(self, experiment: str, task: str):
         if experiment == 'hab_variable_variable':
             experiment = 'hab_variable'
 
@@ -90,14 +90,14 @@ class PsyTestProConfig:
         with open('json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
 
-    def save_task(self, variable, name: str, time, type, value):
+    def save_task(self, variable, name: str, time: str, type: str, value: str):
 
         # Load the JSON data from a file
         with open('json/taskConfig.json', 'r') as file:
             json_data = json.load(file)
 
         # Function to add a new task to a specific object
-        def add_task_to_object(json_data, object_name, task_name, time, type, value):
+        def add_task_to_object(json_data: dict, object_name: str, task_name: str , time: str, type: str, value: str):
             new_task = {
                 'time': time,
                 'state': 'todo',
@@ -117,7 +117,7 @@ class PsyTestProConfig:
         with open('json/customVariables.json', 'r') as file:
             return json.load(file)
 
-    def save_var(self, name):
+    def save_var(self, name: str):
         with open('json/customVariables.json', 'r') as file:
             data = json.load(file)
         if len(data) >= 3:
@@ -128,7 +128,7 @@ class PsyTestProConfig:
                 json.dump(data, file)
             return True
 
-    def delete_var(self, name):
+    def delete_var(self, name: str):
         with open('json/customVariables.json', 'r') as file:
             data = json.load(file)
         data.remove(name)
@@ -141,18 +141,18 @@ class PsyTestProConfig:
 
         return settings
 
-    def save_colors(self, background_color,
-                    primary_color,
-                    button_color,
-                    button_text_color,
-                    active_button_color,
-                    inactive_button_color,
-                    success_color,
-                    danger_color,
-                    warning_color,
-                    grid_color,
-                    show_next_task_and_time, 
-                    show_play_task):
+    def save_colors(self, background_color: str,
+                    primary_color: str,
+                    button_color: str,
+                    button_text_color: str,
+                    active_button_color: str,
+                    inactive_button_color: str,
+                    success_color: str,
+                    danger_color: str,
+                    warning_color: str,
+                    grid_color: str,
+                    show_next_task_and_time: bool, 
+                    show_play_task: bool):
         with open(f'json/settings.json', 'r', encoding='utf-8') as file:
             settings = json.load(file)
 

@@ -12,10 +12,11 @@ from .task_delete_view import DeleteTaskView
 from .variable_delete_view import DeleteVariableView
 from .task_config_view import TaskConfig
 from services import PsyTestProConfig
+from services import TranslateService
 
 
 class ExperimentConfig():
-    def __init__(self, translate_service):
+    def __init__(self, translate_service: TranslateService):
         self.info_text = ''
         self.translate_service = translate_service
         self.psy_test_pro_config = PsyTestProConfig()
@@ -304,7 +305,7 @@ class ExperimentConfig():
 
             pygame.display.flip()  # Flip the display to update the screen
 
-    def show_setting_buttons(self, screen, buttons, label):
+    def show_setting_buttons(self, screen: pygame.Surface, buttons: list[Button], label: str):
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
 

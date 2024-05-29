@@ -3,8 +3,10 @@ from datetime import datetime
 from lib import text_screen
 import pandas as pd
 import shlex
+from services import TranslateService
 
-def save_task_info(filename, task_name, task_start_time, task_end_time, state):
+
+def save_task_info(filename: str, task_name: str, task_start_time: str, task_end_time: str, state: str):
         df = pd.read_excel('./experiments/' + filename)
         new_df = {}
 
@@ -31,7 +33,7 @@ def save_task_info(filename, task_name, task_start_time, task_end_time, state):
         final_df.to_excel('./experiments/' + filename, index=False)
 
 
-def play_tasks(filename, participant_info, upcoming_event, schedule, translate_service, custom_variables):
+def play_tasks(filename: str, participant_info: dict, upcoming_event: str, schedule: dict, translate_service: TranslateService, custom_variables: dict):
     task_start_time = str(datetime.now())
     if not custom_variables:
         custom_variables = {}

@@ -13,7 +13,7 @@ from services import PsyTestProConfig
 
 
 class CreateScheduleDisplay:
-    def __init__(self, schedule, participant_info, psy_test_pro, custom_variables, isHab=False, file_name=''):
+    def __init__(self, schedule: dict, participant_info: dict, psy_test_pro, custom_variables: dict, isHab: bool=False, file_name: str=''):
         self.schedule = schedule
         self.participant_info = participant_info
         self.psy_test_pro = psy_test_pro
@@ -207,7 +207,7 @@ class CreateScheduleDisplay:
 
             pygame.display.flip()  # Flip the display to update the screen
 
-    def text_objects(self, text, font):
+    def text_objects(self, text: str, font: pygame.font.Font):
         text_surface = font.render(text, True, self.button_text_color)
         return text_surface, text_surface.get_rect()
 
@@ -398,7 +398,7 @@ class CreateScheduleDisplay:
 
         pygame.quit()
 
-    def is_valid_datetime_format(self, datetime_str):
+    def is_valid_datetime_format(self, datetime_str: str):
         # This pattern strictly matches DD/MM/YYYY HH:MM:SS
         pattern = r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$'
         return re.match(pattern, datetime_str) is not None
@@ -412,7 +412,7 @@ class CreateScheduleDisplay:
         self.psy_test_pro(self.participant_info['participant_id'], self.participant_info['experiment'], formattedTime,
                           self.custom_variables)
 
-    def change_language(self, translateService, language_config, lang):
+    def change_language(self, translateService: TranslateService, language_config: LanguageConfiguration, lang: str):
         translateService.set_language(lang)
         language_config.update_language_config(lang)
         if not self.isHab:
@@ -440,7 +440,7 @@ class CreateScheduleDisplay:
     def help_action(self):
         webbrowser.open('https://github.com/eliasmattern/PsyTestPro')
 
-    def split_dict(self, input_dict, chunk_size):
+    def split_dict(self, input_dict: dict, chunk_size: int):
         dict_list = [{}]
         current_dict = 0
 
@@ -452,7 +452,7 @@ class CreateScheduleDisplay:
 
         return dict_list
 
-    def page_update(self, schedule, increment, data):
+    def page_update(self, schedule: dict, increment: bool, data: list):
         self.save_data(data)
         self.todo_input_values = {}
         self.newdate_input_values = {}
@@ -463,25 +463,25 @@ class CreateScheduleDisplay:
         else:
             self.schedule_page = (self.schedule_page - 1) if self.schedule_page > 0 else len(schedule) - 1
 
-    def open_date_picker(self, date):
+    def open_date_picker(self, date: str):
         self.show_date_picker = True
         self.date_picker.day, self.date_picker.month, self.date_picker.year = date.split('/')
         self.date_picker.create_calendar(int(self.date_picker.year), int(self.date_picker.month),
                                          int(self.date_picker.day))
 
-    def open_timepicker(self, time):
+    def open_timepicker(self, time: str):
         self.show_time_picker = True
         self.timepicker.set_time(time)
 
 
-    def switch_state(self, state):
+    def switch_state(self, state: dict):
         state_iterator = {'todo': {'value': 'skip', 'color': self.warning, 'key': 'skip'},
                           'skip': {'value': 'done', 'color': self.success, 'key': 'done'},
                           'done': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
                           'error': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'}}
         return state_iterator[state['value']]
 
-    def save_data(self, data):
+    def save_data(self, data: list):
         for task in data:
             if not self.isHab:
                 self.schedule[task[0].replace(' ', '_')]['datetime'] = task[1] + ' ' + task[2]

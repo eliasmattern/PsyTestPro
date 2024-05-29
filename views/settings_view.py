@@ -4,6 +4,7 @@ import pygame
 import math
 from components import InputBox, Button, CheckBox
 from services import PsyTestProConfig
+from services import TranslateService, LanguageConfiguration
 
 
 class SettingsView:
@@ -19,7 +20,7 @@ class SettingsView:
         self.translate_service = None
         self.saved_msg = []
 
-    def check_contrast(self, input_boxes):
+    def check_contrast(self, input_boxes: list):
         MINIMUN_CONTRAST = 60
         has_contrast = True
         background_color_group = {
@@ -64,7 +65,7 @@ class SettingsView:
 
         return has_contrast
 
-    def save_colors(self, input_boxes, show_next_task_and_time, show_play_task):
+    def save_colors(self, input_boxes: dict[str, InputBox], show_next_task_and_time: bool, show_play_task: bool):
         self.saved_msg = []
         has_contrast = self.check_contrast(input_boxes)
         if has_contrast:
@@ -87,7 +88,7 @@ class SettingsView:
         self.running = False
         self.refresh = True
 
-    def change_language(self, lang, translate_service, language_config):
+    def change_language(self, lang: str, translate_service: TranslateService, language_config: LanguageConfiguration):
         translate_service.set_language(lang)
         language_config.update_language_config(lang)
         self.refresh_view()
@@ -95,7 +96,7 @@ class SettingsView:
     def back_to_psy_test_pro(self, psy_test_pro):
         psy_test_pro()
 
-    def change_theme(self, theme, input_boxes):
+    def change_theme(self, theme: str, input_boxes: dict[str, InputBox]):
         if theme == 'darkMode':
             input_boxes['backgroundColor'].text = '#000000'
             input_boxes['primaryColor'].text = '#C0C0C0'
@@ -122,7 +123,8 @@ class SettingsView:
             box.is_touched = True
 
 
-    def create_input_boxes(self, psy_test_pro, translate_service, language_config, initial_texts, show_next_task_initial_value, show_play_taks_initial_value):
+    def create_input_boxes(self, psy_test_pro, translate_service: TranslateService, language_config: LanguageConfiguration, 
+                           initial_texts: list, show_next_task_initial_value: bool, show_play_taks_initial_value: bool):
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
@@ -199,11 +201,11 @@ class SettingsView:
         buttons['save'] = save_button
         return input_boxes, buttons, task_and_time_check_box, play_task_check_box
 
-    def is_hex_color_code(self, code):
+    def is_hex_color_code(self, code: str):
         hex_color_pattern = re.compile(r'^#([A-Fa-f0-9]{6})$')
         return bool(hex_color_pattern.match(code))
 
-    def validate_inputs(self, input_boxes, translate_service):
+    def validate_inputs(self, input_boxes: dict[str, InputBox], translate_service: TranslateService):
         is_valid = True
         self.errors.clear()
         for key, box in input_boxes.items():
@@ -216,7 +218,7 @@ class SettingsView:
             self.errors.clear()
         return is_valid
 
-    def split_dict(self, input_dict, chunk_size):
+    def split_dict(self, input_dict: dict, chunk_size: int):
         dict_list = [{}]
         current_dict = 0
 
@@ -229,7 +231,7 @@ class SettingsView:
 
         return filtered_dict
 
-    def page_update(self, splitted_experiments, increment):
+    def page_update(self, splitted_experiments: list, increment: bool):
         if increment:
             self.input_page = (self.input_page + 1) % len(splitted_experiments)
         else:
@@ -237,7 +239,7 @@ class SettingsView:
                 (self.input_page - 1) if self.input_page > 0 else len(splitted_experiments) - 1
             )
 
-    def display(self, psy_test_pro, translate_service, language_config):
+    def display(self, psy_test_pro, translate_service: TranslateService, language_config: LanguageConfiguration):
         self.translate_service = translate_service
         # Define colors
         black = (0, 0, 0)

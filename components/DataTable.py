@@ -7,7 +7,7 @@ from services import PsyTestProConfig
 
 class DataTable:
 
-    def __init__(self, columns, max_rows, start_pos, data=None, max_cell_width=None, actions=[], max_height=None,
+    def __init__(self, columns: int, max_rows: int, start_pos: tuple[int, int], data=None, max_cell_width=None, actions=[], max_height=None,
                  translate_service=None):
         self.split_data = None
         self.buttons = None
@@ -37,7 +37,7 @@ class DataTable:
         if len(self.data) > 0:
             self.table_width, self.table_height, self.row_width, self.row_height, self.header_heigth = self.get_table_proportions()
 
-    def set_action_data(self, data):
+    def set_action_data(self, data: dict):
         self.data[self.action_data["info"][0]][self.action_data["info"][1]] = data
 
     def get_table_proportions(self):
@@ -94,7 +94,7 @@ class DataTable:
             table_height = self.max_height
         return table_width, table_height, row_width, row_height, header_height
 
-    def get_fromatted_text(self, text, max_width, font):
+    def get_fromatted_text(self, text: str, max_width: int, font: pygame.font.Font):
         texts = []
         index = 0
         while font.size(text)[0] > max_width - self.margin_left:
@@ -108,7 +108,7 @@ class DataTable:
                 break
         return '\\n'.join(map(str, [*texts, text]))
 
-    def get_split_data(self, row_height, max_row_height, header_height=None):
+    def get_split_data(self, row_height: int, max_row_height: int, header_height=None):
         if not header_height is None:
             self.header_heigth = header_height
 
@@ -155,7 +155,7 @@ class DataTable:
             self.entries_per_page.append(len(page))
         self.split_data = trimmed_data
 
-    def create_page_button(self, data):
+    def create_page_button(self, data: list):
         buttons = {}
         left_button = Button(
             self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 37.5) - 20,
@@ -175,14 +175,14 @@ class DataTable:
         buttons['right_button'] = right_button
         return buttons
 
-    def page_update(self, increment, data):
+    def page_update(self, increment: bool, data: list):
         self.event_areas = {}
         if increment:
             self.page = (self.page + 1) % len(data)
         else:
             self.page = (self.page - 1) if self.page > 0 else len(data) - 1
 
-    def get_row_height(self, row, row_width=None):
+    def get_row_height(self, row: list, row_width=None):
         if row_width:
             self.row_width = row_width
         row_height = self.row_height
@@ -226,13 +226,13 @@ class DataTable:
                 row_height = row_height + (text_height - 1) * self.font.get_height()
         return row_height
 
-    def get_max_row_height(self, row_width):
+    def get_max_row_height(self, row_width: int):
         max_height = 0
         for row in self.data:
             max_height += self.get_row_height(row, row_width)
         return max_height
 
-    def handle_events(self, event):
+    def handle_events(self, event: pygame.event):
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 for key, value in self.event_areas.items():
@@ -254,7 +254,7 @@ class DataTable:
             for button in self.buttons.values():
                 button.handle_event(event)
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         if len(self.data) > 0:
             # Render headers
             for index, header in enumerate(self.columns):
