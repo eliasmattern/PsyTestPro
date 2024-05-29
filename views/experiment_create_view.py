@@ -37,7 +37,7 @@ class CreateExperimentView:
         else:
             self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, psy_test_pro_config: PsyTestProConfig, selected_multiple):
+    def create_input_boxes(self, psy_test_pro_config: PsyTestProConfig) -> tuple[list[InputBox], list[Button], CheckBox]:
         input_boxes = []
         buttons = []
         labels = ['experimentName']
@@ -113,7 +113,7 @@ class CreateExperimentView:
         # Setting the window caption
         pygame.display.set_caption('Create Experiment')
 
-        input_boxes, buttons, option_check_box = self.create_input_boxes(psy_test_pro_config, self.selected_multiple)
+        input_boxes, buttons, option_check_box = self.create_input_boxes(psy_test_pro_config)
         self.create_multiple_check_box.active = create_continously
 
         def get_input_index():

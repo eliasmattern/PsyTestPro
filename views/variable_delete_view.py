@@ -48,10 +48,6 @@ class DeleteVariableView:
         original_width = 1280
         original_height = 800
 
-        # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
-        width_scale_factor = screen_width / original_width
-        height_scale_factor = screen_height / original_height
-
         # Creating a fullscreen display surface
         screen = pygame.display.get_surface()
 
@@ -61,7 +57,7 @@ class DeleteVariableView:
         while self.running:
             screen.fill(black)
 
-            buttons = []
+            buttons: list[Button] = []
 
             spacing = 0
             width, height = (

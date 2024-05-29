@@ -124,7 +124,7 @@ class SettingsView:
 
 
     def create_input_boxes(self, psy_test_pro, translate_service: TranslateService, language_config: LanguageConfiguration, 
-                           initial_texts: list, show_next_task_initial_value: bool, show_play_taks_initial_value: bool):
+                           initial_texts: list, show_next_task_initial_value: bool, show_play_taks_initial_value: bool) -> tuple[dict[str, InputBox], dict[str, Button], CheckBox, CheckBox]:
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
@@ -251,14 +251,6 @@ class SettingsView:
         screen_width = screen_info.current_w
         # Store the screen height in a new variable
         screen_height = screen_info.current_h
-
-        # Store the original screen dimensions used to design this program
-        original_width = 1280
-        original_height = 800
-
-        # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
-        width_scale_factor = screen_width / original_width
-        height_scale_factor = screen_height / original_height
 
         # Creating a fullscreen display surface
         screen = pygame.display.get_surface()

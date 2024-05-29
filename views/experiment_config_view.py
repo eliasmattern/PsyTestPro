@@ -81,11 +81,9 @@ class ExperimentConfig():
 
         # Store the original screen dimensions used to design this program
         original_width = 1280
-        original_height = 800
 
         # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
         width_scale_factor = screen_width / original_width
-        height_scale_factor = screen_height / original_height
 
         # Creating a fullscreen display surface
         screen = pygame.display.get_surface()
@@ -100,7 +98,7 @@ class ExperimentConfig():
         create_variables_config = CreateVariablesView(self.translate_service)
         delete_variables_config = DeleteVariableView(self.translate_service)
 
-        buttons = []
+        buttons: list[Button] = []
         experiment_buttons = []
         task_buttons = []
         import_export_buttons = []
@@ -318,11 +316,10 @@ class ExperimentConfig():
 
         # Store the original screen dimensions used to design this program
         original_width = 1280
-        original_height = 800
 
         # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
         width_scale_factor = screen_width / original_width
-        height_scale_factor = screen_height / original_height
+
         width, height = pygame.display.get_surface().get_rect().size
 
         x = width // 2

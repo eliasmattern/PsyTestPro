@@ -39,7 +39,7 @@ class CreateVariablesView:
         else:
             self.back_to_psy_test_pro(psy_test_pro)
 
-    def create_input_boxes(self, psy_test_pro):
+    def create_input_boxes(self, psy_test_pro) -> tuple[list[InputBox], list[Button]]:
         input_boxes = []
         buttons = []
         labels = ['varName']
@@ -68,7 +68,7 @@ class CreateVariablesView:
         buttons.append(submit_button)
         return input_boxes, buttons
 
-    def validate_inputs(self, input_boxes):
+    def validate_inputs(self, input_boxes: list[InputBox]):
         is_valid = False
 
         if (

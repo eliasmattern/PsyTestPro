@@ -127,7 +127,7 @@ class ImportTasksService:
     def save_tasks(self, df, experiment_name, show_preview):
         error = ''
         if show_preview:
-            for index, row in df.iterrows():
+            for _, row in df.iterrows():
                 if not isinstance(row['command'], float):
                     result = self.preview_task(command=row['command'])
                     if not result:
@@ -144,7 +144,7 @@ class ImportTasksService:
             data = json.load(file)
         if experiment_name in data.keys():
             last_minute = None
-            for index, row in df.iterrows():
+            for _, row in df.iterrows():
                 task_name = str(row["task_name"]).replace(' ', '_')
                 minutes = row['minutes'] + last_minute if last_minute is not None else row['minutes']
                 last_minute = last_minute + row['minutes'] if last_minute is not None else minutes

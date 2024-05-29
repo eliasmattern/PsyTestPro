@@ -55,10 +55,6 @@ class TaskConfig:
         original_width = 1280
         original_height = 800
 
-        # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
-        width_scale_factor = screen_width / original_width
-        height_scale_factor = screen_height / original_height
-
         # Creating a fullscreen display surface
         screen = pygame.display.get_surface()
 
@@ -73,7 +69,7 @@ class TaskConfig:
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
 
-            buttons = []
+            buttons: list[Button] = []
 
             spacing = 0
             width, height = (

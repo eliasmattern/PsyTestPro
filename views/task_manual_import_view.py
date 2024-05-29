@@ -41,7 +41,7 @@ class TaskManualImportView:
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
-        buttons = []
+        buttons: list[Button] = []
 
         create_task_button = Button(
             x,

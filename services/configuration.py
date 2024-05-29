@@ -5,7 +5,7 @@ class PsyTestProConfig:
     def __init__(self):
         self.experiments = None
         self.current_experiment = None
-        self.current_tasks = None
+        self.current_tasks: dict = None
         self.error_msg = ''
 
     def load_experiments(self):

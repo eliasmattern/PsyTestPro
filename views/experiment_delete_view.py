@@ -106,7 +106,7 @@ class DeleteExperimentView:
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
 
-            buttons = []
+            buttons: list[Button] = []
 
             spacing = 0
             width, height = (

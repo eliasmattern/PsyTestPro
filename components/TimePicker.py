@@ -4,10 +4,11 @@ from pygame.locals import *
 from components import Button, InputBox
 from services import PsyTestProConfig, TranslateService
 import re
+from typing import Callable
 
 
 class TimePicker:
-    def __init__(self, width: int, height: int, window_key: str, translate_service: TranslateService, time=None, action=None, action_key=''):
+    def __init__(self, width: int, height: int, window_key: str, translate_service: TranslateService, time: str=None, action: Callable=None, action_key: str=''):
         screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
         self.time = time
         if time is not None:
@@ -111,7 +112,7 @@ class TimePicker:
             self.second_input.is_selected = True
             self.second_input.is_highlighted = True
 
-    def handle_events(self, event: pygame.event):
+    def handle_events(self, event):
         self.action_button.handle_event(event)
         self.close_button.handle_event(event)
         self.hour_input.handle_event(event)

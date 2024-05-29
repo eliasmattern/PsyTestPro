@@ -21,7 +21,7 @@ class AddTaskView():
         self.timepicker = TimePicker(300, 200, 'timeForTask', self.translate_service, action_key='save')
         self.show_time_picker = False
 
-    def validate_task_inputs(self, input_boxes: list, time_input: str, command_inputs: list, text_screen_inputs: list, is_command: bool):
+    def validate_task_inputs(self, input_boxes: list[InputBox], time_input: str, command_inputs: list[InputBox], text_screen_inputs: list[InputBox], is_command: bool):
         is_valid = False
 
         if input_boxes[0].text and time_input:
@@ -33,7 +33,7 @@ class AddTaskView():
     def open_time_picker(self):
         self.show_time_picker = True
 
-    def preview(self, command: bool, command_inputs: list, text_screen_inputs: list):
+    def preview(self, command: bool, command_inputs: list[InputBox], text_screen_inputs: list[InputBox]):
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
@@ -88,9 +88,9 @@ class AddTaskView():
             variable: str,
             name: str,
             time: str,
-            input_boxes: list,
-            command_inputs: list,
-            text_screen_inputs: list,
+            input_boxes: list[InputBox],
+            command_inputs: list[InputBox],
+            text_screen_inputs: list[InputBox],
             command=None,
             title=None,
             description=None,
@@ -160,8 +160,8 @@ class AddTaskView():
 
         input_boxes: list[InputBox] = []
         buttons: list[Button] = []
-        text_screen_inputs = []
-        command_inputs = []
+        text_screen_inputs: list[InputBox] = []
+        command_inputs: list[InputBox] = []
         command_labels = ['command']
         text_labels = ['title', 'description']
         spacing = 60

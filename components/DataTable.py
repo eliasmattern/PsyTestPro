@@ -2,13 +2,13 @@ import pygame.font
 import math
 
 from components import Button
-from services import PsyTestProConfig
+from services import PsyTestProConfig, TranslateService
 
 
 class DataTable:
 
-    def __init__(self, columns: int, max_rows: int, start_pos: tuple[int, int], data=None, max_cell_width=None, actions=[], max_height=None,
-                 translate_service=None):
+    def __init__(self, columns: int, max_rows: int, start_pos: tuple[int, int], data: list[list]=None, max_cell_width: int=None, actions: list=[], max_height: int=None,
+                 translate_service: TranslateService=None):
         self.split_data = None
         self.buttons = None
         if data is None:

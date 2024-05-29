@@ -32,8 +32,8 @@ class PsyTestPro:
         self.lang = 'en'
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont('Arial', 24)
-        self.input_boxes = {}
-        self.buttons = []
+        self.input_boxes: dict[str, InputBox] = {}
+        self.buttons: list[Button] = []
         self.errors = []
         self.language_config = LanguageConfiguration()
         self.translateService = TranslateService(self.language_config)
@@ -128,7 +128,7 @@ class PsyTestPro:
             self.translateService.set_language(language)
             self.lang = language
 
-    def change_language(self, lang):
+    def change_language(self, lang: str):
         self.errors.clear()
         self.translateService.set_language(lang)
         self.language_config.update_language_config(lang)
@@ -315,7 +315,7 @@ class PsyTestPro:
         tasks = []
         types = {}
         values = {}
-        times = []
+        times: list[str] = []
         states = {}
 
         for task, details in current_tasks.items():
@@ -365,7 +365,7 @@ class PsyTestPro:
         self.psyTestProConfig.load_experiment_tasks(experiment)
         self.start_experiment(start_time, participant_info, variables)
 
-    def save_experiment_info(self, participant_info: dict):
+    def save_experiment_info(self, participant_info: dict[str, str]):
         if not os.path.exists('./experiments'):
             os.makedirs('./experiments')
         table = {}

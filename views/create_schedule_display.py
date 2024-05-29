@@ -108,7 +108,7 @@ class CreateScheduleDisplay:
                                     translate_service=self.translate_service,
                                     max_height=self.screen_height // 100 * 80)
 
-        buttons = []
+        buttons: list[Button] = []
 
         # Create buttons
         run_button = Button(150 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor,
