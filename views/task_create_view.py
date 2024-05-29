@@ -53,7 +53,7 @@ class AddTaskView():
                                                         startTime=participant_info['start_time'],
                                                         timestamp=participant_info['timestamp'],
                                                         **variables)
-                process = subprocess.Popen(shlex.split(command))
+                process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
                 output, error = process.communicate()
                 return_code = process.wait()
                 self.error = ''

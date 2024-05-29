@@ -75,7 +75,7 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
                                      startTime=participant_info['start_time'],
                                      timestamp=formatted_timestamp,
                                      **custom_variables)
-            process = subprocess.Popen(shlex.split(command))
+            process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
             output, error = process.communicate()
             return_code = process.wait()
 

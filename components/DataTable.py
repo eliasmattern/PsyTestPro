@@ -1,5 +1,5 @@
-import pygame.font
 import math
+import pygame.font
 
 from components import Button
 from services import PsyTestProConfig, TranslateService
@@ -7,8 +7,10 @@ from services import PsyTestProConfig, TranslateService
 
 class DataTable:
 
-    def __init__(self, columns: int, max_rows: int, start_pos: tuple[int, int], data: list[list]=None, max_cell_width: int=None, actions: list=[], max_height: int=None,
-                 translate_service: TranslateService=None):
+    def __init__(self, columns: int, max_rows: int, start_pos: tuple[int, int], data: list[list]=None, max_cell_width: int=None, 
+                 actions: list=None, max_height: int=None, translate_service: TranslateService=None):
+        if actions is None:
+            actions = []
         self.split_data = None
         self.buttons = None
         if data is None:
@@ -232,7 +234,7 @@ class DataTable:
             max_height += self.get_row_height(row, row_width)
         return max_height
 
-    def handle_events(self, event: pygame.event):
+    def handle_events(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 for key, value in self.event_areas.items():
@@ -388,5 +390,4 @@ class DataTable:
             else:
                 error_msg = "No Data"
             error_surface = self.font.render(error_msg, True, self.primary_color)
-            error_rect = error_surface.get_rect()
             screen.blit(error_surface, (self.pos_x, self.pos_y))

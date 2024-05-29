@@ -1,5 +1,6 @@
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time as pythonTime
@@ -391,7 +392,7 @@ class CreateScheduleDisplay:
                                                      experiment=self.participant_info['experiment'],
                                                      startTime=self.participant_info['start_time'],
                                                      timestamp=formatted_timestamp)
-                            process = subprocess.Popen(command)
+                            process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
                             process.communicate()
                             self.schedule[task[0]]['state'] = 'done'
                 sorted_schedule = []
