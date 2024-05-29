@@ -1,9 +1,9 @@
 import pygame
 from services import PsyTestProConfig, TranslateService
-
+from typing import Callable
 
 class Button:
-    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, action: function, translate_service: TranslateService=None, color=None,
+    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, action: Callable, translate_service: TranslateService=None, color=None,
                  text_color=None, active_button_color=None, border_radius=8, hidden=False, align='center', font_size=24):
         self.pos_x = x
         self.pos_y = y
