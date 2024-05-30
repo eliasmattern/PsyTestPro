@@ -1,11 +1,15 @@
+import sys
+
 import pygame
-from tkinter import filedialog
+import tkinter as tk
+import tkinter.filedialog
 
 from components import Button, CheckBox
 from services import PsyTestProConfig, ImportTasksService
 import webbrowser
 from services import TranslateService
 from .task_create_view import AddTaskView
+
 
 class TaskManualImportView:
     def __init__(self, translate_service: TranslateService, task_create_view: AddTaskView):
@@ -19,8 +23,6 @@ class TaskManualImportView:
         self.successMsg = None
         self.errorMsg = None
         self.font = pygame.font.Font(None, 18)
-
-
 
     def back(self):
         self.is_running = False
@@ -121,11 +123,15 @@ class TaskManualImportView:
 
     def import_task(self, experiment_name: str, show_preview: bool):
         try:
-            filepath = filedialog.askopenfilename(
-                initialdir='./',
-                title=self.translate_service.get_translation('selectFile'),
-                filetypes=(('Excel files', '*.xlsx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
-            )
+            if sys.platform == "darwin":
+                filepath = tk.filedialog.askopenfilename(initialdir='./',
+                                                         title=self.translate_service.get_translation('selectFile'))
+            else:
+                filepath = tk.filedialog.askopenfilename(
+                    initialdir='./',
+                    title=self.translate_service.get_translation('selectFile'),
+                    filetypes=(('Excel files', '*.xlsx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
+                )
             if filepath:
                 import_tasks_service = ImportTasksService(self.translate_service)
                 result = import_tasks_service.import_tasks(experiment_name, filepath, show_preview)

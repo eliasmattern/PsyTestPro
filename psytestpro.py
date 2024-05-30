@@ -1,9 +1,10 @@
-# Add buttons to the left side of the screen
 import os.path
 import webbrowser
+import tkinter as tk
 
-# Script updated to add input entry to relevant columns
-
+# mac os can't initialise Tk after the imports of the components / views.  starts tk before pygame is initialised
+tk_root = tk.Tk()
+tk_root.withdraw()
 import pygame
 import sys
 from pygame.locals import *
@@ -16,7 +17,7 @@ import pandas as pd
 
 
 class PsyTestPro:
-    def __init__(self, id:str='', experiment:str='', time:str='', custom_variables:dict={}):
+    def __init__(self, id: str = '', experiment: str = '', time: str = '', custom_variables: dict = {}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
             pygame.init()
@@ -388,5 +389,6 @@ class PsyTestPro:
         df = pd.DataFrame(data=table)
         df.to_excel('./experiments/' + filename, index=False)
         return filename
+
 
 PsyTestPro()

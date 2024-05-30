@@ -32,11 +32,15 @@ class ExperimentConfig():
 
     def import_config(self):
         try:
-            filepath = filedialog.askopenfilename(
-                initialdir='./',  # The initial directory (you can change this)
-                title=self.translate_service.get_translation('selectFile'),
-                filetypes=(('Excel files', '*.xlsx'), ('All files', '*.*'))  # Add more file types if needed
-            )
+            if sys.platform == "darwin":
+                filepath = filedialog.askopenfilename(initialdir='./',
+                                                      title=self.translate_service.get_translation('selectFile'))
+            else:
+                filepath = filedialog.askopenfilename(
+                    initialdir='./',  # The initial directory (you can change this)
+                    title=self.translate_service.get_translation('selectFile'),
+                    filetypes=(('Excel files', '*.xlsx'), ('All files', '*.*'))  # Add more file types if needed
+                )
             if filepath:
                 converter = CSVToJSONConverter(filepath)
                 converter.convert_to_json()
