@@ -170,6 +170,7 @@ have the value you provide when you start an experiment
 | {experiment} | Experiment Name                                 |
 | {startTime}  | Time when the experiment started                |
 | {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss |
+| {scriptCount}| A counter that increments with each execution of the command within a task (used conly for commands) |
 
 > NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at
 this moment.

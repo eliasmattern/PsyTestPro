@@ -39,7 +39,8 @@ class AddTaskView():
             'participant_id': 'VARIABLE_ID',
             'experiment': 'VARIABLE_EXPERMENT',
             'start_time': 'VARIABLE_STARTTIME',
-            'timestamp': 'VARIABLE_TIMESTAMP'
+            'timestamp': 'VARIABLE_TIMESTAMP',
+            'script_count': 0
         }
 
         variables = {}
@@ -52,6 +53,7 @@ class AddTaskView():
                                                         experiment=participant_info['experiment'],
                                                         startTime=participant_info['start_time'],
                                                         timestamp=participant_info['timestamp'],
+                                                        scriptCount=str(participant_info['script_count']),
                                                         **variables)
                 process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
                 output, error = process.communicate()
@@ -68,12 +70,14 @@ class AddTaskView():
                                                           experiment=participant_info['experiment'],
                                                           startTime=participant_info['start_time'],
                                                           timestamp=participant_info['timestamp'],
+                                                          scriptCount='',
                                                           **variables)
 
                 description = text_screen_inputs[1].text.format(id=participant_info['participant_id'],
                                                                 experiment=participant_info['experiment'],
                                                                 startTime=participant_info['start_time'],
                                                                 timestamp=participant_info['timestamp'],
+                                                                scriptCount='',
                                                                 **variables)
 
                 text_screen(title, description, self.translate_service.get_translation('escToReturn'))

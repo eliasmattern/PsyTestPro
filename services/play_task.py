@@ -48,12 +48,14 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
                                  experiment=participant_info['experiment'],
                                  startTime=participant_info['start_time'],
                                  timestamp=formatted_timestamp,
+                                 scriptCount='',
                                  **custom_variables)
 
             description = description.format(id=participant_info['participant_id'],
                                              experiment=participant_info['experiment'],
                                              startTime=participant_info['start_time'],
                                              timestamp=formatted_timestamp,
+                                             scriptCount='',
                                              **custom_variables)
             text_screen(title, description, translate_service.get_translation('escToReturn'))
             task_end_time = str(datetime.now())
@@ -70,10 +72,21 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
             now = datetime.now()
             formatted_timestamp = now.strftime('%Y.%m.%d %H:%M:%S')
             command = schedule[upcoming_event]['value']
+            script_count = 0
+
+            if '{scriptCount}' in command:
+                task_command_pairs = [(task_name, task_info['value']) for task_name, task_info in schedule.items() if task_info['type'] == 'command' and  task_info['value'] == schedule[upcoming_event]['value']]
+
+                for task, _ in task_command_pairs:
+                    script_count += 1
+                    if task == upcoming_event:
+                        break
+
             command = command.format(id=participant_info['participant_id'],
                                      experiment=participant_info['experiment'],
                                      startTime=participant_info['start_time'],
                                      timestamp=formatted_timestamp,
+                                     scriptCount=str(script_count),
                                      **custom_variables)
             process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
             output, error = process.communicate()
