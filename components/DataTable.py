@@ -1,4 +1,5 @@
 import math
+
 import pygame.font
 
 from components import Button
@@ -7,8 +8,9 @@ from services import PsyTestProConfig, TranslateService
 
 class DataTable:
 
-    def __init__(self, columns: int, max_rows: int, start_pos: tuple[int, int], data: list[list]=None, max_cell_width: int=None, 
-                 actions: list=None, max_height: int=None, translate_service: TranslateService=None):
+    def __init__(self, columns: list, max_rows: int, start_pos: tuple[int, int], data: list[list] = None,
+                 max_cell_width: int = None,
+                 actions: list = None, max_height: int = None, translate_service: TranslateService = None):
         if actions is None:
             actions = []
         self.split_data = None
@@ -49,10 +51,9 @@ class DataTable:
         row_height = 50
         for header in self.columns:
             header_width = 2 * self.margin_left + self.header_font.size(header)[0]
-            if header_width > max_header_width:
-                max_header_width = header_width
+            max_header_width = max(header_width, max_header_width)
             width += 2 * self.margin_left
-        if self.max_cell_width != None and max_header_width > self.max_cell_width:
+        if self.max_cell_width is not None and max_header_width > self.max_cell_width:
             max_header_width = self.max_cell_width
         row_width = max_header_width + 2 * self.margin_left
         max_row_height = self.get_max_row_height(row_width)
@@ -62,7 +63,7 @@ class DataTable:
             final_header = header
             header_copy = header
 
-            if ' ' in header and row_width != None:
+            if ' ' in header and row_width is not None:
                 headers = []
                 split_text = None
                 while self.header_font.size(header_copy)[0] + self.margin_left > row_width and ' ' in header_copy:
@@ -196,7 +197,7 @@ class DataTable:
                     cell = cell['value']
 
             cell_copy = cell
-            if ' ' in cell and self.row_width != None:
+            if ' ' in cell and self.row_width is not None:
                 cells = []
                 split_text = None
                 word_to_split = 1
@@ -263,10 +264,11 @@ class DataTable:
                 word_to_split = 1
                 final_header = header
                 header_copy = header
-                if ' ' in header and self.row_width != None:
+                if ' ' in header and self.row_width is not None:
                     headers = []
                     split_text = None
-                    while self.header_font.size(header_copy)[0] > self.row_width - self.margin_left and ' ' in header_copy:
+                    while self.header_font.size(header_copy)[
+                        0] > self.row_width - self.margin_left and ' ' in header_copy:
                         split_text = header.rsplit(' ', word_to_split)
                         header_copy = split_text[0]
                         word_to_split += 1
@@ -283,7 +285,7 @@ class DataTable:
                         first_word = header
                     headers.reverse()
                     final_header = '\\n'.join(map(str, [first_word, *headers]))
-                elif self.row_width != None:
+                elif self.row_width is not None:
                     final_header = self.get_fromatted_text(header, self.row_width, self.header_font)
                 split_header = final_header.split('\\n')
 
@@ -324,7 +326,7 @@ class DataTable:
                         else:
                             cell = cell['value']
                     cell_copy = cell
-                    if ' ' in cell and self.row_width != None:
+                    if ' ' in cell and self.row_width is not None:
                         cells = []
                         split_text = None
                         while self.font.size(cell_copy)[
@@ -361,7 +363,8 @@ class DataTable:
                                      self.margin_top + (cell_y - (row_height - self.row_height) + (
                                              i * self.font.get_linesize()))))
                     self.event_areas[str(count) + '-' + str(index)] = pygame.Rect(self.pos_x + index * self.row_width,
-                                                                                  (cell_y - (row_height - self.row_height)),
+                                                                                  (cell_y - (
+                                                                                              row_height - self.row_height)),
                                                                                   self.row_width, row_height)
                     pygame.draw.line(screen, self.grid_color,
                                      (self.pos_x,

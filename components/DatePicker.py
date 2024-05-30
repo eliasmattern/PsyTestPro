@@ -1,15 +1,17 @@
+import calendar
+from datetime import date, timedelta
+
 import pygame
+from dateutil.relativedelta import relativedelta
+
 from components import Button
 from services import PsyTestProConfig, TranslateService
-from datetime import date, timedelta
-import calendar
-from dateutil.relativedelta import relativedelta
 
 
 class DatePickerComponent():
     def __init__(self, date: str, window_key: str, translate_service: TranslateService, action=None, action_key=''):
         screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
-        self.window_key= window_key
+        self.window_key = window_key
         self.translate_service = translate_service
         self.action = action
         self.day, self.month, self.year = date.split('/')
@@ -134,9 +136,9 @@ class DatePickerComponent():
 
         weekday = first_day.weekday() + 1
         weeks = [[]]
-        for i in range(weekday - 1):
+        for _ in range(weekday - 1):
             weeks[0].append('')
-        for i in range(1, month_days + 1):
+        for _ in range(1, month_days + 1):
             weeks[-1].append(first_day) if len(weeks[-1]) < 7 else weeks.append([first_day])
             first_day = first_day + timedelta(days=1)
         self.date_buttons = []

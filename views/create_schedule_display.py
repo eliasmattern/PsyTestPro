@@ -5,16 +5,19 @@ import subprocess
 import sys
 import time as pythonTime
 import webbrowser
-from datetime import datetime, timedelta, date as python_date
+from datetime import datetime, timedelta
+
 import pygame
+
 from components import Button, DataTable, QuestionDialog, DatePickerComponent, TimePicker
 from lib import text_screen
-from services import TranslateService, LanguageConfiguration, play_tasks
 from services import PsyTestProConfig
+from services import TranslateService, LanguageConfiguration, play_tasks
 
 
 class CreateScheduleDisplay:
-    def __init__(self, schedule: dict, participant_info: dict, psy_test_pro, custom_variables: dict, isHab: bool=False, file_name: str=''):
+    def __init__(self, schedule: dict, participant_info: dict, psy_test_pro, custom_variables: dict,
+                 isHab: bool = False, file_name: str = ''):
         self.schedule = schedule
         self.participant_info = participant_info
         self.psy_test_pro = psy_test_pro
@@ -148,9 +151,9 @@ class CreateScheduleDisplay:
                                                    '/'.join([str(self.date_picker.day), str(self.date_picker.month),
                                                              str(self.date_picker.year)]))
                                                , action_key='save')
-        self.timepicker = TimePicker(300, 200, 'timepicker', self.translate_service, time='12:34:21', action=lambda: self.data_table.set_action_data(
-                                                   str(self.timepicker.time)), action_key='save')
-
+        self.timepicker = TimePicker(300, 200, 'timepicker', self.translate_service, time='12:34:21',
+                                     action=lambda: self.data_table.set_action_data(
+                                         str(self.timepicker.time)), action_key='save')
 
         def update_text():
             for button in buttons:
@@ -313,7 +316,6 @@ class CreateScheduleDisplay:
                 else:
                     event_message = 'No more events today'
 
-
             # Display the message on screen
             if self.isHab or not next_event:
                 font = pygame.font.Font(None, 35)
@@ -346,7 +348,6 @@ class CreateScheduleDisplay:
                 else:
                     self.schedule[upcoming_event]['state'] = 'error'
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
-                print(sorted_schedule)
                 self.play_next_task = False
 
             if not self.isHab or next_event_in_seconds == -1:
@@ -433,7 +434,7 @@ class CreateScheduleDisplay:
 
     def quit_action(self):
         pygame.quit()
-        quit()
+        sys.exit()
 
     def button_help(self):
         self.show_help_dialog = True
@@ -473,7 +474,6 @@ class CreateScheduleDisplay:
     def open_timepicker(self, time: str):
         self.show_time_picker = True
         self.timepicker.set_time(time)
-
 
     def switch_state(self, state: dict):
         state_iterator = {'todo': {'value': 'skip', 'color': self.warning, 'key': 'skip'},

@@ -8,7 +8,7 @@ class LanguageConfiguration:
 
     def read_language_config(self):
         try:
-            with open(f'json/settings.json', 'r', encoding='utf-8') as file:
+            with open('json/settings.json', 'r', encoding='utf-8') as file:
                 settings = json.load(file)
                 self.lang = settings['language']
         except Exception as e:
@@ -17,10 +17,10 @@ class LanguageConfiguration:
 
     def update_language_config(self, new_language: str):
         try:
-            with open(f'json/settings.json', 'r', encoding='utf-8') as file:
+            with open('json/settings.json', 'r', encoding='utf-8') as file:
                 settings = json.load(file)
             settings['language'] = new_language
-            with open('json/settings.json', 'w') as file:
+            with open('json/settings.json', 'w', encoding='utf-8') as file:
                 json.dump(settings, file)
         except Exception as e:
             print(e)

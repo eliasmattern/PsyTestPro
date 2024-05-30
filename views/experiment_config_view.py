@@ -2,17 +2,19 @@ import os
 import sys
 from datetime import datetime
 from tkinter import filedialog
+
 import pygame
+
 from components import Button
 from services import CSVToJSONConverter, JSONToCSVConverter
-from .experiment_create_view import CreateExperimentView
-from .variable_create_view import CreateVariablesView
-from .experiment_delete_view import DeleteExperimentView
-from .task_delete_view import DeleteTaskView
-from .variable_delete_view import DeleteVariableView
-from .task_config_view import TaskConfig
 from services import PsyTestProConfig
 from services import TranslateService
+from .experiment_create_view import CreateExperimentView
+from .experiment_delete_view import DeleteExperimentView
+from .task_config_view import TaskConfig
+from .task_delete_view import DeleteTaskView
+from .variable_create_view import CreateVariablesView
+from .variable_delete_view import DeleteVariableView
 
 
 class ExperimentConfig():

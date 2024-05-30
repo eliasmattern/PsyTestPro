@@ -1,10 +1,15 @@
-import pygame
-from services import PsyTestProConfig, TranslateService
 from typing import Callable
 
+import pygame
+
+from services import PsyTestProConfig, TranslateService
+
+
 class Button:
-    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, action: Callable, translate_service: TranslateService=None, color=None,
-                 text_color=None, active_button_color=None, border_radius=8, hidden=False, align='center', font_size=24):
+    def __init__(self, x: float, y: float, width: float, height: float, translation_key: str, action: Callable,
+                 translate_service: TranslateService = None, color=None,
+                 text_color=None, active_button_color=None, border_radius=8, hidden=False, align='center',
+                 font_size=24):
         self.pos_x = x
         self.pos_y = y
         self.align = align
@@ -77,8 +82,8 @@ class Button:
 
             pygame.draw.rect(screen, self.color if not self.pressed else self.active_button_color, self.rect,
                              border_radius=self.border_radius)
-            alignmentX = (self.rect.width - label_width) / 2 if self.align == 'center' else 5
-            label_x = self.rect.x + alignmentX
+            alignment_X = (self.rect.width - label_width) / 2 if self.align == 'center' else 5
+            label_x = self.rect.x + alignment_X
             label_y = self.rect.y + (self.rect.height - label_height) / 2
             screen.blit(self.label, (label_x, label_y))
 

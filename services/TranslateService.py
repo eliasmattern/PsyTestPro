@@ -1,5 +1,7 @@
 import json
+
 from services import LanguageConfiguration
+
 
 class TranslateService:
     def __init__(self, language_config: LanguageConfiguration):

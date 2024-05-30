@@ -1,10 +1,13 @@
 import pygame
+
 from components import Button
 from services import PsyTestProConfig, TranslateService
 
+
 class QuestionDialog:
-    def __init__(self, width: int, height: int, window_key: str, title_key: str, desc_key: str, translate_service: TranslateService, action=None, action_key='', info=''):
-        screen_width, screen_height = pygame.display.get_surface().get_width(),pygame.display.get_surface().get_height()
+    def __init__(self, width: int, height: int, window_key: str, title_key: str, desc_key: str,
+                 translate_service: TranslateService, action=None, action_key='', info=''):
+        screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
         self.window_key, self.title_key, self.desc_key, self.info = window_key, title_key, desc_key, info
         self.translate_service = translate_service
         self.action = action
@@ -17,7 +20,8 @@ class QuestionDialog:
         self.settings = self.psy_test_pro_config.get_settings()
         self.background_color = pygame.Color(self.settings["backgroundColor"])
         self.primary_color = pygame.Color(self.settings["primaryColor"])
-        self.highlight_color = (min(self.primary_color[0] + 25, 255), min(self.primary_color[1] + 25, 255), min(self.primary_color[2] + 25, 255))
+        self.highlight_color = (min(self.primary_color[0] + 25, 255), min(self.primary_color[1] + 25, 255),
+                                min(self.primary_color[2] + 25, 255))
         self.danger_color = pygame.Color(self.settings["dangerColor"])
         self.is_open = True
         self.move = False
@@ -27,8 +31,8 @@ class QuestionDialog:
                                     self.action_key, lambda: self.execute_action(),
                                     translate_service=self.translate_service)
         self.close_button = Button(self.window.x + self.width - 170, self.window.y + self.height - 35, 100, 25,
-                                    'back', lambda: self.close(),
-                                    translate_service=self.translate_service)
+                                   'back', lambda: self.close(),
+                                   translate_service=self.translate_service)
 
     def open(self):
         self.is_open = True
@@ -63,14 +67,15 @@ class QuestionDialog:
                                             self.action_key, lambda: self.execute_action(),
                                             translate_service=self.translate_service)
                 self.close_button = Button(self.window.x + self.width - 170, self.window.y + self.height - 35, 100, 25,
-                                            'back', lambda: self.close(),
-                                            translate_service=self.translate_service)
+                                           'back', lambda: self.close(),
+                                           translate_service=self.translate_service)
 
         pygame.draw.rect(screen, self.background_color, self.window)
         pygame.draw.rect(screen, self.primary_color if not self.move else self.highlight_color, self.window, width=2)
         pygame.draw.rect(screen, self.primary_color if not self.move else self.highlight_color, self.title_bar)
 
-        title_bar_surface = self.font.render(self.translate_service.get_translation(self.window_key), True, self.background_color)
+        title_bar_surface = self.font.render(self.translate_service.get_translation(self.window_key), True,
+                                             self.background_color)
         title_bar_pos = (self.title_bar.x + 10, self.title_bar.y + (self.title_bar.height // 4))
 
         quit_surface = self.font.render('X', True, self.background_color)
@@ -94,7 +99,8 @@ class QuestionDialog:
 
         info_surface = self.font.render(self.info, True,
                                         self.primary_color)
-        info_pos = (self.window.x + 10, self.window.y + (self.window.height // 4) + self.title_font.get_linesize() + desc_surface.get_height())
+        info_pos = (self.window.x + 10, self.window.y + (
+                    self.window.height // 4) + self.title_font.get_linesize() + desc_surface.get_height())
 
         screen.blit(title_bar_surface, title_bar_pos)
         screen.blit(title_surface, title_pos)

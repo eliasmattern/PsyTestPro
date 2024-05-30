@@ -1,15 +1,15 @@
 from datetime import datetime
 
 import pygame
-from pygame.locals import *
-from services import PsyTestProConfig
 from pandas.io import clipboard
+from pygame.locals import *
+
+from services import PsyTestProConfig
 
 
 class InputBox:
-    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, translate_service=None, info='', initial_text='', desc='',
-                 allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None,
-                 text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False, icon=True):
+    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, translate_service=None, info='',
+                 initial_text='', desc='', allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None, text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False, icon=True):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.psy_test_pro_config = PsyTestProConfig()
@@ -234,8 +234,7 @@ class InputBox:
                             self.text = ''
                             self.cursor_pos = (0, 0)
                             self.offset = 0
-                            pass
-                        if (len(self.text[text_length - self.offset:text_length]) > 0):
+                        if len(self.text[text_length - self.offset:text_length]) > 0:
                             self.text = self.text[0:text_length - self.offset] + self.text[(
                                                                                                    text_length - self.offset) + 1:text_length]
                             self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
@@ -287,7 +286,8 @@ class InputBox:
                 self.offset = 0
                 self.cursor_pos = (0, 0)
             if self.is_active:
-                pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect, border_radius=8)
+                pygame.draw.rect(screen, self.active_color if self.is_selected else self.color, self.rect,
+                                 border_radius=8)
             else:
                 pygame.draw.rect(screen, self.inactive_color, self.rect, border_radius=8)
 
@@ -301,7 +301,8 @@ class InputBox:
                 text_bg_color = self.inactive_color
 
             text_surface = self.font.render(input_text, True,
-                                            self.active_text_color if self.is_selected else self.text_color, text_bg_color)
+                                            self.active_text_color if self.is_selected else self.text_color,
+                                            text_bg_color)
             count = 0
             text_max_width = 85 if self.icon else 100
             while text_surface.get_rect().width > self.rect.width / 100 * text_max_width:
@@ -337,7 +338,7 @@ class InputBox:
                         self.delay = datetime.now().timestamp()
                         self.delayMultiplier = 0.1
 
-            if self.is_selected and self.delay != None and self.started_moving_l:
+            if self.is_selected and self.delay is not None and self.started_moving_l:
                 if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
                     text_length = len(self.text)
                     if self.offset < text_length:
@@ -346,12 +347,13 @@ class InputBox:
                         self.delay = datetime.now().timestamp()
                         self.delayMultiplier = 0.1
 
-            if self.is_selected and self.delay != None and self.started_del:
+            if self.is_selected and self.delay is not None and self.started_del:
                 if float(datetime.now().timestamp()) - float(self.delay) > self.delayMultiplier:
                     text_length = len(self.text)
                     if len(self.text[text_length - self.offset:text_length]) > 0:
                         self.text = self.text[0:text_length - self.offset] + self.text[
-                                                                             (text_length - self.offset) + 1:text_length]
+                                                                             (
+                                                                                         text_length - self.offset) + 1:text_length]
                         self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
                         self.offset -= 1
                         self.delay = datetime.now().timestamp()
@@ -394,7 +396,8 @@ class InputBox:
                 screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
             if self.is_selected:
                 info_font = pygame.font.SysFont('Arial', 12)
-                info_label = info_font.render(self.info, True, self.active_color if self.is_active else self.inactive_color)
+                info_label = info_font.render(self.info, True,
+                                              self.active_color if self.is_active else self.inactive_color)
                 screen.blit(info_label, (self.rect.x + 5, self.rect.y + 40))
 
             desc_font = pygame.font.SysFont('Arial', 12)

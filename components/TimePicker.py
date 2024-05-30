@@ -1,14 +1,16 @@
+import re
+from typing import Callable
+
 import pygame
 from pygame.locals import *
 
 from components import Button, InputBox
 from services import PsyTestProConfig, TranslateService
-import re
-from typing import Callable
 
 
 class TimePicker:
-    def __init__(self, width: int, height: int, window_key: str, translate_service: TranslateService, time: str=None, action: Callable=None, action_key: str=''):
+    def __init__(self, width: int, height: int, window_key: str, translate_service: TranslateService, time: str = None,
+                 action: Callable = None, action_key: str = ''):
         screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
         self.time = time
         if time is not None:

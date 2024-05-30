@@ -1,9 +1,11 @@
 import pygame
+
 from services import PsyTestProConfig, TranslateService
 
 
 class CheckBox():
-    def __init__(self, label: str, posX: int, posY: int, active=False, translate_service: TranslateService=None, font_size=18, color=None) -> None:
+    def __init__(self, label: str, posX: int, posY: int, active=False, translate_service: TranslateService = None,
+                 font_size=18, color=None) -> None:
         self.text = label
         self.translate_service = translate_service
         self.font = pygame.font.Font(None, font_size)
@@ -61,9 +63,6 @@ class CheckBox():
         original_width = 1280
         original_height = 800
 
-        # Calculate scaling factors for position and size adjustments (this is how we can make sure that the program adjusts to any screen it is executed on)
-        width_scale_factor = screen_width / original_width
-        height_scale_factor = screen_height / original_height
         self.tick_box_rect = pygame.Rect(
             self.posX - 25,
             self.posY - (self.label.get_rect().height // 4),
