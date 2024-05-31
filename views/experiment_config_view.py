@@ -166,6 +166,16 @@ class ExperimentConfig():
             self.translate_service,
         )
 
+        import_task_button = Button(
+            x,
+            y + spacing * 3,
+            400,
+            40,
+            'importTasks',
+            lambda: task_config.add_task_config_display(psy_test_pro),
+            self.translate_service,
+        )
+
         import_button = Button(
             x,
             y + spacing,
@@ -211,6 +221,7 @@ class ExperimentConfig():
         experiment_buttons.append(back_to_config_button)
         import_export_buttons.append(import_button)
         import_export_buttons.append(export_button)
+        import_export_buttons.append(import_task_button)
         import_export_buttons.append(back_to_config_button)
         task_buttons.append(create_task_button)
         task_buttons.append(delete_task_button)

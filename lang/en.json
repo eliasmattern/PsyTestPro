@@ -127,5 +127,6 @@
     "wrongFileFormatForTaskImport": "Wrong file format. Only .csv and .xlsx files are supported.",
     "importTaskFailed": "Failed to import Task:",
     "taskImportSuccessful": "Tasks successfully imported",
-    "getImportTemplate": "Get template excel to import tasks"
+    "getImportTemplate": "Get template excel to import tasks",
+    "createTaskForExperiment": "Choose Experiment to create a Task for"
 }

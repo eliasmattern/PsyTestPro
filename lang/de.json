@@ -122,5 +122,6 @@
     "wrongFileFormatForTaskImport": "Falsches Dateiformat. Nur .csv und .xlsx Dateien sind kompatibel.",
     "importTaskFailed": "Import der Task fehlgeschlagen:",
     "taskImportSuccessful": "Tasks erfolgreich importiert",
-    "getImportTemplate": "Excelvorlage um Taks zu imoprtieren"
+    "getImportTemplate": "Excelvorlage um Taks zu imoprtieren",
+    "createTaskForExperiment": "Wähle ein Experiment, für welches eine Aufgabe hinzugefügt werden soll"
 }
