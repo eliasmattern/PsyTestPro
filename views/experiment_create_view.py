@@ -58,9 +58,7 @@ class CreateExperimentView:
             100,
             40,
             'submit',
-            lambda: self.save_experiment(
-                psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box
-            ),
+            lambda: self.save_experiment(psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box),
             self.translate_service,
         )
 
@@ -75,9 +73,7 @@ class CreateExperimentView:
     def validate_inputs(self, input_boxes):
         is_valid = False
 
-        if (
-                input_boxes[0].text
-        ):
+        if input_boxes[0].text:
             is_valid = True
 
         if is_valid:
@@ -85,9 +81,7 @@ class CreateExperimentView:
         else:
             return False
 
-    def create_experiment_config_display(
-            self, psy_test_pro_config: PsyTestProConfig, create_continously=False
-    ):
+    def create_experiment_config_display(self, psy_test_pro_config: PsyTestProConfig, create_continously=False):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -150,6 +144,9 @@ class CreateExperimentView:
                     if event.key == K_TAB:
                         index = get_input_index()
                         input_boxes[index].is_selected = True
+                    elif event.key == K_RETURN:
+                        if self.validate_inputs(input_boxes):
+                            self.save_experiment(psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box)
                 for box in input_boxes:
                     box.handle_event(event)
                 for button in buttons:

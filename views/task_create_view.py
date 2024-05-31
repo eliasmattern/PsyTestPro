@@ -342,9 +342,7 @@ class AddTaskView():
             screen.blit(option_text_rendered, option_text_rect)
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
-            if self.validate_task_inputs(
-                    input_boxes, self.timepicker.time, command_inputs, text_screen_inputs, command
-            ):
+            if self.validate_task_inputs(input_boxes, self.timepicker.time, command_inputs, text_screen_inputs, command):
                 buttons[2].set_active(True)
                 buttons[2].set_color(pygame.Color(self.settings["buttonColor"]))
                 buttons[3].set_active(True)

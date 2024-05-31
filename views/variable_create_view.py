@@ -58,9 +58,7 @@ class CreateVariablesView:
             100,
             40,
             'submit',
-            lambda: self.save_var(
-                psy_test_pro, input_boxes[0].text, input_boxes
-            ),
+            lambda: self.save_var(psy_test_pro, input_boxes[0].text, input_boxes),
             self.translate_service,
         )
 
@@ -158,6 +156,9 @@ class CreateVariablesView:
                     if event.key == K_TAB:
                         index = get_input_index()
                         input_boxes[index].is_selected = True
+                    if event.key == K_RETURN:
+                        if self.validate_inputs(input_boxes):
+                            self.save_var(psy_test_pro, input_boxes[0].text, input_boxes)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # If the left mouse button clicked
                         mouse_pos = (
