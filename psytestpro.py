@@ -43,6 +43,7 @@ class PsyTestPro:
         self.experiment = experiment
         self.time = time
         self.custom_variables = []
+        self.custom_variables_dict = custom_variables
         for key, value in custom_variables.items():
             self.custom_variables.append(value)
         self.experiment_config_display = ExperimentConfig(self.translateService)
@@ -110,8 +111,7 @@ class PsyTestPro:
         exit_button = Button(x - 75, y + 60, 100, 40, 'exit', self.exit, self.translateService)
         submit_button = Button(x + 75, y + 60, 100, 40, 'submit', self.save_details, self.translateService)
         settings_button = Button(self.width - 175, 100, 250, 40, 'settings',
-                                 lambda: self.settings_view.display(PsyTestPro, self.translateService,
-                                                                    self.language_config),
+                                 lambda: self.show_settings_screen(),
                                  self.translateService)
         create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureExperiment',
                                           lambda: self.experiment_config_display.display(PsyTestPro),
@@ -304,7 +304,7 @@ class PsyTestPro:
     def custom_sort(self, item):
         return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
 
-    def start_experiment(self, start_time: str, participant_info: dict, custom_variables: dict):
+    def start_experiment(self, start_time: datetime, participant_info: dict, custom_variables: dict):
         global schedule
         print(self.psyTestProConfig.current_experiment)
         isHab = '_list' in self.psyTestProConfig.current_experiment
@@ -389,6 +389,21 @@ class PsyTestPro:
         df = pd.DataFrame(data=table)
         df.to_excel('./experiments/' + filename, index=False)
         return filename
+
+    def show_settings_screen(self):
+        participant_id = self.input_boxes['participantId'].text
+        experiment = self.input_boxes['experiment'].text
+        start_time = self.input_boxes['startTime'].text
+        custom_variables = self.psyTestProConfig.load_custom_variables()
+
+        variables = {}
+
+        for value in custom_variables:
+            variables[value] = self.input_boxes[value].text
+
+        self.settings_view.display(PsyTestPro, self.translateService,
+                                   self.language_config, participant_id, experiment,
+                                   start_time, variables)
 
 
 PsyTestPro()
