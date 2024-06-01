@@ -331,7 +331,6 @@ class PsyTestPro:
             if time_delta:
                 activation_time = start_time + timedelta(hours=int(time_delta.split(':')[0]),
                                                          minutes=int(time_delta.split(':')[1]))
-                # schedule[exp_variable] = str(activation_time)
                 schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
         edited_schedule = {}
         for key, value in schedule.items():
@@ -339,7 +338,10 @@ class PsyTestPro:
                 {key: {'datetime': value, 'state': states[key], 'type': types[key], 'value': values[key]}})
 
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
-        print('ee = ', edited_schedule)
+        for _, task in schedule.items():
+            if datetime.strptime(task['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now():
+                task['state'] = 'skip'
+        print('schedule = ', edited_schedule)
 
         file_name = self.save_experiment_info(participant_info)
 
