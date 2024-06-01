@@ -393,7 +393,7 @@ class CreateScheduleDisplay:
                                                      experiment=self.participant_info['experiment'],
                                                      startTime=self.participant_info['start_time'],
                                                      timestamp=formatted_timestamp)
-                            process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
+                            process = subprocess.Popen(shlex.split(command, posix=False))
                             process.communicate()
                             self.schedule[task[0]]['state'] = 'done'
                 sorted_schedule = []

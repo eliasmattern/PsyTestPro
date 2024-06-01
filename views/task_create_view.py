@@ -55,9 +55,13 @@ class AddTaskView():
                                                         timestamp=participant_info['timestamp'],
                                                         scriptCount=str(participant_info['script_count']),
                                                         **variables)
-                process = subprocess.Popen(shlex.split(command, posix=False), shell=True)
+                print(command)
+                print(shlex.split(command, posix=False))
+                process = subprocess.Popen(shlex.split(command, posix=False))
                 output, error = process.communicate()
                 return_code = process.wait()
+                if return_code != 0:
+                    raise Exception(f"Command failed with return code {return_code}, Error: {error}")
                 self.error = ''
                 self.is_task_working = True
             except Exception as e:

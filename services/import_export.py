@@ -189,7 +189,7 @@ class ImportTasksService:
                                                    timestamp=participant_info['timestamp'],
                                                    scriptCount=str(participant_info['script_count']),
                                                    **variables)
-                process = subprocess.Popen(shlex.split(formatted_command, posix=False), shell=True)
+                process = subprocess.Popen(shlex.split(formatted_command, posix=False))
                 output, error = process.communicate()
                 return_code = process.wait()
                 print(return_code)
