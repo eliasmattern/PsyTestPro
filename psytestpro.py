@@ -170,13 +170,13 @@ class PsyTestPro:
                 button.handle_event(event)
             if event.type == KEYDOWN:
                 mods = pygame.key.get_mods()
-                if mods != 4160 and event.key == K_TAB:
+                print(mods)
+                if mods != 4097 and event.key == K_TAB:
                     index = get_input_index(1)
                     self.input_boxes[index].is_selected = True
-                elif mods & mods == 4160:  # Check if Ctrl is pressed
-                    if event.key == K_TAB:
-                        index = get_input_index(-1)
-                        self.input_boxes[index].is_selected = True
+                elif mods & mods == 4097 and event.key == K_TAB:  # Check if Sjhift is pressed
+                    index = get_input_index(-1)
+                    self.input_boxes[index].is_selected = True
                 elif event.key == K_BACKSPACE:
                     pass
                 elif event.key == K_RETURN:
