@@ -8,7 +8,7 @@ import shlex
 from services import TranslateService, execute_command
 
 
-class AddTaskView():
+class AddTaskView:
     def __init__(self, translate_service: TranslateService) -> None:
         self.translate_service = translate_service
         self.adding = True
@@ -18,7 +18,7 @@ class AddTaskView():
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
         self.inactive_button_color = pygame.Color(self.settings["inactiveButtonColor"])
-        self.timepicker = TimePicker(300, 200, 'timeForTask', self.translate_service, action_key='save')
+        self.timepicker = TimePicker(300, 200, 'timeDuration', self.translate_service, action_key='save')
         self.show_time_picker = False
 
     def validate_task_inputs(self, input_boxes: list[InputBox], time_input: str, command_inputs: list[InputBox], text_screen_inputs: list[InputBox], is_command: bool):
@@ -176,7 +176,7 @@ class AddTaskView():
             y,
             400,
             40,
-            'timeForTask',
+            'timeDuration',
             lambda: self.open_time_picker(),
             self.translate_service,
             align='left'
@@ -355,7 +355,7 @@ class AddTaskView():
                 choose_time_button.translation_key = self.timepicker.time
             else:
                 choose_time_button.translate_service = self.translate_service
-                choose_time_button.translation_key = 'timeForTask'
+                choose_time_button.translation_key = 'timeDuration'
             choose_time_button.update_text()
 
             for box in input_boxes:

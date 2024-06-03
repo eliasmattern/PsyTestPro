@@ -43,7 +43,7 @@
     "createMultipleTasks": "Mehrere Aufgaben erstellen",
     "createTask": "Aufgabe hinzufügen",
     "taskName": "Name:",
-    "timeForTask": "Zeit relativ zur Startzeit:",
+    "timeDuration": "Taskdauer:",
     "command": "Kommando (shell):",
     "title": "Titel (Enter = neue Zeile):",
     "description": "Beschreibung (Enter = neue Zeile):",
@@ -125,5 +125,4 @@
     "getImportTemplate": "Excelvorlage um Taks zu imoprtieren",
     "createTaskForExperiment": "Wähle eine Suite, für welches eine Aufgabe hinzugefügt werden soll",
     "configureSuites": "Task Suites konfigurieren"
-
 }

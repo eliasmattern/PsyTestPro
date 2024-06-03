@@ -45,7 +45,7 @@
     "createMultipleTasks": "Create Multiple Tasks",
     "createTask": "Add task",
     "taskName": "Name:",
-    "timeForTask": "Time relative to start time:",
+    "timeDuration": "Task duration:",
     "command": "Command (shell):",
     "title": "Title (Return = new line):",
     "description": "Description (Return = new line):",

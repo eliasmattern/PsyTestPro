@@ -98,7 +98,9 @@ class PsyTestProConfig:
 
         # Function to add a new task to a specific object
         def add_task_to_object(json_data: dict, object_name: str, task_name: str, time: str, type: str, value: str):
+            tasks = json_data[object_name]['tasks']
             new_task = {
+                'position': len(tasks) + 1,
                 'time': time,
                 'state': 'todo',
                 'type': type,

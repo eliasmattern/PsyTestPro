@@ -144,28 +144,29 @@ class ImportTasksService:
             data = json.load(file)
         if experiment_name in data.keys():
             last_minute = None
+            position = len(data[experiment_name]['tasks']) + 1
             for _, row in df.iterrows():
                 task_name = str(row["task_name"]).replace(' ', '_')
-                minutes = row['minutes'] + last_minute if last_minute is not None else row['minutes']
-                last_minute = last_minute + row['minutes'] if last_minute is not None else minutes
+                minutes = row['minutes']
                 hours = minutes // 60
                 minutes %= 60
                 time = '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
                 if not isinstance(row['command'], float):
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'command',
-                                                                 'value': row['command']}
+                                                                 'value': row['command'], 'position': position}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
                                                                  'value': {'title': row['title'],
-                                                                           'description': description}}
+                                                                           'description': description},
+                                                                 'position': position}
+                position += 1
         else:
             return False, 'importTasksFailed'
 
         with open('./json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
         return True, 'taskImportSuccessful'
-        
 
     def preview_task(self, command=None, title=None, description=None):
         custom_variables = PsyTestProConfig().load_custom_variables()

@@ -228,9 +228,17 @@ class CreateScheduleDisplay:
 
         filtered_schedule = {key: value for key, value in self.schedule.items() if value['state'] == 'todo'}
         # convert the schedule to a list of tuples and sort it by time
-        sorted_schedule = sorted(
-            [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
-             filtered_schedule.items()])
+        sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: item[1]['position'])
+        sorted_schedule = {k: v for k, v in sorted_schedule}
+        print('sorted_schedule')
+        print(sorted_schedule)
+        print('sorted_schedule')
+        sorted_schedule = [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
+                           sorted_schedule.items()]
+        print('sorted_schedule')
+        print(sorted_schedule)
+        print('sorted_schedule')
+
         check_for_old_tasks = True
         self.play_next_task = False
         start_time = datetime.now()
@@ -368,9 +376,9 @@ class CreateScheduleDisplay:
             elif len(sorted_schedule) > 0:
                 for task in self.schedule.items():
                     if self.schedule[task[0]]['state'] == 'todo':
-                        state = play_tasks(self.file_name, self.participant_info,  task[0], self.schedule,
-                                   self.translate_service,
-                                   self.custom_variables)
+                        state = play_tasks(self.file_name, self.participant_info, task[0], self.schedule,
+                                           self.translate_service,
+                                           self.custom_variables)
                         if state:
                             self.schedule[task[0]]['state'] = 'done'
                         else:

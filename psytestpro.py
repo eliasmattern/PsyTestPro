@@ -101,10 +101,11 @@ class PsyTestPro:
         spacing = 60
         for label, text, info in zip(labels, initial_text, information):
             if len(self.input_boxes) > 2:
-                input_box = InputBox(x, y, 400, 40, label, None,  '', text, desc=label + ' ' + info)
+                input_box = InputBox(x, y, 400, 40, label, None, '', text, desc=label + ' ' + info)
                 self.input_boxes[label] = input_box
             else:
-                input_box = InputBox(x, y, 400, 40, label, self.translateService, '', text, desc=self.translateService.get_translation(label) + ' ' + info)
+                input_box = InputBox(x, y, 400, 40, label, self.translateService, '', text,
+                                     desc=self.translateService.get_translation(label) + ' ' + info)
                 self.input_boxes[label] = input_box
             y += spacing
 
@@ -315,26 +316,35 @@ class PsyTestPro:
         tasks = []
         types = {}
         values = {}
+        positions = {}
         times: list[str] = []
         states = {}
+        sorted_tasks = sorted(current_tasks.items(), key=lambda item: item[1]['position'])
+
+        current_tasks = {k: v for k, v in sorted_tasks}
 
         for task, details in current_tasks.items():
             tasks.append(task)
             times.append(details['time'])
             states[task] = details['state']
+            positions[task] = details['position']
             types[task] = details['type'] if 'type' in details else ''
             values[task] = details['value'] if 'value' in details else ''
-
-        for i, time_delta in enumerate(times):
+        previous_time = start_time
+        for i, _ in enumerate(times):
             exp_variable = tasks[i]
-            if time_delta:
-                activation_time = start_time + timedelta(hours=int(time_delta.split(':')[0]),
-                                                         minutes=int(time_delta.split(':')[1]))
+            if times[i - 1]:
+                activation_time = previous_time + timedelta(hours=int(times[i - 1].split(':')[0]),
+                                                            minutes=int(
+                                                                times[i - 1].split(':')[1])) if i > 0 else start_time
+                previous_time = activation_time
                 schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
+
         edited_schedule = {}
         for key, value in schedule.items():
             edited_schedule.update(
-                {key: {'datetime': value, 'state': states[key], 'type': types[key], 'value': values[key]}})
+                {key: {'datetime': value, 'state': states[key], 'type': types[key], 'value': values[key],
+                       'position': positions[key]}})
 
         schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
         for _, task in schedule.items():
