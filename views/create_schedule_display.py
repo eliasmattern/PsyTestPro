@@ -368,34 +368,13 @@ class CreateScheduleDisplay:
             elif len(sorted_schedule) > 0:
                 for task in self.schedule.items():
                     if self.schedule[task[0]]['state'] == 'todo':
-                        if self.schedule[task[0]]['type'] == 'text':
-                            title = self.schedule[task[0]]['value']['title']
-                            now = datetime.now()
-                            formatted_timestamp = now.strftime('%Y.%m.%d %H:%M:%S')
-                            title = title.format(id=self.participant_info['participant_id'],
-                                                 experiment=self.participant_info['experiment'],
-                                                 startTime=self.participant_info['start_time'],
-                                                 timestamp=formatted_timestamp)
-
-                            description = self.schedule[task[0]]['value']['description']
-                            description = description.format(id=self.participant_info['participant_id'],
-                                                             experiment=self.participant_info['experiment'],
-                                                             startTime=self.participant_info['start_time'],
-                                                             timestamp=formatted_timestamp)
-
-                            text_screen(title, description, self.translate_service.get_translation('escToReturn'))
+                        state = play_tasks(self.file_name, self.participant_info,  task[0], self.schedule,
+                                   self.translate_service,
+                                   self.custom_variables)
+                        if state:
                             self.schedule[task[0]]['state'] = 'done'
-                        elif self.schedule[task[0]]['type'] == 'command':
-                            now = datetime.now()
-                            formatted_timestamp = now.strftime('%Y.%m.%d %H:%M:%S')
-                            command = self.schedule[task[0]]['value']
-                            command = command.format(id=self.participant_info['participant_id'],
-                                                     experiment=self.participant_info['experiment'],
-                                                     startTime=self.participant_info['start_time'],
-                                                     timestamp=formatted_timestamp)
-                            process = subprocess.Popen(shlex.split(command, posix=False))
-                            process.communicate()
-                            self.schedule[task[0]]['state'] = 'done'
+                        else:
+                            self.schedule[task[0]]['state'] = 'error'
                 sorted_schedule = []
 
         pygame.quit()

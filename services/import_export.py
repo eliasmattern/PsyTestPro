@@ -6,7 +6,7 @@ import subprocess
 import pandas as pd
 
 from lib import text_screen
-from services import PsyTestProConfig, TranslateService
+from services import PsyTestProConfig, TranslateService, execute_command
 
 
 class JSONToCSVConverter:
@@ -183,16 +183,7 @@ class ImportTasksService:
             variables[value] = 'CUSTOM_VARIABLE'
         if command:
             try:
-                formatted_command = command.format(id=participant_info['participant_id'],
-                                                   experiment=participant_info['experiment'],
-                                                   startTime=participant_info['start_time'],
-                                                   timestamp=participant_info['timestamp'],
-                                                   scriptCount=str(participant_info['script_count']),
-                                                   **variables)
-                process = subprocess.Popen(shlex.split(formatted_command, posix=False))
-                output, error = process.communicate()
-                return_code = process.wait()
-                print(return_code)
+                error, return_code = execute_command(command, participant_info, variables)
                 if return_code != 0:
                     raise Exception(f"Command failed with return code {return_code}, Error: {error}")
                 return True

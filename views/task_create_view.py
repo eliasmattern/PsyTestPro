@@ -5,7 +5,7 @@ from components import InputBox, Button, TimePicker
 from lib import text_screen
 from services import PsyTestProConfig
 import shlex
-from services import TranslateService
+from services import TranslateService, execute_command
 
 
 class AddTaskView():
@@ -49,17 +49,7 @@ class AddTaskView():
             variables[value] = 'CUSTOM_VARIABLE'
         if command:
             try:
-                command = command_inputs[0].text.format(id=participant_info['participant_id'],
-                                                        experiment=participant_info['experiment'],
-                                                        startTime=participant_info['start_time'],
-                                                        timestamp=participant_info['timestamp'],
-                                                        scriptCount=str(participant_info['script_count']),
-                                                        **variables)
-                print(command)
-                print(shlex.split(command, posix=False))
-                process = subprocess.Popen(shlex.split(command, posix=False))
-                output, error = process.communicate()
-                return_code = process.wait()
+                error, return_code = execute_command(command_inputs[0].text, participant_info, variables)
                 if return_code != 0:
                     raise Exception(f"Command failed with return code {return_code}, Error: {error}")
                 self.error = ''

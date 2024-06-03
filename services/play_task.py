@@ -3,7 +3,7 @@ from datetime import datetime
 from lib import text_screen
 import pandas as pd
 import shlex
-from services import TranslateService
+from services import TranslateService, execute_command
 
 
 def save_task_info(filename: str, task_name: str, task_start_time: str, task_end_time: str, state: str):
@@ -81,17 +81,8 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
                     script_count += 1
                     if task == upcoming_event:
                         break
-
-            command = command.format(id=participant_info['participant_id'],
-                                     experiment=participant_info['experiment'],
-                                     startTime=participant_info['start_time'],
-                                     timestamp=formatted_timestamp,
-                                     scriptCount=str(script_count),
-                                     **custom_variables)
-            process = subprocess.Popen(shlex.split(command, posix=False))
-            output, error = process.communicate()
-            return_code = process.wait()
-
+            error, return_code = execute_command(command, participant_info, custom_variables)
+            
             if return_code != 0:
                 raise Exception(f"Command failed with return code {return_code}, Error: {error}")
             task_end_time = str(datetime.now())
