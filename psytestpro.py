@@ -101,10 +101,10 @@ class PsyTestPro:
         spacing = 60
         for label, text, info in zip(labels, initial_text, information):
             if len(self.input_boxes) > 2:
-                input_box = InputBox(x, y, 400, 40, label, None, info, text)
+                input_box = InputBox(x, y, 400, 40, label, None,  '', text, desc=label + ' ' + info)
                 self.input_boxes[label] = input_box
             else:
-                input_box = InputBox(x, y, 400, 40, label, self.translateService, info, text)
+                input_box = InputBox(x, y, 400, 40, label, self.translateService, '', text, desc=self.translateService.get_translation(label) + ' ' + info)
                 self.input_boxes[label] = input_box
             y += spacing
 
