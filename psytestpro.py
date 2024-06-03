@@ -77,7 +77,7 @@ class PsyTestPro:
 
     def create_input_boxes(self):
         custom_variables = self.psyTestProConfig.load_custom_variables()
-        labels = ['participantId', 'experiment', 'startTime']
+        labels = ['participantId', 'suite', 'startTime']
         experiments_string = ''
         for experiment in self.psyTestProConfig.experiments:
             experiments_string = experiments_string + str(experiment) + ', '
@@ -113,7 +113,7 @@ class PsyTestPro:
         settings_button = Button(self.width - 175, 100, 250, 40, 'settings',
                                  lambda: self.show_settings_screen(),
                                  self.translateService)
-        create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureExperiment',
+        create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureTestBattery',
                                           lambda: self.experiment_config_display.display(PsyTestPro),
                                           self.translateService)
 
@@ -143,8 +143,8 @@ class PsyTestPro:
     def handle_events(self):
         def get_input_index(step):
             custom_variables = self.psyTestProConfig.load_custom_variables()
-            index_to_key = {0: 'participantId', 1: 'experiment', 2: 'startTime'}
-            key_to_index = {'participantId': 0, 'experiment': 1, 'startTime': 2}
+            index_to_key = {0: 'participantId', 1: 'suite', 2: 'startTime'}
+            key_to_index = {'participantId': 0, 'suite': 1, 'startTime': 2}
             count = 3
             for value in custom_variables:
                 index_to_key[count] = value
@@ -170,7 +170,6 @@ class PsyTestPro:
                 button.handle_event(event)
             if event.type == KEYDOWN:
                 mods = pygame.key.get_mods()
-                print(mods)
                 if mods != 4097 and event.key == K_TAB:
                     index = get_input_index(1)
                     self.input_boxes[index].is_selected = True
@@ -215,18 +214,18 @@ class PsyTestPro:
     def draw(self):
         def validate_inputs(experiments: list):
             is_id_valid = len(self.input_boxes['participantId'].text) != 0
-            is_experiment_valid = self.input_boxes['experiment'].text in experiments
+            is_experiment_valid = self.input_boxes['suite'].text in experiments
             is_start_time_valid = self.is_valid_time_format(self.input_boxes['startTime'].text)
 
             # Define validation checks and corresponding error messages
-            index_to_key = {0: 'participantId', 1: 'experiment', 2: 'startTime'}
+            index_to_key = {0: 'participantId', 1: 'suite', 2: 'startTime'}
 
             custom_variables = self.psyTestProConfig.load_custom_variables()
             count = 3
             for value in custom_variables:
                 index_to_key[count] = value
                 count += 1
-            if self.input_boxes['participantId'].text and self.input_boxes['experiment'].text and self.input_boxes[
+            if self.input_boxes['participantId'].text and self.input_boxes['suite'].text and self.input_boxes[
                 'startTime'].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, 'idError'),
@@ -350,12 +349,12 @@ class PsyTestPro:
 
     def save_details(self):
         participant_id = self.input_boxes['participantId'].text
-        experiment = self.input_boxes['experiment'].text
+        experiment = self.input_boxes['suite'].text
         start_time = self.input_boxes['startTime'].text
 
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, '%H:%M').time())
 
-        participant_info = {'participant_id': participant_id, 'experiment': experiment, 'start_time': start_time}
+        participant_info = {'participant_id': participant_id, 'suite': experiment, 'start_time': start_time}
 
         custom_variables = self.psyTestProConfig.load_custom_variables()
 
@@ -384,7 +383,7 @@ class PsyTestPro:
         datetime_string = str(participant_info['start_time'])
 
         filename = participant_info['participant_id'] + '_' + participant_info[
-            'experiment'] + '_' + datetime_string + '_log' + '.xlsx'
+            'suite'] + '_' + datetime_string + '_log' + '.xlsx'
         filename = filename.replace(' ', '_')
         filename = filename.replace('-', '_')
         filename = filename.replace(':', '_')
@@ -394,7 +393,7 @@ class PsyTestPro:
 
     def show_settings_screen(self):
         participant_id = self.input_boxes['participantId'].text
-        experiment = self.input_boxes['experiment'].text
+        experiment = self.input_boxes['suite'].text
         start_time = self.input_boxes['startTime'].text
         custom_variables = self.psyTestProConfig.load_custom_variables()
 

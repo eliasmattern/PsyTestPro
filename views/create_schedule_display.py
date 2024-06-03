@@ -116,7 +116,7 @@ class CreateScheduleDisplay:
 
         # Create buttons
         run_button = Button(150 * width_scale_factor, 100 * height_scale_factor, 200 * width_scale_factor,
-                            50 * height_scale_factor, 'runExperiment', self.run_psy_test_pro, self.translate_service)
+                            50 * height_scale_factor, 'runTestBattery', self.run_psy_test_pro, self.translate_service)
         settings_button = Button(150 * width_scale_factor, 200 * height_scale_factor, 200 * width_scale_factor,
                                  50 * height_scale_factor, 'changeSettings', self.change_settings,
                                  self.translate_service)
@@ -390,7 +390,7 @@ class CreateScheduleDisplay:
         time = str(self.participant_info['start_time']).split(' ')[1]
         splittedTime = time.split(':')
         formattedTime = splittedTime[0] + ':' + splittedTime[1]
-        self.psy_test_pro(self.participant_info['participant_id'], self.participant_info['experiment'], formattedTime,
+        self.psy_test_pro(self.participant_info['participant_id'], self.participant_info['suite'], formattedTime,
                           self.custom_variables)
 
     def change_language(self, translateService: TranslateService, language_config: LanguageConfiguration, lang: str):

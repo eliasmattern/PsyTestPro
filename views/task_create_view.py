@@ -37,7 +37,7 @@ class AddTaskView():
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
-            'experiment': 'VARIABLE_EXPERMENT',
+            'suite': 'VARIABLE_EXPERMENT',
             'start_time': 'VARIABLE_STARTTIME',
             'timestamp': 'VARIABLE_TIMESTAMP',
             'script_count': 0
@@ -61,14 +61,14 @@ class AddTaskView():
         else:
             try:
                 title = text_screen_inputs[0].text.format(id=participant_info['participant_id'],
-                                                          experiment=participant_info['experiment'],
+                                                          experiment=participant_info['suite'],
                                                           startTime=participant_info['start_time'],
                                                           timestamp=participant_info['timestamp'],
                                                           scriptCount='',
                                                           **variables)
 
                 description = text_screen_inputs[1].text.format(id=participant_info['participant_id'],
-                                                                experiment=participant_info['experiment'],
+                                                                experiment=participant_info['suite'],
                                                                 startTime=participant_info['start_time'],
                                                                 timestamp=participant_info['timestamp'],
                                                                 scriptCount='',

@@ -120,7 +120,7 @@ class ExperimentConfig():
             y + spacing,
             400,
             40,
-            'createExperiment',
+            'createSuite',
             lambda: create_experiment_config.create_experiment_config_display(
                 psy_test_pro, create_continously
             ),
@@ -131,7 +131,7 @@ class ExperimentConfig():
             y + spacing * 2,
             400,
             40,
-            'deleteExperiment',
+            'deleteSuite',
             lambda: delete_experiment_config.delete_experiment_config_display(
                 psy_test_pro
             ),
@@ -235,8 +235,8 @@ class ExperimentConfig():
             y + 60,
             400,
             40,
-            'configureExperiment',
-            lambda: self.show_setting_buttons(screen, experiment_buttons, 'configureExperiment'),
+            'configureSuites',
+            lambda: self.show_setting_buttons(screen, experiment_buttons, 'configureSuites'),
             self.translate_service,
         )
         y += spacing
@@ -303,7 +303,7 @@ class ExperimentConfig():
                 None, int(30 * width_scale_factor)
             )  # Create font object for header
             text_surface = font.render(
-                self.translate_service.get_translation('configureExperiment'), True, light_grey
+                self.translate_service.get_translation('configureTestBattery'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, height // 2 - 150))

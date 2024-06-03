@@ -17,7 +17,7 @@ class DeleteExperimentView:
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
         self.experiment_name = None
-        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteExperimentMsg', '', self.translate_service,
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteSuiteMsg', '', self.translate_service,
                                             lambda: self.delete_action(self.experiment_name), action_key='delete')
         self.show_delete_dialog = False
 
@@ -26,7 +26,7 @@ class DeleteExperimentView:
 
     def delete_experiment(self, experiment_name: str):
         self.experiment_name = experiment_name
-        self.delete_dialog.info = self.translate_service.get_translation('experiment') + ' ' + experiment_name
+        self.delete_dialog.info = self.translate_service.get_translation('suite') + ' ' + experiment_name
         self.show_delete_dialog = True
 
     def delete_action(self, experiment_name: str):
@@ -190,7 +190,7 @@ class DeleteExperimentView:
                 None, int(30)
             )  # Create font object for header
             text_surface = font.render(
-                self.translate_service.get_translation('deleteExperiment'), True, light_grey
+                self.translate_service.get_translation('deleteSuite'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

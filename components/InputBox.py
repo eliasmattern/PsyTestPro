@@ -392,7 +392,7 @@ class InputBox:
                     self.cursor_blink = True
                 else:
                     self.cursor_blink = False
-            if len(self.text) == 0:
+            if len(self.text) == 0 and not self.is_selected:
                 screen.blit(self.label, (self.rect.x + 5, self.rect.y + 5))
             if self.is_selected:
                 info_font = pygame.font.SysFont('Arial', 12)
@@ -406,6 +406,6 @@ class InputBox:
                 desc_color = self.active_color
             elif not self.is_active:
                 desc_color = self.inactive_color
-            if len(self.text) != 0:
+            if len(self.text) != 0 or self.is_selected:
                 desc_label = desc_font.render(self.desc, True, desc_color)
                 screen.blit(desc_label, (self.rect.x + 5, self.rect.y - 17))

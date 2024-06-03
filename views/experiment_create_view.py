@@ -40,7 +40,7 @@ class CreateExperimentView:
     def create_input_boxes(self, psy_test_pro_config: PsyTestProConfig) -> tuple[list[InputBox], list[Button], CheckBox]:
         input_boxes = []
         buttons = []
-        labels = ['experimentName']
+        labels = ['suiteName']
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
@@ -130,7 +130,7 @@ class CreateExperimentView:
             None, int(30 * width_scale_factor)
         )  # Create font object for header
         text_surface = font.render(
-            self.translate_service.get_translation('createExperiment'), True, light_grey
+            self.translate_service.get_translation('createSuite'), True, light_grey
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 

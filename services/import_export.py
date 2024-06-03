@@ -171,7 +171,7 @@ class ImportTasksService:
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
-            'experiment': 'VARIABLE_EXPERMENT',
+            'suite': 'VARIABLE_EXPERMENT',
             'start_time': 'VARIABLE_STARTTIME',
             'timestamp': 'VARIABLE_TIMESTAMP',
             'script_count': 0
@@ -193,7 +193,7 @@ class ImportTasksService:
         else:
             try:
                 title = title.format(id=participant_info['participant_id'],
-                                     experiment=participant_info['experiment'],
+                                     experiment=participant_info['suite'],
                                      startTime=participant_info['start_time'],
                                      timestamp=participant_info['timestamp'],
                                      scriptCount='',
@@ -203,7 +203,7 @@ class ImportTasksService:
                     description = ''
 
                 description = description.format(id=participant_info['participant_id'],
-                                                 experiment=participant_info['experiment'],
+                                                 experiment=participant_info['suite'],
                                                  startTime=participant_info['start_time'],
                                                  timestamp=participant_info['timestamp'],
                                                  scriptCount='',
