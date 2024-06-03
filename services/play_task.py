@@ -1,9 +1,8 @@
-import subprocess
 from datetime import datetime
 from lib import text_screen
 import pandas as pd
-import shlex
-from services import TranslateService, execute_command
+from .TranslateService import TranslateService
+from .execute_command_service import execute_command
 
 
 def save_task_info(filename: str, task_name: str, task_start_time: str, task_end_time: str, state: str):

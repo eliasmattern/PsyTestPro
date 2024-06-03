@@ -1,12 +1,12 @@
 import json
 import os
-import shlex
-import subprocess
 
 import pandas as pd
 
 from lib import text_screen
-from services import PsyTestProConfig, TranslateService, execute_command
+from .configuration import PsyTestProConfig
+from .TranslateService import TranslateService
+from .execute_command_service import execute_command
 
 
 class JSONToCSVConverter:
