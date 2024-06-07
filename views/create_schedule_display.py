@@ -234,6 +234,19 @@ class CreateScheduleDisplay:
         sorted_schedule = [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
                            sorted_schedule.items()]
 
+        past_todo_tasks = {key: value for key, value in self.schedule.items() if
+                           value['state'] == 'todo' and datetime.strptime(value['datetime'],
+                                                                          '%d/%m/%Y %H:%M:%S') < datetime.now()}
+        for task in past_todo_tasks.keys():
+            state = play_tasks(self.file_name, self.participant_info, task, self.schedule,
+                               self.translate_service,
+                               self.custom_variables)
+            pygame.mouse.set_visible(True)
+            if state:
+                self.schedule[task]['state'] = 'done'
+            else:
+                self.schedule[task]['state'] = 'error'
+
         check_for_old_tasks = True
         self.play_next_task = False
         start_time = datetime.now()
