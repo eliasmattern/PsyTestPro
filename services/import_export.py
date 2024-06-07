@@ -39,19 +39,23 @@ class JSONToCSVConverter:
         custom_variables_df['custom_variables'] = custom_variables
 
         experiment_config_df = pd.DataFrame()
-        experiment_config_df['experiment_config'] = experiment_config_data
+        experiments_list = ['\'' + str(exp) for exp in experiment_config_data]
+        experiment_config_df['experiment_config'] = experiments_list
 
         task_config_df = pd.DataFrame()
         tasks = []
         for experiment_name, value in task_config_data.items():
-            for task_name, task_settings in value['tasks'].items():
-                time = task_settings['time']
-                state = task_settings['state']
-                task_type = task_settings['type']
-                value = task_settings['value'] + '|' if task_settings['type'] == 'command' \
-                    else task_settings['value']['title'] + '|' + task_settings['value']['description']
-                tasks.append('|'.join([experiment_name, task_name, time, state, task_type, value]))
-
+            if len(value['tasks']) > 0:
+                for task_name, task_settings in value['tasks'].items():
+                    time = task_settings['time']
+                    state = task_settings['state']
+                    task_type = task_settings['type']
+                    task_position = str(task_settings['position'])
+                    value = task_settings['value'] + '|' if task_settings['type'] == 'command' \
+                        else task_settings['value']['title'] + '|' + task_settings['value']['description']
+                    tasks.append('|'.join([experiment_name, task_name, time, state, task_type, value, task_position]))
+            else:
+                tasks.append('|'.join([experiment_name, '', '', '', '', '', '', '']))
         task_config_df['task_config'] = tasks
 
         final_df = pd.concat([setting_df, custom_variables_df, experiment_config_df, task_config_df], axis=1)
@@ -94,6 +98,8 @@ class CSVToJSONConverter:
         for experiment in df['experiment_config']:
             if any(pd.isna(val) for val in [experiment]):
                 break
+            if experiment.startswith('\''):
+                experiment = experiment.replace('\'', '', 1)
             experiments.append(experiment)
 
         with open(self.experiment_config_path, 'w') as file:
@@ -104,17 +110,18 @@ class CSVToJSONConverter:
         for task in df['task_config']:
             if pd.isna(task):
                 break
-            experiment_name, task_name, time, state, task_type, value, desc = task.split('|')
+            experiment_name, task_name, time, state, task_type, value, desc, position = task.split('|')
 
             if experiment_name not in tasks.keys():
                 tasks[experiment_name] = {'tasks': {}}
-
+            if task_name == '':
+                continue
             if task_type == 'command':
                 task_value = value
             else:
                 task_value = {'title': value, 'description': desc}
-            tasks[experiment_name]['tasks'][task_name] = {'time': time, 'state': state, 'type': task_type,
-                                                          "value": task_value}
+            tasks[experiment_name]['tasks'][task_name] = {'position': int(position), 'time': time, 'state': state,
+                                                          'type': task_type, "value": task_value}
 
         with open(self.task_config_path, 'w') as file:
             json.dump(tasks, file, indent=4)

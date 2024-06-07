@@ -28,6 +28,8 @@ class TaskManualImportView:
         self.delete_task_view = DeleteTaskView(self.translate_service)
 
     def back(self):
+        self.errorMsg = None
+        self.successMsg = None
         self.is_running = False
 
     def show(self, psy_test_pro, create_continuously: bool, experiment_name: str):
@@ -138,12 +140,12 @@ class TaskManualImportView:
             if self.successMsg:
                 message = self.font.render(self.successMsg, True, self.primary_color)
                 message_rect = message.get_rect()
-                message_rect.center = (x, y + spacing * 3 + self.font.get_linesize() * 2)
+                message_rect.center = (x, y + spacing * 5 + self.font.get_linesize() * 2)
                 screen.blit(message, message_rect)
             if self.errorMsg:
                 message = self.font.render(self.errorMsg, True, self.danger_color)
                 message_rect = message.get_rect()
-                message_rect.center = (x, y + spacing * 3 + self.font.get_linesize() * 2)
+                message_rect.center = (x, y + spacing * 5 + self.font.get_linesize() * 2)
                 screen.blit(message, message_rect)
 
             pygame.display.flip()  # Flip the display to update the screen
