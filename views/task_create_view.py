@@ -9,7 +9,15 @@ from services import TranslateService, execute_command
 
 
 class AddTaskView:
-    def __init__(self, translate_service: TranslateService) -> None:
+    def __init__(self, translate_service: TranslateService, editing=False, task_name=None, task_time=None, task_title=None,
+                 task_desc=None, task_command=None, position=None) -> None:
+        self.editing = editing
+        self.task_name = task_name
+        self.task_time = task_time
+        self.task_title = task_title
+        self.task_desc = task_desc
+        self.task_command = task_command
+        self.task_position = position
         self.translate_service = translate_service
         self.adding = True
         self.selected_multiple = False
@@ -19,9 +27,12 @@ class AddTaskView:
         self.settings = self.psy_test_pro_config.get_settings()
         self.inactive_button_color = pygame.Color(self.settings["inactiveButtonColor"])
         self.timepicker = TimePicker(300, 200, 'timeDuration', self.translate_service, action_key='save')
+        if self.task_time:
+            self.timepicker.set_time(self.task_time)
         self.show_time_picker = False
 
-    def validate_task_inputs(self, input_boxes: list[InputBox], time_input: str, command_inputs: list[InputBox], text_screen_inputs: list[InputBox], is_command: bool):
+    def validate_task_inputs(self, input_boxes: list[InputBox], time_input: str, command_inputs: list[InputBox],
+                             text_screen_inputs: list[InputBox], is_command: bool):
         is_valid = False
 
         if input_boxes[0].text and time_input:
@@ -83,7 +94,7 @@ class AddTaskView:
     def save_task(
             self,
             create_continously: bool,
-            variable: str,
+            experiment: str,
             name: str,
             time: str,
             input_boxes: list[InputBox],
@@ -92,7 +103,7 @@ class AddTaskView:
             command=None,
             title=None,
             description=None,
-            is_command: bool=False,
+            is_command: bool = False,
 
     ):
         type = 'text' if not is_command else 'command'
@@ -100,7 +111,10 @@ class AddTaskView:
             {'title': title, 'description': description} if not is_command else command
         )
         psy_test_pro_config = PsyTestProConfig()
-        psy_test_pro_config.save_task(variable, name, time, type, value)
+        if not self.editing:
+            psy_test_pro_config.save_task(experiment, name, time, type, value)
+        else:
+            psy_test_pro_config.edit_task(self.task_name, experiment, name, time, type, value)
         if create_continously:
             self.is_task_working = False
             self.error = ''
@@ -124,7 +138,6 @@ class AddTaskView:
 
     def add(
             self,
-            psy_test_pro,
             create_continously: bool,
             experiment: str
     ):
@@ -160,14 +173,15 @@ class AddTaskView:
         buttons: list[Button] = []
         text_screen_inputs: list[InputBox] = []
         command_inputs: list[InputBox] = []
-        command_labels = ['command']
-        text_labels = ['title', 'description']
+        command_labels = [('command', self.task_command)]
+        text_labels = [('title', self.task_title), ('description', self.task_desc)]
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
         y = height // 2 - 100
         input_box = InputBox(
-            x, y, 400, 40, 'taskName', self.translate_service, allow_new_line=False
+            x, y, 400, 40, 'taskName', self.translate_service, allow_new_line=False,
+            initial_text=self.task_name if self.task_name else ''
         )
         input_boxes.append(input_box)
         y += spacing
@@ -184,14 +198,14 @@ class AddTaskView:
         y += spacing + spacing
         for label in text_labels:
             input_box = InputBox(
-                x, y, 400, 40, label, self.translate_service, allow_new_line=True
+                x, y, 400, 40, label[0], self.translate_service, allow_new_line=True, initial_text=label[1] if label[1] else ''
             )
             text_screen_inputs.append(input_box)
             y += spacing
         y = height // 2 - 100 + 3 * spacing
         for label in command_labels:
             input_box = InputBox(
-                x, y, 400.1, 40, label, self.translate_service, allow_new_line=False
+                x, y, 400, 40, label[0], self.translate_service, allow_new_line=False,  initial_text=label[1] if label[1] else ''
             )
             command_inputs.append(input_box)
             y += spacing
@@ -267,8 +281,8 @@ class AddTaskView:
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
-        text_screen = True
-        command = False
+        text_screen = False if self.task_command else True
+        command = not text_screen
 
         text_screen_rendered = question_font.render(
             self.translate_service.get_translation('textScreen'), True, light_grey
@@ -307,9 +321,7 @@ class AddTaskView:
                             mouse_pos = (
                                 pygame.mouse.get_pos()
                             )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
-                            if tick_box_rect.collidepoint(
-                                    mouse_pos
-                            ):  # If the cursor position has collided with the start timer button
+                            if tick_box_rect.collidepoint(mouse_pos) and not self.editing:  # If the cursor position has collided with the start timer button
                                 self.selected_multiple = not self.selected_multiple
                             if text_tick_box_rect.collidepoint(
                                     mouse_pos
@@ -333,10 +345,10 @@ class AddTaskView:
                         button.handle_event(event)
             screen.fill(black)  # Fill the screen with the black color
 
-            screen.blit(option_text_rendered, option_text_rect)
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
-            if self.validate_task_inputs(input_boxes, self.timepicker.time, command_inputs, text_screen_inputs, command):
+            if self.validate_task_inputs(input_boxes, self.timepicker.time, command_inputs, text_screen_inputs,
+                                         command):
                 buttons[2].set_active(True)
                 buttons[2].set_color(pygame.Color(self.settings["buttonColor"]))
                 buttons[3].set_active(True)
@@ -383,13 +395,13 @@ class AddTaskView:
                     box.update_text()
             for button in buttons:
                 button.draw(screen)
-
             # draw the tick box rectangle on the window surface
-            pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
             pygame.draw.rect(screen, light_grey, text_tick_box_rect, 2)
             pygame.draw.rect(screen, light_grey, command_tick_box_rect, 2)
             # if the selected_multiple variable is equal to the option currently being processed in the loop
-            if self.selected_multiple:
+            if self.selected_multiple and not self.editing:
+                pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
+
                 # create a list of points that define the shape of the tick mark
                 tick_mark_points = [
                     (
@@ -407,6 +419,7 @@ class AddTaskView:
                 ]
                 # draw lines connecting the points defined above (draw the tick)
                 pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
+                screen.blit(option_text_rendered, option_text_rect)
 
             screen.blit(text_screen_rendered, text_screen_rect)
 

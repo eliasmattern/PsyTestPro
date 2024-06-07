@@ -9,12 +9,14 @@ from services import PsyTestProConfig, ImportTasksService
 import webbrowser
 from services import TranslateService
 from .task_create_view import AddTaskView
-
+from .manage_task_view import ManageTasksView
+from .task_delete_view import DeleteTaskView
 
 class TaskManualImportView:
     def __init__(self, translate_service: TranslateService, task_create_view: AddTaskView):
         self.translate_service = translate_service
         self.add_task = task_create_view
+        self.manage_tasks_view = ManageTasksView(translate_service)
         self.is_running = True
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
@@ -23,6 +25,7 @@ class TaskManualImportView:
         self.successMsg = None
         self.errorMsg = None
         self.font = pygame.font.Font(None, 18)
+        self.delete_task_view = DeleteTaskView(self.translate_service)
 
     def back(self):
         self.is_running = False
@@ -54,16 +57,36 @@ class TaskManualImportView:
             400,
             40,
             'createTask',
-            lambda: self.add_task.add(psy_test_pro, create_continuously, experiment_name),
+            lambda: self.add_task.add(create_continuously, experiment_name),
             self.translate_service,
         )
 
-        show_preview_check_box = CheckBox('showPreview', x, y + spacing * 3, active=True,
+        manage_tasks_button = Button(
+            x,
+            y + 2 * spacing,
+            400,
+            40,
+            'manageTasks',
+            lambda: self.manage_tasks_view.display(experiment_name),
+            self.translate_service,
+        )
+
+        delete_tasks_button = Button(
+            x,
+            y + 3 * spacing,
+            400,
+            40,
+            'deleteTasks',
+            lambda: self.delete_task_view.delete_task(experiment_name),
+            self.translate_service,
+        )
+
+        show_preview_check_box = CheckBox('showPreview', x, y + spacing * 5, active=True,
                                           translate_service=self.translate_service, font_size=24)
 
         import_task_button = Button(
             x,
-            y + spacing * 2,
+            y + spacing * 4,
             400,
             40,
             'importTasks',
@@ -73,7 +96,7 @@ class TaskManualImportView:
 
         back_to_task_manual_import_button = Button(
             x,
-            y + 4 * spacing,
+            y + 6 * spacing,
             100,
             40,
             'back',
@@ -92,7 +115,9 @@ class TaskManualImportView:
         )
 
         buttons.append(create_task_button)
+        buttons.append(manage_tasks_button)
         buttons.append(import_task_button)
+        buttons.append(delete_tasks_button)
         buttons.append(back_to_task_manual_import_button)
         buttons.append(get_template_button)
 

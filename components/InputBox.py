@@ -8,8 +8,12 @@ from services import PsyTestProConfig
 
 
 class InputBox:
-    def __init__(self, x: int, y: int, width: int, height: int, translation_key: str, translate_service=None, info='',
-                 initial_text='', desc='', allow_new_line=False, not_allowed_characters=[], is_active=True, color=None, active_color=None, text_color=None, label_color=None, active_text_color=None, inactive_color=None, hidden=False, icon=True):
+    def __init__(self, x: float, y: float, width: int, height: int, translation_key: str, translate_service=None,
+                 info='',
+                 initial_text='', desc='', allow_new_line=False, not_allowed_characters=[], is_active=True, color=None,
+                 active_color=None, text_color=None, label_color=None, active_text_color=None, inactive_color=None,
+                 hidden=False, icon=True, is_numeric=False, minVal: int = None, maxVal: int = None,
+                 on_deselect: callable = None):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)
         self.psy_test_pro_config = PsyTestProConfig()
@@ -74,6 +78,10 @@ class InputBox:
         self.is_hidden = hidden
         self.is_touched = False
         self.icon = icon
+        self.is_numeric = is_numeric
+        self.min = minVal
+        self.max = maxVal
+        self.on_deselect = on_deselect
 
     def set_active(self, active: bool):
         self.is_active = active
@@ -90,6 +98,8 @@ class InputBox:
                 if self.rect.collidepoint(event.pos) and event.button == 1:
                     self.is_selected = True
                 else:
+                    if self.on_deselect and self.is_selected:
+                        self.on_deselect()
                     self.is_selected = False
                     self.is_highlighted = False
                 if self.imagePos.collidepoint(pygame.mouse.get_pos()) and event.button == 1 and self.icon:
@@ -244,14 +254,29 @@ class InputBox:
                     else:
                         text_length = len(self.text)
                         if event.unicode not in self.not_allowed_characters:
-                            self.text_memory.append(self.text)
-                            self.memory_index = 0
-                            if self.is_highlighted:
-                                self.offset = 0
-                                self.cursor_pos = (0, 0)
-                                self.text = ''
-                            self.text = self.text[0:text_length - self.offset] + event.unicode + self.text[
-                                                                                                 text_length - self.offset:text_length]
+                            if self.is_numeric and event.unicode.isdigit():
+                                new_text = self.text[0:text_length - self.offset] + event.unicode + self.text[
+                                                                                                    text_length - self.offset:text_length]
+                                if self.min and int(new_text) < self.min:
+                                    new_text = self.text
+                                elif self.max and int(new_text) > self.max:
+                                    new_text = self.text
+                                self.text_memory.append(self.text)
+                                self.memory_index = 0
+                                if self.is_highlighted:
+                                    self.offset = 0
+                                    self.cursor_pos = (0, 0)
+                                    self.text = ''
+                                self.text = new_text
+                            elif not self.is_numeric:
+                                self.text_memory.append(self.text)
+                                self.memory_index = 0
+                                if self.is_highlighted:
+                                    self.offset = 0
+                                    self.cursor_pos = (0, 0)
+                                    self.text = ''
+                                self.text = self.text[0:text_length - self.offset] + event.unicode + self.text[
+                                                                                                     text_length - self.offset:text_length]
                         self.is_highlighted = False
 
                     self.cursor_visible = True
@@ -353,7 +378,7 @@ class InputBox:
                     if len(self.text[text_length - self.offset:text_length]) > 0:
                         self.text = self.text[0:text_length - self.offset] + self.text[
                                                                              (
-                                                                                         text_length - self.offset) + 1:text_length]
+                                                                                     text_length - self.offset) + 1:text_length]
                         self.cursor_pos = self.font.size(self.text[text_length - self.offset:text_length])
                         self.offset -= 1
                         self.delay = datetime.now().timestamp()

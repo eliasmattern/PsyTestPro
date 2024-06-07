@@ -71,13 +71,23 @@ class PsyTestProConfig:
 
         return result
 
-    def load_tasks_of_experiment(self, experiment: str):
+    def load_task_names_of_experiment(self, experiment: str) -> list:
 
         with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
-        tasks = list(data[experiment]['tasks'].keys())
+        tasks = data[experiment]['tasks']
+
+        sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
+        current_tasks = {k: v for k, v in sorted_tasks}
+        tasks = list(current_tasks.keys())
 
         return tasks
+
+    def load_task_of_experiment(self, experiment: str) -> dict:
+
+        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        return data[experiment]['tasks']
 
     def delete_task(self, experiment: str, task: str):
         if experiment == 'hab_variable_variable':
@@ -85,7 +95,13 @@ class PsyTestProConfig:
 
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
+        deleted_position = data[experiment]['tasks'][task]['position']
         del data[experiment]['tasks'][task]
+
+        for key in data[experiment]['tasks'].keys():
+            position = data[experiment]['tasks'][key]['position']
+            if position > deleted_position:
+                data[experiment]['tasks'][key]['position'] = position - 1
         # Save the updated array back to the file
         with open('json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
@@ -109,9 +125,25 @@ class PsyTestProConfig:
             json_data[object_name]['tasks'][task_name] = new_task
 
         name = name.replace(' ', '_')
-        # Example usage
+
         add_task_to_object(json_data, variable, name, time, type, value)
 
+        # Save the updated JSON data back to the file
+        with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
+            json.dump(json_data, file, indent=4)
+
+    def edit_task(self, old_task_name, variable, name: str, time: str, type: str, value: str):
+
+        # Load the JSON data from a file
+        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+            json_data = json.load(file)
+
+        name = name.replace(' ', '_')
+        old_task_name = old_task_name.replace(' ', '_')
+        json_data[variable]['tasks'][old_task_name]['time'] = time
+        json_data[variable]['tasks'][old_task_name]['type'] = type
+        json_data[variable]['tasks'][old_task_name]['value'] = value
+        json_data[variable]['tasks'][name] = json_data[variable]['tasks'].pop(old_task_name)
         # Save the updated JSON data back to the file
         with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
@@ -174,3 +206,10 @@ class PsyTestProConfig:
 
         with open('json/settings.json', 'w', encoding='utf-8') as file:
             json.dump(settings, file)
+
+    def save_task_list(self, experiment: str, tasks: dict):
+        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        data[experiment]['tasks'] = tasks
+        with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
+            json.dump(data, file, indent=4)

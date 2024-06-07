@@ -247,7 +247,6 @@ class SettingsView:
 
     def display(self, psy_test_pro, translate_service: TranslateService, language_config: LanguageConfiguration,
                 id: str, experiment: str, start_time: str, custom_variables: dict):
-        print(id,experiment,start_time,custom_variables)
         self.translate_service = translate_service
         # Define colors
         black = (0, 0, 0)

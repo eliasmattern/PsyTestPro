@@ -96,17 +96,14 @@ class ExperimentConfig():
 
         # Setting the window caption
         pygame.display.set_caption('Configure Experiment')
-
         create_experiment_config = CreateExperimentView(self.translate_service)
         delete_experiment_config = DeleteExperimentView(self.translate_service)
         task_config = TaskConfig(self.translate_service)
-        delte_task_config = DeleteTaskView(self.translate_service)
         create_variables_config = CreateVariablesView(self.translate_service)
         delete_variables_config = DeleteVariableView(self.translate_service)
 
         buttons: list[Button] = []
         experiment_buttons = []
-        task_buttons = []
         import_export_buttons = []
         var_buttons = []
         spacing = 60
@@ -144,15 +141,6 @@ class ExperimentConfig():
             40,
             'createTask',
             lambda: task_config.add_task_config_display(psy_test_pro),
-            self.translate_service,
-        )
-        delete_task_button = Button(
-            x,
-            y + spacing * 2,
-            400,
-            40,
-            'deleteTask',
-            lambda: delte_task_config.delete_task_config_display(),
             self.translate_service,
         )
 
@@ -223,9 +211,6 @@ class ExperimentConfig():
         import_export_buttons.append(export_button)
         import_export_buttons.append(import_task_button)
         import_export_buttons.append(back_to_config_button)
-        task_buttons.append(create_task_button)
-        task_buttons.append(delete_task_button)
-        task_buttons.append(back_to_config_button)
         var_buttons.append(create_var_button)
         var_buttons.append(delete_var_button)
         var_buttons.append(back_to_config_button)
@@ -247,7 +232,7 @@ class ExperimentConfig():
             400,
             40,
             'configureTasks',
-            lambda: self.show_setting_buttons(screen, task_buttons, 'configureTasks'),
+            lambda: task_config.add_task_config_display(psy_test_pro),
             self.translate_service,
         )
         y += spacing
@@ -340,7 +325,7 @@ class ExperimentConfig():
         width, height = pygame.display.get_surface().get_rect().size
 
         x = width // 2
-        y = height // 2 - 150
+        y = height // 3
 
         while True:
             for event in pygame.event.get():

@@ -52,7 +52,7 @@
     "textScreen": "Information Screen",
     "preview": "Preview",
     "chooseSuite": "Choose a suite",
-    "deleteTask": "Delete task",
+    "deleteTasks": "Delete tasks",
     "deleteTaskFrom": "Delete task from:",
     "importExperiments": "Import Test Battery",
     "exportExperiments": "Export Test Battery",
@@ -122,12 +122,13 @@
     "variableError": "You can only create 3 variables",
     "timepicker": "Time Picker",
     "importTasks": "Import Task",
-    "showPreview": "Show Preview",
+    "showPreview": "Show Preview during import",
     "importTasksFailed": "Failed to import tasks",
     "wrongFileFormatForTaskImport": "Wrong file format. Only .csv and .xlsx files are supported.",
     "importTaskFailed": "Failed to import Task:",
     "taskImportSuccessful": "Tasks successfully imported",
     "getImportTemplate": "Get template excel to import tasks",
-    "createTaskForSuite": "Choose Suite to create a Task for",
-    "configureSuites": "Configure Task Suites"
+    "chooseSuiteToConfigureTask": "Choose suite to configure tasks for:",
+    "configureSuites": "Configure Task Suites",
+    "manageTasks": "Manage Tasks"
 }

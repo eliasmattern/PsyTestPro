@@ -163,7 +163,7 @@ class TaskConfig:
                 None, int(32)
             )  # Create font object for header
             text_surface = font.render(
-                self.translate_service.get_translation('createTaskForSuite'), True, light_grey
+                self.translate_service.get_translation('chooseSuiteToConfigureTask'), True, light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))

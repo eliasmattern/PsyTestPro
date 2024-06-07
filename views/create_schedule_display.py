@@ -230,14 +230,9 @@ class CreateScheduleDisplay:
         # convert the schedule to a list of tuples and sort it by time
         sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: item[1]['position'])
         sorted_schedule = {k: v for k, v in sorted_schedule}
-        print('sorted_schedule')
-        print(sorted_schedule)
-        print('sorted_schedule')
+
         sorted_schedule = [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
                            sorted_schedule.items()]
-        print('sorted_schedule')
-        print(sorted_schedule)
-        print('sorted_schedule')
 
         check_for_old_tasks = True
         self.play_next_task = False

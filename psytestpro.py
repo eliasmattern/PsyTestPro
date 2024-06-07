@@ -306,9 +306,7 @@ class PsyTestPro:
 
     def start_experiment(self, start_time: datetime, participant_info: dict, custom_variables: dict):
         global schedule
-        print(self.psyTestProConfig.current_experiment)
         isHab = '_list' in self.psyTestProConfig.current_experiment
-        print(isHab)
         schedule = {}
         current_tasks = self.psyTestProConfig.current_tasks
         if len(self.psyTestProConfig.error_msg) > 0:
@@ -350,7 +348,6 @@ class PsyTestPro:
         for _, task in schedule.items():
             if datetime.strptime(task['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now():
                 task['state'] = 'skip'
-        print('schedule = ', edited_schedule)
 
         file_name = self.save_experiment_info(participant_info)
 
