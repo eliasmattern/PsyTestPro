@@ -44,9 +44,7 @@ class TaskManualImportView:
             None, int(32)
         )  # Create font object for header
         formated_experiment_name = experiment_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
-        title_text = ' '.join(
-            [self.translate_service.get_translation('createTask'), self.translate_service.get_translation('for'),
-             formated_experiment_name])
+        title_text = self.translate_service.get_translation('configureTasksForSuite') + formated_experiment_name
         text_surface = font.render(title_text, True,
                                    pygame.Color(self.settings["primaryColor"]))  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()

@@ -129,6 +129,7 @@
     "taskImportSuccessful": "Tasks successfully imported",
     "getImportTemplate": "Get template excel to import tasks",
     "chooseSuiteToConfigureTask": "Choose suite to configure tasks for:",
-    "configureSuites": "Configure Task Suites",
-    "manageTasks": "Manage Tasks"
+    "configureSuites": "Configure Suites",
+    "manageTasks": "Manage Tasks",
+    "configureTasksForSuite": "Configure tasks for Suite: "
 }

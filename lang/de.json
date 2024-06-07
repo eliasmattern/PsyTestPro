@@ -124,7 +124,8 @@
     "taskImportSuccessful": "Tasks erfolgreich importiert",
     "getImportTemplate": "Excelvorlage um Taks zu imoprtieren",
     "createTaskForExperiment": "Wähle eine Suite, für welches eine Aufgabe hinzugefügt werden soll",
-    "configureSuites": "Task Suites konfigurieren",
+    "configureSuites": "Suites konfigurieren",
     "manageTasks": "Aufgaben verwalten",
-    "chooseSuiteToConfigureTask": "Wähle die Suite für welche du Aufgaben konfigurieren möchtest:"
+    "chooseSuiteToConfigureTask": "Wähle die Suite für welche du Aufgaben konfigurieren möchtest:",
+    "configureTasksForSuite": "Konfiguriere Aufgaben für Suite: "
 }

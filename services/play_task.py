@@ -80,6 +80,7 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
                     script_count += 1
                     if task == upcoming_event:
                         break
+            participant_info['script_count'] = script_count
             error, return_code = execute_command(command, participant_info, custom_variables)
             
             if return_code != 0:

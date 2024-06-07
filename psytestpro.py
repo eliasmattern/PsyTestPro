@@ -360,8 +360,10 @@ class PsyTestPro:
         start_time = self.input_boxes['startTime'].text
 
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, '%H:%M').time())
+        current_time = datetime.now()
 
-        participant_info = {'participant_id': participant_id, 'suite': experiment, 'start_time': start_time}
+        timestamp = current_time.strftime("%Y.%m.%d %H:%M:%S")
+        participant_info = {'participant_id': participant_id, 'suite': experiment, 'start_time': start_time, 'timestamp': timestamp}
 
         custom_variables = self.psyTestProConfig.load_custom_variables()
 
