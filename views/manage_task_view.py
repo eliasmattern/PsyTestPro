@@ -57,12 +57,12 @@ class ManageTasksView:
             input_box.draw(self.screen)
         for rect in self.rects:
             pygame.draw.rect(self.screen, self.primary_color, rect, width=2, border_radius=10)
-
-        page_text = f'{self.page + 1}/{len(self.tasks)}'
-        page_surface = self.font.render(page_text, True, self.primary_color)
-        page_rect = page_surface.get_rect()
-        page_rect.center = (self.screen.get_width() / 2, self.screen.get_height() / 8 + 8 * 80 + 12.5)
-        self.screen.blit(page_surface, page_rect)
+        if len(self.tasks) > 1:
+            page_text = f'{self.page + 1}/{len(self.tasks)}'
+            page_surface = self.font.render(page_text, True, self.primary_color)
+            page_rect = page_surface.get_rect()
+            page_rect.center = (self.screen.get_width() / 2, self.screen.get_height() / 8 + 8 * 80 + 12.5)
+            self.screen.blit(page_surface, page_rect)
         pygame.display.flip()
 
     def handle_events(self):
@@ -138,8 +138,9 @@ class ManageTasksView:
             self.translate_service
         )
         self.buttons['back_button'] = back_button
-        self.buttons['left_button'] = left_button
-        self.buttons['right_button'] = right_button
+        if len(self.tasks) > 1:
+            self.buttons['left_button'] = left_button
+            self.buttons['right_button'] = right_button
 
     def rearrange(self, old_pos, input_name, task_name):
         if old_pos == self.input_boxes[input_name].text:
@@ -177,7 +178,7 @@ class ManageTasksView:
             if len(dict_list[current_dict]) >= chunk_size:
                 dict_list.append({})
                 current_dict += 1
-
+        dict_list = list(filter(lambda lst: len(lst) > 0, dict_list))
         return dict_list
 
     def page_update(self, increment: bool, splitted_tasks: list):
