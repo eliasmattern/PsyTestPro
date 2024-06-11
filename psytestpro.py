@@ -115,7 +115,7 @@ class PsyTestPro:
                                  lambda: self.show_settings_screen(),
                                  self.translateService)
         create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureTestBattery',
-                                          lambda: self.experiment_config_display.display(PsyTestPro),
+                                          lambda: self.configure_test_battery(),
                                           self.translateService)
 
         self.buttons.append(exit_button)
@@ -414,6 +414,15 @@ class PsyTestPro:
         self.settings_view.display(PsyTestPro, self.translateService,
                                    self.language_config, participant_id, experiment,
                                    start_time, variables)
+
+    def configure_test_battery(self):
+        self.experiment_config_display.display(PsyTestPro)
+        old_experiements = self.psyTestProConfig.experiments
+        self.psyTestProConfig.load_experiments()
+        if old_experiements != self.psyTestProConfig.experiments:
+            self.buttons = []
+            self.input_boxes = {}
+            self.create_input_boxes()
 
 
 PsyTestPro()
