@@ -233,7 +233,7 @@ class SettingsView:
             if len(dict_list[current_dict]) >= chunk_size:
                 dict_list.append({})
                 current_dict += 1
-        filtered_dict = [entry for entry in dict_list if entry]
+        filtered_dict = list(filter(lambda lst: len(lst) > 0, dict_list))
 
         return filtered_dict
 

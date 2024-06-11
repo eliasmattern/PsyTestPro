@@ -446,6 +446,7 @@ class CreateScheduleDisplay:
             if len(dict_list[current_dict]) >= chunk_size:
                 dict_list.append({})
                 current_dict += 1
+        dict_list = list(filter(lambda lst: len(lst) > 0, dict_list))
 
         return dict_list
 
