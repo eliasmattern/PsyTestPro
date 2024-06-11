@@ -325,9 +325,7 @@ class AddTaskView:
                                 text_screen = not text_screen
                                 command = not command
                                 self.error = ''
-                            if command_tick_box_rect.collidepoint(
-                                    mouse_pos
-                            ):  # If the cursor position has collided with the start timer button
+                            if command_tick_box_rect.collidepoint(mouse_pos):  # If the cursor position has collided with the start timer button
                                 text_screen = not text_screen
                                 command = not command
                                 self.error = ''
@@ -395,27 +393,29 @@ class AddTaskView:
             pygame.draw.rect(screen, light_grey, text_tick_box_rect, 2)
             pygame.draw.rect(screen, light_grey, command_tick_box_rect, 2)
             # if the selected_multiple variable is equal to the option currently being processed in the loop
-            if self.selected_multiple and not self.editing:
+            if not self.editing:
                 pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
-
-                # create a list of points that define the shape of the tick mark
-                tick_mark_points = [
-                    (
-                        x + 275 - 25 * height_scale_factor,
-                        y + 420 + 10 * height_scale_factor,
-                    ),
-                    (
-                        x + 275 - 20 * height_scale_factor,
-                        y + 420 + 15 * height_scale_factor,
-                    ),
-                    (
-                        x + 275 - 15 * height_scale_factor,
-                        y + 420 + 5 * width_scale_factor,
-                    ),
-                ]
-                # draw lines connecting the points defined above (draw the tick)
-                pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
                 screen.blit(option_text_rendered, option_text_rect)
+
+                if self.selected_multiple:
+
+                    # create a list of points that define the shape of the tick mark
+                    tick_mark_points = [
+                        (
+                            x + 275 - 25 * height_scale_factor,
+                            y + 420 + 10 * height_scale_factor,
+                        ),
+                        (
+                            x + 275 - 20 * height_scale_factor,
+                            y + 420 + 15 * height_scale_factor,
+                        ),
+                        (
+                            x + 275 - 15 * height_scale_factor,
+                            y + 420 + 5 * width_scale_factor,
+                        ),
+                    ]
+                    # draw lines connecting the points defined above (draw the tick)
+                    pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
 
             screen.blit(text_screen_rendered, text_screen_rect)
 
