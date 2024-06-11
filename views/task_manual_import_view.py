@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import sys
 
 import pygame
@@ -22,14 +23,15 @@ class TaskManualImportView:
         self.settings = self.psy_test_pro_config.get_settings()
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         self.danger_color = pygame.Color(self.settings["dangerColor"])
-        self.successMsg = None
-        self.errorMsg = None
+        self.success_msg = None
+        self.error_msg = None
+        self.message_timer = None
         self.font = pygame.font.Font(None, 18)
         self.delete_task_view = DeleteTaskView(self.translate_service)
 
     def back(self):
-        self.errorMsg = None
-        self.successMsg = None
+        self.error_msg = None
+        self.success_msg = None
         self.is_running = False
 
     def show(self, psy_test_pro, create_continuously: bool, experiment_name: str):
@@ -135,18 +137,30 @@ class TaskManualImportView:
 
             show_preview_check_box.draw(screen)
 
-            if self.successMsg:
-                message = self.font.render(self.successMsg, True, self.primary_color)
+            if self.success_msg:
+                if not self.message_timer:
+                    self.message_timer = datetime.now()
+                message = self.font.render(self.success_msg, True, self.primary_color)
                 message_rect = message.get_rect()
                 message_rect.center = (x, y + spacing * 5 + self.font.get_linesize() * 2)
                 screen.blit(message, message_rect)
-            if self.errorMsg:
-                message = self.font.render(self.errorMsg, True, self.danger_color)
+                if datetime.now() >= self.message_timer + timedelta(seconds=5):
+                    self.success_msg = None
+                    self.message_timer = None
+
+            if self.error_msg:
+                if not self.message_timer:
+                    self.message_timer = datetime.now()
+                message = self.font.render(self.error_msg, True, self.danger_color)
                 message_rect = message.get_rect()
                 message_rect.center = (x, y + spacing * 5 + self.font.get_linesize() * 2)
                 screen.blit(message, message_rect)
+                if datetime.now() >= self.message_timer + timedelta(seconds=5):
+                    self.error_msg = None
+                    self.message_timer = None
 
             pygame.display.flip()  # Flip the display to update the screen
+
         self.is_running = True
 
     def import_task(self, experiment_name: str, show_preview: bool):
@@ -163,14 +177,14 @@ class TaskManualImportView:
             if filepath:
                 import_tasks_service = ImportTasksService(self.translate_service)
                 result = import_tasks_service.import_tasks(experiment_name, filepath, show_preview)
-                self.successMsg = None
-                self.errorMsg = None
+                self.success_msg = None
+                self.error_msg = None
                 if result[0]:
-                    self.successMsg = self.translate_service.get_translation(result[1])
+                    self.success_msg = self.translate_service.get_translation(result[1])
                 else:
-                    self.errorMsg = self.translate_service.get_translation(result[1])
+                    self.error_msg = self.translate_service.get_translation(result[1])
                     if len(result) == 3:
-                        self.errorMsg = ' '.join((self.errorMsg, result[2]))
+                        self.error_msg = ' '.join((self.error_msg, result[2]))
 
         except Exception as e:
             print(f'An error occurred: {e}')
