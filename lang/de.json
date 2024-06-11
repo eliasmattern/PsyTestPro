@@ -116,7 +116,7 @@
     "showPlayTaskButton": "Nächste Aufgabe abspielen button anzeigen",
     "variableError": "Es können nur 3 Variablen erstellt werden",
     "timepicker": "Zeitpicker",
-    "importTasks": "Aufgabe importieren",
+    "importTasks": "Aufgaben importieren",
     "showPreview": "Vorschau Anzeigen beim importieren",
     "importTasksFailed": "Beim Importieren ist ein Fehler aufgetreten",
     "wrongFileFormatForTaskImport": "Falsches Dateiformat. Nur .csv und .xlsx Dateien sind kompatibel.",

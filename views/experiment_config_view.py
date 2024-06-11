@@ -23,9 +23,14 @@ class ExperimentConfig():
         self.translate_service = translate_service
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.running = True
+        self.config_button_running = True
 
-    def back_to_psy_test_pro(self, psy_test_pro):
-        psy_test_pro()
+    def back_to_psy_test_pro(self):
+        self.running = False
+
+    def back_to_config(self):
+        self.config_button_running = False
 
     def back(self, psy_test_pro):
         self.display(psy_test_pro, self.translate_service)
@@ -200,7 +205,7 @@ class ExperimentConfig():
             100,
             40,
             'back',
-            lambda: self.display(psy_test_pro, create_continously),
+            self.back_to_config,
             self.translate_service,
         )
 
@@ -263,7 +268,7 @@ class ExperimentConfig():
             100,
             40,
             'back',
-            lambda: self.back_to_psy_test_pro(psy_test_pro),
+            lambda: self.back_to_psy_test_pro(),
             self.translate_service,
         )
         buttons.append(experiment_config_button)
@@ -272,7 +277,7 @@ class ExperimentConfig():
         buttons.append(task_config_button)
         buttons.append(back_button)
 
-        while True:
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -305,6 +310,8 @@ class ExperimentConfig():
 
             pygame.display.flip()  # Flip the display to update the screen
 
+        self.running = True
+
     def show_setting_buttons(self, screen: pygame.Surface, buttons: list[Button], label: str):
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -327,7 +334,7 @@ class ExperimentConfig():
         x = width // 2
         y = height // 3
 
-        while True:
+        while self.config_button_running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -359,3 +366,4 @@ class ExperimentConfig():
             screen.blit(info_surface, (x - info_rect.width // 2, screen_height - 90))
 
             pygame.display.flip()  # Flip the display to update the screen
+        self.config_button_running = True
