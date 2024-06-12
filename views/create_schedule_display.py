@@ -228,7 +228,7 @@ class CreateScheduleDisplay:
 
         filtered_schedule = {key: value for key, value in self.schedule.items() if value['state'] == 'todo'}
         # convert the schedule to a list of tuples and sort it by time
-        sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: item[1]['position'])
+        sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: (item[1]['datetime'], item[1]['position']))
         sorted_schedule = {k: v for k, v in sorted_schedule}
 
         sorted_schedule = [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
