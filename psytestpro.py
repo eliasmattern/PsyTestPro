@@ -230,7 +230,7 @@ class PsyTestPro:
                 'startTime'].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, 'idError'),
-                    (lambda text: text in experiments, 'experimentError'),
+                    (lambda text: text in experiments, 'suiteError'),
                     (self.is_valid_time_format, 'startTimeError')
                 ]
 

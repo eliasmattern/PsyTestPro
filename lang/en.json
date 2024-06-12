@@ -27,7 +27,7 @@
     "helpText": "You will be redirected to GitHub",
     "allTasksCompleted": "All tasks completed",
     "idError": "ID is a mandatory field",
-    "experimentError": "No experiment with this name found",
+    "suiteError": "No suite with this name found",
     "timeOfDayError": "Invalid time of day",
     "weekNoError": "Week number must be numeric",
     "startTimeError": "Start time must be in the format hh:mm",

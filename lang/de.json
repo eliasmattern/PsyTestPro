@@ -25,7 +25,7 @@
     "helpText": "Du wirst zu GitHub weitergeleitet",
     "allTasksCompleted": "Alle Aufgaben erledigt",
     "idError": "ID ist ein Pflichtfeld",
-    "experimentError": "Kein Experiment mit diesem Namen gefunden",
+    "suiteError": "Keine Suite mit diesem Namen gefunden",
     "timeOfDayError": "Ungültige Tageszeit",
     "weekNoError": "Die Wochennummer muss numerisch sein",
     "startTimeError": "Startzeit muss im Format hh:mm sein",
