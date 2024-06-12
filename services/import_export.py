@@ -154,7 +154,7 @@ class ImportTasksService:
             position = len(data[experiment_name]['tasks']) + 1
             for _, row in df.iterrows():
                 task_name = str(row["task_name"]).replace(' ', '_')
-                minutes = row['minutes']
+                minutes = row['duration in minutes']
                 hours = minutes // 60
                 minutes %= 60
                 time = '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
