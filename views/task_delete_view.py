@@ -88,7 +88,7 @@ class DeleteTaskView:
                         y + 60 + spacing,
                         400,
                         40,
-                        task,
+                        task.replace('_', ' '),
                         lambda t=task: self.delete_task_from_config(
                             full_experiment_name,
                             t
