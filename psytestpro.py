@@ -79,10 +79,12 @@ class PsyTestPro:
         custom_variables = self.psyTestProConfig.load_custom_variables()
         labels = ['participantId', 'suite', 'startTime']
         experiments_string = ''
+
         for experiment in self.psyTestProConfig.experiments:
             experiments_string = experiments_string + str(experiment) + ', '
         if ',' in experiments_string:
             experiments_string = experiments_string[:-2]
+
         information = ['', '(' + experiments_string + ')', 'hh:mm']
         initial_text = [self.id, self.experiment, self.time]
         if len(self.custom_variables) == len(custom_variables):
@@ -416,10 +418,15 @@ class PsyTestPro:
                                    start_time, variables)
 
     def configure_test_battery(self):
+        old_custom_variables  = self.psyTestProConfig.load_custom_variables()
+
         self.experiment_config_display.display(PsyTestPro)
         old_experiements = self.psyTestProConfig.experiments
+
         self.psyTestProConfig.load_experiments()
-        if old_experiements != self.psyTestProConfig.experiments:
+        custom_variables = self.psyTestProConfig.load_custom_variables()
+
+        if old_experiements != self.psyTestProConfig.experiments or custom_variables != old_custom_variables:
             self.buttons = []
             self.input_boxes = {}
             self.create_input_boxes()

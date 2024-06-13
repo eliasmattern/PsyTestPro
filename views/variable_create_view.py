@@ -146,7 +146,7 @@ class CreateVariablesView:
         )  # Create font object for header
         text_surface = font.render(self.translate_service.get_translation('createVar'), True, light_grey)  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
-
+        error_font = pygame.font.Font(None, 18)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -192,10 +192,11 @@ class CreateVariablesView:
                 button.draw(screen)
 
             if self.error:
-                error_font = pygame.font.Font(None, 18)
                 error_surface = error_font.render(self.error, True, pygame.Color(self.settings["dangerColor"]))
-                screen.blit(error_surface,
-                            (screen_height // 100 * 80, screen_width // 2 - (error_surface.get_width() // 2)))
+                error_rect = error_surface.get_rect()
+                error_rect.center =(screen_width / 2, screen_height / 100 * 80)
+
+                screen.blit(error_surface, error_rect)
 
             # draw the tick box rectangle on the window surface
             pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
