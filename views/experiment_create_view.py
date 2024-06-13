@@ -63,7 +63,7 @@ class CreateExperimentView:
         )
 
         text_width = pygame.font.Font(None, int(24)).size(self.translate_service.get_translation('createWithSchedule'))
-        self.create_multiple_check_box = CheckBox('createWithSchedule', x + 160 + text_width[0] / 2, y + 75, active=True,
+        self.create_multiple_check_box = CheckBox('createMultipleExperiments', x + 160 + text_width[0] / 2, y + 75, active=True,
                                                   translate_service=self.translate_service, font_size=24)
 
         buttons.append(exit_button)
