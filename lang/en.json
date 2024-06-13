@@ -131,5 +131,7 @@
     "chooseSuiteToConfigureTask": "Choose suite to configure tasks for:",
     "configureSuites": "Configure Suites",
     "manageTasks": "Manage Tasks",
-    "configureTasksForSuite": "Configure tasks for Suite: "
+    "configureTasksForSuite": "Configure tasks for Suite: ",
+    "manageTasksFor": "Manage tasks for: "
+
 }

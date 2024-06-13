@@ -22,12 +22,15 @@ class ManageTasksView:
         self.input_boxes: dict[str, InputBox] = {}
         self.refresh = False
         self.experiment = ''
+        self.formatted_experiment = ''
         self.page = 0
         self.font = pygame.font.Font(None, 24)
+        self.title_font = pygame.font.Font(None, 30)
         self.task_length = 0
 
     def display(self, experiment_name: str):
         self.experiment = experiment_name
+        self.formatted_experiment = experiment_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
         tasks = self.psy_test_pro_config.load_task_of_experiment(experiment_name)
         sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
         current_tasks = {k: v for k, v in sorted_tasks}
@@ -63,6 +66,14 @@ class ManageTasksView:
             page_rect = page_surface.get_rect()
             page_rect.center = (self.screen.get_width() / 2, self.screen.get_height() / 8 + 8 * 80 + 12.5)
             self.screen.blit(page_surface, page_rect)
+
+        title = self.translate_service.get_translation('manageTasksFor') + self.formatted_experiment
+        title_surface = self.title_font.render(title, True, self.primary_color)
+        title_rect = title_surface.get_rect()
+        title_rect.center = (
+            self.screen.get_width() / 2, self.screen.get_height() / 8 - (self.title_font.get_height() * 3))
+
+        self.screen.blit(title_surface, title_rect)
         pygame.display.flip()
 
     def handle_events(self):
@@ -84,32 +95,34 @@ class ManageTasksView:
         row_spacing = 80
         column_spacing = self.screen.get_width() / 2 - self.screen.get_width() / 5
         row, column = 0, 0
-        for task, details in self.tasks[self.page].items():
-            task_x, task_y = x + column * column_spacing, y + row * row_spacing
-            button = Button(
-                task_x + 25,
-                task_y,
-                200,
-                40,
-                task.replace('_', ' '),
-                lambda t=task, d=details: self.edit_task(t, d)
-            )
-            input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(details['position']),
-                                 is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
-                                 on_deselect=lambda pos=details['position'], t=task, r=row: self.rearrange(str(pos),
-                                                                                                           t + str(r),
-                                                                                                           t))
-            rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
+        if not len(self.tasks) == 0:
+            for task, details in self.tasks[self.page].items():
+                task_x, task_y = x + column * column_spacing, y + row * row_spacing
+                button = Button(
+                    task_x + 25,
+                    task_y,
+                    200,
+                    40,
+                    task.replace('_', ' '),
+                    lambda t=task, d=details: self.edit_task(t, d)
+                )
+                input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(details['position']),
+                                     is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
+                                     on_deselect=lambda pos=details['position'], t=task, r=row: self.rearrange(str(pos),
+                                                                                                               t + str(
+                                                                                                                   r),
+                                                                                                               t))
+                rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
 
-            self.buttons[task + str(row)] = button
-            self.input_boxes[task + str(row)] = input_box
-            self.rects.append(rect)
+                self.buttons[task + str(row)] = button
+                self.input_boxes[task + str(row)] = input_box
+                self.rects.append(rect)
 
-            if row < 7:
-                row += 1
-            else:
-                column += 1
-                row = 0
+                if row < 7:
+                    row += 1
+                else:
+                    column += 1
+                    row = 0
         left_button = Button(
             self.screen.get_width() / 2 - 50,
             y + 8 * row_spacing,

@@ -127,5 +127,6 @@
     "configureSuites": "Suites konfigurieren",
     "manageTasks": "Aufgaben verwalten",
     "chooseSuiteToConfigureTask": "Wähle die Suite für welche du Aufgaben konfigurieren möchtest:",
-    "configureTasksForSuite": "Konfiguriere Aufgaben für Suite: "
+    "configureTasksForSuite": "Konfiguriere Aufgaben für Suite: ",
+    "manageTasksFor": "Verwalte Aufgaben für: "
 }
