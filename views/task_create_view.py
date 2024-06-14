@@ -59,11 +59,15 @@ class AddTaskView:
         for value in custom_variables:
             variables[value] = 'CUSTOM_VARIABLE'
         if command:
+            try:
                 error, return_code = execute_command(command_inputs[0].text, participant_info, variables)
                 if return_code != 0:
                     raise Exception(f"Command failed with return code {return_code}, Error: {error}")
                 self.error = ''
                 self.is_task_working = True
+            except Exception as e:
+                self.error = self.translate_service.get_translation('commandFailedToExecute')
+                self.is_task_working = False
 
         else:
             try:
