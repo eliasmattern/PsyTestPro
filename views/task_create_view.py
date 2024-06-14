@@ -1,22 +1,24 @@
-import subprocess
+import re
 import sys
+import webbrowser
+
 import pygame
-from components import InputBox, Button, TimePicker
+from components import InputBox, Button, TimePicker, CheckBox
 from lib import text_screen
 from services import PsyTestProConfig
-import shlex
 from services import TranslateService, execute_command
 
 
 class AddTaskView:
-    def __init__(self, translate_service: TranslateService, editing=False, task_name=None, task_time=None, task_title=None,
-                 task_desc=None, task_command=None, position=None) -> None:
+    def __init__(self, translate_service: TranslateService, editing=False, task_name=None, task_time=None,
+                 task_title=None, task_desc=None, task_command=None, task_url=None, position=None) -> None:
         self.editing = editing
         self.task_name = task_name
         self.task_time = task_time
         self.task_title = task_title
         self.task_desc = task_desc
         self.task_command = task_command
+        self.task_url = task_url
         self.task_position = position
         self.translate_service = translate_service
         self.adding = True
@@ -32,19 +34,24 @@ class AddTaskView:
         self.show_time_picker = False
 
     def validate_task_inputs(self, input_boxes: list[InputBox], time_input: str, command_inputs: list[InputBox],
-                             text_screen_inputs: list[InputBox], is_command: bool):
+                             text_screen_inputs: list[InputBox], url_inputs: list[InputBox], is_command: bool,
+                             is_url: bool):
         is_valid = False
 
         if input_boxes[0].text and time_input:
-            if is_command and command_inputs[0].text or not is_command and text_screen_inputs[0].text:
+            if (is_command and command_inputs[0].text or not is_command and text_screen_inputs[0].text
+                    or url_inputs[0].text and is_url):
                 is_valid = True
+        if is_url and is_valid:
+            pattern = re.compile(r'^(http://|https://)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(:[0-9]{1,5})?(/.*)?$')
+            is_valid = re.match(pattern, url_inputs[0].text) is not None
 
         return is_valid
 
     def open_time_picker(self):
         self.show_time_picker = True
 
-    def preview(self, command: bool, command_inputs: list[InputBox], text_screen_inputs: list[InputBox]):
+    def preview(self, command: bool, is_url: bool, command_inputs: list[InputBox], text_screen_inputs: list[InputBox], url_inputs: list[InputBox]):
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
@@ -68,7 +75,21 @@ class AddTaskView:
             except Exception as e:
                 self.error = self.translate_service.get_translation('commandFailedToExecute')
                 self.is_task_working = False
-
+        elif is_url:
+            try:
+                url = url_inputs[0].text.format(id=participant_info['participant_id'],
+                                                          experiment=participant_info['suite'],
+                                                          startTime=participant_info['start_time'],
+                                                          timestamp=participant_info['timestamp'],
+                                                          scriptCount='',
+                                                          **variables)
+                webbrowser.open(url)
+                self.error = ''
+                self.is_task_working = True
+            except Exception as e:
+                print(e)
+                self.error = self.translate_service.get_translation('urlFailed')
+                self.is_task_working = False
         else:
             try:
                 title = text_screen_inputs[0].text.format(id=participant_info['participant_id'],
@@ -100,21 +121,26 @@ class AddTaskView:
             input_boxes: list[InputBox],
             command_inputs: list[InputBox],
             text_screen_inputs: list[InputBox],
+            url_inputs: list[InputBox],
             command=None,
             title=None,
             description=None,
-            is_command: bool = False,
-
-    ):
-        type = 'text' if not is_command else 'command'
-        value = (
-            {'title': title, 'description': description} if not is_command else command
-        )
+            url=None,
+            is_text_field: bool = False,
+            is_command: bool = False):
+        if is_command or is_text_field:
+            task_type = 'text' if not is_command else 'command'
+            value = (
+                {'title': title, 'description': description} if not is_command else command
+            )
+        else:
+            task_type = 'url'
+            value = url
         psy_test_pro_config = PsyTestProConfig()
         if not self.editing:
-            psy_test_pro_config.save_task(experiment, name, time, type, value)
+            psy_test_pro_config.save_task(experiment, name, time, task_type, value)
         else:
-            psy_test_pro_config.edit_task(self.task_name, experiment, name, time, type, value)
+            psy_test_pro_config.edit_task(self.task_name, experiment, name, time, task_type, value)
         if create_continously:
             self.is_task_working = False
             self.error = ''
@@ -123,6 +149,8 @@ class AddTaskView:
             for input_box in command_inputs:
                 input_box.text = ''
             for input_box in text_screen_inputs:
+                input_box.text = ''
+            for input_box in url_inputs:
                 input_box.text = ''
             self.timepicker.set_time('')
             return
@@ -173,16 +201,16 @@ class AddTaskView:
         buttons: list[Button] = []
         text_screen_inputs: list[InputBox] = []
         command_inputs: list[InputBox] = []
+        url_inputs: list[InputBox] = []
         command_labels = [('command', self.task_command)]
+        url_labels = [('url', self.task_url)]
         text_labels = [('title', self.task_title), ('description', self.task_desc)]
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
         y = height // 2 - 100
-        input_box = InputBox(
-            x, y, 400, 40, 'taskName', self.translate_service, allow_new_line=False,
-            initial_text=self.task_name if self.task_name else ''
-        )
+        input_box = InputBox(x, y, 400, 40, 'taskName', self.translate_service, allow_new_line=False,
+                             initial_text=self.task_name if self.task_name else '')
         input_boxes.append(input_box)
         y += spacing
         choose_time_button = Button(
@@ -197,17 +225,24 @@ class AddTaskView:
         )
         y += spacing + spacing
         for label in text_labels:
-            input_box = InputBox(
-                x, y, 400, 40, label[0], self.translate_service, allow_new_line=True, initial_text=label[1] if label[1] else ''
-            )
+            input_box = InputBox(x, y, 400, 40, label[0], self.translate_service, allow_new_line=True,
+                                 initial_text=label[1] if label[1] else '')
             text_screen_inputs.append(input_box)
             y += spacing
         y = height // 2 - 100 + 3 * spacing
         for label in command_labels:
             input_box = InputBox(
-                x, y, 400, 40, label[0], self.translate_service, allow_new_line=False,  initial_text=label[1] if label[1] else ''
+                x, y, 400, 40, label[0], self.translate_service, allow_new_line=False,
+                initial_text=label[1] if label[1] else ''
             )
             command_inputs.append(input_box)
+        for label in url_labels:
+            input_box = InputBox(
+                x, y, 400, 40, label[0], self.translate_service, allow_new_line=False,
+                initial_text=label[1] if label[1] else 'https://'
+            )
+            url_inputs.append(input_box)
+
             y += spacing
         y += spacing
 
@@ -228,10 +263,13 @@ class AddTaskView:
                 input_boxes,
                 command_inputs,
                 text_screen_inputs,
+                url_inputs,
                 command_inputs[0].text,
                 text_screen_inputs[0].text,
                 text_screen_inputs[1].text,
-                command,
+                url_inputs[0].text,
+                text_screen_check_box.active,
+                command_check_box.active
             ),
             self.translate_service,
         )
@@ -242,7 +280,7 @@ class AddTaskView:
             100,
             40,
             'preview',
-            lambda: self.preview(command, command_inputs, text_screen_inputs),
+            lambda: self.preview(command_check_box.active, url_check_box.active, command_inputs, text_screen_inputs, url_inputs),
             self.translate_service,
         )
 
@@ -281,32 +319,15 @@ class AddTaskView:
         )  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
 
-        text_screen = False if self.task_command else True
-        command = not text_screen
+        text_screen = False if self.task_command or self.task_url else True
+        command = False if self.task_title or self.task_url or not self.task_command else True
+        url = False if self.task_command or self.task_command or not self.task_url else True
+        command_check_box = CheckBox('command', screen_width / 2 + 200, y + 180, command,
+                                     self.translate_service)
+        text_screen_check_box = CheckBox('textScreen', screen_width / 2 - 200, y + 180, text_screen,
+                                         self.translate_service)
+        url_check_box = CheckBox('url', screen_width / 2, y + 180, url, self.translate_service)
 
-        text_screen_rendered = question_font.render(
-            self.translate_service.get_translation('textScreen'), True, light_grey
-        )
-        text_screen_rect = text_screen_rendered.get_rect(left=x - 300, top=y + 180)
-        text_tick_box_rect = pygame.Rect(
-            x - 315 - 20 * height_scale_factor,
-            y + 180,
-            20 * width_scale_factor,
-            20 * height_scale_factor,
-        )
-
-        command_screen_rendered = question_font.render(
-            self.translate_service.get_translation('command'), True, light_grey
-        )
-        command_screen_rect = command_screen_rendered.get_rect(
-            left=x + 100, top=y + 180
-        )
-        command_tick_box_rect = pygame.Rect(
-            x + 85 - 20 * height_scale_factor,
-            y + 180,
-            20 * width_scale_factor,
-            20 * height_scale_factor,
-        )
         self.adding = True
         while self.adding:
             for event in pygame.event.get():
@@ -319,23 +340,36 @@ class AddTaskView:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:  # If the left mouse button clicked
                             mouse_pos = (
-                                pygame.mouse.get_pos()
-                            )  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
-                            if tick_box_rect.collidepoint(mouse_pos) and not self.editing:  # If the cursor position has collided with the start timer button
+                                pygame.mouse.get_pos())  # Store the position of the curser when the mouse was clicked to a variable mouse_pos
+                            if tick_box_rect.collidepoint(
+                                    mouse_pos) and not self.editing:  # If the cursor position has collided with the start timer button
                                 self.selected_multiple = not self.selected_multiple
-                            if text_tick_box_rect.collidepoint(
-                                    mouse_pos
-                            ):  # If the cursor position has collided with the start timer button
-                                text_screen = not text_screen
-                                command = not command
-                                self.error = ''
-                            if command_tick_box_rect.collidepoint(mouse_pos):  # If the cursor position has collided with the start timer button
-                                text_screen = not text_screen
-                                command = not command
-                                self.error = ''
+                    command_before = command_check_box.active
+                    text_screen_before = text_screen_check_box.active
+                    url_before = url_check_box.active
+                    text_screen_check_box.handle_event(event)
+                    command_check_box.handle_event(event)
+                    url_check_box.handle_event(event)
+                    if command_before != command_check_box.active:
+                        text_screen_check_box.active = False
+                        command_check_box.active = True
+                        url_check_box.active = False
+                        self.is_task_working = False
+                    elif text_screen_before != text_screen_check_box.active:
+                        command_check_box.active = False
+                        text_screen_check_box.active = True
+                        url_check_box.active = False
+                        self.is_task_working = False
+                    elif url_before != url_check_box.active:
+                        command_check_box.active = False
+                        url_check_box.active = True
+                        text_screen_check_box.active = False
+                        self.is_task_working = False
                     for box in input_boxes:
                         box.handle_event(event)
                     for box in text_screen_inputs:
+                        box.handle_event(event)
+                    for box in url_inputs:
                         box.handle_event(event)
                     for box in command_inputs:
                         box.handle_event(event)
@@ -346,7 +380,7 @@ class AddTaskView:
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
             if self.validate_task_inputs(input_boxes, self.timepicker.time, command_inputs, text_screen_inputs,
-                                         command):
+                                         url_inputs, command_check_box.active, url_check_box.active):
                 buttons[2].set_active(True)
                 buttons[2].set_color(pygame.Color(self.settings["buttonColor"]))
                 buttons[3].set_active(True)
@@ -371,7 +405,7 @@ class AddTaskView:
             for box in input_boxes:
                 box.update_text()
                 box.draw(screen)
-            if command:
+            if command_check_box.active:
                 for box in command_inputs:
                     box.set_hidden(False)
                     box.update_text()
@@ -381,28 +415,35 @@ class AddTaskView:
                     box.set_hidden(True)
                     box.update_text()
                     box.draw(screen)
-            if text_screen:
+            if text_screen_check_box.active:
                 for box in text_screen_inputs:
                     box.set_hidden(False)
                     box.draw(screen)
                     box.update_text()
             else:
                 for box in text_screen_inputs:
+                    box.set_hidden(True)
+                    box.draw(screen)
+                    box.update_text()
+            if url_check_box.active:
+                for box in url_inputs:
+                    box.set_hidden(False)
+                    box.draw(screen)
+                    box.update_text()
+            else:
+                for box in url_inputs:
                     box.set_hidden(True)
                     box.draw(screen)
                     box.update_text()
             for button in buttons:
                 button.draw(screen)
             # draw the tick box rectangle on the window surface
-            pygame.draw.rect(screen, light_grey, text_tick_box_rect, 2)
-            pygame.draw.rect(screen, light_grey, command_tick_box_rect, 2)
             # if the selected_multiple variable is equal to the option currently being processed in the loop
             if not self.editing:
                 pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
                 screen.blit(option_text_rendered, option_text_rect)
 
                 if self.selected_multiple:
-
                     # create a list of points that define the shape of the tick mark
                     tick_mark_points = [
                         (
@@ -421,51 +462,9 @@ class AddTaskView:
                     # draw lines connecting the points defined above (draw the tick)
                     pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
 
-            screen.blit(text_screen_rendered, text_screen_rect)
-
-            if text_screen:
-                # create a list of points that define the shape of the tick mark
-                text_tick_mark_points = [
-                    (
-                        x - 300 - 25 * height_scale_factor,
-                        y + 180 + 10 * height_scale_factor,
-                    ),
-                    (
-                        x - 300 - 20 * height_scale_factor,
-                        y + 180 + 15 * height_scale_factor,
-                    ),
-                    (
-                        x - 300 - 15 * height_scale_factor,
-                        y + 180 + 5 * width_scale_factor,
-                    ),
-                ]
-
-                # draw lines connecting the points defined above (draw the tick)
-                pygame.draw.lines(screen, light_grey, False, text_tick_mark_points, 2)
-
-            screen.blit(command_screen_rendered, command_screen_rect)
-
-            if command:
-                # create a list of points that define the shape of the tick mark
-                command_tick_mark_points = [
-                    (
-                        x + 100 - 25 * height_scale_factor,
-                        y + 180 + 10 * height_scale_factor,
-                    ),
-                    (
-                        x + 100 - 20 * height_scale_factor,
-                        y + 180 + 15 * height_scale_factor,
-                    ),
-                    (
-                        x + 100 - 15 * height_scale_factor,
-                        y + 180 + 5 * width_scale_factor,
-                    ),
-                ]
-
-                # draw lines connecting the points defined above (draw the tick)
-                pygame.draw.lines(
-                    screen, light_grey, False, command_tick_mark_points, 2
-                )
+            command_check_box.draw(screen)
+            text_screen_check_box.draw(screen)
+            url_check_box.draw(screen)
 
             if self.error:
                 error_font = pygame.font.Font(None, int(24))

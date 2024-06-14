@@ -4,7 +4,7 @@ from services import PsyTestProConfig, TranslateService
 
 
 class CheckBox():
-    def __init__(self, label: str, posX: int, posY: int, active=False, translate_service: TranslateService = None,
+    def __init__(self, label: str, posX: float, posY: float, active=False, translate_service: TranslateService = None,
                  font_size=18, color=None) -> None:
         self.text = label
         self.translate_service = translate_service

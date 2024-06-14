@@ -1,3 +1,4 @@
+import webbrowser
 from datetime import datetime
 from lib import text_screen
 import pandas as pd
@@ -85,6 +86,38 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
             
             if return_code != 0:
                 raise Exception(f"Command failed with return code {return_code}, Error: {error}")
+            task_end_time = str(datetime.now())
+
+            save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
+            return True
+        except Exception as e:
+            task_end_time = str(datetime.now())
+            save_task_info(filename, upcoming_event, task_start_time, task_end_time, e)
+            return False
+
+    elif schedule[upcoming_event]['type'] == 'url':
+        try:
+            url = schedule[upcoming_event]['value']
+            script_count = 0
+
+            if '{scriptCount}' in url:
+                task_url_pairs = [(task_name, task_info['value']) for task_name, task_info in schedule.items() if
+                                      task_info['type'] == 'url' and task_info['value'] == schedule[upcoming_event][
+                                          'value']]
+
+                for task, _ in task_url_pairs:
+                    script_count += 1
+                    if task == upcoming_event:
+                        break
+            participant_info['script_count'] = script_count
+            url = url.format(id=participant_info['participant_id'],
+                                     experiment=participant_info['suite'],
+                                     startTime=participant_info['start_time'],
+                                     timestamp=participant_info['timestamp'],
+                                     scriptCount=str(participant_info['script_count']),
+                                     **custom_variables)
+            webbrowser.open(url)
+
             task_end_time = str(datetime.now())
 
             save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')

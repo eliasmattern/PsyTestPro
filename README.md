@@ -135,18 +135,18 @@ Here you can delete your experiments. Once deleted, the experiment and its tasks
 
 ### :heavy_plus_sign: Add Task
 
-A task can be either a screen with text or your own script. To create a task, you have to assign a name and a time.
-The time is relative to the start time, which you define when you start an experiment.
+A task can be a screen with text, your own script or an URL. To create a task, you have to assign a name and a task duration.
 
 Task properties
 
-| Name        | Description                                                |
-|-------------|------------------------------------------------------------|
-| Name        | Name of the task                                           |
-| Time        | Starting time of the task.<br />Relative to the start time |
-| Command     | Command to execute your own script*                        |
-| Title       | Title of the screen with text                              |
-| Description | Description of the screen with text                        |
+| Name          | Description                         |
+|---------------|-------------------------------------|
+| Name          | Name of the task                    |
+| Task duration | Time a task takes.                  |
+| Command       | Command to execute your own script* |
+| Title         | Title of the screen with text       |
+| Description   | Description of the screen with text |
+| url           | URL to a Webpage                    |
 
 > <p style="color: #d7ba7d; font-size: 0.8em; line-height: 1.1em;">
 > * Use relative paths instead of absolute paths to execute a file. <br /> 
@@ -164,13 +164,13 @@ Task properties
 If you want to provide your command or text screen some variables, you can choose from the variables below. These will
 have the value you provide when you start an experiment
 
-| Usage        | Description                                     |
-|--------------|-------------------------------------------------|
-| {id}         | Participant ID                                  |
-| {experiment} | Experiment Name                                 |
-| {startTime}  | Time when the experiment started                |
-| {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss |
-| {scriptCount}| A counter that increments with each execution of the command within a task (used conly for commands) |
+| Usage        | Description                                                                                                  |
+|--------------|--------------------------------------------------------------------------------------------------------------|
+| {id}         | Participant ID                                                                                               |
+| {experiment} | Experiment Name                                                                                              |
+| {startTime}  | Time when the experiment started                                                                             |
+| {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss                                                              |
+| {scriptCount}| A counter that increments with each execution of the command within a task (used only for commands and urls) |
 
 > NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at
 this moment.

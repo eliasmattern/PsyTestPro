@@ -1,5 +1,6 @@
 import json
 import os
+import webbrowser
 
 import pandas as pd
 
@@ -51,7 +52,8 @@ class JSONToCSVConverter:
                     state = task_settings['state']
                     task_type = task_settings['type']
                     task_position = str(task_settings['position'])
-                    value = task_settings['value'] + '|' if task_settings['type'] == 'command' \
+                    value = task_settings['value'] + '|' if task_settings['type'] == 'command' or task_settings[
+                        'type'] == 'url' \
                         else task_settings['value']['title'] + '|' + task_settings['value']['description']
                     tasks.append('|'.join([experiment_name, task_name, time, state, task_type, value, task_position]))
             else:
@@ -116,7 +118,7 @@ class CSVToJSONConverter:
                 tasks[experiment_name] = {'tasks': {}}
             if task_name == '':
                 continue
-            if task_type == 'command':
+            if task_type == 'command' or task_type == 'url':
                 task_value = value
             else:
                 task_value = {'title': value, 'description': desc}
@@ -145,6 +147,11 @@ class ImportTasksService:
                     if not result:
                         error = row["task_name"]
                         break
+                elif not isinstance(row['url'], float):
+                    result = self.preview_task(url=row['url'])
+                    if not result:
+                        error = row["task_name"]
+                        break
             if len(error) > 0:
                 return False, 'importTaskFailed', error
         with open('./json/taskConfig.json', 'r') as file:
@@ -158,9 +165,12 @@ class ImportTasksService:
                 hours = minutes // 60
                 minutes %= 60
                 time = '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
-                if not isinstance(row['command'], float):
-                    data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'command',
-                                                                 'value': row['command'], 'position': position}
+                if not isinstance(row['command'], float) or not isinstance(row['url'], float):
+                    print(row['command'], row['url'])
+                    task_type = 'command' if not isinstance(row['command'], float) else 'url'
+                    value = row['command'] if not isinstance(row['command'], float) else row['url']
+                    data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': task_type,
+                                                                 'value': value, 'position': position}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
                     data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
@@ -175,7 +185,7 @@ class ImportTasksService:
             json.dump(data, file, indent=4)
         return True, 'taskImportSuccessful'
 
-    def preview_task(self, command=None, title=None, description=None):
+    def preview_task(self, command=None, title=None, description=None, url=None):
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
@@ -194,6 +204,21 @@ class ImportTasksService:
                 error, return_code = execute_command(command, participant_info, variables)
                 if return_code != 0:
                     raise Exception(f"Command failed with return code {return_code}, Error: {error}")
+                return True
+            except Exception as e:
+                print(e)
+                return False
+        elif url:
+            try:
+                url = url.format(id=participant_info['participant_id'],
+                                 experiment=participant_info['suite'],
+                                 startTime=participant_info['start_time'],
+                                 timestamp=participant_info['timestamp'],
+                                 scriptCount='',
+                                 **variables)
+
+                webbrowser.open(url)
+
                 return True
             except Exception as e:
                 print(e)

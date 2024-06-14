@@ -132,6 +132,7 @@
     "configureSuites": "Configure Suites",
     "manageTasks": "Manage Tasks",
     "configureTasksForSuite": "Configure tasks for Suite: ",
-    "manageTasksFor": "Manage tasks for: "
-
+    "manageTasksFor": "Manage tasks for: ",
+    "url": "URL",
+    "urlFailed": "Error when calling the URL"
 }

@@ -209,13 +209,20 @@ class ManageTasksView:
             task_command = details['value']
             task_title = None
             task_desc = None
+            task_url = None
+        elif details['type'] == 'url':
+            task_command = None
+            task_title = None
+            task_desc = None
+            task_url = details['value']
         else:
             task_command = None
             task_title = details['value']['title']
             task_desc = details['value']['description']
+            task_url = None
 
         add_task_view = AddTaskView(self.translate_service, editing=True, task_name=task_name, task_time=task_time,
                                     task_title=task_title, task_desc=task_desc, task_command=task_command,
-                                    position=task_position)
+                                    task_url=task_url, position=task_position)
         add_task_view.add(False, self.experiment)
         self.refresh = True
