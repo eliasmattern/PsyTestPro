@@ -119,7 +119,6 @@ class DatePickerComponent():
 
         self.prev_month.draw(screen)
         self.next_month.draw(screen)
-        self.action_button.update_text()
         self.action_button.draw(screen)
         if self.date_buttons:
             for button in self.date_buttons:

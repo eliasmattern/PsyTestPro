@@ -183,7 +183,9 @@ class SettingsView:
                                        translate_service=self.translate_service, font_size=24,
                                        color=pygame.Color('#C0C0C0'))
 
-        exit_button = Button(x - 75, y + 100, 100, 40, 'back', lambda: self.back_to_psy_test_pro(psy_test_pro, id, experiment, start_time, custom_variables),
+        exit_button = Button(x - 75, y + 100, 100, 40, 'back',
+                             lambda: self.back_to_psy_test_pro(psy_test_pro, id, experiment, start_time,
+                                                               custom_variables),
                              translate_service, color=pygame.Color('#C0C0C0'), text_color=pygame.Color('Black'),
                              active_button_color=pygame.Color('#ACACAC'))
         save_button = Button(
@@ -348,10 +350,8 @@ class SettingsView:
             page_rect = page_surface.get_rect()
             page_rect.center = (page_x + 75, left_button.rect.centery)
 
-            task_and_time_check_box.update_text()
             task_and_time_check_box.draw(screen)
 
-            play_task_check_box.update_text()
             play_task_check_box.draw(screen)
 
             screen.blit(text_surface, (x - text_rect.width // 2, y - 30))
@@ -377,7 +377,6 @@ class SettingsView:
             for key, box in input_boxes.items():
                 if key in splitted_inputs[self.input_page].keys():
                     box.set_hidden(False)
-                    box.update_text()
                     box.draw(screen)
                 else:
                     box.set_hidden(True)
@@ -392,8 +391,7 @@ class SettingsView:
                 elif "Reset" in key:
                     input_name = key.split('Reset')[0]
                     if input_boxes[input_name].is_active and input_name in splitted_inputs[self.input_page].keys() and \
-                            input_boxes[input_name].is_touched and input_boxes[input_name].text != settings[
-                        input_name]:
+                            input_boxes[input_name].is_touched and input_boxes[input_name].text != settings[input_name]:
                         button.set_hidden(False)
                         button.draw(screen)
                     else:

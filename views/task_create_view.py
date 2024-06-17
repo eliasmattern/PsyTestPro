@@ -400,41 +400,33 @@ class AddTaskView:
             else:
                 choose_time_button.translate_service = self.translate_service
                 choose_time_button.translation_key = 'timeDuration'
-            choose_time_button.update_text()
 
             for box in input_boxes:
-                box.update_text()
                 box.draw(screen)
             if command_check_box.active:
                 for box in command_inputs:
                     box.set_hidden(False)
-                    box.update_text()
                     box.draw(screen)
             else:
                 for box in command_inputs:
                     box.set_hidden(True)
-                    box.update_text()
                     box.draw(screen)
             if text_screen_check_box.active:
                 for box in text_screen_inputs:
                     box.set_hidden(False)
                     box.draw(screen)
-                    box.update_text()
             else:
                 for box in text_screen_inputs:
                     box.set_hidden(True)
                     box.draw(screen)
-                    box.update_text()
             if url_check_box.active:
                 for box in url_inputs:
                     box.set_hidden(False)
                     box.draw(screen)
-                    box.update_text()
             else:
                 for box in url_inputs:
                     box.set_hidden(True)
                     box.draw(screen)
-                    box.update_text()
             for button in buttons:
                 button.draw(screen)
             # draw the tick box rectangle on the window surface

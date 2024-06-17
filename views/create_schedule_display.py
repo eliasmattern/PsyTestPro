@@ -155,10 +155,6 @@ class CreateScheduleDisplay:
                                      action=lambda: self.data_table.set_action_data(
                                          str(self.timepicker.time)), action_key='save')
 
-        def update_text():
-            for button in buttons:
-                button.update_text()
-
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -180,7 +176,6 @@ class CreateScheduleDisplay:
                     self.data_table.handle_events(event)
 
             screen.fill(self.black)  # Fill the screen with the black color
-            update_text()
             for button in buttons:
                 button.draw(screen)
 

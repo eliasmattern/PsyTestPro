@@ -108,8 +108,6 @@ class QuestionDialog:
         screen.blit(info_surface, info_pos)
         screen.blit(quit_surface, quit_bar_pos)
 
-        self.action_button.update_text()
-        self.close_button.update_text()
         self.action_button.draw(screen)
         self.close_button.draw(screen)
 

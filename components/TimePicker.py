@@ -261,13 +261,6 @@ class TimePicker:
             self.action_button.set_active(False)
             self.action_button.set_color(self.inactive_button_color)
 
-        self.action_button.update_text()
-        self.close_button.update_text()
-
-        self.hour_input.update_text()
-        self.minute_input.update_text()
-        self.second_input.update_text()
-
         self.action_button.draw(screen)
         self.close_button.draw(screen)
         self.hour_input.draw(screen)

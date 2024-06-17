@@ -2,6 +2,7 @@ from typing import Callable
 
 import pygame
 
+from events import LANGUAGE_EVENT
 from services import PsyTestProConfig, TranslateService
 
 
@@ -55,6 +56,8 @@ class Button:
             elif event.type == pygame.MOUSEMOTION and self.rect.collidepoint(event.pos):
                 if self.is_active:
                     self.pressed = True
+            elif event.type == LANGUAGE_EVENT:
+                self.update_text()
 
     def set_hidden(self, hidden: bool):
         self.is_hidden = hidden

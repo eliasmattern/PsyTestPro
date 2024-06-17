@@ -1,5 +1,6 @@
 import pygame
 
+from events import LANGUAGE_EVENT
 from services import PsyTestProConfig, TranslateService
 
 
@@ -51,17 +52,10 @@ class CheckBox():
                 if self.tick_box_rect.collidepoint(event.pos) or self.label_rect.collidepoint(event.pos):
                     if event.button == 1:
                         self.active = not self.active
+            elif event.type == LANGUAGE_EVENT:
+                self.update_text()
 
     def draw(self, screen: pygame.Surface):
-        screen_info = pygame.display.Info()
-
-        # Store the screen width in a new variable
-        screen_width = screen_info.current_w
-        # Store the screen height in a new variable
-        screen_height = screen_info.current_h
-        # Store the original screen dimensions used to design this program
-        original_width = 1280
-        original_height = 800
 
         self.tick_box_rect = pygame.Rect(
             self.posX - 25,

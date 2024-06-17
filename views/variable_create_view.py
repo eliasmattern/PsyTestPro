@@ -185,7 +185,6 @@ class CreateVariablesView:
                 buttons[1].set_color(pygame.Color(self.settings["inactiveButtonColor"]))
 
             for box in input_boxes:
-                box.update_text()
                 box.draw(screen)
 
             for button in buttons:

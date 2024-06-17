@@ -1,5 +1,8 @@
 import json
 
+import pygame
+from events import LANGUAGE_EVENT
+
 
 class LanguageConfiguration:
     def __init__(self):
@@ -22,6 +25,8 @@ class LanguageConfiguration:
             settings['language'] = new_language
             with open('json/settings.json', 'w', encoding='utf-8') as file:
                 json.dump(settings, file)
+            event = pygame.event.Event(LANGUAGE_EVENT, message="language changed")
+            pygame.event.post(event)
         except Exception as e:
             print(e)
             print('not able to access ./json/settings.json! Couldn\'t save language!')

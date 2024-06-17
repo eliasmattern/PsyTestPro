@@ -4,6 +4,7 @@ import pygame
 from pandas.io import clipboard
 from pygame.locals import *
 
+from events import LANGUAGE_EVENT
 from services import PsyTestProConfig
 
 
@@ -281,6 +282,9 @@ class InputBox:
 
                     self.cursor_visible = True
                     self.cursor_timer = pygame.time.get_ticks() + 500
+
+            elif event.type == LANGUAGE_EVENT:
+                self.update_text()
 
     def update_text(self):
         if self.translate_service:

@@ -38,7 +38,7 @@ class PsyTestPro:
         self.errors = []
         self.language_config = LanguageConfiguration()
         self.translateService = TranslateService(self.language_config)
-        self.lang = self.load_config_lang()
+        self.lang = self.load_config_language()
         self.id = id
         self.experiment = experiment
         self.time = time
@@ -60,7 +60,6 @@ class PsyTestPro:
         self.logo_image = pygame.image.load('./img/logo.png')
 
         while self.is_running:
-            self.update_text()
             self.handle_events()
             self.clear_screen()
             self.draw()
@@ -125,7 +124,7 @@ class PsyTestPro:
         self.buttons.append(create_experiment_button)
         self.buttons.append(submit_button)
 
-    def load_config_lang(self):
+    def load_config_language(self):
         self.language_config.read_language_config()
         language = self.language_config.get_language()
         if len(language) > 0:
@@ -136,12 +135,6 @@ class PsyTestPro:
         self.errors.clear()
         self.translateService.set_language(lang)
         self.language_config.update_language_config(lang)
-
-    def update_text(self):
-        for key, box in self.input_boxes.items():
-            box.update_text()
-        for button in self.buttons:
-            button.update_text()
 
     def handle_events(self):
         def get_input_index(step):
@@ -254,18 +247,15 @@ class PsyTestPro:
         y = self.height // 2 - 200
         x = self.width // 2
 
-        font = pygame.font.Font(
-            None, int(64)
-        )  # Create font object for header
-        text_surface = font.render(
-            self.translateService.get_translation('psytestpro'), True, self.primary_color
-        )
+        font = pygame.font.Font(None, int(64))
+        text_surface = font.render(self.translateService.get_translation('psytestpro'), True, self.primary_color)
         text_rect = text_surface.get_rect()
         self.screen.blit(text_surface, (x - text_rect.width // 2, y))
         self.screen.blit(self.logo_image, (20, 20))
 
         for key, box in self.input_boxes.items():
             box.draw(self.screen)
+
         is_input_valid = validate_inputs(self.psyTestProConfig.experiments)
 
         for button in self.buttons:
@@ -365,7 +355,8 @@ class PsyTestPro:
         current_time = datetime.now()
 
         timestamp = current_time.strftime("%Y.%m.%d %H:%M:%S")
-        participant_info = {'participant_id': participant_id, 'suite': experiment, 'start_time': start_time, 'timestamp': timestamp}
+        participant_info = {'participant_id': participant_id, 'suite': experiment, 'start_time': start_time,
+                            'timestamp': timestamp}
 
         custom_variables = self.psyTestProConfig.load_custom_variables()
 
@@ -418,7 +409,7 @@ class PsyTestPro:
                                    start_time, variables)
 
     def configure_test_battery(self):
-        old_custom_variables  = self.psyTestProConfig.load_custom_variables()
+        old_custom_variables = self.psyTestProConfig.load_custom_variables()
 
         self.experiment_config_display.display(PsyTestPro)
         old_experiements = self.psyTestProConfig.experiments
