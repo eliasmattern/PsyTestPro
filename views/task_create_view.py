@@ -166,7 +166,7 @@ class AddTaskView:
 
     def add(
             self,
-            create_continously: bool,
+            create_continuously: bool,
             experiment: str
     ):
         variable = experiment
@@ -195,7 +195,7 @@ class AddTaskView:
         # Setting the window caption
         pygame.display.set_caption('Create Task')
 
-        self.selected_multiple = create_continously
+        self.selected_multiple = create_continuously
 
         input_boxes: list[InputBox] = []
         buttons: list[Button] = []
@@ -256,7 +256,7 @@ class AddTaskView:
             40,
             'submit',
             lambda: self.save_task(
-                self.selected_multiple,
+                create_continuously_check_box.active,
                 variable,
                 input_boxes[0].text,
                 self.timepicker.time,
@@ -296,10 +296,6 @@ class AddTaskView:
         question_font = pygame.font.Font(
             None, int(24)
         )  # Create font object for header
-        option_text_rendered = question_font.render(
-            self.translate_service.get_translation('createMultipleTasks'), True, light_grey
-        )
-        option_text_rect = option_text_rendered.get_rect(left=x + 285, top=y + 420)
         tick_box_rect = pygame.Rect(
             x + 260 - 20 * height_scale_factor,
             y + 420,
@@ -328,6 +324,8 @@ class AddTaskView:
                                          self.translate_service)
         url_check_box = CheckBox('url', screen_width / 2, y + 180, url, self.translate_service)
 
+        create_continuously_check_box = CheckBox('createMultipleTasks', x + 300, y + 420, create_continuously, self.translate_service)
+
         self.adding = True
         while self.adding:
             for event in pygame.event.get():
@@ -350,6 +348,8 @@ class AddTaskView:
                     text_screen_check_box.handle_event(event)
                     command_check_box.handle_event(event)
                     url_check_box.handle_event(event)
+                    if not self.editing:
+                        create_continuously_check_box.handle_event(event)
                     if command_before != command_check_box.active:
                         text_screen_check_box.active = False
                         command_check_box.active = True
@@ -440,27 +440,7 @@ class AddTaskView:
             # draw the tick box rectangle on the window surface
             # if the selected_multiple variable is equal to the option currently being processed in the loop
             if not self.editing:
-                pygame.draw.rect(screen, light_grey, tick_box_rect, 2)
-                screen.blit(option_text_rendered, option_text_rect)
-
-                if self.selected_multiple:
-                    # create a list of points that define the shape of the tick mark
-                    tick_mark_points = [
-                        (
-                            x + 275 - 25 * height_scale_factor,
-                            y + 420 + 10 * height_scale_factor,
-                        ),
-                        (
-                            x + 275 - 20 * height_scale_factor,
-                            y + 420 + 15 * height_scale_factor,
-                        ),
-                        (
-                            x + 275 - 15 * height_scale_factor,
-                            y + 420 + 5 * width_scale_factor,
-                        ),
-                    ]
-                    # draw lines connecting the points defined above (draw the tick)
-                    pygame.draw.lines(screen, light_grey, False, tick_mark_points, 2)
+                create_continuously_check_box.draw(screen)
 
             command_check_box.draw(screen)
             text_screen_check_box.draw(screen)
