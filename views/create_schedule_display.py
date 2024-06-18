@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import pygame
 
 from components import Button, DataTable, QuestionDialog, DatePickerComponent, TimePicker
+from events import LANGUAGE_EVENT
 from lib import text_screen
 from services import PsyTestProConfig
 from services import TranslateService, LanguageConfiguration, play_tasks
@@ -160,6 +161,11 @@ class CreateScheduleDisplay:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == LANGUAGE_EVENT:
+                    help_dialog.handle_events(event)
+                    self.date_picker.handle_events(event)
+                    self.timepicker.handle_events(event)
+                    quit_dialog.handle_events(event)
 
                 if self.show_help_dialog:
                     help_dialog.handle_events(event)

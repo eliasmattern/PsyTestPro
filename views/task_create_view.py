@@ -4,6 +4,7 @@ import webbrowser
 
 import pygame
 from components import InputBox, Button, TimePicker, CheckBox
+from events import LANGUAGE_EVENT
 from lib import text_screen
 from services import PsyTestProConfig
 from services import TranslateService, execute_command
@@ -400,7 +401,7 @@ class AddTaskView:
             else:
                 choose_time_button.translate_service = self.translate_service
                 choose_time_button.translation_key = 'timeDuration'
-
+            choose_time_button.update_text()
             for box in input_boxes:
                 box.draw(screen)
             if command_check_box.active:
