@@ -15,7 +15,9 @@ def execute_command(command: str, participant_info: dict, variables: dict) -> tu
         process = subprocess.Popen(shlex.split(command, posix=False), shell=False)
         error = 0
         is_focused = True
+        clock = pygame.time.Clock()
         while process.poll() is None or not is_focused:
+            clock.tick(15)
             if process.stderr:
                 error += 1
             for event in pygame.event.get():

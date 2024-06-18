@@ -1,5 +1,9 @@
+import time
 import webbrowser
-from datetime import datetime
+from datetime import datetime, timedelta
+
+import pygame
+
 from lib import text_screen
 import pandas as pd
 from .TranslateService import TranslateService
@@ -116,8 +120,17 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
                                      timestamp=participant_info['timestamp'],
                                      scriptCount=str(participant_info['script_count']),
                                      **custom_variables)
+            is_focused = pygame.display.get_active()
+            clock = pygame.time.Clock()
+            start = datetime.now()
             webbrowser.open(url)
-
+            while not is_focused or datetime.now() < start + timedelta(seconds=2):
+                clock.tick(15)
+                for event in pygame.event.get():
+                    if event.type == pygame.WINDOWFOCUSLOST:
+                        is_focused = False
+                    elif event.type == pygame.WINDOWFOCUSGAINED:
+                        is_focused = True
             task_end_time = str(datetime.now())
 
             save_task_info(filename, upcoming_event, task_start_time, task_end_time, 'Success')
