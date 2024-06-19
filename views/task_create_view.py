@@ -56,7 +56,7 @@ class AddTaskView:
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
-            'suite': 'VARIABLE_EXPERMENT',
+            'suite': 'VARIABLE_SUITE',
             'start_time': 'VARIABLE_STARTTIME',
             'timestamp': 'VARIABLE_TIMESTAMP',
             'script_count': 0
