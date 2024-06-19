@@ -1,7 +1,7 @@
 # :test_tube: PsyTestPro
 
 PsyTestPro is a Python program developed using the Pygame library that allows users to create and manage experiments.
-With PsyTestPro, users can define experiments, each of which consists of a series of tasks. These tasks can be
+With PsyTestPro, users can define suites, each of which consists of a series of tasks. These tasks can be
 customized to suit specific requirements.
 
 The user interface of PsyTestPro is intentionally designed to be predominantly black. This deliberate choice is driven
@@ -10,14 +10,14 @@ for conducting experiments, where even the slightest disruptions from external s
 
 ## :gem: Key Features
 
-### :microscope: Experiment Creation:
+### :microscope: Suite Creation:
 
-Users can easily create experiments by specifying the tasks they want to include and setting up a schedule for when each
+Users can easily create suites by specifying the tasks they want to include and setting up a schedule for when each
 task should be executed.
 
 ### :wrench: Customizable Tasks:
 
-For each task within an experiment, users have the flexibility to select their own scripts, allowing for a wide range of
+For each task within a suite, users have the flexibility to select their own scripts, allowing for a wide range of
 experimental designs and functionalities.
 
 ### :calendar: Schedule Management:
@@ -27,14 +27,14 @@ allows users to have a clear overview of the experiment's timeline.
 
 ### :rocket: Automated Execution:
 
-Once an experiment is started, PsyTestPro will automatically manage the execution of tasks according to the predefined
+Once a suite is started, PsyTestPro will automatically manage the execution of tasks according to the predefined
 schedule. When a task's scheduled time arrives, PsyTestPro will launch the corresponding script.
 
 ## :books: Table of Contents
 
 - [:test\_tube: PsyTestPro](#test_tube-psytestpro)
   - [:gem: Key Features](#gem-key-features)
-    - [:microscope: Experiment Creation:](#microscope-experiment-creation)
+    - [:microscope: Suite Creation:](#microscope-experiment-creation)
     - [:wrench: Customizable Tasks:](#wrench-customizable-tasks)
     - [:calendar: Schedule Management:](#calendar-schedule-management)
     - [:rocket: Automated Execution:](#rocket-automated-execution)
@@ -45,7 +45,7 @@ schedule. When a task's scheduled time arrives, PsyTestPro will launch the corre
     - [:clock1: Schedule](#clock1-schedule)
     - [:running: Run tasks](#running-run-tasks)
   - [:nut\_and\_bolt: Configure PsyTestPro](#nut_and_bolt-configure-psytestpro)
-    - [:heavy\_plus\_sign: Create experiment](#heavy_plus_sign-create-experiment)
+    - [:heavy\_plus\_sign: Create suite](#heavy_plus_sign-create-experiment)
     - [:x: Delete experiment](#x-delete-experiment)
     - [:heavy\_plus\_sign: Add Task](#heavy_plus_sign-add-task)
       - [Variables](#variables)
@@ -112,11 +112,11 @@ previous task is finished.
 
 ## :nut_and_bolt: Configure PsyTestPro
 
-To set up an experiment, you will have to go to `Configure Experiment`.
+To set up a suite, you will have to go to `Configure Test Battery`.
 From there, you can do the following actions:
 
-- Create experiment
-- Delete experiment
+- Create Suite
+- Delete Suite
 - Create task
 - Delete task
 - Create Custom Variables
@@ -124,14 +124,14 @@ From there, you can do the following actions:
 - Import experiments
 - Export experiments
 
-### :heavy_plus_sign: Create experiment
+### :heavy_plus_sign: Create suite
 
-The experiments you create will have a schedule with tasks for the user. You can also declare that an experiment should
+The suites you create will have a schedule with tasks for the user. You can also declare that an suite should
 not have a schedule. If you do this, all tasks will immediately start when PsyTestPro begins.
 
-### :x: Delete experiment
+### :x: Delete suite
 
-Here you can delete your experiments. Once deleted, the experiment and its tasks will be removed.
+Here you can delete your suites. Once deleted, the suite and its tasks will be removed.
 
 ### :heavy_plus_sign: Add Task
 
@@ -162,27 +162,27 @@ Task properties
 #### Variables
 
 If you want to provide your command or text screen some variables, you can choose from the variables below. These will
-have the value you provide when you start an experiment
+have the value you provide when you start a suite
 
-| Usage        | Description                                                                                                  |
-|--------------|--------------------------------------------------------------------------------------------------------------|
-| {id}         | Participant ID                                                                                               |
-| {experiment} | Experiment Name                                                                                              |
-| {startTime}  | Time when the experiment started                                                                             |
-| {timestamp}  | Current time stamp. Format: YYYY.mm.dd hh:mm:ss                                                              |
-| {scriptCount}| A counter that increments with each execution of the command within a task (used only for commands and urls) |
+| Usage         | Description                                                                                                  |
+|---------------|--------------------------------------------------------------------------------------------------------------|
+| {id}          | Participant ID                                                                                               |
+| {suite}       | Suite Name                                                                                                   |
+| {startTime}   | Time when the suite started                                                                                  |
+| {timestamp}   | Current time stamp. Format: YYYY.mm.dd hh:mm:ss                                                              |
+| {scriptCount} | A counter that increments with each execution of the command within a task (used only for commands and urls) |
 
-> NOTE: The preview will use an example text ("VARIABLE") not the actual value because no experiment will be selected at
+> NOTE: The preview will use an example text ("VARIABLE") not the actual value because no suite will be selected at
 this moment.
 
 Example command:
-py yourTask.py {experiment}
+py yourTask.py {suite}
 
 Before you save a task, use the preview to see if everything is working.
 
 ### :x: Delete task
 
-Here, you can delete tasks from experiments. Once deleted, the task will be removed.
+Here, you can delete tasks from suites. Once deleted, the task will be removed.
 
 ### :heavy_plus_sign: Create Custom Variables
 
@@ -199,17 +199,17 @@ code.
 
 Example command of a task: ```python ./path/to/your_script.py {CustomVariableName}```
 
-### :outbox_tray: Export experiments
+### :outbox_tray: Export Test Battery
 
-This will export all your experiments, their tasks and schedule.
+This will export all your suites, their tasks and schedule.
 It will create a CSV in the `./exports/` folder.
-You can use this CSV to Import the experiments again.
+You can use this CSV to Import the suite again.
 ><p style="color: #CC7F7F; font-size: 0.8em; line-height: 1.1em;">
 >NOTE: This will not export your own scripts. You will have to transfer these by yourself.</p>
 
-### :inbox_tray: Import experiments
+### :inbox_tray: Import Test Battery
 
-This allows you to choose a CSV on your computer to import Experiments and their tasks
+This allows you to choose a CSV on your computer to import Suites and their tasks
 
 ## Citation
 
