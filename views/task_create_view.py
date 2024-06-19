@@ -79,7 +79,7 @@ class AddTaskView:
         elif is_url:
             try:
                 url = url_inputs[0].text.format(id=participant_info['participant_id'],
-                                                          experiment=participant_info['suite'],
+                                                          suite=participant_info['suite'],
                                                           startTime=participant_info['start_time'],
                                                           timestamp=participant_info['timestamp'],
                                                           scriptCount='',
@@ -94,14 +94,14 @@ class AddTaskView:
         else:
             try:
                 title = text_screen_inputs[0].text.format(id=participant_info['participant_id'],
-                                                          experiment=participant_info['suite'],
+                                                          suite=participant_info['suite'],
                                                           startTime=participant_info['start_time'],
                                                           timestamp=participant_info['timestamp'],
                                                           scriptCount='',
                                                           **variables)
 
                 description = text_screen_inputs[1].text.format(id=participant_info['participant_id'],
-                                                                experiment=participant_info['suite'],
+                                                                suite=participant_info['suite'],
                                                                 startTime=participant_info['start_time'],
                                                                 timestamp=participant_info['timestamp'],
                                                                 scriptCount='',

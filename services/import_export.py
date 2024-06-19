@@ -211,7 +211,7 @@ class ImportTasksService:
         elif url:
             try:
                 url = url.format(id=participant_info['participant_id'],
-                                 experiment=participant_info['suite'],
+                                 suite=participant_info['suite'],
                                  startTime=participant_info['start_time'],
                                  timestamp=participant_info['timestamp'],
                                  scriptCount='',
@@ -226,7 +226,7 @@ class ImportTasksService:
         else:
             try:
                 title = title.format(id=participant_info['participant_id'],
-                                     experiment=participant_info['suite'],
+                                     suite=participant_info['suite'],
                                      startTime=participant_info['start_time'],
                                      timestamp=participant_info['timestamp'],
                                      scriptCount='',
@@ -236,7 +236,7 @@ class ImportTasksService:
                     description = ''
 
                 description = description.format(id=participant_info['participant_id'],
-                                                 experiment=participant_info['suite'],
+                                                 suite=participant_info['suite'],
                                                  startTime=participant_info['start_time'],
                                                  timestamp=participant_info['timestamp'],
                                                  scriptCount='',

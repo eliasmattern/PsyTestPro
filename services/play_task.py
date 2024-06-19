@@ -49,14 +49,14 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
             description = schedule[upcoming_event]['value']['description']
 
             title = title.format(id=participant_info['participant_id'],
-                                 experiment=participant_info['suite'],
+                                 suite=participant_info['suite'],
                                  startTime=participant_info['start_time'],
                                  timestamp=formatted_timestamp,
                                  scriptCount='',
                                  **custom_variables)
 
             description = description.format(id=participant_info['participant_id'],
-                                             experiment=participant_info['suite'],
+                                             suite=participant_info['suite'],
                                              startTime=participant_info['start_time'],
                                              timestamp=formatted_timestamp,
                                              scriptCount='',
@@ -115,7 +115,7 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: str, sched
                         break
             participant_info['script_count'] = script_count
             url = url.format(id=participant_info['participant_id'],
-                                     experiment=participant_info['suite'],
+                                     suite=participant_info['suite'],
                                      startTime=participant_info['start_time'],
                                      timestamp=participant_info['timestamp'],
                                      scriptCount=str(participant_info['script_count']),
