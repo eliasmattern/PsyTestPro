@@ -19,7 +19,7 @@
     "todo": "ToDo",
     "skip": "Überspringen",
     "done": "Fertig",
-    "skipDoneTodo": "ToDo/Überspr./Fertig",
+    "state": "Status",
     "confirmExit": "Beenden bestätigen",
     "confirmExitText": "Bist du sicher, dass du PsyTestPro beenden wollen?",
     "helpText": "Du wirst zu GitHub weitergeleitet",

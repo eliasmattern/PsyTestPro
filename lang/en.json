@@ -21,7 +21,7 @@
     "todo": "ToDo",
     "skip": "Skip",
     "done": "Done",
-    "skipDoneTodo": "Todo/Skip/Done",
+    "state": "State",
     "confirmExit": "Confirm Exit",
     "confirmExitText": "Are you sure you want to quit PsyTestPro?",
     "helpText": "You will be redirected to GitHub",

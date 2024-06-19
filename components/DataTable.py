@@ -1,396 +1,192 @@
 import math
+from typing import Optional
 
-import pygame.font
+import pygame
 
 from components import Button
-from services import PsyTestProConfig, TranslateService
+from events import LANGUAGE_EVENT
+from services import TranslateService, PsyTestProConfig
+
+
+class ActionRect:
+    def __init__(self, x: float, y: float, width: float, heigth: float, column: int, row: int):
+        self.rect = pygame.rect.Rect(x, y, width, heigth)
+        self.column_index = column
+        self.row_index = row
 
 
 class DataTable:
 
-    def __init__(self, columns: list, max_rows: int, start_pos: tuple[int, int], data: list[list] = None,
-                 max_cell_width: int = None,
-                 actions: list = None, max_height: int = None, translate_service: TranslateService = None):
-        if actions is None:
-            actions = []
-        self.split_data = None
-        self.buttons = None
-        if data is None:
-            data = [[]]
-        self.data = data
+    def __init__(self, columns: list, start_pos: tuple[float, float], column_width: int, data: Optional[list[list]] = None,
+                 actions: Optional[list] = None, max_height: Optional[float] = None, translate_service: Optional[
+                TranslateService] = None):
         self.columns = columns
-        self.max_rows = max_rows
         self.pos_x, self.pos_y = start_pos
-        self.font = pygame.font.Font(None, 24)
-        self.header_font = pygame.font.Font(None, 30)
+        self.actions = actions
+        self.max_height = max_height
+        self.column_width = column_width
+        self.font = pygame.font.Font(None, 28)
+        self.column_font = pygame.font.Font(None, 32)
+        self.padding = self.font.get_linesize() / 2
+        self.row_height = self.padding * 4
+        self.translate_service = translate_service
+        self.surfaces: list[tuple[pygame.Surface, tuple[float, float]]] = []
+        self.lines: list[tuple[tuple[float, float], tuple[float, float]]] = []
+        self.buttons: list[Button] = []
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
-        self.margin_left = 10
-        self.margin_top = 5
-        self.max_cell_width = max_cell_width - 10 if max_cell_width else None
-        self.page = 0
         self.grid_color = pygame.Color(self.settings['gridColor'])
-        self.primary_color = pygame.Color(self.settings['gridColor'])
-        self.max_height = max_height
-        self.row_height = 50
-        self.translate_service = translate_service
-        self.event_areas = {}
-        self.actions = actions
-        self.action_data = None
-        self.entries_per_page = []
-        if len(self.data) > 0:
-            self.table_width, self.table_height, self.row_width, self.row_height, self.header_heigth = self.get_table_proportions()
-
-    def set_action_data(self, data: dict):
-        self.data[self.action_data["info"][0]][self.action_data["info"][1]] = data
-
-    def get_table_proportions(self):
-        width = 0
-        table_height = 0
-        max_header_width = 0
-        row_height = 50
-        for header in self.columns:
-            header_width = 2 * self.margin_left + self.header_font.size(header)[0]
-            max_header_width = max(header_width, max_header_width)
-            width += 2 * self.margin_left
-        if self.max_cell_width is not None and max_header_width > self.max_cell_width:
-            max_header_width = self.max_cell_width
-        row_width = max_header_width + 2 * self.margin_left
-        max_row_height = self.get_max_row_height(row_width)
-        header_height = 0
-        for header in self.columns:
-            word_to_split = 1
-            final_header = header
-            header_copy = header
-
-            if ' ' in header and row_width is not None:
-                headers = []
-                split_text = None
-                while self.header_font.size(header_copy)[0] + self.margin_left > row_width and ' ' in header_copy:
-                    split_text = header.rsplit(' ', word_to_split)
-                    header_copy = split_text[0]
-                    word_to_split += 1
-                    if self.header_font.size(split_text[1])[0] > row_width:
-                        split_text[1] = self.get_fromatted_text(split_text[1], row_width, self.header_font)
-                    if len(headers) > 0 and self.header_font.size(split_text[1] + ' ' + headers[-1])[
-                        0] + self.margin_left < row_width:
-                        split_text[1] = split_text[1] + ' ' + headers[-1]
-                        del headers[len(headers) - 1]
-                    headers.append(split_text[1])
-                if split_text:
-                    first_word = self.get_fromatted_text(split_text[0], row_width, self.header_font)
-                else:
-                    first_word = header
-                final_header = '\\n'.join(map(str, [first_word, *headers]))
-            elif row_width is not None:
-                final_header = self.get_fromatted_text(header, row_width, self.header_font)
-            split_header = final_header.split('\\n')
-            if row_height < self.header_font.get_height() * len(split_header) > header_height:
-                header_height = self.header_font.get_height() * (len(split_header) - 1)
-
-        self.get_split_data(row_height, max_row_height, header_height)
-        table_height = row_height * (len(self.split_data[self.page]))
-        table_width = width + max_header_width * len(self.columns)
-
-        table_height += header_height + max_row_height
-        if self.max_height is not None and table_height > self.max_height:
-            table_height = self.max_height
-        return table_width, table_height, row_width, row_height, header_height
-
-    def get_fromatted_text(self, text: str, max_width: int, font: pygame.font.Font):
-        texts = []
-        index = 0
-        while font.size(text)[0] > max_width - self.margin_left:
-            if font.size(text[:index])[0] >= max_width - self.margin_left:
-                texts.append(text[:index - 2])
-                text = text[index - 2:]
-                index = 0
-            else:
-                index += 1
-            if index > len(text):
-                break
-        return '\\n'.join(map(str, [*texts, text]))
-
-    def get_split_data(self, row_height: int, max_row_height: int, header_height=None):
-        if not header_height is None:
-            self.header_heigth = header_height
-
-        max_fields = self.max_rows
-        if max_row_height > self.max_height:
-            max_fields = math.floor((self.max_height - row_height) / row_height)
-            if max_fields <= 1:
-                max_fields = 1
-                self.table_height = row_height * 2
-            self.max_rows = max_fields
-        result = [self.data[i:i + max_fields] for i in range(0, len(self.data), max_fields)]
-        trimmed_data = [sublist for sublist in result if sublist]
-        max_fields_old = max_fields
-        val = 0
-        old_size = len(trimmed_data)
-        size = 0
-        while size != old_size:
-            old_size = len(trimmed_data)
-            for index, page in zip(range(len(trimmed_data)), trimmed_data):
-
-                max_fields = len(page)
-                val += 1
-                editing = True
-                while editing:
-                    total_height = 0
-                    for row in page:
-                        total_height += self.get_row_height(row)
-                    if max_fields <= 1:
-                        max_fields = 1
-                        editing = False
-                    elif total_height + self.header_heigth > self.max_height - 120:
-                        max_fields -= 1
-                        last = page[- 1]
-                        del trimmed_data[index][- 1]
-                        if index + 1 < len(trimmed_data):
-                            trimmed_data[index + 1].insert(0, last)
-                        else:
-                            trimmed_data.append([last])
-                    else:
-                        editing = False
-                        max_fields = max_fields_old
-            size = len(trimmed_data)
-        for page in trimmed_data:
-            self.entries_per_page.append(len(page))
-        self.split_data = trimmed_data
-
-    def create_page_button(self, data: list):
-        buttons = {}
-        left_button = Button(
-            self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 37.5) - 20,
-            self.table_height + self.row_height + 40,
-            40,
-            40, '<',
-            lambda: self.page_update(False, data),
-            border_radius=90)
-        right_button = Button(
-            self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 67.5) - 20,
-            self.table_height + self.row_height + 40,
-            40,
-            40, '>',
-            lambda: self.page_update(True, data),
-            border_radius=90)
-        buttons['left_button'] = left_button
-        buttons['right_button'] = right_button
-        return buttons
-
-    def page_update(self, increment: bool, data: list):
-        self.event_areas = {}
-        if increment:
-            self.page = (self.page + 1) % len(data)
-        else:
-            self.page = (self.page - 1) if self.page > 0 else len(data) - 1
-
-    def get_row_height(self, row: list, row_width=None):
-        if row_width:
-            self.row_width = row_width
-        row_height = self.row_height
-        for cell in row:
-            if isinstance(cell, dict):
-                if 'key' in cell.keys() and self.translate_service is not None:
-                    cell = self.translate_service.get_translation(cell['key'])
-                else:
-                    cell = cell['value']
-
-            cell_copy = cell
-            if ' ' in cell and self.row_width is not None:
-                cells = []
-                split_text = None
-                word_to_split = 1
-                while self.font.size(cell_copy)[
-                    0] > self.row_width - self.margin_left and ' ' in cell_copy:
-
-                    split_text = cell.rsplit(' ', word_to_split)
-                    cell_copy = split_text[0]
-                    word_to_split += 1
-                    if self.font.size(split_text[1])[0] + self.margin_left > self.row_width:
-                        split_text[1] = self.get_fromatted_text(split_text[1], self.row_width, self.font)
-                    if len(cells) > 0 and self.font.size(split_text[1] + ' ' + cells[-1])[
-                        0] + self.margin_left < self.row_width:
-                        split_text[1] = split_text[1] + ' ' + cells[-1]
-                        del cells[len(cells) - 1]
-                    cells.append(split_text[1])
-                if split_text:
-                    first_word = self.get_fromatted_text(split_text[0], self.row_width, self.font)
-                else:
-                    first_word = cell
-                cells.reverse()
-                final_cells = '\\n'.join(map(str, [first_word, *cells]))
-            else:
-                final_cells = self.get_fromatted_text(cell, self.row_width, self.font)
-            split_cell = final_cells.split('\\n')
-
-            text_height = len(split_cell) if len(split_cell) > 2 else 1
-            if (text_height - 1) * row_height > self.row_height:
-                row_height = row_height + (text_height - 1) * self.font.get_height()
-        return row_height
-
-    def get_max_row_height(self, row_width: int):
-        max_height = 0
-        for row in self.data:
-            max_height += self.get_row_height(row, row_width)
-        return max_height
-
-    def handle_events(self, event):
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                for key, value in self.event_areas.items():
-                    get_past_areas = self.entries_per_page[0:self.page]
-                    entries = 0
-                    for num in get_past_areas:
-                        entries += num
-                    row = int(key.split('-')[0]) + entries
-                    value_index = int(key.split('-')[1])
-                    if row >= len(self.data):
-                        continue
-
-                    if value.collidepoint(event.pos):
-                        if len(self.actions) - 1 >= value_index and self.actions[value_index]:
-                            self.action_data = {"data": self.data[row][value_index], "info": (row, value_index)}
-                            self.actions[value_index]()
-
-        if self.buttons is not None:
-            for button in self.buttons.values():
-                button.handle_event(event)
+        self.primary_color = pygame.Color(self.settings['primaryColor'])
+        self.split_data = list(self.split_list(data))
+        self.page = 0
+        self.data = self.format_data(self.split_data[self.page])
+        self.prepare_table()
+        self.action_rects: list[ActionRect] = self.get_action_rects()
+        self.current_action_rect = None
 
     def draw(self, screen: pygame.Surface):
-        if len(self.data) > 0:
-            # Render headers
-            for index, header in enumerate(self.columns):
-                word_to_split = 1
-                final_header = header
-                header_copy = header
-                if ' ' in header and self.row_width is not None:
-                    headers = []
-                    split_text = None
-                    while self.header_font.size(header_copy)[
-                        0] > self.row_width - self.margin_left and ' ' in header_copy:
-                        split_text = header.rsplit(' ', word_to_split)
-                        header_copy = split_text[0]
-                        word_to_split += 1
-                        if self.header_font.size(split_text[1])[0] + self.margin_left > self.row_width:
-                            split_text[1] = self.get_fromatted_text(split_text[1], self.row_width, self.header_font)
-                        if len(headers) > 0 and self.header_font.size(split_text[1] + ' ' + headers[-1])[
-                            0] + self.margin_left < self.row_width:
-                            split_text[1] = split_text[1] + ' ' + headers[-1]
-                            del headers[len(headers) - 1]
-                        headers.append(split_text[1])
-                    if split_text:
-                        first_word = self.get_fromatted_text(split_text[0], self.row_width, self.header_font)
-                    else:
-                        first_word = header
-                    headers.reverse()
-                    final_header = '\\n'.join(map(str, [first_word, *headers]))
-                elif self.row_width is not None:
-                    final_header = self.get_fromatted_text(header, self.row_width, self.header_font)
-                split_header = final_header.split('\\n')
+        for surface, pos in self.surfaces:
+            screen.blit(surface, pos)
+        for start_pos, end_pos in self.lines:
+            pygame.draw.line(screen, self.grid_color, start_pos, end_pos)
 
-                header_surfaces = []
-                for header_text in split_header:
-                    header_surfaces.append(self.header_font.render(
-                        header_text, True, self.primary_color
-                    ))
-                for i, surface in enumerate(header_surfaces):
-                    screen.blit(surface,
-                                (self.pos_x + self.margin_left + index * self.row_width,
-                                 self.pos_y + self.margin_top + (i * self.header_font.get_linesize())))
-                pygame.draw.line(screen, self.grid_color,
-                                 (self.pos_x, self.pos_y),
-                                 (self.pos_x + self.table_width, self.pos_y))
-                pygame.draw.line(screen, self.grid_color,
-                                 (self.pos_x, self.pos_y + self.row_height + self.header_heigth),
-                                 (self.pos_x + self.table_width, self.pos_y + self.row_height + self.header_heigth))
+        if len(self.split_data) > 1:
+            for button in self.buttons:
+                button.draw(screen)
+            page_text = f'{self.page + 1}/{len(self.split_data)}'
+            surface = self.font.render(page_text, True, self.primary_color)
+            screen.blit(surface, (
+                self.pos_x + (len(self.columns) * self.column_width / 2) - (self.font.size(page_text)[0] / 2),
+                self.max_height + self.padding * 4))
 
-            cell_y = self.pos_y + self.header_heigth
+    def handle_event(self, event):
+        for button in self.buttons:
+            button.handle_event(event)
+        if event.type == pygame.MOUSEBUTTONUP:
+            try:
+                rect = next(
+                    action_rect for action_rect in self.action_rects if action_rect.rect.collidepoint(event.pos))
+                payload = self.split_data[self.page][rect.row_index][rect.column_index]
+                self.current_action_rect = rect
+                self.actions[rect.column_index](payload)
+            except:
+                pass
+        elif event.type == LANGUAGE_EVENT:
+            self.data = self.format_data(self.split_data[self.page])
+            self.prepare_table()
 
-            # Render rows
-            for count, row in enumerate(self.split_data[self.page]):
-                row_height = self.get_row_height(row)
-                cell_y += self.get_row_height(row)
-                for index, cell in enumerate(row):
-                    word_to_split = 1
-                    if index >= len(self.columns):
-                        continue
+    def prepare_table(self):
+        self.surfaces = []
+        self.lines = []
+        self.buttons = []
+        for index, column in enumerate(self.columns):
+            label = self.column_font.render(self.translate_service.get_translation(column), False, self.primary_color)
+            self.surfaces.append((label,
+                                  (self.pos_x + self.column_width * index + self.padding, self.pos_y + self.padding)))
 
-                    color = self.primary_color
+            left_border = ((self.pos_x + self.column_width * index, self.pos_y),
+                           (self.pos_x + self.column_width * index, self.pos_y + self.row_height))
+            right_border = ((self.pos_x + self.column_width * (index + 1), self.pos_y),
+                            (self.pos_x + self.column_width * (index + 1), self.pos_y + self.row_height))
+            self.lines.extend([left_border, right_border])
 
-                    if isinstance(cell, dict):
-                        if 'color' in cell.keys():
-                            color = cell['color']
-                        if 'key' in cell.keys() and self.translate_service is not None:
-                            cell = self.translate_service.get_translation(cell['key'])
-                        else:
-                            cell = cell['value']
-                    cell_copy = cell
-                    if ' ' in cell and self.row_width is not None:
-                        cells = []
-                        split_text = None
-                        while self.font.size(cell_copy)[
-                            0] > self.row_width - self.margin_left and ' ' in cell_copy:
+        column_top_line = (self.pos_x, self.pos_y), (self.pos_x + len(self.columns) * self.column_width, self.pos_y)
+        column_bottom_line = ((self.pos_x, self.pos_y + self.row_height),
+                              (self.pos_x + len(self.columns) * self.column_width, self.pos_y + self.row_height))
+        self.lines.extend([column_top_line, column_bottom_line])
 
-                            split_text = cell.rsplit(' ', word_to_split)
-                            cell_copy = split_text[0]
-                            word_to_split += 1
-                            if self.font.size(split_text[1])[0] + self.margin_left > self.row_width:
-                                split_text[1] = self.get_fromatted_text(split_text[1], self.row_width, self.font)
-                            if len(cells) > 0 and self.font.size(split_text[1] + ' ' + cells[-1])[
-                                0] + self.margin_left < self.row_width:
-                                split_text[1] = split_text[1] + ' ' + cells[-1]
-                                del cells[len(cells) - 1]
-                            cells.append(split_text[1])
-                        if split_text:
-                            first_word = self.get_fromatted_text(split_text[0], self.row_width, self.font)
-                        else:
-                            first_word = cell
-                        cells.reverse()
-                        final_cells = '\\n'.join(map(str, [first_word, *cells]))
-                    elif self.row_width != None:
-                        final_cells = self.get_fromatted_text(cell, self.row_width, self.font)
-                    split_cell = final_cells.split('\\n')
-                    cell_surfaces = []
-                    for cell_text in split_cell:
-                        cell_surfaces.append(self.font.render(
-                            cell_text, True, color
-                        ))
+        for row_index, row in enumerate(self.data):
+            for value_index, value in enumerate(row):
+                if isinstance(value, dict):
+                    label = self.font.render(self.translate_service.get_translation(value['value']), False,
+                                             value['color'])
+                else:
+                    label = self.font.render(value, False, self.primary_color)
+                self.surfaces.append((label, (self.pos_x + self.padding + self.column_width * value_index,
+                                              self.pos_y + self.row_height * (row_index + 1) + self.padding)))
+                left_border = (
+                    (self.pos_x + self.column_width * value_index, self.pos_y + self.row_height * (row_index + 1)),
+                    (self.pos_x + self.column_width * value_index,
+                     self.pos_y + self.row_height * (row_index + 1) + self.row_height)
+                )
+                right_border = ((self.pos_x + self.column_width * (value_index + 1),
+                                 self.pos_y + self.row_height * (row_index + 1)),
+                                (self.pos_x + self.column_width * (value_index + 1),
+                                 self.pos_y + self.row_height * (row_index + 1) + self.row_height))
 
-                    for i, surface in enumerate(cell_surfaces):
-                        screen.blit(surface,
-                                    (self.pos_x + self.margin_left + index * self.row_width,
-                                     self.margin_top + (cell_y - (row_height - self.row_height) + (
-                                             i * self.font.get_linesize()))))
-                    self.event_areas[str(count) + '-' + str(index)] = pygame.Rect(self.pos_x + index * self.row_width,
-                                                                                  (cell_y - (
-                                                                                              row_height - self.row_height)),
-                                                                                  self.row_width, row_height)
-                    pygame.draw.line(screen, self.grid_color,
-                                     (self.pos_x,
-                                      cell_y + self.row_height),
-                                     (self.pos_x + self.table_width,
-                                      cell_y + self.row_height))
+                self.lines.extend([left_border, right_border])
+            self.lines.append(((self.pos_x, self.pos_y + self.row_height * (row_index + 1) + self.row_height),
+                               (self.pos_x + len(self.columns) * self.column_width,
+                                self.pos_y + self.row_height * (row_index + 1) + self.row_height)))
 
-            for count in range(len(self.columns) + 1):
-                pygame.draw.line(screen, self.grid_color, (self.pos_x + count * self.row_width, self.pos_y),
-                                 (self.pos_x + count * self.row_width,
-                                  cell_y + self.row_height))
-            if len(self.split_data) > 1:
-                self.buttons = self.create_page_button(self.split_data)
-                if self.buttons is not None:
-                    page_number_surface = self.font.render(str(self.page + 1) + '/' + str(len(self.split_data)),
-                                                           True,
-                                                           self.primary_color)
-                    screen.blit(page_number_surface, (
-                        self.pos_x + (((self.table_width + (len(self.columns) * self.margin_left)) // 100) * 50) - 20,
-                        self.table_height + self.row_height + 60))
-                    for button in self.buttons.values():
-                        button.draw(screen)
+        left_page_button = Button(self.pos_x + (len(self.columns) * self.column_width / 2 - 50),
+                                  self.max_height + self.padding * 4,
+                                  25, 20, '<', lambda: self.page_update(False, self.split_data), border_radius=90)
+        right_page_button = Button(self.pos_x + (len(self.columns) * self.column_width / 2 + 50),
+                                   self.max_height + self.padding * 4,
+                                   25, 20, '>', lambda: self.page_update(True, self.split_data), border_radius=90)
+
+        self.buttons.extend([left_page_button, right_page_button])
+
+    def format_data(self, data):
+        formatted_data = []
+        for row in data:
+            new_row = []
+            for value in row:
+                if isinstance(value, dict):
+                    while self.font.size(value['value'])[0] > self.column_width - self.padding * 2:
+                        value = value['value'][:-4] + '...'
+                else:
+                    while self.font.size(value)[0] > self.column_width - self.padding * 2:
+                        value = value[:-4] + '...'
+                new_row.append(value)
+            formatted_data.append(new_row)
+        return formatted_data
+
+    def split_list(self, input_list: list):
+        chunk_size = math.floor(self.max_height / self.row_height) - 2
+        for i in range(0, len(input_list), chunk_size):
+            yield input_list[i:i + chunk_size]
+
+    def page_update(self, increment: bool, splitted_data: list):
+        if increment:
+            self.page = (self.page + 1) % len(splitted_data)
         else:
-            if self.translate_service:
-                error_msg = self.translate_service.get_translation('noData')
-            else:
-                error_msg = "No Data"
-            error_surface = self.font.render(error_msg, True, self.primary_color)
-            screen.blit(error_surface, (self.pos_x, self.pos_y))
+            self.page = (
+                (self.page - 1) if self.page > 0 else len(splitted_data) - 1
+            )
+        self.data = self.format_data(self.split_data[self.page])
+        self.prepare_table()
+        self.action_rects: list[ActionRect] = self.get_action_rects()
+
+    def get_action_rects(self):
+        rects = []
+        for row_index in range(len(self.split_data[self.page])):
+            for column_index in range(len(self.columns)):
+                rects.append(ActionRect(self.pos_x + column_index * self.column_width,
+                                        self.pos_y + self.row_height * (row_index + 1), self.column_width,
+                                        self.row_height, column_index, row_index))
+        return rects
+
+    def update_field(self, new_value):
+        if self.current_action_rect:
+            self.split_data[self.page][self.current_action_rect.row_index][
+                self.current_action_rect.column_index] = new_value
+            self.data = self.format_data(self.split_data[self.page])
+            self.prepare_table()
+            self.current_action_rect = None
+            self.action_rects: list[ActionRect] = self.get_action_rects()
+
+    def get_data(self):
+        data = []
+        for page in self.split_data:
+            data.extend(page)
+        return data
+
+    def set_data(self, data):
+        self.split_data = list(self.split_list(data))
+        self.page = 0
+        self.data = self.format_data(self.split_data[self.page])
+        self.prepare_table()
+        self.action_rects: list[ActionRect] = self.get_action_rects()
+        self.current_action_rect = None

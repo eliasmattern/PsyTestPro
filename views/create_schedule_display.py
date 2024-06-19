@@ -1,7 +1,5 @@
 import os
 import re
-import shlex
-import subprocess
 import sys
 import time as pythonTime
 import webbrowser
@@ -11,7 +9,6 @@ import pygame
 
 from components import Button, DataTable, QuestionDialog, DatePickerComponent, TimePicker
 from events import LANGUAGE_EVENT
-from lib import text_screen
 from services import PsyTestProConfig
 from services import TranslateService, LanguageConfiguration, play_tasks
 
@@ -47,44 +44,33 @@ class CreateScheduleDisplay:
         self.show_quit_dialog = False
         self.show_date_picker = False
         self.show_time_picker = False
-        self.screen_width = None
-        self.screen_height = None
-        self.column_width = None
-        self.splitted_schedule = self.split_dict(self.schedule, 15)
-        self.headers = [self.translate_service.get_translation('task'),
-                        self.translate_service.get_translation('date'),
-                        self.translate_service.get_translation('time'),
-                        self.translate_service.get_translation('skipDoneTodo')]
-        self.date_picker = None
-        self.timepicker = None
-
-        self.actions = [None,
-                        lambda: self.open_date_picker(self.data_table.action_data["data"]),
-                        lambda: self.open_timepicker(self.data_table.action_data["data"]),
-                        lambda: self.data_table.set_action_data(self.switch_state(self.data_table.action_data["data"]))]
-        self.play_next_task = False
-
-        if self.isHab:
-            self.headers = [self.translate_service.get_translation('task'),
-                            self.translate_service.get_translation('skipDoneTodo')]
-            self.actions = [None,
-                            lambda: self.data_table.set_action_data(
-                                self.switch_state(self.data_table.action_data["data"]))]
-        self.data_table = None
-
-    def display(self):
-        # Open the pygame window at front of all windows open on screen
-        os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
-
-        # Initializing Pygame
-        pygame.init()
-
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()
         # Store the screen width in a new variable
         self.screen_width = screen_info.current_w
         # Store the screen height in a new variable
         self.screen_height = screen_info.current_h
+        self.column_width = None
+        self.splitted_schedule = self.split_dict(self.schedule, 15)
+        self.headers = ['task', 'date', 'time', 'state']
+
+        self.date_picker = None
+        self.timepicker = None
+
+        self.actions = [None,
+                        self.open_date_picker,
+                        self.open_timepicker,
+                        self.switch_state]
+        self.play_next_task = False
+
+        if self.isHab:
+            self.headers = ['task', 'state']
+            self.actions = [None, self.switch_state]
+        self.data_table = DataTable(self.headers, (self.screen_width - (len(self.headers) + 0.5) * 150, self.screen_height / 15), 150, self.get_table_data(), self.actions, self.screen_height / 15 * 12, self.translate_service)
+
+    def display(self):
+        # Open the pygame window at front of all windows open on screen
+        os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'  # Set window position to top-left corner
 
         # Store the original screen dimensions used to design this program
         original_width = 1280
@@ -102,16 +88,6 @@ class CreateScheduleDisplay:
 
         # Calculate column widths and row height based on screen size
         self.column_width = self.screen_width // 9
-
-        max_rows = 30
-
-        self.data_table = DataTable(self.headers, max_rows,
-                                    (self.screen_width - len(self.headers) * self.column_width - 50,
-                                     self.screen_height / 100 * 5),
-                                    data=self.get_table_data(),
-                                    max_cell_width=self.column_width, actions=self.actions,
-                                    translate_service=self.translate_service,
-                                    max_height=self.screen_height // 100 * 80)
 
         buttons: list[Button] = []
 
@@ -148,12 +124,12 @@ class CreateScheduleDisplay:
                                      lambda: self.quit_action(), action_key='quit')
 
         self.date_picker = DatePickerComponent('26/12/2023', 'datepicker', self.translate_service,
-                                               lambda: self.data_table.set_action_data(
+                                               lambda: self.data_table.update_field((
                                                    '/'.join([str(self.date_picker.day), str(self.date_picker.month),
-                                                             str(self.date_picker.year)]))
+                                                             str(self.date_picker.year)])))
                                                , action_key='save')
         self.timepicker = TimePicker(300, 200, 'timepicker', self.translate_service, time='12:34:21',
-                                     action=lambda: self.data_table.set_action_data(
+                                     action=lambda: self.data_table.update_field(
                                          str(self.timepicker.time)), action_key='save')
 
         while True:
@@ -179,7 +155,7 @@ class CreateScheduleDisplay:
                     for button in buttons:
                         button.handle_event(event)
 
-                    self.data_table.handle_events(event)
+                    self.data_table.handle_event(event)
 
             screen.fill(self.black)  # Fill the screen with the black color
             for button in buttons:
@@ -217,7 +193,7 @@ class CreateScheduleDisplay:
         return text_surface, text_surface.get_rect()
 
     def run_psy_test_pro(self):
-        self.save_data(self.data_table.data)
+        self.save_data(self.data_table.get_data())
         # set the display mode to fullscreen
         screen = pygame.display.get_surface()
 
@@ -229,12 +205,11 @@ class CreateScheduleDisplay:
 
         filtered_schedule = {key: value for key, value in self.schedule.items() if value['state'] == 'todo'}
         # convert the schedule to a list of tuples and sort it by time
-        sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: (item[1]['datetime'], item[1]['position']))
+        sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: (datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S'), item[1]['position']))
         sorted_schedule = {k: v for k, v in sorted_schedule}
 
         sorted_schedule = [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
                            sorted_schedule.items()]
-
         past_todo_tasks = {key: value for key, value in self.schedule.items() if
                            value['state'] == 'todo' and datetime.strptime(value['datetime'],
                                                                           '%d/%m/%Y %H:%M:%S') < datetime.now()}
@@ -413,17 +388,6 @@ class CreateScheduleDisplay:
     def change_language(self, translateService: TranslateService, language_config: LanguageConfiguration, lang: str):
         translateService.set_language(lang)
         language_config.update_language_config(lang)
-        if not self.isHab:
-            self.headers = [self.translate_service.get_translation('task'),
-                            self.translate_service.get_translation('date'),
-                            self.translate_service.get_translation('time'),
-                            self.translate_service.get_translation('skipDoneTodo')]
-        else:
-            self.headers = [self.translate_service.get_translation('task'),
-                            self.translate_service.get_translation('skipDoneTodo')]
-        self.data_table.columns = self.headers
-        if len(self.data_table.data) > 0:
-            self.data_table.table_width, self.data_table.table_height, self.data_table.row_width, self.data_table.row_height, self.data_table.header_heigth = self.data_table.get_table_proportions()
 
     def quit_psy_test_pro(self):
         self.show_quit_dialog = True
@@ -451,17 +415,6 @@ class CreateScheduleDisplay:
 
         return dict_list
 
-    def page_update(self, schedule: dict, increment: bool, data: list):
-        self.save_data(data)
-        self.todo_input_values = {}
-        self.newdate_input_values = {}
-        self.newtime_input_values = {}
-
-        if increment:
-            self.schedule_page = (self.schedule_page + 1) % len(schedule)
-        else:
-            self.schedule_page = (self.schedule_page - 1) if self.schedule_page > 0 else len(schedule) - 1
-
     def open_date_picker(self, date: str):
         self.show_date_picker = True
         self.date_picker.day, self.date_picker.month, self.date_picker.year = date.split('/')
@@ -477,7 +430,7 @@ class CreateScheduleDisplay:
                           'skip': {'value': 'done', 'color': self.success, 'key': 'done'},
                           'done': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
                           'error': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'}}
-        return state_iterator[state['value']]
+        self.data_table.update_field(state_iterator[state['value']])
 
     def save_data(self, data: list):
         for task in data:
@@ -508,7 +461,7 @@ class CreateScheduleDisplay:
 
     def edit_schedule(self):
         self.play_next_task = False
-        self.schedule_page = 0
+        self.data_table.set_data(self.get_table_data())
         self.display()
 
     def play_task(self):
