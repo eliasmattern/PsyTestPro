@@ -294,9 +294,6 @@ class AddTaskView:
         x = width // 2
         y = height // 2 - 150
 
-        question_font = pygame.font.Font(
-            None, int(24)
-        )  # Create font object for header
         tick_box_rect = pygame.Rect(
             x + 260 - 20 * height_scale_factor,
             y + 420,
@@ -325,7 +322,7 @@ class AddTaskView:
                                          self.translate_service)
         url_check_box = CheckBox('url', screen_width / 2, y + 180, url, self.translate_service)
 
-        create_continuously_check_box = CheckBox('createMultipleTasks', x + 300, y + 420, create_continuously, self.translate_service)
+        create_continuously_check_box = CheckBox('createMultipleTasks', x + 320, y + 420, create_continuously, self.translate_service)
 
         self.adding = True
         while self.adding:
