@@ -5,21 +5,23 @@ import webbrowser
 import pandas as pd
 
 from lib import text_screen
+
 from .configuration import PsyTestProConfig
 from .TranslateService import TranslateService
 from .execute_command_service import execute_command
+from .PathService import get_resource_path
 
 
 class JSONToCSVConverter:
     def __init__(self, output_path: str):
         self.output_path = output_path
-        self.suite_config_path = './json/suiteConfig.json'
-        self.task_config_path = './json/taskConfig.json'
-        self.settings_path = './json/settings.json'
-        self.custom_variables_path = './json/customVariables.json'
+        self.suite_config_path = get_resource_path('./json/suiteConfig.json')
+        self.task_config_path = get_resource_path('./json/taskConfig.json')
+        self.settings_path = get_resource_path('./json/settings.json')
+        self.custom_variables_path = get_resource_path('./json/customVariables.json')
 
     def read_json(self, file_path: str):
-        with open(file_path, 'r') as file:
+        with open(get_resource_path(file_path), 'r') as file:
             data = json.load(file)
         return data
 
@@ -67,10 +69,10 @@ class JSONToCSVConverter:
 class CSVToJSONConverter:
     def __init__(self, input_excel_path: str):
         self.input_excel_path = input_excel_path
-        self.suite_config_path = './json/suiteConfig.json'
-        self.task_config_path = './json/taskConfig.json'
-        self.settings_path = './json/settings.json'
-        self.custom_variables_path = './json/customVariables.json'
+        self.suite_config_path = get_resource_path('./json/suiteConfig.json')
+        self.task_config_path = get_resource_path('./json/taskConfig.json')
+        self.settings_path = get_resource_path('./json/settings.json')
+        self.custom_variables_path = get_resource_path('./json/customVariables.json')
 
     def convert_to_json(self):
         df = pd.read_excel(self.input_excel_path)
@@ -84,7 +86,7 @@ class CSVToJSONConverter:
                 break
             settings[setting_key] = setting_value
 
-        with open(self.settings_path, 'w') as file:
+        with open(get_resource_path(self.settings_path), 'w') as file:
             json.dump(settings, file, indent=2)
 
         custom_variables = []
@@ -93,7 +95,7 @@ class CSVToJSONConverter:
                 break
             custom_variables.append(custom_variable)
 
-        with open(self.custom_variables_path, 'w') as file:
+        with open(get_resource_path(self.custom_variables_path), 'w') as file:
             json.dump(custom_variables, file)
 
         suites = []
@@ -104,7 +106,7 @@ class CSVToJSONConverter:
                 suite = suite.replace('\'', '', 1)
             suites.append(suite)
 
-        with open(self.suite_config_path, 'w') as file:
+        with open(get_resource_path(self.suite_config_path), 'w') as file:
             json.dump(suites, file)
 
         tasks = {}
@@ -125,7 +127,7 @@ class CSVToJSONConverter:
             tasks[suite_name]['tasks'][task_name] = {'position': int(position), 'time': time, 'state': state,
                                                           'type': task_type, "value": task_value}
 
-        with open(self.task_config_path, 'w') as file:
+        with open(get_resource_path(self.task_config_path), 'w') as file:
             json.dump(tasks, file, indent=4)
 
 
@@ -154,7 +156,7 @@ class ImportTasksService:
                         break
             if len(error) > 0:
                 return False, 'importTaskFailed', error
-        with open('./json/taskConfig.json', 'r') as file:
+        with open(get_resource_path('./json/taskConfig.json'), 'r') as file:
             data = json.load(file)
         if suite_name in data.keys():
             last_minute = None
@@ -181,7 +183,7 @@ class ImportTasksService:
         else:
             return False, 'importTasksFailed'
 
-        with open('./json/taskConfig.json', 'w') as file:
+        with open(get_resource_path('./json/taskConfig.json'), 'w') as file:
             json.dump(data, file, indent=4)
         return True, 'taskImportSuccessful'
 

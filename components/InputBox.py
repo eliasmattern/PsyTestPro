@@ -5,8 +5,9 @@ from pandas.io import clipboard
 from pygame.locals import *
 
 from events import LANGUAGE_EVENT
-from services import PsyTestProConfig
-
+from services import PsyTestProConfig, get_resource_path
+import os
+import sys
 
 class InputBox:
     def __init__(self, x: float, y: float, width: int, height: int, translation_key: str, translate_service=None,
@@ -62,7 +63,19 @@ class InputBox:
         self.started_moving_r = False
         self.started_moving_l = False
         self.delay = None
-        self.image = pygame.image.load('./img/copyIcon.png')
+        def resource_path(relative_path):
+            """ Get absolute path to resource, works for dev and for PyInstaller """
+            try:
+                # PyInstaller creates a temp folder and stores path in _MEIPASS
+                base_path = sys._MEIPASS
+            except Exception:
+                base_path = os.path.abspath(".")
+
+            return os.path.join(base_path, relative_path)
+
+        icon_path = resource_path(get_resource_path("./img/copyIcon.png"))
+
+        self.image = pygame.image.load(icon_path)
         self.posX = x
         self.posY = y
         self.imagePos = pygame.Rect(0, 0, self.image.get_rect().width, self.image.get_rect().height)

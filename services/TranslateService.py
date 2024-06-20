@@ -1,6 +1,7 @@
 import json
 
 from services import LanguageConfiguration
+from .PathService import get_resource_path
 
 
 class TranslateService:
@@ -16,7 +17,7 @@ class TranslateService:
 
     def load_language(self, language: str):
         try:
-            with open(f'lang/{language}.json', 'r', encoding='utf-8') as file:
+            with open(get_resource_path(f'lang/{language}.json'), 'r', encoding='utf-8') as file:
                 self.translations[language] = json.load(file)
         except FileNotFoundError:
             raise Exception(f'Translation file for {language} not found')

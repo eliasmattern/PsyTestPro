@@ -2,6 +2,7 @@ import json
 
 import pygame
 from events import LANGUAGE_EVENT
+from .PathService import get_resource_path
 
 
 class LanguageConfiguration:
@@ -11,7 +12,7 @@ class LanguageConfiguration:
 
     def read_language_config(self):
         try:
-            with open('json/settings.json', 'r', encoding='utf-8') as file:
+            with open(get_resource_path('json/settings.json'), 'r', encoding='utf-8') as file:
                 settings = json.load(file)
                 self.lang = settings['language']
         except Exception as e:
@@ -20,10 +21,10 @@ class LanguageConfiguration:
 
     def update_language_config(self, new_language: str):
         try:
-            with open('json/settings.json', 'r', encoding='utf-8') as file:
+            with open(get_resource_path('json/settings.json'), 'r', encoding='utf-8') as file:
                 settings = json.load(file)
             settings['language'] = new_language
-            with open('json/settings.json', 'w', encoding='utf-8') as file:
+            with open(get_resource_path('json/settings.json'), 'w', encoding='utf-8') as file:
                 json.dump(settings, file)
             event = pygame.event.Event(LANGUAGE_EVENT, message="language changed")
             pygame.event.post(event)

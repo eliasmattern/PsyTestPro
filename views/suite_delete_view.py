@@ -4,7 +4,7 @@ import sys
 import pygame
 
 from components import Button, QuestionDialog
-from services import PsyTestProConfig
+from services import PsyTestProConfig, get_resource_path
 from services import TranslateService
 
 
@@ -32,13 +32,13 @@ class DeleteSuiteView:
     def delete_action(self, suite_name: str):
         if suite_name:
             # Load the original JSON from the file
-            with open('json/taskConfig.json', 'r') as file:
+            with open(get_resource_path('json/taskConfig.json'), 'r') as file:
                 original_tasks = json.load(file)
 
             exp_keys = [key for key in original_tasks.keys() if suite_name in key]
 
             del original_tasks[exp_keys[0]]
-            with open('json/suiteConfig.json', 'r') as file:
+            with open(get_resource_path('json/suiteConfig.json'), 'r') as file:
                 original_suites = json.load(file)
 
             # Add a new value to the array
@@ -46,11 +46,11 @@ class DeleteSuiteView:
             original_suites.remove(suite_name)
 
             # Save the updated array back to the file
-            with open('json/suiteConfig.json', 'w') as file:
+            with open(get_resource_path('json/suiteConfig.json'), 'w') as file:
                 json.dump(original_suites, file)
 
             # Save the updated JSON back to the file
-            with open('json/taskConfig.json', 'w') as file:
+            with open(get_resource_path('json/taskConfig.json'), 'w') as file:
                 json.dump(original_tasks, file, indent=4)
             self.update = True
             self.running = False

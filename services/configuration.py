@@ -1,5 +1,7 @@
 import json
 
+from .PathService import get_resource_path
+
 
 class PsyTestProConfig:
     def __init__(self):
@@ -10,7 +12,7 @@ class PsyTestProConfig:
 
     def load_suites(self):
         try:
-            with open('json/suiteConfig.json', 'r', encoding='utf-8') as file:
+            with open(get_resource_path('json/suiteConfig.json'), 'r', encoding='utf-8') as file:
                 suite = json.load(file)
                 string = ','.join(str(e) for e in suite)
                 self.suites = string.split(',')
@@ -20,7 +22,7 @@ class PsyTestProConfig:
     def load_suite_tasks(self, suite: str):
         self.error_msg = ''
         try:
-            with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+            with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
                 tasks = json.load(file)
                 if tasks.get(str(suite) + '_schedule') is not None:
                     self.current_tasks = tasks.get(suite + '_schedule').get('tasks')
@@ -34,7 +36,7 @@ class PsyTestProConfig:
             raise Exception('File Error: ./json/taskConfig.json not found')
 
     def save_suite(self, suite_name: str, schedule: bool):
-        with open('json/suiteConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/suiteConfig.json'), 'r', encoding='utf-8') as file:
             original_suites = json.load(file)
 
             if not suite_name in original_suites:
@@ -42,11 +44,11 @@ class PsyTestProConfig:
                 original_suites.append(suite_name)
 
         # Save the updated array back to the file
-        with open('json/suiteConfig.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/suiteConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(original_suites, file)
 
         # Load the original JSON from the file
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             original_tasks = json.load(file)
         if schedule:
             suite_name += '_schedule'
@@ -58,11 +60,11 @@ class PsyTestProConfig:
             original_tasks[suite_name] = {'tasks': {}}
 
         # Save the updated JSON back to the file
-        with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(original_tasks, file, indent=4)
 
     def get_suites(self):
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         variable_names = data.keys()
         result = []
@@ -73,7 +75,7 @@ class PsyTestProConfig:
 
     def load_task_names_of_suites(self, suite: str) -> list:
 
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         tasks = data[suite]['tasks']
 
@@ -85,7 +87,7 @@ class PsyTestProConfig:
 
     def load_task_of_suite(self, suite: str) -> dict:
 
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         return data[suite]['tasks']
 
@@ -93,7 +95,7 @@ class PsyTestProConfig:
         if suite == 'hab_variable_variable':
             suite = 'hab_variable'
 
-        with open('json/taskConfig.json', 'r') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r') as file:
             data = json.load(file)
         deleted_position = data[suite]['tasks'][task]['position']
         del data[suite]['tasks'][task]
@@ -103,13 +105,13 @@ class PsyTestProConfig:
             if position > deleted_position:
                 data[suite]['tasks'][key]['position'] = position - 1
         # Save the updated array back to the file
-        with open('json/taskConfig.json', 'w') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'w') as file:
             json.dump(data, file, indent=4)
 
     def save_task(self, variable, name: str, time: str, type: str, value: str):
 
         # Load the JSON data from a file
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             json_data = json.load(file)
 
         # Function to add a new task to a specific object
@@ -129,13 +131,13 @@ class PsyTestProConfig:
         add_task_to_object(json_data, variable, name, time, type, value)
 
         # Save the updated JSON data back to the file
-        with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
 
     def edit_task(self, old_task_name, variable, name: str, time: str, type: str, value: str):
 
         # Load the JSON data from a file
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             json_data = json.load(file)
 
         name = name.replace(' ', '_')
@@ -145,33 +147,33 @@ class PsyTestProConfig:
         json_data[variable]['tasks'][old_task_name]['value'] = value
         json_data[variable]['tasks'][name] = json_data[variable]['tasks'].pop(old_task_name)
         # Save the updated JSON data back to the file
-        with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
 
     def load_custom_variables(self):
-        with open('json/customVariables.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/customVariables.json'), 'r', encoding='utf-8') as file:
             return json.load(file)
 
     def save_var(self, name: str):
-        with open('json/customVariables.json', 'r') as file:
+        with open(get_resource_path('json/customVariables.json'), 'r') as file:
             data = json.load(file)
         if len(data) >= 3:
             return False
         else:
             data.append(name)
-            with open('json/customVariables.json', 'w') as file:
+            with open(get_resource_path('json/customVariables.json'), 'w') as file:
                 json.dump(data, file)
             return True
 
     def delete_var(self, name: str):
-        with open('json/customVariables.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/customVariables.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         data.remove(name)
-        with open('json/customVariables.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/customVariables.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file)
 
     def get_settings(self):
-        with open('json/settings.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/settings.json'), 'r', encoding='utf-8') as file:
             settings = json.load(file)
 
         return settings
@@ -188,7 +190,7 @@ class PsyTestProConfig:
                     grid_color: str,
                     show_next_task_and_time: bool,
                     show_play_task: bool):
-        with open('json/settings.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/settings.json'), 'r', encoding='utf-8') as file:
             settings = json.load(file)
 
         settings["backgroundColor"] = background_color
@@ -204,12 +206,12 @@ class PsyTestProConfig:
         settings["showNextTask"] = show_next_task_and_time
         settings["showPlayTaskButton"] = show_play_task
 
-        with open('json/settings.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/settings.json'), 'w', encoding='utf-8') as file:
             json.dump(settings, file)
 
     def save_task_list(self, suite: str, tasks: dict):
-        with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         data[suite]['tasks'] = tasks
-        with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)

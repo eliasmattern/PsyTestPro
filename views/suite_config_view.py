@@ -6,7 +6,7 @@ from tkinter import filedialog
 import pygame
 
 from components import Button
-from services import CSVToJSONConverter, JSONToCSVConverter
+from services import CSVToJSONConverter, JSONToCSVConverter, get_resource_path
 from services import PsyTestProConfig
 from services import TranslateService
 from .suite_create_view import CreateSuiteView
@@ -37,11 +37,11 @@ class SuiteConfig:
     def import_config(self):
         try:
             if sys.platform == "darwin":
-                filepath = filedialog.askopenfilename(initialdir='./',
+                filepath = filedialog.askopenfilename(initialdir=get_resource_path('./'),
                                                       title=self.translate_service.get_translation('selectFile'))
             else:
                 filepath = filedialog.askopenfilename(
-                    initialdir='./',  # The initial directory (you can change this)
+                    initialdir=get_resource_path('./'),  # The initial directory (you can change this)
                     title=self.translate_service.get_translation('selectFile'),
                     filetypes=(('Excel files', '*.xlsx'), ('All files', '*.*'))  # Add more file types if needed
                 )
@@ -62,7 +62,7 @@ class SuiteConfig:
             formatted_time = current_time.strftime('%Y-%m-%dT%H%M%S')
 
             # Usage
-            converter = JSONToCSVConverter('./exports/Suite_export_' + formatted_time + '.xlsx')
+            converter = JSONToCSVConverter(get_resource_path('./exports/Suite_export_' + formatted_time + '.xlsx'))
             converter.export_to_csv()
             self.info_text = 'exportSuccessfully'
 

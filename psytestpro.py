@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from components import InputBox, Button
 from views import CreateScheduleDisplay, SuiteConfig, SettingsView
 import re
-from services import TranslateService, LanguageConfiguration, PsyTestProConfig
+from services import TranslateService, LanguageConfiguration, PsyTestProConfig, get_resource_path
 import pandas as pd
 
 
@@ -20,12 +20,19 @@ class PsyTestPro:
     def __init__(self, id: str = '', suite: str = '', time: str = '', custom_variables: dict = {}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
-            pygame.init()
-            self.screen = pygame.display.set_mode((0, 0))
-            pygame.display.toggle_fullscreen()
+            try:
+                pygame.init()
+                self.screen = pygame.display.set_mode((0, 0))
+                pygame.display.toggle_fullscreen()
+            except pygame.error as e:
+                print(f"Pygame fullscreen toggle error: {e}")
+                # Alternative method to set fullscreen
+                self.screen = pygame.display.set_mode((640, 480), pygame.FULLSCREEN)
+                print("Fullscreen mode set using alternative method")
+
         self.width, self.height = pygame.display.get_surface().get_rect().size
         pygame.display.set_caption('PsyTestPro')
-        app_icon = pygame.image.load('./img/logo.png')
+        app_icon = pygame.image.load(get_resource_path('./img/logo.png'))
         pygame.display.set_icon(app_icon)
         pygame.scrap.init()
         self.psyTestProConfig = PsyTestProConfig()
@@ -57,7 +64,7 @@ class PsyTestPro:
         self.inactive_button_color = pygame.Color(self.settings['inactiveButtonColor'])
         self.button_text_color = pygame.Color(self.settings["buttonTextColor"])
         self.button_color = pygame.Color(self.settings["buttonColor"])
-        self.logo_image = pygame.image.load('./img/logo.png')
+        self.logo_image = pygame.image.load(get_resource_path('./img/logo.png'))
 
         while self.is_running:
             self.handle_events()
@@ -370,8 +377,8 @@ class PsyTestPro:
         self.start_suite(start_time, participant_info, variables)
 
     def save_suite_info(self, participant_info: dict[str, str]):
-        if not os.path.exists('./logs'):
-            os.makedirs('./logs')
+        if not os.path.exists(get_resource_path('./logs')):
+            os.makedirs(get_resource_path('./logs'))
         table = {}
         names = []
         values = []
@@ -390,7 +397,7 @@ class PsyTestPro:
         filename = filename.replace('-', '_')
         filename = filename.replace(':', '_')
         df = pd.DataFrame(data=table)
-        df.to_excel('./logs/' + filename, index=False)
+        df.to_excel(get_resource_path('./logs/' + filename), index=False)
         return filename
 
     def show_settings_screen(self):

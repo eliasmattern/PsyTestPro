@@ -9,7 +9,7 @@ import pygame
 
 from components import Button, DataTable, QuestionDialog, DatePickerComponent, TimePicker
 from events import LANGUAGE_EVENT
-from services import PsyTestProConfig
+from services import PsyTestProConfig, get_resource_path
 from services import TranslateService, LanguageConfiguration, play_tasks
 
 
@@ -329,7 +329,7 @@ class CreateScheduleDisplay:
             if self.play_next_task:
                 check_for_old_tasks = True
                 upcoming_event = next_event[1]
-                beep_sound = pygame.mixer.Sound('./lib/beep.wav')
+                beep_sound = pygame.mixer.Sound(get_resource_path('./lib/beep.wav'))
                 beep_sound.play()
                 state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                    self.translate_service,
@@ -347,7 +347,7 @@ class CreateScheduleDisplay:
                     check_for_old_tasks = True
                     upcoming_event = next_event[1]
                     pythonTime.sleep(1.1)
-                    beep_sound = pygame.mixer.Sound('./lib/beep.wav')
+                    beep_sound = pygame.mixer.Sound(get_resource_path('./lib/beep.wav'))
                     beep_sound.play()
                     state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                        self.translate_service,

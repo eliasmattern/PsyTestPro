@@ -6,7 +6,7 @@ import tkinter as tk
 import tkinter.filedialog
 
 from components import Button, CheckBox
-from services import PsyTestProConfig, ImportTasksService
+from services import PsyTestProConfig, ImportTasksService, get_resource_path
 import webbrowser
 from services import TranslateService
 from .task_create_view import AddTaskView
@@ -166,11 +166,11 @@ class TaskManualImportView:
     def import_task(self, suite_name: str, show_preview: bool):
         try:
             if sys.platform == "darwin":
-                filepath = tk.filedialog.askopenfilename(initialdir='./',
+                filepath = tk.filedialog.askopenfilename(initialdir=get_resource_path('./'),
                                                          title=self.translate_service.get_translation('selectFile'))
             else:
                 filepath = tk.filedialog.askopenfilename(
-                    initialdir='./',
+                    initialdir=get_resource_path('./'),
                     title=self.translate_service.get_translation('selectFile'),
                     filetypes=(('Excel files', '*.xlsx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
                 )
