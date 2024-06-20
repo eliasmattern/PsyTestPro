@@ -62,7 +62,9 @@ class SuiteConfig:
             formatted_time = current_time.strftime('%Y-%m-%dT%H%M%S')
 
             # Usage
-            converter = JSONToCSVConverter(get_resource_path('./exports/Suite_export_' + formatted_time + '.xlsx'))
+            file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.xlsx"),
+                                                                                         ("All files", "*.*")])
+            converter = JSONToCSVConverter(get_resource_path(file_path))
             converter.export_to_csv()
             self.info_text = 'exportSuccessfully'
 

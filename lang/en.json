@@ -57,7 +57,7 @@
     "importExperiments": "Import Test Battery",
     "exportExperiments": "Export Test Battery",
     "selectFile": "Select A File",
-    "exportSuccessfully": "Export was successful. Exported to ./exports",
+    "exportSuccessfully": "Export was successful",
     "exportFailed": "Export failed",
     "importSuccessfully": "Suites were imported successfully",
     "importFailed": "Import failed. Allowed file formats: Excel (.xlsx)",

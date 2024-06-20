@@ -55,7 +55,7 @@
     "importExperiments": "Testbatterie importieren",
     "exportExperiments": "Testbatterie exportieren",
     "selectFile": "Datei auswählen",
-    "exportSuccessfully": "Export war erfolgreich. Gespeichert in ./exports",
+    "exportSuccessfully": "Export war erfolgreich",
     "exportFailed": "Export ist fehlgeschlagen",
     "importSuccessfully": "Suites wurden erfolgreich importiert",
     "importFailed": "Import fehlgeschlagen. Erlaubte Dateiformate: Excel (.xlsx)",
