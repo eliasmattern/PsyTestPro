@@ -204,9 +204,12 @@ class DataTable:
         return data
 
     def set_data(self, data):
-        self.split_data = list(self.split_list(data))
-        self.page = 0
-        self.data = self.format_data(self.split_data[self.page])
-        self.prepare_table()
-        self.action_rects: list[ActionRect] = self.get_action_rects()
-        self.current_action_rect = None
+        if len(data) > 0:
+            self.split_data = list(self.split_list(data))
+            self.page = 0
+            self.data = self.format_data(self.split_data[self.page])
+            self.prepare_table()
+            self.action_rects: list[ActionRect] = self.get_action_rects()
+            self.current_action_rect = None
+        else:
+            self.data = data

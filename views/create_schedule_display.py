@@ -66,7 +66,7 @@ class CreateScheduleDisplay:
         if self.isHab:
             self.headers = ['task', 'state']
             self.actions = [None, self.switch_state]
-        self.data_table = DataTable(self.headers, (self.screen_width - (len(self.headers) + 0.5) * 150, self.screen_height / 15), 150, self.get_table_data(), self.actions, self.screen_height / 15 * 12, self.translate_service)
+        self.data_table = DataTable(self.headers, (self.screen_width - (len(self.headers) + 0.5) * 150, self.screen_height / 15), 150, self.get_table_data(), self.actions, self.screen_height / 15 * 13, self.translate_service)
 
     def display(self):
         # Open the pygame window at front of all windows open on screen
