@@ -64,9 +64,10 @@ class SuiteConfig:
             # Usage
             file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.xlsx"),
                                                                                          ("All files", "*.*")])
-            converter = JSONToCSVConverter(get_resource_path(file_path))
-            converter.export_to_csv()
-            self.info_text = 'exportSuccessfully'
+            if file_path:
+                converter = JSONToCSVConverter(get_resource_path(file_path))
+                converter.export_to_csv()
+                self.info_text = 'exportSuccessfully'
 
         except Exception as e:
             self.info_text = 'exportFailed'
