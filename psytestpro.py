@@ -377,8 +377,8 @@ class PsyTestPro:
         self.start_suite(start_time, participant_info, variables)
 
     def save_suite_info(self, participant_info: dict[str, str]):
-        if not os.path.exists(get_resource_path('./logs')):
-            os.makedirs(get_resource_path('./logs'))
+        if not os.path.exists(get_resource_path('./logs', True)):
+            os.makedirs(get_resource_path('./logs', True))
         table = {}
         names = []
         values = []
@@ -397,7 +397,7 @@ class PsyTestPro:
         filename = filename.replace('-', '_')
         filename = filename.replace(':', '_')
         df = pd.DataFrame(data=table)
-        df.to_excel(get_resource_path('./logs/' + filename), index=False)
+        df.to_excel(get_resource_path('./logs/' + filename, True), index=False)
         return filename
 
     def show_settings_screen(self):
