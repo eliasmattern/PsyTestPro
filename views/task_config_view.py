@@ -41,21 +41,10 @@ class TaskConfig:
 
         psy_test_pro_config = PsyTestProConfig()
         # Define colors
-        black = pygame.Color(self.settings["backgroundColor"])
-        light_grey = pygame.Color(self.settings["primaryColor"])
+        background_color = pygame.Color(self.settings["backgroundColor"])
+        primary_color = pygame.Color(self.settings["primaryColor"])
 
-        # Get the screen width and height from the current device in use
-        screen_info = pygame.display.Info()
         # Store the screen width in a new variable
-        screen_width = screen_info.current_w
-        # Store the screen height in a new variable
-        screen_height = screen_info.current_h
-
-        # Store the original screen dimensions used to design this program
-        original_width = 1280
-        original_height = 800
-
-        # Creating a fullscreen display surface
         screen = pygame.display.get_surface()
 
         # Setting the window caption
@@ -67,7 +56,7 @@ class TaskConfig:
         splitted_suite = list(self.split_dict(suite_and_day_of_times, 5))
 
         while self.running:
-            screen.fill(black)  # Fill the screen with the black color
+            screen.fill(background_color)  # Fill the screen with the background_color color
 
             buttons: list[Button] = []
 
@@ -98,7 +87,7 @@ class TaskConfig:
             else:
                 font = pygame.font.Font(None, int(24))  # Create font object for header
                 text_surface = font.render(
-                    self.translate_service.get_translation('noExperiments'), True, 'gray'
+                    self.translate_service.get_translation('noExperiments'), True, primary_color
                 )
                 text_rect = text_surface.get_rect()
                 screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
@@ -122,7 +111,7 @@ class TaskConfig:
                 page_text_surface = page_font.render(
                     str(self.page + 1) + '/' + str(len(splitted_suite)),
                     True,
-                    light_grey,
+                    primary_color,
                 )
                 page_rect = page_text_surface.get_rect()
                 screen.blit(
@@ -163,8 +152,8 @@ class TaskConfig:
                 None, int(32)
             )  # Create font object for header
             text_surface = font.render(
-                self.translate_service.get_translation('chooseSuiteToConfigureTask'), True, light_grey
-            )  # Render the text 'Task' with the font and color light_grey
+                self.translate_service.get_translation('chooseSuiteToConfigureTask'), True, primary_color
+            )  # Render the text 'Task' with the font and color primary_color
             text_rect = text_surface.get_rect()
             screen.blit(text_surface, (x - text_rect.width // 2, y))
 
