@@ -17,7 +17,8 @@ class ActionRect:
 
 class DataTable:
 
-    def __init__(self, columns: list, start_pos: tuple[float, float], column_width: int, data: Optional[list[list]] = None,
+    def __init__(self, columns: list, start_pos: tuple[float, float], column_width: int,
+                 data: Optional[list[list]] = None,
                  actions: Optional[list] = None, max_height: Optional[float] = None, translate_service: Optional[
                 TranslateService] = None):
         self.columns = columns
@@ -39,12 +40,30 @@ class DataTable:
         self.primary_color = pygame.Color(self.settings['primaryColor'])
         self.split_data = list(self.split_list(data))
         self.page = 0
-        self.data = self.format_data(self.split_data[self.page])
-        self.prepare_table()
-        self.action_rects: list[ActionRect] = self.get_action_rects()
-        self.current_action_rect = None
+        self.data = data
+        if data and len(data) > 0:
+            self.data = self.format_data(self.split_data[self.page])
+            self.prepare_table()
+            self.action_rects: list[ActionRect] = self.get_action_rects()
+            self.current_action_rect = None
 
     def draw(self, screen: pygame.Surface):
+        if not self.data or len(self.data) == 0:
+            pygame.draw.line(screen, self.grid_color, (self.pos_x, self.pos_y),
+                             (self.pos_x, self.pos_y + self.max_height))
+            pygame.draw.line(screen, self.grid_color, (self.pos_x + self.column_width * len(self.columns), self.pos_y),
+                             (self.pos_x + self.column_width * len(self.columns), self.pos_y + self.max_height))
+            pygame.draw.line(screen, self.grid_color, (self.pos_x, self.pos_y),
+                             (self.pos_x + self.column_width * len(self.columns), self.pos_y))
+            pygame.draw.line(screen, self.grid_color, (self.pos_x, self.pos_y + self.max_height),
+                             (self.pos_x + self.column_width * len(self.columns), self.pos_y + self.max_height))
+            no_data_text = 'noData' if not self.translate_service else self.translate_service.get_translation('noData')
+            no_data_text_surface = self.font.render(no_data_text, True, self.primary_color)
+            screen.blit(no_data_text_surface, (
+                self.pos_x - (self.font.size(no_data_text)[0] / 2) + (self.column_width * len(self.columns)) / 2,
+                self.pos_y + self.max_height / 2))
+            return
+
         for surface, pos in self.surfaces:
             screen.blit(surface, pos)
         for start_pos, end_pos in self.lines:
@@ -72,8 +91,9 @@ class DataTable:
             except:
                 pass
         elif event.type == LANGUAGE_EVENT:
-            self.data = self.format_data(self.split_data[self.page])
-            self.prepare_table()
+            if len(self.data) > 0:
+                self.data = self.format_data(self.split_data[self.page])
+                self.prepare_table()
 
     def prepare_table(self):
         self.surfaces = []
