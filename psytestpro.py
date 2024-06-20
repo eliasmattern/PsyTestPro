@@ -27,7 +27,7 @@ class PsyTestPro:
             except pygame.error as e:
                 print(f"Pygame fullscreen toggle error: {e}")
                 # Alternative method to set fullscreen
-                self.screen = pygame.display.set_mode((640, 480), pygame.FULLSCREEN)
+                self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                 print("Fullscreen mode set using alternative method")
 
         self.width, self.height = pygame.display.get_surface().get_rect().size
