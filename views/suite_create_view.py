@@ -7,7 +7,7 @@ from services import PsyTestProConfig
 from services import TranslateService
 
 
-class CreateExperimentView:
+class CreateSuiteView:
     def __init__(self, translate_service: TranslateService):
         self.running = True
         self.selected_multiple = False
@@ -23,11 +23,11 @@ class CreateExperimentView:
     def back(self):
         self.running = False
 
-    def save_experiment(
-            self, psy_test_pro, experiment_name: str, input_boxes: list[InputBox], check_box: CheckBox
+    def save_suite(
+            self, psy_test_pro, suite_name: str, input_boxes: list[InputBox], check_box: CheckBox
     ):
         psy_test_pro_config = PsyTestProConfig()
-        psy_test_pro_config.save_experiment(experiment_name, check_box.active)
+        psy_test_pro_config.save_suite(suite_name, check_box.active)
 
         if self.create_multiple_check_box.active:
             check_box.active = True
@@ -58,12 +58,12 @@ class CreateExperimentView:
             100,
             40,
             'submit',
-            lambda: self.save_experiment(psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box),
+            lambda: self.save_suite(psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box),
             self.translate_service,
         )
 
         text_width = pygame.font.Font(None, int(24)).size(self.translate_service.get_translation('createWithSchedule'))
-        self.create_multiple_check_box = CheckBox('createMultipleExperiments', x + 160 + text_width[0] / 2, y + 75, active=True,
+        self.create_multiple_check_box = CheckBox('createMultipleSuites', x + 160 + text_width[0] / 2, y + 75, active=True,
                                                   translate_service=self.translate_service, font_size=24)
 
         buttons.append(exit_button)
@@ -81,7 +81,7 @@ class CreateExperimentView:
         else:
             return False
 
-    def create_experiment_config_display(self, psy_test_pro_config: PsyTestProConfig, create_continously=False):
+    def create_suite_config_display(self, psy_test_pro_config: PsyTestProConfig, create_continously=False):
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -105,7 +105,7 @@ class CreateExperimentView:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption('Create Experiment')
+        pygame.display.set_caption('Create Suite')
 
         input_boxes, buttons, option_check_box = self.create_input_boxes(psy_test_pro_config)
         self.create_multiple_check_box.active = create_continously
@@ -146,7 +146,7 @@ class CreateExperimentView:
                         input_boxes[index].is_selected = True
                     elif event.key == K_RETURN:
                         if self.validate_inputs(input_boxes):
-                            self.save_experiment(psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box)
+                            self.save_suite(psy_test_pro_config, input_boxes[0].text, input_boxes, option_check_box)
                 for box in input_boxes:
                     box.handle_event(event)
                 for button in buttons:

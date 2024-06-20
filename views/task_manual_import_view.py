@@ -34,7 +34,7 @@ class TaskManualImportView:
         self.success_msg = None
         self.is_running = False
 
-    def show(self, psy_test_pro, create_continuously: bool, experiment_name: str):
+    def show(self, psy_test_pro, create_continuously: bool, suite_name: str):
         screen = pygame.display.get_surface()
 
         spacing = 60
@@ -45,8 +45,8 @@ class TaskManualImportView:
         font = pygame.font.Font(
             None, int(32)
         )  # Create font object for header
-        formated_experiment_name = experiment_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
-        title_text = self.translate_service.get_translation('configureTasksForSuite') + formated_experiment_name
+        formated_suite_name = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
+        title_text = self.translate_service.get_translation('configureTasksForSuite') + formated_suite_name
         text_surface = font.render(title_text, True,
                                    pygame.Color(self.settings["primaryColor"]))  # Render the text 'Task' with the font and color light_grey
         text_rect = text_surface.get_rect()
@@ -59,7 +59,7 @@ class TaskManualImportView:
             400,
             40,
             'createTask',
-            lambda: self.add_task.add(create_continuously, experiment_name),
+            lambda: self.add_task.add(create_continuously, suite_name),
             self.translate_service,
         )
 
@@ -69,7 +69,7 @@ class TaskManualImportView:
             400,
             40,
             'manageTasks',
-            lambda: self.manage_tasks_view.display(experiment_name),
+            lambda: self.manage_tasks_view.display(suite_name),
             self.translate_service,
         )
 
@@ -79,7 +79,7 @@ class TaskManualImportView:
             400,
             40,
             'deleteTasks',
-            lambda: self.delete_task_view.delete_task(experiment_name),
+            lambda: self.delete_task_view.delete_task(suite_name),
             self.translate_service,
         )
 
@@ -92,7 +92,7 @@ class TaskManualImportView:
             400,
             40,
             'importTasks',
-            lambda: self.import_task(experiment_name, show_preview_check_box.active),
+            lambda: self.import_task(suite_name, show_preview_check_box.active),
             self.translate_service,
         )
 
@@ -163,7 +163,7 @@ class TaskManualImportView:
 
         self.is_running = True
 
-    def import_task(self, experiment_name: str, show_preview: bool):
+    def import_task(self, suite_name: str, show_preview: bool):
         try:
             if sys.platform == "darwin":
                 filepath = tk.filedialog.askopenfilename(initialdir='./',
@@ -176,7 +176,7 @@ class TaskManualImportView:
                 )
             if filepath:
                 import_tasks_service = ImportTasksService(self.translate_service)
-                result = import_tasks_service.import_tasks(experiment_name, filepath, show_preview)
+                result = import_tasks_service.import_tasks(suite_name, filepath, show_preview)
                 self.success_msg = None
                 self.error_msg = None
                 if result[0]:

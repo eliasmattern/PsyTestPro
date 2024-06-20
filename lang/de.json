@@ -39,7 +39,7 @@
     "deleteTaskMsg": "Möchtest du diese Aufgabe löschen? ",
     "delete": "Löschen",
     "deleteMultipleExperimentMsg": "Diese Suite hat unterschiedliche Aufgaben für unterschiedliche Tageszeiten!\nWillst du alle löschen? ",
-    "createMultipleExperiments": "Mehrere Suites erstellen",
+    "createMultipleSuites": "Mehrere Suites erstellen",
     "createMultipleTasks": "Mehrere Aufgaben erstellen",
     "createTask": "Aufgabe hinzufügen",
     "taskName": "Name:",

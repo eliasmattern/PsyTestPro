@@ -27,12 +27,12 @@ class TaskConfig:
         for i in range(0, len(input_list), chunk_size):
             yield input_list[i:i + chunk_size]
 
-    def page_update(self, increment: bool, splitted_experiments: list):
+    def page_update(self, increment: bool, splitted_suites: list):
         if increment:
-            self.page = (self.page + 1) % len(splitted_experiments)
+            self.page = (self.page + 1) % len(splitted_suites)
         else:
             self.page = (
-                (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
+                (self.page - 1) if self.page > 0 else len(splitted_suites) - 1
             )
 
     def add_task_config_display(self, psy_test_pro):
@@ -61,10 +61,10 @@ class TaskConfig:
         # Setting the window caption
         pygame.display.set_caption('Add task')
 
-        experiments_and_day_of_times = (
-            psy_test_pro_config.get_experiments()
+        suite_and_day_of_times = (
+            psy_test_pro_config.get_suites()
         )
-        splitted_experiments = list(self.split_dict(experiments_and_day_of_times, 5))
+        splitted_suite = list(self.split_dict(suite_and_day_of_times, 5))
 
         while self.running:
             screen.fill(black)  # Fill the screen with the black color
@@ -79,15 +79,15 @@ class TaskConfig:
 
             x = width // 2
             y = height // 2 - 150
-            if len(splitted_experiments) > 0:
-                for experiment in splitted_experiments[self.page]:
+            if len(splitted_suite) > 0:
+                for suite in splitted_suite[self.page]:
                     exp_button = Button(
                         x,
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment.split('_')[0],
-                        lambda exp=experiment: self.task_manual_import_view.show(
+                        suite.split('_')[0],
+                        lambda exp=suite: self.task_manual_import_view.show(
                             psy_test_pro,
                             False,
                             exp
@@ -104,7 +104,7 @@ class TaskConfig:
                 screen.blit(text_surface, (x - text_rect.width // 2, y + 60 + spacing))
                 spacing += 60
 
-            spacing = len(splitted_experiments[0]) * 60 if len(splitted_experiments) > 0 else 60
+            spacing = len(splitted_suite[0]) * 60 if len(splitted_suite) > 0 else 60
             spacing += 60
             back_button = Button(
                 x,
@@ -117,10 +117,10 @@ class TaskConfig:
             )
             buttons.append(back_button)
 
-            if len(splitted_experiments) > 1:
+            if len(splitted_suite) > 1:
                 page_font = pygame.font.Font(None, int(24))
                 page_text_surface = page_font.render(
-                    str(self.page + 1) + '/' + str(len(splitted_experiments)),
+                    str(self.page + 1) + '/' + str(len(splitted_suite)),
                     True,
                     light_grey,
                 )
@@ -135,7 +135,7 @@ class TaskConfig:
                     25,
                     25,
                     '<',
-                    lambda: self.page_update(False, splitted_experiments),
+                    lambda: self.page_update(False, splitted_suite),
                     border_radius=90
                 )
                 next_page_back_button = Button(
@@ -144,7 +144,7 @@ class TaskConfig:
                     25,
                     25,
                     '>',
-                    lambda: self.page_update(True, splitted_experiments),
+                    lambda: self.page_update(True, splitted_suite),
                     border_radius=90
                 )
                 buttons.append(previous_page_button)

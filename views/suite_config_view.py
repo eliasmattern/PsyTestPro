@@ -9,15 +9,14 @@ from components import Button
 from services import CSVToJSONConverter, JSONToCSVConverter
 from services import PsyTestProConfig
 from services import TranslateService
-from .experiment_create_view import CreateExperimentView
-from .experiment_delete_view import DeleteExperimentView
+from .suite_create_view import CreateSuiteView
+from .suite_delete_view import DeleteSuiteView
 from .task_config_view import TaskConfig
-from .task_delete_view import DeleteTaskView
 from .variable_create_view import CreateVariablesView
 from .variable_delete_view import DeleteVariableView
 
 
-class ExperimentConfig():
+class SuiteConfig:
     def __init__(self, translate_service: TranslateService):
         self.info_text = ''
         self.translate_service = translate_service
@@ -63,7 +62,7 @@ class ExperimentConfig():
             formatted_time = current_time.strftime('%Y-%m-%dT%H%M%S')
 
             # Usage
-            converter = JSONToCSVConverter('./exports/Experiments_export_' + formatted_time + '.xlsx')
+            converter = JSONToCSVConverter('./exports/Suite_export_' + formatted_time + '.xlsx')
             converter.export_to_csv()
             self.info_text = 'exportSuccessfully'
 
@@ -100,15 +99,15 @@ class ExperimentConfig():
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption('Configure Experiment')
-        create_experiment_config = CreateExperimentView(self.translate_service)
-        delete_experiment_config = DeleteExperimentView(self.translate_service)
+        pygame.display.set_caption('Configure Suite')
+        create_suite_config = CreateSuiteView(self.translate_service)
+        delete_suite_config = DeleteSuiteView(self.translate_service)
         task_config = TaskConfig(self.translate_service)
         create_variables_config = CreateVariablesView(self.translate_service)
         delete_variables_config = DeleteVariableView(self.translate_service)
 
         buttons: list[Button] = []
-        experiment_buttons = []
+        suite_buttons = []
         import_export_buttons = []
         var_buttons = []
         spacing = 60
@@ -117,13 +116,13 @@ class ExperimentConfig():
         x = width // 2
         y = height // 2 - 150
 
-        create_experiment_button = Button(
+        create_suite_button = Button(
             x,
             y + spacing,
             400,
             40,
             'createSuite',
-            lambda: create_experiment_config.create_experiment_config_display(
+            lambda: create_suite_config.create_suite_config_display(
                 psy_test_pro, create_continously
             ),
             self.translate_service,
@@ -134,7 +133,7 @@ class ExperimentConfig():
             400,
             40,
             'deleteSuite',
-            lambda: delete_experiment_config.delete_experiment_config_display(
+            lambda: delete_suite_config.delete_suite_config_display(
                 psy_test_pro
             ),
             self.translate_service,
@@ -209,9 +208,9 @@ class ExperimentConfig():
             self.translate_service,
         )
 
-        experiment_buttons.append(create_experiment_button)
-        experiment_buttons.append(delete_button)
-        experiment_buttons.append(back_to_config_button)
+        suite_buttons.append(create_suite_button)
+        suite_buttons.append(delete_button)
+        suite_buttons.append(back_to_config_button)
         import_export_buttons.append(import_button)
         import_export_buttons.append(export_button)
         import_export_buttons.append(import_task_button)
@@ -220,13 +219,13 @@ class ExperimentConfig():
         var_buttons.append(delete_var_button)
         var_buttons.append(back_to_config_button)
 
-        experiment_config_button = Button(
+        suite_config_button = Button(
             x,
             y + 60,
             400,
             40,
             'configureSuites',
-            lambda: self.show_setting_buttons(screen, experiment_buttons, 'configureSuites'),
+            lambda: self.show_setting_buttons(screen, suite_buttons, 'configureSuites'),
             self.translate_service,
         )
         y += spacing
@@ -271,7 +270,7 @@ class ExperimentConfig():
             lambda: self.back_to_psy_test_pro(),
             self.translate_service,
         )
-        buttons.append(experiment_config_button)
+        buttons.append(suite_config_button)
         buttons.append(variable_config_button)
         buttons.append(import_export_config_button)
         buttons.append(task_config_button)

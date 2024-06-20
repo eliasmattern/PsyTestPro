@@ -116,7 +116,7 @@ class AddTaskView:
     def save_task(
             self,
             create_continously: bool,
-            experiment: str,
+            suite: str,
             name: str,
             time: str,
             input_boxes: list[InputBox],
@@ -139,9 +139,9 @@ class AddTaskView:
             value = url
         psy_test_pro_config = PsyTestProConfig()
         if not self.editing:
-            psy_test_pro_config.save_task(experiment, name, time, task_type, value)
+            psy_test_pro_config.save_task(suite, name, time, task_type, value)
         else:
-            psy_test_pro_config.edit_task(self.task_name, experiment, name, time, task_type, value)
+            psy_test_pro_config.edit_task(self.task_name, suite, name, time, task_type, value)
         if create_continously:
             self.is_task_working = False
             self.error = ''
@@ -168,9 +168,9 @@ class AddTaskView:
     def add(
             self,
             create_continuously: bool,
-            experiment: str
+            suite: str
     ):
-        variable = experiment
+        variable = suite
         # Define colors
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
@@ -307,7 +307,7 @@ class AddTaskView:
         text_surface = font.render(
             self.translate_service.get_translation('createTask')
             + ' ' + self.translate_service.get_translation('for') + ' '
-            + experiment.split('_')[0],
+            + suite.split('_')[0],
             True,
             light_grey,
         )  # Render the text 'Task' with the font and color light_grey

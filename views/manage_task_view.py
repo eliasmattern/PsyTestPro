@@ -21,17 +21,17 @@ class ManageTasksView:
         self.buttons: dict[str, Button] = {}
         self.input_boxes: dict[str, InputBox] = {}
         self.refresh = False
-        self.experiment = ''
-        self.formatted_experiment = ''
+        self.suite = ''
+        self.formatted_suite = ''
         self.page = 0
         self.font = pygame.font.Font(None, 24)
         self.title_font = pygame.font.Font(None, 30)
         self.task_length = 0
 
-    def display(self, experiment_name: str):
-        self.experiment = experiment_name
-        self.formatted_experiment = experiment_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
-        tasks = self.psy_test_pro_config.load_task_of_experiment(experiment_name)
+    def display(self, suite_name: str):
+        self.suite = suite_name
+        self.formatted_suite = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
+        tasks = self.psy_test_pro_config.load_task_of_suite(suite_name)
         sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
         current_tasks = {k: v for k, v in sorted_tasks}
         self.task_length = len(current_tasks)
@@ -41,7 +41,7 @@ class ManageTasksView:
         while self.is_running:
             if self.refresh:
                 self.refresh = False
-                tasks = self.psy_test_pro_config.load_task_of_experiment(experiment_name)
+                tasks = self.psy_test_pro_config.load_task_of_suite(suite_name)
                 sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
                 current_tasks = {k: v for k, v in sorted_tasks}
                 self.task_length = len(current_tasks)
@@ -67,7 +67,7 @@ class ManageTasksView:
             page_rect.center = (self.screen.get_width() / 2, self.screen.get_height() / 8 + 8 * 80 + 12.5)
             self.screen.blit(page_surface, page_rect)
 
-        title = self.translate_service.get_translation('manageTasksFor') + self.formatted_experiment
+        title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
         title_surface = self.title_font.render(title, True, self.primary_color)
         title_rect = title_surface.get_rect()
         title_rect.center = (
@@ -176,7 +176,7 @@ class ManageTasksView:
                         tasks[key]['position'] += 1
 
         tasks[task_name]['position'] = new_pos
-        self.psy_test_pro_config.save_task_list(self.experiment, tasks)
+        self.psy_test_pro_config.save_task_list(self.suite, tasks)
         self.refresh = True
 
     def back(self):
@@ -224,5 +224,5 @@ class ManageTasksView:
         add_task_view = AddTaskView(self.translate_service, editing=True, task_name=task_name, task_time=task_time,
                                     task_title=task_title, task_desc=task_desc, task_command=task_command,
                                     task_url=task_url, position=task_position)
-        add_task_view.add(False, self.experiment)
+        add_task_view.add(False, self.suite)
         self.refresh = True

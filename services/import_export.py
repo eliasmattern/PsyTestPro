@@ -13,7 +13,7 @@ from .execute_command_service import execute_command
 class JSONToCSVConverter:
     def __init__(self, output_path: str):
         self.output_path = output_path
-        self.experiment_config_path = './json/experimentConfig.json'
+        self.suite_config_path = './json/suiteConfig.json'
         self.task_config_path = './json/taskConfig.json'
         self.settings_path = './json/settings.json'
         self.custom_variables_path = './json/customVariables.json'
@@ -27,7 +27,7 @@ class JSONToCSVConverter:
         directory = self.output_path.split(os.path.basename(self.output_path))[0]
         if not os.path.exists(directory):
             os.makedirs(directory)
-        experiment_config_data = self.read_json(self.experiment_config_path)
+        suite_config_data = self.read_json(self.suite_config_path)
         task_config_data = self.read_json(self.task_config_path)
         settings = self.read_json(self.settings_path)
         custom_variables = self.read_json(self.custom_variables_path)
@@ -39,13 +39,13 @@ class JSONToCSVConverter:
         custom_variables_df = pd.DataFrame()
         custom_variables_df['custom_variables'] = custom_variables
 
-        experiment_config_df = pd.DataFrame()
-        experiments_list = ['\'' + str(exp) for exp in experiment_config_data]
-        experiment_config_df['experiment_config'] = experiments_list
+        suite_config_df = pd.DataFrame()
+        suite_list = ['\'' + str(exp) for exp in suite_config_data]
+        suite_config_df['suite_config'] = suite_list
 
         task_config_df = pd.DataFrame()
         tasks = []
-        for experiment_name, value in task_config_data.items():
+        for suite_name, value in task_config_data.items():
             if len(value['tasks']) > 0:
                 for task_name, task_settings in value['tasks'].items():
                     time = task_settings['time']
@@ -55,26 +55,26 @@ class JSONToCSVConverter:
                     value = task_settings['value'] + '|' if task_settings['type'] == 'command' or task_settings[
                         'type'] == 'url' \
                         else task_settings['value']['title'] + '|' + task_settings['value']['description']
-                    tasks.append('|'.join([experiment_name, task_name, time, state, task_type, value, task_position]))
+                    tasks.append('|'.join([suite_name, task_name, time, state, task_type, value, task_position]))
             else:
-                tasks.append('|'.join([experiment_name, '', '', '', '', '', '', '']))
+                tasks.append('|'.join([suite_name, '', '', '', '', '', '', '']))
         task_config_df['task_config'] = tasks
 
-        final_df = pd.concat([setting_df, custom_variables_df, experiment_config_df, task_config_df], axis=1)
+        final_df = pd.concat([setting_df, custom_variables_df, suite_config_df, task_config_df], axis=1)
         final_df.to_excel(self.output_path, index=False)
 
 
 class CSVToJSONConverter:
     def __init__(self, input_excel_path: str):
         self.input_excel_path = input_excel_path
-        self.experiment_config_path = './json/experimentConfig.json'
+        self.suite_config_path = './json/suiteConfig.json'
         self.task_config_path = './json/taskConfig.json'
         self.settings_path = './json/settings.json'
         self.custom_variables_path = './json/customVariables.json'
 
     def convert_to_json(self):
         df = pd.read_excel(self.input_excel_path)
-        headers = ['settings_keys', 'settings_values', 'custom_variables', 'experiment_config', 'task_config']
+        headers = ['settings_keys', 'settings_values', 'custom_variables', 'suite_config', 'task_config']
         if not all(header in df.keys() for header in headers):
             raise Exception('Invalid Excel file')
 
@@ -96,33 +96,33 @@ class CSVToJSONConverter:
         with open(self.custom_variables_path, 'w') as file:
             json.dump(custom_variables, file)
 
-        experiments = []
-        for experiment in df['experiment_config']:
-            if any(pd.isna(val) for val in [experiment]):
+        suites = []
+        for suite in df['suite_config']:
+            if any(pd.isna(val) for val in [suite]):
                 break
-            if experiment.startswith('\''):
-                experiment = experiment.replace('\'', '', 1)
-            experiments.append(experiment)
+            if suite.startswith('\''):
+                suite = suite.replace('\'', '', 1)
+            suites.append(suite)
 
-        with open(self.experiment_config_path, 'w') as file:
-            json.dump(experiments, file)
+        with open(self.suite_config_path, 'w') as file:
+            json.dump(suites, file)
 
         tasks = {}
 
         for task in df['task_config']:
             if pd.isna(task):
                 break
-            experiment_name, task_name, time, state, task_type, value, desc, position = task.split('|')
+            suite_name, task_name, time, state, task_type, value, desc, position = task.split('|')
 
-            if experiment_name not in tasks.keys():
-                tasks[experiment_name] = {'tasks': {}}
+            if suite_name not in tasks.keys():
+                tasks[suite_name] = {'tasks': {}}
             if task_name == '':
                 continue
             if task_type == 'command' or task_type == 'url':
                 task_value = value
             else:
                 task_value = {'title': value, 'description': desc}
-            tasks[experiment_name]['tasks'][task_name] = {'position': int(position), 'time': time, 'state': state,
+            tasks[suite_name]['tasks'][task_name] = {'position': int(position), 'time': time, 'state': state,
                                                           'type': task_type, "value": task_value}
 
         with open(self.task_config_path, 'w') as file:
@@ -133,7 +133,7 @@ class ImportTasksService:
     def __init__(self, translate_service: TranslateService):
         self.translate_service = translate_service
 
-    def save_tasks(self, df, experiment_name, show_preview):
+    def save_tasks(self, df, suite_name, show_preview):
         error = ''
         if show_preview:
             for _, row in df.iterrows():
@@ -156,9 +156,9 @@ class ImportTasksService:
                 return False, 'importTaskFailed', error
         with open('./json/taskConfig.json', 'r') as file:
             data = json.load(file)
-        if experiment_name in data.keys():
+        if suite_name in data.keys():
             last_minute = None
-            position = len(data[experiment_name]['tasks']) + 1
+            position = len(data[suite_name]['tasks']) + 1
             for _, row in df.iterrows():
                 task_name = str(row["task_name"]).replace(' ', '_')
                 minutes = row['duration in minutes']
@@ -169,11 +169,11 @@ class ImportTasksService:
                     print(row['command'], row['url'])
                     task_type = 'command' if not isinstance(row['command'], float) else 'url'
                     value = row['command'] if not isinstance(row['command'], float) else row['url']
-                    data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': task_type,
+                    data[suite_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': task_type,
                                                                  'value': value, 'position': position}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
-                    data[experiment_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
+                    data[suite_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
                                                                  'value': {'title': row['title'],
                                                                            'description': description},
                                                                  'position': position}
@@ -248,17 +248,17 @@ class ImportTasksService:
                 print(e)
                 return False
 
-    def import_tasks(self, experiment_name: str, file_path: str, show_preview: bool):
+    def import_tasks(self, suite_name: str, file_path: str, show_preview: bool):
         try:
             file_name, file_extension = os.path.splitext(file_path)
             print(file_path)
             if file_extension == '.csv':
                 df = pd.read_csv(file_path)
-                result = self.save_tasks(df, experiment_name, show_preview)
+                result = self.save_tasks(df, suite_name, show_preview)
                 return result
             elif file_extension == '.xlsx':
                 df = pd.read_excel(file_path)
-                result = self.save_tasks(df, experiment_name, show_preview)
+                result = self.save_tasks(df, suite_name, show_preview)
                 return result
             else:
                 print('Wrong file format. Only .csv and .xlsx files are supported.')

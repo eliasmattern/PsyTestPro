@@ -10,14 +10,14 @@ import sys
 from pygame.locals import *
 from datetime import datetime, timedelta
 from components import InputBox, Button
-from views import CreateScheduleDisplay, ExperimentConfig, SettingsView
+from views import CreateScheduleDisplay, SuiteConfig, SettingsView
 import re
 from services import TranslateService, LanguageConfiguration, PsyTestProConfig
 import pandas as pd
 
 
 class PsyTestPro:
-    def __init__(self, id: str = '', experiment: str = '', time: str = '', custom_variables: dict = {}):
+    def __init__(self, id: str = '', suite: str = '', time: str = '', custom_variables: dict = {}):
         self.screen = pygame.display.get_surface()
         if self.screen == None:
             pygame.init()
@@ -29,7 +29,7 @@ class PsyTestPro:
         pygame.display.set_icon(app_icon)
         pygame.scrap.init()
         self.psyTestProConfig = PsyTestProConfig()
-        self.psyTestProConfig.load_experiments()
+        self.psyTestProConfig.load_suites()
         self.lang = 'en'
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont('Arial', 24)
@@ -40,13 +40,13 @@ class PsyTestPro:
         self.translateService = TranslateService(self.language_config)
         self.lang = self.load_config_language()
         self.id = id
-        self.experiment = experiment
+        self.suite = suite
         self.time = time
         self.custom_variables = []
         self.custom_variables_dict = custom_variables
         for key, value in custom_variables.items():
             self.custom_variables.append(value)
-        self.experiment_config_display = ExperimentConfig(self.translateService)
+        self.suite_config_display = SuiteConfig(self.translateService)
         self.create_input_boxes()
         self.is_running = True
         self.start_time = None
@@ -77,15 +77,15 @@ class PsyTestPro:
     def create_input_boxes(self):
         custom_variables = self.psyTestProConfig.load_custom_variables()
         labels = ['participantId', 'suite', 'startTime']
-        experiments_string = ''
+        suite_string = ''
 
-        for experiment in self.psyTestProConfig.experiments:
-            experiments_string = experiments_string + str(experiment) + ', '
-        if ',' in experiments_string:
-            experiments_string = experiments_string[:-2]
+        for suite in self.psyTestProConfig.suites:
+            suite_string = suite_string + str(suite) + ', '
+        if ',' in suite_string:
+            suite_string = suite_string[:-2]
 
-        information = ['', '(' + experiments_string + ')', 'hh:mm']
-        initial_text = [self.id, self.experiment, self.time]
+        information = ['', '(' + suite_string + ')', 'hh:mm']
+        initial_text = [self.id, self.suite, self.time]
         if len(self.custom_variables) == len(custom_variables):
             for value in custom_variables:
                 labels.append(value)
@@ -115,13 +115,13 @@ class PsyTestPro:
         settings_button = Button(self.width - 175, 100, 250, 40, 'settings',
                                  lambda: self.show_settings_screen(),
                                  self.translateService)
-        create_experiment_button = Button(self.width - 175, 150, 250, 40, 'configureTestBattery',
+        create_suite_button = Button(self.width - 175, 150, 250, 40, 'configureTestBattery',
                                           lambda: self.configure_test_battery(),
                                           self.translateService)
 
         self.buttons.append(exit_button)
         self.buttons.append(settings_button)
-        self.buttons.append(create_experiment_button)
+        self.buttons.append(create_suite_button)
         self.buttons.append(submit_button)
 
     def load_config_language(self):
@@ -208,9 +208,9 @@ class PsyTestPro:
         self.screen.fill(self.background_color)
 
     def draw(self):
-        def validate_inputs(experiments: list):
+        def validate_inputs(suites: list):
             is_id_valid = len(self.input_boxes['participantId'].text) != 0
-            is_experiment_valid = self.input_boxes['suite'].text in experiments
+            is_suite_valid = self.input_boxes['suite'].text in suites
             is_start_time_valid = self.is_valid_time_format(self.input_boxes['startTime'].text)
 
             # Define validation checks and corresponding error messages
@@ -225,7 +225,7 @@ class PsyTestPro:
                 'startTime'].text:
                 validation_checks = [
                     (lambda text: len(text) != 0, 'idError'),
-                    (lambda text: text in experiments, 'suiteError'),
+                    (lambda text: text in suites, 'suiteError'),
                     (self.is_valid_time_format, 'startTimeError')
                 ]
 
@@ -239,7 +239,7 @@ class PsyTestPro:
                     elif is_valid and error_translation in self.errors:
                         self.errors.remove(error_translation)
 
-            if is_id_valid and is_experiment_valid and is_start_time_valid:
+            if is_id_valid and is_suite_valid and is_start_time_valid:
                 return True
             else:
                 return False
@@ -256,7 +256,7 @@ class PsyTestPro:
         for key, box in self.input_boxes.items():
             box.draw(self.screen)
 
-        is_input_valid = validate_inputs(self.psyTestProConfig.experiments)
+        is_input_valid = validate_inputs(self.psyTestProConfig.suites)
 
         for button in self.buttons:
             button.draw(self.screen)
@@ -296,9 +296,9 @@ class PsyTestPro:
     def custom_sort(self, item):
         return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
 
-    def start_experiment(self, start_time: datetime, participant_info: dict, custom_variables: dict):
+    def start_suite(self, start_time: datetime, participant_info: dict, custom_variables: dict):
         global schedule
-        isHab = '_list' in self.psyTestProConfig.current_experiment
+        isHab = '_list' in self.psyTestProConfig.current_suite
         schedule = {}
         current_tasks = self.psyTestProConfig.current_tasks
         if len(self.psyTestProConfig.error_msg) > 0:
@@ -341,21 +341,21 @@ class PsyTestPro:
             if datetime.strptime(task['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now():
                 task['state'] = 'skip'
 
-        file_name = self.save_experiment_info(participant_info)
+        file_name = self.save_suite_info(participant_info)
 
         CreateScheduleDisplay(schedule, participant_info, PsyTestPro, custom_variables, isHab, file_name).display()
         self.input_boxes = {}
 
     def save_details(self):
         participant_id = self.input_boxes['participantId'].text
-        experiment = self.input_boxes['suite'].text
+        suite = self.input_boxes['suite'].text
         start_time = self.input_boxes['startTime'].text
 
         start_time = datetime.combine(datetime.now().date(), datetime.strptime(start_time, '%H:%M').time())
         current_time = datetime.now()
 
         timestamp = current_time.strftime("%Y.%m.%d %H:%M:%S")
-        participant_info = {'participant_id': participant_id, 'suite': experiment, 'start_time': start_time,
+        participant_info = {'participant_id': participant_id, 'suite': suite, 'start_time': start_time,
                             'timestamp': timestamp}
 
         custom_variables = self.psyTestProConfig.load_custom_variables()
@@ -366,12 +366,12 @@ class PsyTestPro:
             participant_info[value] = self.input_boxes[value].text
             variables[value] = self.input_boxes[value].text
 
-        self.psyTestProConfig.load_experiment_tasks(experiment)
-        self.start_experiment(start_time, participant_info, variables)
+        self.psyTestProConfig.load_suite_tasks(suite)
+        self.start_suite(start_time, participant_info, variables)
 
-    def save_experiment_info(self, participant_info: dict[str, str]):
-        if not os.path.exists('./experiments'):
-            os.makedirs('./experiments')
+    def save_suite_info(self, participant_info: dict[str, str]):
+        if not os.path.exists('./logs'):
+            os.makedirs('./logs')
         table = {}
         names = []
         values = []
@@ -390,12 +390,12 @@ class PsyTestPro:
         filename = filename.replace('-', '_')
         filename = filename.replace(':', '_')
         df = pd.DataFrame(data=table)
-        df.to_excel('./experiments/' + filename, index=False)
+        df.to_excel('./logs/' + filename, index=False)
         return filename
 
     def show_settings_screen(self):
         participant_id = self.input_boxes['participantId'].text
-        experiment = self.input_boxes['suite'].text
+        suite = self.input_boxes['suite'].text
         start_time = self.input_boxes['startTime'].text
         custom_variables = self.psyTestProConfig.load_custom_variables()
 
@@ -405,19 +405,19 @@ class PsyTestPro:
             variables[value] = self.input_boxes[value].text
 
         self.settings_view.display(PsyTestPro, self.translateService,
-                                   self.language_config, participant_id, experiment,
+                                   self.language_config, participant_id, suite,
                                    start_time, variables)
 
     def configure_test_battery(self):
         old_custom_variables = self.psyTestProConfig.load_custom_variables()
 
-        self.experiment_config_display.display(PsyTestPro)
-        old_experiements = self.psyTestProConfig.experiments
+        self.suite_config_display.display(PsyTestPro)
+        old_experiements = self.psyTestProConfig.suites
 
-        self.psyTestProConfig.load_experiments()
+        self.psyTestProConfig.load_suites()
         custom_variables = self.psyTestProConfig.load_custom_variables()
 
-        if old_experiements != self.psyTestProConfig.experiments or custom_variables != old_custom_variables:
+        if old_experiements != self.psyTestProConfig.suites or custom_variables != old_custom_variables:
             self.buttons = []
             self.input_boxes = {}
             self.create_input_boxes()

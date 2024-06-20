@@ -11,7 +11,7 @@ from .execute_command_service import execute_command
 
 
 def save_task_info(filename: str, task_name: str, task_start_time: str, task_end_time: str, state: str):
-        df = pd.read_excel('./experiments/' + filename)
+        df = pd.read_excel('./logs/' + filename)
         new_df = {}
 
         if 'task' in df:
@@ -34,7 +34,7 @@ def save_task_info(filename: str, task_name: str, task_start_time: str, task_end
             new_df['state'] = [state]
             new_df = pd.DataFrame(data=new_df)
             final_df = pd.concat([df, new_df], axis=1)
-        final_df.to_excel('./experiments/' + filename, index=False)
+        final_df.to_excel('./logs/' + filename, index=False)
 
 
 def play_tasks(filename: str, participant_info: dict, upcoming_event: str, schedule: dict, translate_service: TranslateService, custom_variables: dict):

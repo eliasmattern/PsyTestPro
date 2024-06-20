@@ -12,10 +12,10 @@ class DeleteTaskView:
         self.running = True
         self.page = 0
         self.removing = True
-        self.experiment_name = ''
+        self.suite_name = ''
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
-        self.experiment= None
+        self.suite = None
         self.task = None
         self.translate_service = translate_service
         self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteTaskMsg', '', self.translate_service,
@@ -40,14 +40,14 @@ class DeleteTaskView:
                 (self.page - 1) if self.page > 0 else len(splitted_tasks) - 1
             )
 
-    def delete_task_from_config(self, experiment: str, task: str):
-        self.experiment = experiment
+    def delete_task_from_config(self, suite: str, task: str):
+        self.suite = suite
         self.task = task
         self.delete_dialog.info = self.translate_service.get_translation('task') + ': ' + task
         self.show_delete_dialog = True
 
-    def delete_task(self, experiment_name: str):
-        self.experiment = experiment_name
+    def delete_task(self, suite_name: str):
+        self.suite = suite_name
         self.page = 0
         self.running = True
 
@@ -61,9 +61,9 @@ class DeleteTaskView:
 
         # Setting the window caption
         pygame.display.set_caption('Delete task')
-        full_experiment_name = experiment_name
+        full_suite_name = suite_name
         tasks = (
-            psy_test_pro_config.load_task_names_of_experiment(full_experiment_name)
+            psy_test_pro_config.load_task_names_of_suites(full_suite_name)
         )
         chunk_size = 5
         splitted_tasks = [tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)]
@@ -90,7 +90,7 @@ class DeleteTaskView:
                         40,
                         task.replace('_', ' '),
                         lambda t=task: self.delete_task_from_config(
-                            full_experiment_name,
+                            full_suite_name,
                             t
                         ),
                     )
@@ -156,7 +156,7 @@ class DeleteTaskView:
                 None, int(32)
             )  # Create font object for header
             text_surface = font.render(
-                self.translate_service.get_translation('deleteTaskFrom') + ' ' + experiment_name.split('_')[0], True,
+                self.translate_service.get_translation('deleteTaskFrom') + ' ' + suite_name.split('_')[0], True,
                 light_grey
             )  # Render the text 'Task' with the font and color light_grey
             text_rect = text_surface.get_rect()
@@ -185,6 +185,6 @@ class DeleteTaskView:
 
     def delete_action(self):
         config = PsyTestProConfig()
-        config.delete_task(self.experiment, self.task)
+        config.delete_task(self.suite, self.task)
         self.show_delete_dialog = False
-        self.delete_task(self.experiment)
+        self.delete_task(self.suite)

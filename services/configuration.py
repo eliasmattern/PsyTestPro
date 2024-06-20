@@ -3,65 +3,65 @@ import json
 
 class PsyTestProConfig:
     def __init__(self):
-        self.experiments = None
-        self.current_experiment = None
+        self.suites = None
+        self.current_suite = None
         self.current_tasks: dict = None
         self.error_msg = ''
 
-    def load_experiments(self):
+    def load_suites(self):
         try:
-            with open('json/experimentConfig.json', 'r', encoding='utf-8') as file:
-                experiments = json.load(file)
-                string = ','.join(str(e) for e in experiments)
-                self.experiments = string.split(',')
+            with open('json/suiteConfig.json', 'r', encoding='utf-8') as file:
+                suite = json.load(file)
+                string = ','.join(str(e) for e in suite)
+                self.suites = string.split(',')
         except FileNotFoundError:
-            raise Exception('File Error: ./json/experimentConfig.json not found ')
+            raise Exception('File Error: ./json/suiteConfig.json not found ')
 
-    def load_experiment_tasks(self, experiment: str):
+    def load_suite_tasks(self, suite: str):
         self.error_msg = ''
         try:
             with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
                 tasks = json.load(file)
-                if tasks.get(str(experiment) + '_schedule') is not None:
-                    self.current_tasks = tasks.get(experiment + '_schedule').get('tasks')
-                    self.current_experiment = str(experiment) + '_schedule'
-                elif tasks.get(str(experiment) + '_list') is not None:
-                    self.current_tasks = tasks.get(experiment + '_list').get('tasks')
-                    self.current_experiment = str(experiment) + '_list'
+                if tasks.get(str(suite) + '_schedule') is not None:
+                    self.current_tasks = tasks.get(suite + '_schedule').get('tasks')
+                    self.current_suite = str(suite) + '_schedule'
+                elif tasks.get(str(suite) + '_list') is not None:
+                    self.current_tasks = tasks.get(suite + '_list').get('tasks')
+                    self.current_suite = str(suite) + '_list'
                 else:
                     self.error_msg = 'experimentNotFound'
         except FileNotFoundError:
             raise Exception('File Error: ./json/taskConfig.json not found')
 
-    def save_experiment(self, experiment_name: str, schedule: bool):
-        with open('json/experimentConfig.json', 'r', encoding='utf-8') as file:
-            original_experiments = json.load(file)
+    def save_suite(self, suite_name: str, schedule: bool):
+        with open('json/suiteConfig.json', 'r', encoding='utf-8') as file:
+            original_suites = json.load(file)
 
-            if not experiment_name in original_experiments:
+            if not suite_name in original_suites:
                 # Add a new value to the array
-                original_experiments.append(experiment_name)
+                original_suites.append(suite_name)
 
         # Save the updated array back to the file
-        with open('json/experimentConfig.json', 'w', encoding='utf-8') as file:
-            json.dump(original_experiments, file)
+        with open('json/suiteConfig.json', 'w', encoding='utf-8') as file:
+            json.dump(original_suites, file)
 
         # Load the original JSON from the file
         with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
             original_tasks = json.load(file)
         if schedule:
-            experiment_name += '_schedule'
+            suite_name += '_schedule'
         else:
-            experiment_name += '_list'
+            suite_name += '_list'
 
-        if not experiment_name in original_tasks:
+        if not suite_name in original_tasks:
             # Add a new variable with an empty task object
-            original_tasks[experiment_name] = {'tasks': {}}
+            original_tasks[suite_name] = {'tasks': {}}
 
         # Save the updated JSON back to the file
         with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
             json.dump(original_tasks, file, indent=4)
 
-    def get_experiments(self):
+    def get_suites(self):
         with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
         variable_names = data.keys()
@@ -71,11 +71,11 @@ class PsyTestProConfig:
 
         return result
 
-    def load_task_names_of_experiment(self, experiment: str) -> list:
+    def load_task_names_of_suites(self, suite: str) -> list:
 
         with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
-        tasks = data[experiment]['tasks']
+        tasks = data[suite]['tasks']
 
         sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
         current_tasks = {k: v for k, v in sorted_tasks}
@@ -83,25 +83,25 @@ class PsyTestProConfig:
 
         return tasks
 
-    def load_task_of_experiment(self, experiment: str) -> dict:
+    def load_task_of_suite(self, suite: str) -> dict:
 
         with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
-        return data[experiment]['tasks']
+        return data[suite]['tasks']
 
-    def delete_task(self, experiment: str, task: str):
-        if experiment == 'hab_variable_variable':
-            experiment = 'hab_variable'
+    def delete_task(self, suite: str, task: str):
+        if suite == 'hab_variable_variable':
+            suite = 'hab_variable'
 
         with open('json/taskConfig.json', 'r') as file:
             data = json.load(file)
-        deleted_position = data[experiment]['tasks'][task]['position']
-        del data[experiment]['tasks'][task]
+        deleted_position = data[suite]['tasks'][task]['position']
+        del data[suite]['tasks'][task]
 
-        for key in data[experiment]['tasks'].keys():
-            position = data[experiment]['tasks'][key]['position']
+        for key in data[suite]['tasks'].keys():
+            position = data[suite]['tasks'][key]['position']
             if position > deleted_position:
-                data[experiment]['tasks'][key]['position'] = position - 1
+                data[suite]['tasks'][key]['position'] = position - 1
         # Save the updated array back to the file
         with open('json/taskConfig.json', 'w') as file:
             json.dump(data, file, indent=4)
@@ -207,9 +207,9 @@ class PsyTestProConfig:
         with open('json/settings.json', 'w', encoding='utf-8') as file:
             json.dump(settings, file)
 
-    def save_task_list(self, experiment: str, tasks: dict):
+    def save_task_list(self, suite: str, tasks: dict):
         with open('json/taskConfig.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
-        data[experiment]['tasks'] = tasks
+        data[suite]['tasks'] = tasks
         with open('json/taskConfig.json', 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)

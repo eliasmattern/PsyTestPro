@@ -6,7 +6,7 @@ import pygame.event
 
 def execute_command(command: str, participant_info: dict, variables: dict) -> tuple[int, int]:
     command = command.format(id='"' + participant_info['participant_id'] + '"',
-                             experiment='"' + participant_info['suite'] + '"',
+                             suite='"' + participant_info['suite'] + '"',
                              startTime=participant_info['start_time'],
                              timestamp=participant_info['timestamp'],
                              scriptCount=str(participant_info['script_count']),

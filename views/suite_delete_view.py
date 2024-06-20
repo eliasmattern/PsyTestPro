@@ -8,7 +8,7 @@ from services import PsyTestProConfig
 from services import TranslateService
 
 
-class DeleteExperimentView:
+class DeleteSuiteView:
     def __init__(self, translate_service: TranslateService):
         self.translate_service = translate_service
         self.page = 0
@@ -16,56 +16,56 @@ class DeleteExperimentView:
         self.update = False
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
-        self.experiment_name = None
+        self.suite_name = None
         self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteSuiteMsg', '', self.translate_service,
-                                            lambda: self.delete_action(self.experiment_name), action_key='delete')
+                                            lambda: self.delete_action(self.suite_name), action_key='delete')
         self.show_delete_dialog = False
 
     def back(self):
         self.running = False
 
-    def delete_experiment(self, experiment_name: str):
-        self.experiment_name = experiment_name
-        self.delete_dialog.info = self.translate_service.get_translation('suite') + ' ' + experiment_name
+    def delete_suite(self, suite_name: str):
+        self.suite_name = suite_name
+        self.delete_dialog.info = self.translate_service.get_translation('suite') + ' ' + suite_name
         self.show_delete_dialog = True
 
-    def delete_action(self, experiment_name: str):
-        if experiment_name:
+    def delete_action(self, suite_name: str):
+        if suite_name:
             # Load the original JSON from the file
             with open('json/taskConfig.json', 'r') as file:
                 original_tasks = json.load(file)
 
-            exp_keys = [key for key in original_tasks.keys() if experiment_name in key]
+            exp_keys = [key for key in original_tasks.keys() if suite_name in key]
 
             del original_tasks[exp_keys[0]]
-            with open('json/experimentConfig.json', 'r') as file:
-                original_experiments = json.load(file)
+            with open('json/suiteConfig.json', 'r') as file:
+                original_suites = json.load(file)
 
             # Add a new value to the array
 
-            original_experiments.remove(experiment_name)
+            original_suites.remove(suite_name)
 
             # Save the updated array back to the file
-            with open('json/experimentConfig.json', 'w') as file:
-                json.dump(original_experiments, file)
+            with open('json/suiteConfig.json', 'w') as file:
+                json.dump(original_suites, file)
 
             # Save the updated JSON back to the file
             with open('json/taskConfig.json', 'w') as file:
                 json.dump(original_tasks, file, indent=4)
             self.update = True
             self.running = False
-            self.experiment_name = None
+            self.suite_name = None
         return
 
-    def page_update(self, increment: bool, splitted_experiments: list):
+    def page_update(self, increment: bool, splitted_suites: list):
         if increment:
-            self.page = (self.page + 1) % len(splitted_experiments)
+            self.page = (self.page + 1) % len(splitted_suites)
         else:
             self.page = (
-                (self.page - 1) if self.page > 0 else len(splitted_experiments) - 1
+                (self.page - 1) if self.page > 0 else len(splitted_suites) - 1
             )
 
-    def delete_experiment_config_display(self, psy_test_pro):
+    def delete_suite_config_display(self, psy_test_pro):
         psy_test_pro_config = PsyTestProConfig()
 
         # Define colors
@@ -91,14 +91,14 @@ class DeleteExperimentView:
         screen = pygame.display.get_surface()
 
         # Setting the window caption
-        pygame.display.set_caption('Delete Experiment')
+        pygame.display.set_caption('Delete Suite')
 
-        psy_test_pro_config.load_experiments()
-        experiments = psy_test_pro_config.experiments
-        experiments = list(filter(None, experiments))
+        psy_test_pro_config.load_suites()
+        suites = psy_test_pro_config.suites
+        suites = list(filter(None, suites))
 
-        splitted_experiments = [
-            experiments[i: i + 5] for i in range(0, len(experiments), 5)
+        splitted_suite = [
+            suites[i: i + 5] for i in range(0, len(suites), 5)
         ]
 
         self.page = 0
@@ -116,15 +116,15 @@ class DeleteExperimentView:
 
             x = width // 2
             y = height // 2 - 150
-            if len(splitted_experiments) > 0:
-                for experiment in splitted_experiments[self.page]:
+            if len(splitted_suite) > 0:
+                for suite in splitted_suite[self.page]:
                     exp_button = Button(
                         x,
                         y + 60 + spacing,
                         400,
                         40,
-                        experiment,
-                        lambda exp=experiment: self.delete_experiment(
+                        suite,
+                        lambda exp=suite: self.delete_suite(
                             exp
                         ),
                     )
@@ -144,10 +144,10 @@ class DeleteExperimentView:
             )
             buttons.append(back_button)
 
-            if len(splitted_experiments) > 1:
+            if len(splitted_suite) > 1:
                 page_font = pygame.font.Font(None, int(24))
                 page_text_surface = page_font.render(
-                    str(self.page + 1) + '/' + str(len(splitted_experiments)),
+                    str(self.page + 1) + '/' + str(len(splitted_suite)),
                     True,
                     light_grey,
                 )
@@ -162,7 +162,7 @@ class DeleteExperimentView:
                     25,
                     25,
                     '<',
-                    lambda: self.page_update(False, splitted_experiments),
+                    lambda: self.page_update(False, splitted_suite),
                     border_radius=90
                 )
                 next_page_back_button = Button(
@@ -171,7 +171,7 @@ class DeleteExperimentView:
                     25,
                     25,
                     '>',
-                    lambda: self.page_update(True, splitted_experiments),
+                    lambda: self.page_update(True, splitted_suite),
                     border_radius=90
                 )
                 buttons.append(previous_page_button)
@@ -217,4 +217,4 @@ class DeleteExperimentView:
         self.running = True
         if (self.update):
             self.update = False
-            self.delete_experiment_config_display(psy_test_pro)
+            self.delete_suite_config_display(psy_test_pro)

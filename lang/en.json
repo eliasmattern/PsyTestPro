@@ -41,7 +41,7 @@
     "deleteTaskMsg": "Do you want to delete this task?: ",
     "delete": "Delete",
     "deleteMultipleExperimentMsg": "This suite has different tasks for different times of day!\nDo you want to delete them all? ",
-    "createMultipleExperiments": "Create Multiple Suites",
+    "createMultipleSuites": "Create Multiple Suites",
     "createMultipleTasks": "Create Multiple Tasks",
     "createTask": "Add task",
     "taskName": "Name:",
