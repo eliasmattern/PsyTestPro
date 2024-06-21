@@ -26,13 +26,11 @@ class PsyTestPro:
                 pygame.display.toggle_fullscreen()
             except pygame.error as e:
                 print(f"Pygame fullscreen toggle error: {e}")
-                # Alternative method to set fullscreen
                 self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-                print("Fullscreen mode set using alternative method")
 
         self.width, self.height = pygame.display.get_surface().get_rect().size
         pygame.display.set_caption('PsyTestPro')
-        app_icon = pygame.image.load(get_resource_path('./img/logo.png'))
+        app_icon = pygame.image.load(get_resource_path('./img/logo.ico'))
         pygame.display.set_icon(app_icon)
         pygame.scrap.init()
         self.psyTestProConfig = PsyTestProConfig()
@@ -390,8 +388,9 @@ class PsyTestPro:
         table['value'] = values
 
         datetime_string = str(participant_info['start_time'])
+        datetime_now = datetime.now().strftime('%Y_%m_%d_%H_%M')
 
-        filename = participant_info['participant_id'] + '_' + participant_info[
+        filename = datetime_now + '_' + participant_info['participant_id'] + '_' + participant_info[
             'suite'] + '_' + datetime_string + '_log' + '.xlsx'
         filename = filename.replace(' ', '_')
         filename = filename.replace('-', '_')
