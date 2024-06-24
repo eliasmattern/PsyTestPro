@@ -1,3 +1,4 @@
+import math
 import os
 import re
 import sys
@@ -7,6 +8,7 @@ from datetime import datetime, timedelta
 
 import pygame
 
+from app_types import Task
 from components import Button, DataTable, QuestionDialog, DatePickerComponent, TimePicker
 from events import LANGUAGE_EVENT
 from services import PsyTestProConfig, get_resource_path
@@ -14,7 +16,7 @@ from services import TranslateService, LanguageConfiguration, play_tasks
 
 
 class CreateScheduleDisplay:
-    def __init__(self, schedule: dict, participant_info: dict, psy_test_pro, custom_variables: dict,
+    def __init__(self, schedule: list[Task], participant_info: dict, psy_test_pro, custom_variables: dict,
                  isHab: bool = False, file_name: str = ''):
         self.schedule = schedule
         self.participant_info = participant_info
@@ -51,7 +53,7 @@ class CreateScheduleDisplay:
         # Store the screen height in a new variable
         self.screen_height = screen_info.current_h
         self.column_width = None
-        self.splitted_schedule = self.split_dict(self.schedule, 15)
+        self.splitted_schedule: list[list[Task]] = list(self.split_list(self.schedule, 15))
         self.headers = ['task', 'date', 'time', 'state']
 
         self.date_picker = None
@@ -66,7 +68,10 @@ class CreateScheduleDisplay:
         if self.isHab:
             self.headers = ['task', 'state']
             self.actions = [None, self.switch_state]
-        self.data_table = DataTable(self.headers, (self.screen_width - (len(self.headers) + 0.5) * 150, self.screen_height / 15), 150, self.get_table_data(), self.actions, self.screen_height / 15 * 13, self.translate_service)
+        self.data_table = DataTable(self.headers,
+                                    (self.screen_width - (len(self.headers) + 0.5) * 150, self.screen_height / 15), 150,
+                                    self.get_table_data(), self.actions, self.screen_height / 15 * 13,
+                                    self.translate_service)
 
     def display(self):
         # Open the pygame window at front of all windows open on screen
@@ -202,26 +207,23 @@ class CreateScheduleDisplay:
 
         # set the color of the screen to black
         screen.fill(self.black)
-
-        filtered_schedule = {key: value for key, value in self.schedule.items() if value['state'] == 'todo'}
+        filtered_schedule: list[Task] = [task for task in self.schedule if task.state == 'todo']
         # convert the schedule to a list of tuples and sort it by time
-        sorted_schedule = sorted(filtered_schedule.items(), key=lambda item: (datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S'), item[1]['position']))
-        sorted_schedule = {k: v for k, v in sorted_schedule}
-
-        sorted_schedule = [(datetime.strptime(info['datetime'], '%d/%m/%Y %H:%M:%S'), event) for event, info in
-                           sorted_schedule.items()]
-        past_todo_tasks = {key: value for key, value in self.schedule.items() if
-                           value['state'] == 'todo' and datetime.strptime(value['datetime'],
-                                                                          '%d/%m/%Y %H:%M:%S') < datetime.now()}
-        for task in past_todo_tasks.keys():
+        sorted_schedule = sorted(filtered_schedule, key=lambda task: (task.duration, task.position))
+        sorted_schedule = [(datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S'), task) for task in
+                           sorted_schedule]
+        past_todo_tasks = [task for task in self.schedule if
+                           task.state == 'todo' and datetime.strptime(task.duration,
+                                                                      '%d/%m/%Y %H:%M:%S') < datetime.now()]
+        for task in past_todo_tasks:
             state = play_tasks(self.file_name, self.participant_info, task, self.schedule,
                                self.translate_service,
                                self.custom_variables)
             pygame.mouse.set_visible(True)
             if state:
-                self.schedule[task]['state'] = 'done'
+                task.state = 'done'
             else:
-                self.schedule[task]['state'] = 'error'
+                task.state = 'error'
 
         check_for_old_tasks = True
         self.play_next_task = False
@@ -253,12 +255,12 @@ class CreateScheduleDisplay:
                 if event.type == pygame.QUIT:
                     running = False
             if check_for_old_tasks:
-                filtered_dict = {
-                    key: value for key, value in self.schedule.items()
-                    if value['state'] == 'todo'
-                       and start_time < datetime.strptime(value['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now()
-                }
-                for item in filtered_dict:
+                filtered_list = [
+                    task for task in self.schedule
+                    if task.state == 'todo' and start_time < datetime.strptime(task.duration,
+                                                                               '%d/%m/%Y %H:%M:%S') < datetime.now()
+                ]
+                for item in filtered_list:
                     upcoming_event = item
 
                     state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
@@ -266,9 +268,9 @@ class CreateScheduleDisplay:
                                        self.custom_variables)
                     pygame.mouse.set_visible(True)
                     if state:
-                        self.schedule[upcoming_event]['state'] = 'done'
+                        upcoming_event.state = 'done'
                     else:
-                        self.schedule[upcoming_event]['state'] = 'error'
+                        upcoming_event.state = 'error'
                 check_for_old_tasks = False
 
             # get the current time
@@ -299,7 +301,7 @@ class CreateScheduleDisplay:
                 # calculate the time until the next event
                 if next_event is not None:
                     if self.show_task:
-                        event_message = ' ' + self.translate_service.get_translation('until') + f' {next_event[1]}'
+                        event_message = ' ' + self.translate_service.get_translation('until') + f' {next_event[1].name}'
                         countdown = str(timedelta(seconds=round(next_event_in_seconds)))
                     else:
                         event_message = ''
@@ -336,9 +338,9 @@ class CreateScheduleDisplay:
                                    self.custom_variables)
                 pygame.mouse.set_visible(True)
                 if state:
-                    self.schedule[upcoming_event]['state'] = 'done'
+                    upcoming_event.state = 'done'
                 else:
-                    self.schedule[upcoming_event]['state'] = 'error'
+                    upcoming_event.state = 'error'
                 sorted_schedule = [(dt, desc) for dt, desc in sorted_schedule if desc != upcoming_event]
                 self.play_next_task = False
 
@@ -354,19 +356,21 @@ class CreateScheduleDisplay:
                                        self.custom_variables)
                     pygame.mouse.set_visible(True)
                     if state:
-                        self.schedule[upcoming_event]['state'] = 'done'
+                        upcoming_event.state = 'done'
                     else:
-                        self.schedule[upcoming_event]['state'] = 'error'
+                        upcoming_event.state = 'error'
             elif len(sorted_schedule) > 0:
-                for task in self.schedule.items():
-                    if self.schedule[task[0]]['state'] == 'todo':
-                        state = play_tasks(self.file_name, self.participant_info, task[0], self.schedule,
+                filtered_schedule: list[Task] = [task for task in self.schedule if task.state == 'todo']
+                sorted_schedule = sorted(filtered_schedule, key=lambda task: task.position)
+                for task in sorted_schedule:
+                    if task.state == 'todo':
+                        state = play_tasks(self.file_name, self.participant_info, task, self.schedule,
                                            self.translate_service,
                                            self.custom_variables)
                         if state:
-                            self.schedule[task[0]]['state'] = 'done'
+                            task.state = 'done'
                         else:
-                            self.schedule[task[0]]['state'] = 'error'
+                            task.state = 'error'
                 sorted_schedule = []
 
         pygame.quit()
@@ -402,18 +406,9 @@ class CreateScheduleDisplay:
     def help_action(self):
         webbrowser.open('https://github.com/eliasmattern/PsyTestPro')
 
-    def split_dict(self, input_dict: dict, chunk_size: int):
-        dict_list = [{}]
-        current_dict = 0
-
-        for key, value in input_dict.items():
-            dict_list[current_dict][key] = value
-            if len(dict_list[current_dict]) >= chunk_size:
-                dict_list.append({})
-                current_dict += 1
-        dict_list = list(filter(lambda lst: len(lst) > 0, dict_list))
-
-        return dict_list
+    def split_list(self, input_list: list, chunk_size: int):
+        for i in range(0, len(input_list), chunk_size):
+            yield input_list[i:i + chunk_size]
 
     def open_date_picker(self, date: str):
         self.show_date_picker = True
@@ -433,12 +428,12 @@ class CreateScheduleDisplay:
         self.data_table.update_field(state_iterator[state['value']])
 
     def save_data(self, data: list):
-        for task in data:
+        for task, new_task in zip(self.schedule, data):
             if not self.isHab:
-                self.schedule[task[0].replace(' ', '_')]['datetime'] = task[1] + ' ' + task[2]
-                self.schedule[task[0].replace(' ', '_')]['state'] = task[3]['value']
+                task.duration = new_task[1] + ' ' + new_task[2]
+                task.state = new_task[3]['value']
             else:
-                self.schedule[task[0].replace(' ', '_')]['state'] = task[1]['value']
+                task.state = new_task[1]['value']
 
     def get_table_data(self):
         states = {'todo': {'value': 'todo', 'color': self.light_grey, 'key': 'todo'},
@@ -446,17 +441,17 @@ class CreateScheduleDisplay:
                   'done': {'value': 'done', 'color': self.success, 'key': 'done'},
                   'error': {'value': 'error', 'color': self.red, 'key': 'error'}}
         data = []
-        for key, value in self.schedule.items():
-            date, time = value['datetime'].split(' ')
+        for task in self.schedule:
+            date, time = task.duration.split(' ')
             if self.isHab:
                 data.append(
-                    [key.replace('_', ' '), {'value': value['state'], 'color': states[value['state']]['color'],
-                                             'key': states[value['state']]['key']}])
+                    [task.name.replace('_', ' '), {'value': task.state, 'color': states[task.state]['color'],
+                                                   'key': states[task.state]['key']}])
             else:
                 data.append(
-                    [key.replace('_', ' '), date, time,
-                     {'value': value['state'], 'color': states[value['state']]['color'],
-                      'key': states[value['state']]['key']}])
+                    [task.name.replace('_', ' '), date, time,
+                     {'value': task.state, 'color': states[task.state]['color'],
+                      'key': states[task.state]['key']}])
         return data
 
     def edit_schedule(self):

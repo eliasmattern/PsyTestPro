@@ -1,5 +1,6 @@
 import json
 
+from app_types import Task
 from .PathService import get_resource_path
 
 
@@ -7,7 +8,7 @@ class PsyTestProConfig:
     def __init__(self):
         self.suites = None
         self.current_suite = None
-        self.current_tasks: dict = None
+        self.current_tasks: list[Task] = []
         self.error_msg = ''
 
     def load_suites(self):
@@ -25,10 +26,16 @@ class PsyTestProConfig:
             with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
                 tasks = json.load(file)
                 if tasks.get(str(suite) + '_schedule') is not None:
-                    self.current_tasks = tasks.get(suite + '_schedule').get('tasks')
+                    for task_name, task_detail in tasks.get(suite + '_schedule').get('tasks').items():
+                        self.current_tasks.append(
+                            Task(task_name, task_detail['time'], task_detail['type'], task_detail['value'],
+                                 task_detail['position'], task_detail['state']))
                     self.current_suite = str(suite) + '_schedule'
                 elif tasks.get(str(suite) + '_list') is not None:
-                    self.current_tasks = tasks.get(suite + '_list').get('tasks')
+                    for task_name, task_detail in tasks.get(suite + '_list').get('tasks').items():
+                        self.current_tasks.append(
+                            Task(task_name, task_detail['time'], task_detail['type'], task_detail['value'],
+                                 task_detail['position'], task_detail['state']))
                     self.current_suite = str(suite) + '_list'
                 else:
                     self.error_msg = 'experimentNotFound'

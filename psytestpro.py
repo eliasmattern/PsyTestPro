@@ -2,6 +2,8 @@ import os.path
 import webbrowser
 import tkinter as tk
 
+from app_types import Task
+
 # mac os can't initialise Tk after the imports of the components / views.  starts tk before pygame is initialised
 tk_root = tk.Tk()
 tk_root.withdraw()
@@ -19,7 +21,7 @@ import pandas as pd
 class PsyTestPro:
     def __init__(self, id: str = '', suite: str = '', time: str = '', custom_variables: dict = {}):
         self.screen = pygame.display.get_surface()
-        if self.screen == None:
+        if self.screen is None:
             try:
                 pygame.init()
                 self.screen = pygame.display.set_mode((0, 0))
@@ -298,8 +300,8 @@ class PsyTestPro:
     def exit(self):
         self.is_running = False
 
-    def custom_sort(self, item):
-        return datetime.strptime(item[1]['datetime'], '%d/%m/%Y %H:%M:%S')
+    def custom_sort(self, item: Task):
+        return datetime.strptime(item.duration, '%d/%m/%Y %H:%M:%S')
 
     def start_suite(self, start_time: datetime, participant_info: dict, custom_variables: dict):
         global schedule
@@ -314,17 +316,15 @@ class PsyTestPro:
         positions = {}
         times: list[str] = []
         states = {}
-        sorted_tasks = sorted(current_tasks.items(), key=lambda item: item[1]['position'])
+        sorted_tasks = sorted(current_tasks, key=lambda task: task.position)
 
-        current_tasks = {k: v for k, v in sorted_tasks}
-
-        for task, details in current_tasks.items():
-            tasks.append(task)
-            times.append(details['time'])
-            states[task] = details['state']
-            positions[task] = details['position']
-            types[task] = details['type'] if 'type' in details else ''
-            values[task] = details['value'] if 'value' in details else ''
+        for task in current_tasks:
+            tasks.append(task.name)
+            times.append(task.duration)
+            states[task.name] = task.state
+            positions[task.name] = task.position
+            types[task.name] = task.task_type
+            values[task.name] = task.value
         previous_time = start_time
         for i, _ in enumerate(times):
             exp_variable = tasks[i]
@@ -334,18 +334,17 @@ class PsyTestPro:
                                                                 times[i - 1].split(':')[1])) if i > 0 else start_time
                 previous_time = activation_time
                 schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
-
-        edited_schedule = {}
+        edited_schedule = []
         for key, value in schedule.items():
-            edited_schedule.update(
-                {key: {'datetime': value, 'state': states[key], 'type': types[key], 'value': values[key],
-                       'position': positions[key]}})
+            edited_schedule.append(Task(key, value, types[key], values[key], positions[key], states[key]))
 
-        schedule = dict(sorted(edited_schedule.items(), key=self.custom_sort))
-        for _, task in schedule.items():
-            if datetime.strptime(task['datetime'], '%d/%m/%Y %H:%M:%S') < datetime.now():
-                task['state'] = 'skip'
-
+        if isHab:
+            schedule = sorted(edited_schedule, key= lambda task: task.position)
+        else:
+            schedule = sorted(edited_schedule, key=self.custom_sort)
+        for task in schedule:
+            if datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S') < datetime.now():
+                task.state = 'skip'
         file_name = self.save_suite_info(participant_info)
 
         CreateScheduleDisplay(schedule, participant_info, PsyTestPro, custom_variables, isHab, file_name).display()
