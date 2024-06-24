@@ -37,17 +37,6 @@ class DeleteVariableView:
         black = pygame.Color(self.settings["backgroundColor"])
         light_grey = pygame.Color(self.settings["primaryColor"])
 
-        # Get the screen width and height from the current device in use
-        screen_info = pygame.display.Info()
-        # Store the screen width in a new variable
-        screen_width = screen_info.current_w
-        # Store the screen height in a new variable
-        screen_height = screen_info.current_h
-
-        # Store the original screen dimensions used to design this program
-        original_width = 1280
-        original_height = 800
-
         # Creating a fullscreen display surface
         screen = pygame.display.get_surface()
 
@@ -86,6 +75,7 @@ class DeleteVariableView:
 
             spacing = 5 * 60
             spacing += 60
+            print(y,spacing)
             back_button = Button(
                 x,
                 y + spacing + 100,
