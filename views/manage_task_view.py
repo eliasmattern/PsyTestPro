@@ -102,19 +102,19 @@ class ManageTasksView:
                     task_y,
                     200,
                     40,
-                    task.name.replace('_', ' '),
+                    task.name,
                     lambda t=task: self.edit_task(t)
                 )
                 input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(task.position),
                                      is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
-                                     on_deselect=lambda pos=task.position, t=task.name, r=row: self.rearrange(str(pos),
+                                     on_deselect=lambda pos=task.position, t=task.id, r=row: self.rearrange(str(pos),
                                                                                                                t + str(
                                                                                                                    r),
                                                                                                                t))
                 rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
 
-                self.buttons[task.name + str(row)] = button
-                self.input_boxes[task.name + str(row)] = input_box
+                self.buttons[task.id + str(row)] = button
+                self.input_boxes[task.id + str(row)] = input_box
                 self.rects.append(rect)
 
                 if row < 7:
@@ -154,7 +154,7 @@ class ManageTasksView:
             self.buttons['left_button'] = left_button
             self.buttons['right_button'] = right_button
 
-    def rearrange(self, old_pos, input_name, task_name):
+    def rearrange(self, old_pos, input_name, task_id):
         if old_pos == self.input_boxes[input_name].text:
             return
         if self.input_boxes[input_name].text == '':
@@ -166,7 +166,7 @@ class ManageTasksView:
         new_pos = int(self.input_boxes[input_name].text)
         current_position = int(old_pos)
         for task in tasks:
-            if task.name != task_name:
+            if task.id != task_id:
                 if current_position < new_pos:
                     if current_position < task.position <= new_pos:
                         task.position -= 1
@@ -194,7 +194,7 @@ class ManageTasksView:
         self.refresh = True
 
     def edit_task(self, task: Task):
-        task_name = task.name.replace('_', ' ')
+        task_name = task.name
         task_time = task.duration
         task_position = task.position
         if task.task_type == TaskTypeEnum.COMMAND:
@@ -214,7 +214,7 @@ class ManageTasksView:
             task_url = None
 
         add_task_view = AddTaskView(self.translate_service, editing=True, task_name=task_name, task_time=task_time,
-                                    task_title=task_title, task_desc=task_desc, task_command=task_command,
+                                    task_id=task.id, task_title=task_title, task_desc=task_desc, task_command=task_command,
                                     task_url=task_url, position=task_position)
         add_task_view.add(False, self.suite)
         self.refresh = True

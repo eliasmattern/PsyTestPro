@@ -315,16 +315,18 @@ class PsyTestPro:
         values = {}
         positions = {}
         times: list[str] = []
+        names = {}
         states = {}
         sorted_tasks = sorted(current_tasks, key=lambda task: task.position)
 
-        for task in current_tasks:
-            tasks.append(task.name)
+        for task in sorted_tasks:
+            tasks.append(task.id)
             times.append(task.duration)
-            states[task.name] = task.state
-            positions[task.name] = task.position
-            types[task.name] = task.task_type
-            values[task.name] = task.value
+            names[task.id] = task.name
+            states[task.id] = task.state
+            positions[task.id] = task.position
+            types[task.id] = task.task_type
+            values[task.id] = task.value
         previous_time = start_time
         for i, _ in enumerate(times):
             exp_variable = tasks[i]
@@ -336,17 +338,17 @@ class PsyTestPro:
                 schedule[exp_variable] = activation_time.strftime('%d/%m/%Y %H:%M:%S')
         edited_schedule = []
         for key, value in schedule.items():
-            edited_schedule.append(Task(key, value, types[key], values[key], positions[key], states[key]))
+            edited_schedule.append(Task(key, names[key], value, types[key], values[key], positions[key], states[key]))
 
         if isHab:
-            schedule = sorted(edited_schedule, key= lambda task: task.position)
+            schedule = sorted(edited_schedule, key=lambda task: task.position)
         else:
-            schedule = sorted(edited_schedule, key=self.custom_sort)
+            schedule = sorted(edited_schedule, key=lambda task: (task.position, task.duration))
         for task in schedule:
             if datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S') < datetime.now():
                 task.state = 'skip'
         file_name = self.save_suite_info(participant_info)
-
+        print(isHab)
         CreateScheduleDisplay(schedule, participant_info, PsyTestPro, custom_variables, isHab, file_name).display()
         self.input_boxes = {}
 

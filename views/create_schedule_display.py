@@ -209,7 +209,7 @@ class CreateScheduleDisplay:
         screen.fill(self.black)
         filtered_schedule: list[Task] = [task for task in self.schedule if task.state == 'todo']
         # convert the schedule to a list of tuples and sort it by time
-        sorted_schedule = sorted(filtered_schedule, key=lambda task: (task.duration, task.position))
+        sorted_schedule = sorted(filtered_schedule, key=lambda task: (task.position, task.duration))
         sorted_schedule = [(datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S'), task) for task in
                            sorted_schedule]
         past_todo_tasks = [task for task in self.schedule if
@@ -445,11 +445,11 @@ class CreateScheduleDisplay:
             date, time = task.duration.split(' ')
             if self.isHab:
                 data.append(
-                    [task.name.replace('_', ' '), {'value': task.state, 'color': states[task.state]['color'],
-                                                   'key': states[task.state]['key']}])
+                    [task.name.replace, {'value': task.state, 'color': states[task.state]['color'],
+                                         'key': states[task.state]['key']}])
             else:
                 data.append(
-                    [task.name.replace('_', ' '), date, time,
+                    [task.name, date, time,
                      {'value': task.state, 'color': states[task.state]['color'],
                       'key': states[task.state]['key']}])
         return data

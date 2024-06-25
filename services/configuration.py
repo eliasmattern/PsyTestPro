@@ -26,16 +26,16 @@ class PsyTestProConfig:
             with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
                 tasks = json.load(file)
                 if tasks.get(str(suite) + '_schedule') is not None:
-                    for task_name, task_detail in tasks.get(suite + '_schedule').get('tasks').items():
+                    for task_id, task_detail in tasks.get(suite + '_schedule').get('tasks').items():
                         self.current_tasks.append(
-                            Task(task_name, task_detail['time'], task_detail['type'], task_detail['value'],
-                                 task_detail['position'], task_detail['state']))
+                            Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'],
+                                 task_detail['value'], task_detail['position'], task_detail['state']))
                     self.current_suite = str(suite) + '_schedule'
                 elif tasks.get(str(suite) + '_list') is not None:
-                    for task_name, task_detail in tasks.get(suite + '_list').get('tasks').items():
+                    for task_id, task_detail in tasks.get(suite + '_list').get('tasks').items():
                         self.current_tasks.append(
-                            Task(task_name, task_detail['time'], task_detail['type'], task_detail['value'],
-                                 task_detail['position'], task_detail['state']))
+                            Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'],
+                                 task_detail['value'],task_detail['position'], task_detail['state']))
                     self.current_suite = str(suite) + '_list'
                 else:
                     self.error_msg = 'experimentNotFound'
@@ -85,19 +85,19 @@ class PsyTestProConfig:
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         tasks = []
-        for task_name, task_detail in data[suite]['tasks'].items():
-            tasks.append(Task(task_name, task_detail['time'], task_detail['type'], task_detail['value'],
+        for task_id, task_detail in data[suite]['tasks'].items():
+            tasks.append(Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'], task_detail['value'],
                               task_detail['position'], task_detail['state']))
         return tasks
 
-    def delete_task(self, suite: str, task: str):
+    def delete_task(self, suite: str, task_id: str):
         if suite == 'hab_variable_variable':
             suite = 'hab_variable'
 
         with open(get_resource_path('json/taskConfig.json'), 'r') as file:
             data = json.load(file)
-        deleted_position = data[suite]['tasks'][task]['position']
-        del data[suite]['tasks'][task]
+        deleted_position = data[suite]['tasks'][task_id]['position']
+        del data[suite]['tasks'][task_id]
 
         for key in data[suite]['tasks'].keys():
             position = data[suite]['tasks'][key]['position']
@@ -107,44 +107,45 @@ class PsyTestProConfig:
         with open(get_resource_path('json/taskConfig.json'), 'w') as file:
             json.dump(data, file, indent=4)
 
-    def save_task(self, variable, name: str, time: str, type: str, value: str):
+    def save_task(self, suite: str, name: str, time: str, type: str, value: str):
 
         # Load the JSON data from a file
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             json_data = json.load(file)
 
         # Function to add a new task to a specific object
-        def add_task_to_object(json_data: dict, object_name: str, task_name: str, time: str, type: str, value: str):
+        def add_task_to_object(json_data: dict, object_name: str, task_id: str, task_name: str, time: str, type: str,
+                               value: str):
             tasks = json_data[object_name]['tasks']
             new_task = {
+                'name': task_name,
                 'position': len(tasks) + 1,
                 'time': time,
                 'state': 'todo',
                 'type': type,
                 'value': value
             }
-            json_data[object_name]['tasks'][task_name] = new_task
+            json_data[object_name]['tasks'][task_id] = new_task
 
-        name = name.replace(' ', '_')
+        keys = json_data[suite]['tasks'].keys()
+        task_id = len(keys)
 
-        add_task_to_object(json_data, variable, name, time, type, value)
+        add_task_to_object(json_data, suite, task_id, name, time, type, value)
 
         # Save the updated JSON data back to the file
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
 
-    def edit_task(self, old_task_name, variable, name: str, time: str, type: str, value: str):
+    def edit_task(self, task_id: str, variable, name: str, time: str, type: str, value: str):
 
         # Load the JSON data from a file
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             json_data = json.load(file)
 
-        name = name.replace(' ', '_')
-        old_task_name = old_task_name.replace(' ', '_')
-        json_data[variable]['tasks'][old_task_name]['time'] = time
-        json_data[variable]['tasks'][old_task_name]['type'] = type
-        json_data[variable]['tasks'][old_task_name]['value'] = value
-        json_data[variable]['tasks'][name] = json_data[variable]['tasks'].pop(old_task_name)
+        json_data[variable]['tasks'][task_id]['time'] = time
+        json_data[variable]['tasks'][task_id]['type'] = type
+        json_data[variable]['tasks'][task_id]['value'] = value
+        json_data[variable]['tasks'][task_id]['name'] = name
         # Save the updated JSON data back to the file
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
@@ -213,7 +214,7 @@ class PsyTestProConfig:
             data = json.load(file)
         new_tasks = {}
         for task in tasks:
-            new_tasks[task.name] = {'time': task.duration, 'state': task.state, 'type': task.task_type,
+            new_tasks[task.id] = {'name': task.name, 'time': task.duration, 'state': task.state, 'type': task.task_type,
                                     'value': task.value, 'position': task.position}
         data[suite]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:

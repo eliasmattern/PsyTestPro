@@ -9,14 +9,20 @@ class TaskTypeEnum(Enum):
 
 
 class Task:
-    def __init__(self, name: str, duration: str, task_type: TaskTypeEnum, value: Union[dict[str, str], str], position: int,
+    def __init__(self, id, name: str, duration: str, task_type: TaskTypeEnum, value: Union[dict[str, str], str], position: int,
                  state: str = 'todo'):
+        self.__id = id
         self.__name = name
         self.__duration = duration
         self.__state = state
         self.__position = position
         self.__task_type = task_type
         self.__value = value
+
+    @property
+    def id(self) -> str:
+        return self.__id
+
 
     @property
     def name(self) -> str:

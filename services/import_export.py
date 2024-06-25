@@ -125,7 +125,7 @@ class CSVToJSONConverter:
             else:
                 task_value = {'title': value, 'description': desc}
             tasks[suite_name]['tasks'][task_name] = {'position': int(position), 'time': time, 'state': state,
-                                                          'type': task_type, "value": task_value}
+                                                     'type': task_type, "value": task_value}
 
         with open(get_resource_path(self.task_config_path), 'w') as file:
             json.dump(tasks, file, indent=4)
@@ -159,10 +159,11 @@ class ImportTasksService:
         with open(get_resource_path('./json/taskConfig.json'), 'r') as file:
             data = json.load(file)
         if suite_name in data.keys():
-            last_minute = None
             position = len(data[suite_name]['tasks']) + 1
             for _, row in df.iterrows():
-                task_name = str(row["task_name"]).replace(' ', '_')
+                keys = data[suite_name]['tasks'].keys()
+                task_id = len(keys)
+                task_name = str(row["task_name"])
                 minutes = row['duration in minutes']
                 hours = minutes // 60
                 minutes %= 60
@@ -171,14 +172,14 @@ class ImportTasksService:
                     print(row['command'], row['url'])
                     task_type = 'command' if not isinstance(row['command'], float) else 'url'
                     value = row['command'] if not isinstance(row['command'], float) else row['url']
-                    data[suite_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': task_type,
-                                                                 'value': value, 'position': position}
+                    data[suite_name]['tasks'][task_id] = {'name': task_name, 'time': time, 'state': 'todo',
+                                                            'type': task_type, 'value': value, 'position': position}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
-                    data[suite_name]['tasks'][task_name] = {'time': time, 'state': 'todo', 'type': 'text',
-                                                                 'value': {'title': row['title'],
-                                                                           'description': description},
-                                                                 'position': position}
+                    data[suite_name]['tasks'][task_id] = {'name': task_name, 'time': time, 'state': 'todo',
+                                                            'type': 'text', 'value': {'title': row['title'],
+                                                                                      'description': description},
+                                                            'position': position}
                 position += 1
         else:
             return False, 'importTasksFailed'

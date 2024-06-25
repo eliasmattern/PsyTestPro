@@ -11,9 +11,10 @@ from services import TranslateService, execute_command
 
 
 class AddTaskView:
-    def __init__(self, translate_service: TranslateService, editing=False, task_name=None, task_time=None,
+    def __init__(self, translate_service: TranslateService, editing=False, task_id: str=None, task_name=None, task_time=None,
                  task_title=None, task_desc=None, task_command=None, task_url=None, position=None) -> None:
         self.editing = editing
+        self.task_id = task_id
         self.task_name = task_name
         self.task_time = task_time
         self.task_title = task_title
@@ -141,7 +142,7 @@ class AddTaskView:
         if not self.editing:
             psy_test_pro_config.save_task(suite, name, time, task_type, value)
         else:
-            psy_test_pro_config.edit_task(self.task_name, suite, name, time, task_type, value)
+            psy_test_pro_config.edit_task(self.task_id, suite, name, time, task_type, value)
         if create_continously:
             self.is_task_working = False
             self.error = ''
