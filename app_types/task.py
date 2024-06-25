@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 
 
 class TaskTypeEnum(Enum):
@@ -8,7 +9,7 @@ class TaskTypeEnum(Enum):
 
 
 class Task:
-    def __init__(self, name: str, duration: str, task_type: TaskTypeEnum, value: dict[str, str] | str, position: int,
+    def __init__(self, name: str, duration: str, task_type: TaskTypeEnum, value: Union[dict[str, str], str], position: int,
                  state: str = 'todo'):
         self.__name = name
         self.__duration = duration

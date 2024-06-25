@@ -80,23 +80,15 @@ class PsyTestProConfig:
 
         return result
 
-    def load_task_names_of_suites(self, suite: str) -> list:
+    def load_task_of_suite(self, suite: str) -> list[Task]:
 
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
-        tasks = data[suite]['tasks']
-
-        sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
-        current_tasks = {k: v for k, v in sorted_tasks}
-        tasks = list(current_tasks.keys())
-
+        tasks = []
+        for task_name, task_detail in data[suite]['tasks'].items():
+            tasks.append(Task(task_name, task_detail['time'], task_detail['type'], task_detail['value'],
+                              task_detail['position'], task_detail['state']))
         return tasks
-
-    def load_task_of_suite(self, suite: str) -> dict:
-
-        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
-            data = json.load(file)
-        return data[suite]['tasks']
 
     def delete_task(self, suite: str, task: str):
         if suite == 'hab_variable_variable':
@@ -216,9 +208,13 @@ class PsyTestProConfig:
         with open(get_resource_path('json/settings.json'), 'w', encoding='utf-8') as file:
             json.dump(settings, file)
 
-    def save_task_list(self, suite: str, tasks: dict):
+    def save_task_list(self, suite: str, tasks: list[Task]):
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
-        data[suite]['tasks'] = tasks
+        new_tasks = {}
+        for task in tasks:
+            new_tasks[task.name] = {'time': task.duration, 'state': task.state, 'type': task.task_type,
+                                    'value': task.value, 'position': task.position}
+        data[suite]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)

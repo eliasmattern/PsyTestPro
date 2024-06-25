@@ -36,9 +36,7 @@ class DeleteTaskView:
         if increment:
             self.page = (self.page + 1) % len(splitted_tasks)
         else:
-            self.page = (
-                (self.page - 1) if self.page > 0 else len(splitted_tasks) - 1
-            )
+            self.page = ((self.page - 1) if self.page > 0 else len(splitted_tasks) - 1)
 
     def delete_task_from_config(self, suite: str, task: str):
         self.suite = suite
@@ -62,9 +60,7 @@ class DeleteTaskView:
         # Setting the window caption
         pygame.display.set_caption('Delete task')
         full_suite_name = suite_name
-        tasks = (
-            psy_test_pro_config.load_task_names_of_suites(full_suite_name)
-        )
+        tasks = (psy_test_pro_config.load_task_of_suite(full_suite_name))
         chunk_size = 5
         splitted_tasks = [tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)]
 
@@ -88,8 +84,8 @@ class DeleteTaskView:
                         y + 60 + spacing,
                         400,
                         40,
-                        task.replace('_', ' '),
-                        lambda t=task: self.delete_task_from_config(
+                        task.name.replace('_', ' '),
+                        lambda t=task.name: self.delete_task_from_config(
                             full_suite_name,
                             t
                         ),

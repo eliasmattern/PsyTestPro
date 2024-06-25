@@ -2,6 +2,7 @@ import sys
 
 import pygame
 
+from app_types import Task, TaskTypeEnum
 from components import Button, InputBox
 from services import PsyTestProConfig, TranslateService
 from .task_create_view import AddTaskView
@@ -16,7 +17,7 @@ class ManageTasksView:
         self.settings = self.psy_test_pro_config.get_settings()
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         self.background_color = pygame.Color(self.settings["backgroundColor"])
-        self.tasks: list[dict[str, any]] = []
+        self.tasks: list[list[Task]] = []
         self.rects = []
         self.buttons: dict[str, Button] = {}
         self.input_boxes: dict[str, InputBox] = {}
@@ -31,21 +32,19 @@ class ManageTasksView:
     def display(self, suite_name: str):
         self.suite = suite_name
         self.formatted_suite = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
-        tasks = self.psy_test_pro_config.load_task_of_suite(suite_name)
-        sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
-        current_tasks = {k: v for k, v in sorted_tasks}
-        self.task_length = len(current_tasks)
-        current_tasks = self.split_dict(current_tasks, 24)
+        tasks: list[Task] = self.psy_test_pro_config.load_task_of_suite(suite_name)
+        sorted_tasks = sorted(tasks, key=lambda task: task.position)
+        self.task_length = len(sorted_tasks)
+        current_tasks = list(self.split_list(sorted_tasks, 24))
         self.tasks = current_tasks
         self.create_buttons()
         while self.is_running:
             if self.refresh:
                 self.refresh = False
                 tasks = self.psy_test_pro_config.load_task_of_suite(suite_name)
-                sorted_tasks = sorted(tasks.items(), key=lambda item: item[1]['position'])
-                current_tasks = {k: v for k, v in sorted_tasks}
-                self.task_length = len(current_tasks)
-                current_tasks = self.split_dict(current_tasks, 24)
+                sorted_tasks = sorted(tasks, key=lambda task: task.position)
+                self.task_length = len(sorted_tasks)
+                current_tasks = list(self.split_list(sorted_tasks, 24))
                 self.tasks = current_tasks
                 self.create_buttons()
             self.draw()
@@ -96,26 +95,26 @@ class ManageTasksView:
         column_spacing = self.screen.get_width() / 2 - self.screen.get_width() / 5
         row, column = 0, 0
         if not len(self.tasks) == 0:
-            for task, details in self.tasks[self.page].items():
+            for task in self.tasks[self.page]:
                 task_x, task_y = x + column * column_spacing, y + row * row_spacing
                 button = Button(
                     task_x + 25,
                     task_y,
                     200,
                     40,
-                    task.replace('_', ' '),
-                    lambda t=task, d=details: self.edit_task(t, d)
+                    task.name.replace('_', ' '),
+                    lambda t=task: self.edit_task(t)
                 )
-                input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(details['position']),
+                input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(task.position),
                                      is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
-                                     on_deselect=lambda pos=details['position'], t=task, r=row: self.rearrange(str(pos),
+                                     on_deselect=lambda pos=task.position, t=task.name, r=row: self.rearrange(str(pos),
                                                                                                                t + str(
                                                                                                                    r),
                                                                                                                t))
                 rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
 
-                self.buttons[task + str(row)] = button
-                self.input_boxes[task + str(row)] = input_box
+                self.buttons[task.name + str(row)] = button
+                self.input_boxes[task.name + str(row)] = input_box
                 self.rects.append(rect)
 
                 if row < 7:
@@ -161,38 +160,31 @@ class ManageTasksView:
         if self.input_boxes[input_name].text == '':
             self.input_boxes[input_name].text = old_pos
             return
-        tasks = {}
+        tasks = []
         for task in self.tasks:
-            tasks.update(task)
+            tasks.extend(task)
         new_pos = int(self.input_boxes[input_name].text)
         current_position = int(old_pos)
-        for key, value in tasks.items():
-            if key != task_name:
+        for task in tasks:
+            if task.name != task_name:
                 if current_position < new_pos:
-                    if current_position < value['position'] <= new_pos:
-                        tasks[key]['position'] -= 1
+                    if current_position < task.position <= new_pos:
+                        task.position -= 1
                 else:
-                    if new_pos <= value['position'] < current_position:
-                        tasks[key]['position'] += 1
+                    if new_pos <= task.position < current_position:
+                        task.position += 1
+            else:
+                task.position = new_pos
 
-        tasks[task_name]['position'] = new_pos
         self.psy_test_pro_config.save_task_list(self.suite, tasks)
         self.refresh = True
 
     def back(self):
         self.is_running = False
 
-    def split_dict(self, input_dict: dict, chunk_size: int):
-        dict_list = [{}]
-        current_dict = 0
-
-        for key, value in input_dict.items():
-            dict_list[current_dict][key] = value
-            if len(dict_list[current_dict]) >= chunk_size:
-                dict_list.append({})
-                current_dict += 1
-        dict_list = list(filter(lambda lst: len(lst) > 0, dict_list))
-        return dict_list
+    def split_list(self, input_list: list, chunk_size: int):
+        for i in range(0, len(input_list), chunk_size):
+            yield input_list[i:i + chunk_size]
 
     def page_update(self, increment: bool, splitted_tasks: list):
         if increment:
@@ -201,24 +193,24 @@ class ManageTasksView:
             self.page = (self.page - 1) if self.page > 0 else len(splitted_tasks) - 1
         self.refresh = True
 
-    def edit_task(self, task, details):
-        task_name = task.replace('_', ' ')
-        task_time = details['time']
-        task_position = details['position']
-        if details['type'] == 'command':
-            task_command = details['value']
+    def edit_task(self, task: Task):
+        task_name = task.name.replace('_', ' ')
+        task_time = task.duration
+        task_position = task.position
+        if task.task_type == TaskTypeEnum.COMMAND:
+            task_command = task.value
             task_title = None
             task_desc = None
             task_url = None
-        elif details['type'] == 'url':
+        elif task.task_type == TaskTypeEnum.URL:
             task_command = None
             task_title = None
             task_desc = None
-            task_url = details['value']
+            task_url = task.value
         else:
             task_command = None
-            task_title = details['value']['title']
-            task_desc = details['value']['description']
+            task_title = task.value['title']
+            task_desc = task.value['description']
             task_url = None
 
         add_task_view = AddTaskView(self.translate_service, editing=True, task_name=task_name, task_time=task_time,
