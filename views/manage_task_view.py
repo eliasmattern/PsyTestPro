@@ -197,12 +197,12 @@ class ManageTasksView:
         task_name = task.name
         task_time = task.duration
         task_position = task.position
-        if task.task_type == TaskTypeEnum.COMMAND:
+        if task.task_type == TaskTypeEnum.COMMAND.value:
             task_command = task.value
             task_title = None
             task_desc = None
             task_url = None
-        elif task.task_type == TaskTypeEnum.URL:
+        elif task.task_type == TaskTypeEnum.URL.value:
             task_command = None
             task_title = None
             task_desc = None
