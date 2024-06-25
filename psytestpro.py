@@ -348,7 +348,7 @@ class PsyTestPro:
             if datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S') < datetime.now():
                 task.state = 'skip'
         file_name = self.save_suite_info(participant_info)
-        print(isHab)
+
         CreateScheduleDisplay(schedule, participant_info, PsyTestPro, custom_variables, isHab, file_name).display()
         self.input_boxes = {}
 
