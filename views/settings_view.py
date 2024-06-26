@@ -81,6 +81,7 @@ class SettingsView:
                                                  input_boxes['gridColor'].text,
                                                  show_next_task_and_time,
                                                  show_play_task)
+            self.saving_errors = []
             self.saved_msg.append(self.translate_service.get_translation('updatedSettings'))
             self.refresh_view()
 
