@@ -79,6 +79,7 @@
     "varName": "Variable name",
     "deleteVarMsg": "Do you want to delete this variable?: ",
     "variable": "Variable:",
+    "variables": "Variables",
     "settings": "Settings",
     "colors": "Colors",
     "language": "Language",
@@ -134,5 +135,11 @@
     "configureTasksForSuite": "Configure tasks for Suite: ",
     "manageTasksFor": "Manage tasks for: ",
     "url": "URL",
-    "urlFailed": "Error when calling the URL"
+    "urlFailed": "Error when calling the URL",
+    "idDescription": "Participant ID",
+    "suiteDescription": "Suite Name",
+    "startTimeDescription": "Time when the suite started",
+    "timestampDescription": "Current time stamp. Format: YYYY.mm.dd hh:mm:ss",
+    "scriptCountDescription": "A counter that increments with each execution of the command within a task. (Commands and URL's only)",
+    "customVariables": "Custom Variables"
 }

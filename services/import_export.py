@@ -169,7 +169,6 @@ class ImportTasksService:
                 minutes %= 60
                 time = '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
                 if not isinstance(row['command'], float) or not isinstance(row['url'], float):
-                    print(row['command'], row['url'])
                     task_type = 'command' if not isinstance(row['command'], float) else 'url'
                     value = row['command'] if not isinstance(row['command'], float) else row['url']
                     data[suite_name]['tasks'][task_id] = {'name': task_name, 'time': time, 'state': 'todo',

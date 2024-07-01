@@ -1,13 +1,11 @@
-import time
 import webbrowser
 from datetime import datetime, timedelta
 
+import pandas as pd
 import pygame
 
 from app_types import Task
 from lib import text_screen
-import pandas as pd
-
 from .PathService import get_resource_path
 from .TranslateService import TranslateService
 from .execute_command_service import execute_command
@@ -77,18 +75,15 @@ def play_tasks(filename: str, participant_info: dict, upcoming_event: Task, sche
 
     elif upcoming_event.task_type == 'command':
         try:
-            now = datetime.now()
-            formatted_timestamp = now.strftime('%Y.%m.%d %H:%M:%S')
             command = upcoming_event.value
             script_count = 0
-
             if '{scriptCount}' in command:
-                task_command_pairs = [(task.name, task.value) for task in schedule if
+                schedule = sorted(schedule, key=lambda task: task.position)
+                task_command_pairs = [(task.id, task.value) for task in schedule if
                                       task.task_type == 'command' and task.value == upcoming_event.value]
-
                 for task, _ in task_command_pairs:
                     script_count += 1
-                    if task == upcoming_event:
+                    if task == upcoming_event.id:
                         break
             participant_info['script_count'] = script_count
             error, return_code = execute_command(command, participant_info, custom_variables)

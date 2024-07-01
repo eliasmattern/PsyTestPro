@@ -75,7 +75,6 @@ class DeleteVariableView:
 
             spacing = 5 * 60
             spacing += 60
-            print(y,spacing)
             back_button = Button(
                 x,
                 y + spacing + 100,

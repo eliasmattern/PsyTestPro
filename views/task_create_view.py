@@ -153,7 +153,7 @@ class AddTaskView:
             for input_box in text_screen_inputs:
                 input_box.text = ''
             for input_box in url_inputs:
-                input_box.text = ''
+                input_box.text = 'https://'
             self.timepicker.set_time('')
             return
         else:
@@ -171,10 +171,9 @@ class AddTaskView:
             create_continuously: bool,
             suite: str
     ):
-        variable = suite
         # Define colors
-        black = pygame.Color(self.settings["backgroundColor"])
-        light_grey = pygame.Color(self.settings["primaryColor"])
+        background_color = pygame.Color(self.settings["backgroundColor"])
+        primary_color = pygame.Color(self.settings["primaryColor"])
 
         # Get the screen width and height from the current device in use
         screen_info = pygame.display.Info()
@@ -231,7 +230,18 @@ class AddTaskView:
                                  initial_text=label[1] if label[1] else '')
             text_screen_inputs.append(input_box)
             y += spacing
+
         y = height // 2 - 100 + 3 * spacing
+        font = pygame.font.Font(None, int(30 * width_scale_factor))  # Create font object for header
+        x_offset = font.size('?')[0] / 2
+        info_text = font.render('?', True, primary_color)
+        info_pos = (x + 225, y + 20 - (font.get_height() / 2))
+        info_circle = (x + 225 + x_offset, y + 20)
+        info_rect = pygame.rect.Rect(x + 212.5, y, 40, 40)
+        triangle_vertices = [(x + 225 + x_offset, y), (x + 205 + x_offset, y - 20), (x + 245 + x_offset, y - 20)]
+        popup_rect = pygame.rect.Rect(0, 0, 400, 250)
+        popup_rect.center = x + 225 + x_offset, y - 145
+
         for label in command_labels:
             input_box = InputBox(
                 x, y, 400, 40, label[0], self.translate_service, allow_new_line=False,
@@ -259,7 +269,7 @@ class AddTaskView:
             'submit',
             lambda: self.save_task(
                 create_continuously_check_box.active,
-                variable,
+                suite,
                 input_boxes[0].text,
                 self.timepicker.time,
                 input_boxes,
@@ -302,17 +312,15 @@ class AddTaskView:
             20 * height_scale_factor,
         )
 
-        font = pygame.font.Font(
-            None, int(30 * width_scale_factor)
-        )  # Create font object for header
         text_surface = font.render(
             self.translate_service.get_translation('createTask')
             + ' ' + self.translate_service.get_translation('for') + ' '
             + suite.split('_')[0],
             True,
-            light_grey,
-        )  # Render the text 'Task' with the font and color light_grey
+            primary_color,
+        )  # Render the text 'Task' with the font and color primary_color
         text_rect = text_surface.get_rect()
+        text_pos = x - text_rect.width // 2, y
 
         text_screen = False if self.task_command or self.task_url else True
         command = False if self.task_title or self.task_url or not self.task_command else True
@@ -324,6 +332,70 @@ class AddTaskView:
         url_check_box = CheckBox('url', screen_width / 2, y + 180, url, self.translate_service)
 
         create_continuously_check_box = CheckBox('createMultipleTasks', x + 320, y + 420, create_continuously, self.translate_service)
+        var_font = pygame.font.Font(None, int(20))
+
+        variables = ['id', 'suite', 'startTime', 'timestamp', 'scriptCount']
+        x = width // 2
+        y = height // 2 - 100 + 3 * spacing
+        var_x, var_y = x + 225 + x_offset - 180, y - 250
+        var_table_texts = []
+
+        variables_title = self.translate_service.get_translation('variables')
+        surface = var_font.render(variables_title, True, background_color)
+        pos = (var_x, var_y)
+        var_table_texts.append((surface, pos))
+        var_y += var_font.get_height()
+
+        for variable in variables:
+            text = '{' + variable + '} ' + self.translate_service.get_translation(variable + 'Description')
+            if var_font.size(text)[0] + var_x < var_x + 360:
+                surface = var_font.render(text, True, background_color)
+                pos = (var_x, var_y)
+                var_table_texts.append((surface, pos))
+                var_y += var_font.get_height()
+            else:
+                new_text = ''
+                while var_font.size(text)[0] + var_x > var_x + 360:
+                    words = text.split()
+                    text = ' '.join(words[:-1])
+                    new_text = ' '.join([words[-1], new_text])
+                new_text2 = ''
+                while var_font.size(new_text)[0] + var_x > var_x + 360:
+                    words = new_text.split()
+                    new_text = ' '.join(words[:-1])
+                    new_text2 = ' '.join([words[-1], new_text2])
+                surface = var_font.render(text, True, background_color)
+                pos = (var_x, var_y)
+                var_table_texts.append((surface, pos))
+                var_y += var_font.get_height()
+                surface = var_font.render(new_text, True, background_color)
+                pos = (var_x, var_y)
+                var_table_texts.append((surface, pos))
+                var_y += var_font.get_height()
+                surface = var_font.render(new_text2, True, background_color)
+                pos = (var_x, var_y)
+                var_table_texts.append((surface, pos))
+
+        var_y += var_font.get_height()
+
+        custom_variables = PsyTestProConfig().load_custom_variables()
+
+        if len(custom_variables) > 0:
+            var_y += var_font.get_height()
+            custom_variables_title = self.translate_service.get_translation('customVariables')
+            surface = var_font.render(custom_variables_title, True, background_color)
+            pos = (var_x, var_y)
+            var_table_texts.append((surface, pos))
+            var_y += var_font.get_height()
+
+            for variable in custom_variables:
+                text = '{' + variable + '}'
+                surface = var_font.render(text, True, background_color)
+                pos = (var_x, var_y)
+                var_table_texts.append((surface, pos))
+                var_y += var_font.get_height()
+
+        show_info = False
 
         self.adding = True
         while self.adding:
@@ -341,6 +413,8 @@ class AddTaskView:
                             if tick_box_rect.collidepoint(
                                     mouse_pos) and not self.editing:  # If the cursor position has collided with the start timer button
                                 self.selected_multiple = not self.selected_multiple
+                    elif event.type == pygame.MOUSEMOTION:
+                        show_info = info_rect.collidepoint(event.pos)
                     command_before = command_check_box.active
                     text_screen_before = text_screen_check_box.active
                     url_before = url_check_box.active
@@ -374,9 +448,9 @@ class AddTaskView:
                         box.handle_event(event)
                     for button in buttons:
                         button.handle_event(event)
-            screen.fill(black)  # Fill the screen with the black color
+            screen.fill(background_color)  # Fill the screen with the background_color color
 
-            screen.blit(text_surface, (x - text_rect.width // 2, y))
+            screen.blit(text_surface, text_pos)
 
             if self.validate_task_inputs(input_boxes, self.timepicker.time, command_inputs, text_screen_inputs,
                                          url_inputs, command_check_box.active, url_check_box.active):
@@ -428,6 +502,13 @@ class AddTaskView:
                     box.draw(screen)
             for button in buttons:
                 button.draw(screen)
+            screen.blit(info_text, info_pos)
+            pygame.draw.circle(screen, primary_color, info_circle, radius=20, width=2)
+            if show_info:
+                pygame.draw.polygon(screen, primary_color, triangle_vertices)
+                pygame.draw.rect(screen, primary_color, popup_rect, border_radius=30)
+                for surface, pos in var_table_texts:
+                    screen.blit(surface, pos)
             # draw the tick box rectangle on the window surface
             # if the selected_multiple variable is equal to the option currently being processed in the loop
             if not self.editing:
@@ -442,7 +523,7 @@ class AddTaskView:
                 error_text_surface = error_font.render(
                     self.error,
                     True,
-                    light_grey,
+                    primary_color,
                 )
                 error_rect = error_text_surface.get_rect()
                 screen.blit(
