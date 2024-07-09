@@ -85,7 +85,7 @@ class DeleteTaskView:
                         400,
                         40,
                         task.name,
-                        lambda t=task.name: self.delete_task_from_config(
+                        lambda t=task.id: self.delete_task_from_config(
                             full_suite_name,
                             t
                         ),

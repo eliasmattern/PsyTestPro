@@ -137,5 +137,6 @@
     "startTimeDescription": "Zeitpunkt wenn die Suite gestartet wurde",
     "timestampDescription": "Aktueller Zeitstempel. Format: YYYY.mm.dd hh:mm:ss",
     "scriptCountDescription": "Ein Zähler, der sich bei jeder Ausführung eines Befehls erhöht (Nur für Commands und URL's)",
-    "customVariables": "Eigene Variables"
+    "customVariables": "Eigene Variables",
+    "createTaskGroup": "Taskgruppe erstellen"
 }

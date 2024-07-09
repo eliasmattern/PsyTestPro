@@ -2,8 +2,6 @@ import os.path
 import webbrowser
 import tkinter as tk
 
-from app_types import Task
-
 # mac os can't initialise Tk after the imports of the components / views.  starts tk before pygame is initialised
 tk_root = tk.Tk()
 tk_root.withdraw()
@@ -11,8 +9,9 @@ import pygame
 import sys
 from pygame.locals import *
 from datetime import datetime, timedelta
+from app_types import Task, TaskGroup
 from components import InputBox, Button
-from views import CreateScheduleDisplay, SuiteConfig, SettingsView
+from views import CreateScheduleDisplay, SuiteConfig, SettingsView, CreateTaskGroupView
 import re
 from services import TranslateService, LanguageConfiguration, PsyTestProConfig, get_resource_path
 import pandas as pd
@@ -123,8 +122,8 @@ class PsyTestPro:
                                  lambda: self.show_settings_screen(),
                                  self.translateService)
         create_suite_button = Button(self.width - 175, 150, 250, 40, 'configureTestBattery',
-                                          lambda: self.configure_test_battery(),
-                                          self.translateService)
+                                     lambda: self.configure_test_battery(),
+                                     self.translateService)
 
         self.buttons.append(exit_button)
         self.buttons.append(settings_button)
@@ -253,6 +252,7 @@ class PsyTestPro:
 
         y = self.height // 2 - 200
         x = self.width // 2
+        # CreateTaskGroupView(self.screen, self.translateService).show('group_schedule')
 
         font = pygame.font.Font(None, int(64))
         text_surface = font.render(self.translateService.get_translation('psytestpro'), True, self.primary_color)
@@ -320,13 +320,38 @@ class PsyTestPro:
         sorted_tasks = sorted(current_tasks, key=lambda task: task.position)
 
         for task in sorted_tasks:
-            tasks.append(task.id)
-            times.append(task.duration)
-            names[task.id] = task.name
-            states[task.id] = task.state
-            positions[task.id] = task.position
-            types[task.id] = task.task_type
-            values[task.id] = task.value
+            if isinstance(task, Task):
+                tasks.append(task.id)
+                times.append(task.duration)
+                names[task.id] = task.name
+                states[task.id] = task.state
+                positions[task.id] = task.position
+                types[task.id] = task.task_type
+                values[task.id] = task.value
+            elif isinstance(task, TaskGroup):
+                time_delta = task.pause_inbetween
+                time_format = "%H:%M:%S"
+
+                for i in range(task.loops):
+                    for task_of_group in task.tasks:
+                        new_id = task.id + ':' + task_of_group.id + ':' + str(i)
+                        tasks.append(new_id)
+                        times.append(task_of_group.duration)
+                        names[new_id] = task_of_group.name + str(i)
+                        states[new_id] = task_of_group.state
+                        positions[new_id] = float(str(task.id) + '.' + str(i) + str(task_of_group.position + i).zfill(
+                            len(str(len(task.tasks)))))
+                        types[new_id] = task_of_group.task_type
+                        values[new_id] = task_of_group.value
+                    time_str = times[-1]
+
+                    time_obj = datetime.strptime(time_str, time_format)
+
+                    new_time_obj = time_obj + time_delta
+
+                    new_time_str = new_time_obj.strftime(time_format)
+                    times[-1] = new_time_str
+
         previous_time = start_time
         for i, _ in enumerate(times):
             exp_variable = tasks[i]
@@ -344,9 +369,10 @@ class PsyTestPro:
             schedule = sorted(edited_schedule, key=lambda task: task.position)
         else:
             schedule = sorted(edited_schedule, key=lambda task: (task.position, task.duration))
-        for task in schedule:
-            if datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S') < datetime.now():
-                task.state = 'skip'
+        if not isHab:
+            for task in schedule:
+                if datetime.strptime(task.duration, '%d/%m/%Y %H:%M:%S') < datetime.now():
+                    task.state = 'skip'
         file_name = self.save_suite_info(participant_info)
 
         CreateScheduleDisplay(schedule, participant_info, PsyTestPro, custom_variables, isHab, file_name).display()

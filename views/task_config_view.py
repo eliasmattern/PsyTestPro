@@ -77,7 +77,6 @@ class TaskConfig:
                         40,
                         suite.split('_')[0],
                         lambda exp=suite: self.task_manual_import_view.show(
-                            psy_test_pro,
                             False,
                             exp
                         ),

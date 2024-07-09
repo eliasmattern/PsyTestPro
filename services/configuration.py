@@ -1,6 +1,7 @@
 import json
+from typing import Union
 
-from app_types import Task
+from app_types import Task, TaskGroup
 from .PathService import get_resource_path
 
 
@@ -8,7 +9,7 @@ class PsyTestProConfig:
     def __init__(self):
         self.suites = None
         self.current_suite = None
-        self.current_tasks: list[Task] = []
+        self.current_tasks: list[Union[Task, TaskGroup]] = []
         self.error_msg = ''
 
     def load_suites(self):
@@ -27,15 +28,25 @@ class PsyTestProConfig:
                 tasks = json.load(file)
                 if tasks.get(str(suite) + '_schedule') is not None:
                     for task_id, task_detail in tasks.get(suite + '_schedule').get('tasks').items():
-                        self.current_tasks.append(
-                            Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'],
-                                 task_detail['value'], task_detail['position'], task_detail['state']))
+                        if task_detail['is_group']:
+                            self.current_tasks.append(
+                                TaskGroup(task_id, task_detail['name'], task_detail['pause'], task_detail['loops'],
+                                          task_detail['tasks'], task_detail['position']))
+                        else:
+                            self.current_tasks.append(
+                                Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'],
+                                     task_detail['value'], task_detail['position'], task_detail['state']))
                     self.current_suite = str(suite) + '_schedule'
                 elif tasks.get(str(suite) + '_list') is not None:
                     for task_id, task_detail in tasks.get(suite + '_list').get('tasks').items():
-                        self.current_tasks.append(
-                            Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'],
-                                 task_detail['value'],task_detail['position'], task_detail['state']))
+                        if task_detail['is_group']:
+                            self.current_tasks.append(
+                                TaskGroup(task_id, task_detail['name'], task_detail['pause'], task_detail['loops'],
+                                          task_detail['tasks'], task_detail['position']))
+                        else:
+                            self.current_tasks.append(
+                                Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'],
+                                     task_detail['value'], task_detail['position'], task_detail['state']))
                     self.current_suite = str(suite) + '_list'
                 else:
                     self.error_msg = 'experimentNotFound'
@@ -80,14 +91,20 @@ class PsyTestProConfig:
 
         return result
 
-    def load_task_of_suite(self, suite: str) -> list[Task]:
+    def load_task_of_suite(self, suite: str) -> list[Union[Task, TaskGroup]]:
 
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
         tasks = []
         for task_id, task_detail in data[suite]['tasks'].items():
-            tasks.append(Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'], task_detail['value'],
-                              task_detail['position'], task_detail['state']))
+            if task_detail['is_group']:
+                tasks.append(
+                    TaskGroup(task_id, task_detail['name'], task_detail['pause'], task_detail['loops'],
+                              task_detail['tasks'], task_detail['position']))
+            else:
+                tasks.append(
+                    Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'], task_detail['value'],
+                         task_detail['position'], task_detail['state']))
         return tasks
 
     def delete_task(self, suite: str, task_id: str):
@@ -96,6 +113,7 @@ class PsyTestProConfig:
 
         with open(get_resource_path('json/taskConfig.json'), 'r') as file:
             data = json.load(file)
+        print(suite)
         deleted_position = data[suite]['tasks'][task_id]['position']
         del data[suite]['tasks'][task_id]
 
@@ -118,6 +136,7 @@ class PsyTestProConfig:
                                value: str):
             tasks = json_data[object_name]['tasks']
             new_task = {
+                'is_group': False,
                 'name': task_name,
                 'position': len(tasks) + 1,
                 'time': time,
@@ -130,7 +149,7 @@ class PsyTestProConfig:
         keys = json_data[suite]['tasks'].keys()
         task_id = len(keys)
 
-        add_task_to_object(json_data, suite, task_id, name, time, type, value)
+        add_task_to_object(json_data, suite, str(task_id), name, time, type, value)
 
         # Save the updated JSON data back to the file
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
@@ -215,7 +234,7 @@ class PsyTestProConfig:
         new_tasks = {}
         for task in tasks:
             new_tasks[task.id] = {'name': task.name, 'time': task.duration, 'state': task.state, 'type': task.task_type,
-                                    'value': task.value, 'position': task.position}
+                                  'value': task.value, 'position': task.position}
         data[suite]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)

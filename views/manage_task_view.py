@@ -1,8 +1,9 @@
 import sys
+from typing import Union
 
 import pygame
 
-from app_types import Task, TaskTypeEnum
+from app_types import Task, TaskTypeEnum, TaskGroup
 from components import Button, InputBox
 from services import PsyTestProConfig, TranslateService
 from .task_create_view import AddTaskView
@@ -193,7 +194,9 @@ class ManageTasksView:
             self.page = (self.page - 1) if self.page > 0 else len(splitted_tasks) - 1
         self.refresh = True
 
-    def edit_task(self, task: Task):
+    def edit_task(self, task: Union[Task, TaskGroup]):
+        if isinstance(task, TaskGroup):
+            return
         task_name = task.name
         task_time = task.duration
         task_position = task.position

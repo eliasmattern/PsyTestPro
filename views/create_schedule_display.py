@@ -444,8 +444,8 @@ class CreateScheduleDisplay:
             date, time = task.duration.split(' ')
             if self.isHab:
                 data.append(
-                    [task.name.replace, {'value': task.state, 'color': states[task.state]['color'],
-                                         'key': states[task.state]['key']}])
+                    [task.name, {'value': task.state, 'color': states[task.state]['color'],
+                                 'key': states[task.state]['key']}])
             else:
                 data.append(
                     [task.name, date, time,

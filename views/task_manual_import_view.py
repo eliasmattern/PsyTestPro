@@ -34,7 +34,7 @@ class TaskManualImportView:
         self.success_msg = None
         self.is_running = False
 
-    def show(self, psy_test_pro, create_continuously: bool, suite_name: str):
+    def show(self, create_continuously: bool, suite_name: str):
         screen = pygame.display.get_surface()
 
         spacing = 60
@@ -62,10 +62,19 @@ class TaskManualImportView:
             lambda: self.add_task.add(create_continuously, suite_name),
             self.translate_service,
         )
+        create_group_button = Button(
+            x,
+            y + 2 * spacing,
+            400,
+            40,
+            'createTaskGroup',
+            lambda: self.manage_tasks_view.display(suite_name),
+            self.translate_service,
+        )
 
         manage_tasks_button = Button(
             x,
-            y + 2 * spacing,
+            y + 3 * spacing,
             400,
             40,
             'manageTasks',
@@ -75,7 +84,7 @@ class TaskManualImportView:
 
         delete_tasks_button = Button(
             x,
-            y + 3 * spacing,
+            y + 4 * spacing,
             400,
             40,
             'deleteTasks',
@@ -83,12 +92,12 @@ class TaskManualImportView:
             self.translate_service,
         )
 
-        show_preview_check_box = CheckBox('showPreview', x, y + spacing * 5, active=True,
+        show_preview_check_box = CheckBox('showPreview', x, y + spacing * 6, active=True,
                                           translate_service=self.translate_service, font_size=24)
 
         import_task_button = Button(
             x,
-            y + spacing * 4,
+            y + spacing * 5,
             400,
             40,
             'importTasks',
@@ -98,7 +107,7 @@ class TaskManualImportView:
 
         back_to_task_manual_import_button = Button(
             x,
-            y + 6 * spacing,
+            y + 7 * spacing,
             100,
             40,
             'back',
@@ -117,6 +126,7 @@ class TaskManualImportView:
         )
 
         buttons.append(create_task_button)
+        buttons.append(create_group_button)
         buttons.append(manage_tasks_button)
         buttons.append(import_task_button)
         buttons.append(delete_tasks_button)
@@ -131,7 +141,8 @@ class TaskManualImportView:
             screen.fill(pygame.Color(self.settings["backgroundColor"]))
 
             screen.blit(text_surface, (x - text_rect.width // 2, y))
-
+            tasks = self.psy_test_pro_config.load_task_of_suite(suite_name)
+            create_group_button.set_active(bool(len(tasks)))
             for button in buttons:
                 button.draw(screen)
 
@@ -142,7 +153,7 @@ class TaskManualImportView:
                     self.message_timer = datetime.now()
                 message = self.font.render(self.success_msg, True, self.primary_color)
                 message_rect = message.get_rect()
-                message_rect.center = (x, y + spacing * 5 + self.font.get_linesize() * 2)
+                message_rect.center = (x, y + spacing * 6 + self.font.get_linesize() * 2)
                 screen.blit(message, message_rect)
                 if datetime.now() >= self.message_timer + timedelta(seconds=5):
                     self.success_msg = None
@@ -153,7 +164,7 @@ class TaskManualImportView:
                     self.message_timer = datetime.now()
                 message = self.font.render(self.error_msg, True, self.danger_color)
                 message_rect = message.get_rect()
-                message_rect.center = (x, y + spacing * 5 + self.font.get_linesize() * 2)
+                message_rect.center = (x, y + spacing * 6 + self.font.get_linesize() * 2)
                 screen.blit(message, message_rect)
                 if datetime.now() >= self.message_timer + timedelta(seconds=5):
                     self.error_msg = None
