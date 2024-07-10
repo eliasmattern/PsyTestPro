@@ -4,7 +4,7 @@ from typing import Union
 import pygame
 
 from app_types import Task, TaskTypeEnum, TaskGroup
-from components import Button, InputBox
+from components import Button, InputBox, IconButton, QuestionDialog
 from services import PsyTestProConfig, TranslateService
 from .task_create_view import AddTaskView
 
@@ -19,9 +19,11 @@ class ManageTasksView:
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         self.background_color = pygame.Color(self.settings["backgroundColor"])
         self.group_button_color = pygame.Color(self.settings["groupButtonColor"])
+        self.danger_color = pygame.Color(self.settings["dangerColor"])
         self.tasks: list[list[Task]] = []
         self.rects = []
         self.buttons: dict[str, Button] = {}
+        self.icon_buttons: dict[str, IconButton] = {}
         self.input_boxes: dict[str, InputBox] = {}
         self.refresh = False
         self.suite = ''
@@ -32,6 +34,11 @@ class ManageTasksView:
         self.task_length = 0
         self.active_group = None
         self.title = ''
+        self.delete_dialog = QuestionDialog(500, 200, 'delete', 'deleteTaskMsg', '', self.translate_service,
+                                            lambda: self.delete_action(), action_key='delete')
+        self.delete_dialog.is_open = False
+        self.deleting_task = None
+
 
     def display(self, suite_name: str):
         self.suite = suite_name
@@ -69,6 +76,8 @@ class ManageTasksView:
         self.screen.fill(self.background_color)
         for button in self.buttons.values():
             button.draw(self.screen)
+        for button in self.icon_buttons.values():
+            button.draw(self.screen)
         for input_box in self.input_boxes.values():
             input_box.draw(self.screen)
         for rect in self.rects:
@@ -86,6 +95,9 @@ class ManageTasksView:
             self.screen.get_width() / 2, self.screen.get_height() / 8 - (self.title_font.get_height() * 3))
 
         self.screen.blit(title_surface, title_rect)
+
+        if self.delete_dialog.is_open:
+            self.delete_dialog.draw(self.screen)
         pygame.display.flip()
 
     def handle_events(self):
@@ -93,13 +105,19 @@ class ManageTasksView:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            for input_box in self.input_boxes.values():
-                input_box.handle_event(event)
-            for button in self.buttons.values():
-                button.handle_event(event)
+            if self.delete_dialog.is_open:
+                self.delete_dialog.handle_events(event)
+            else:
+                for input_box in self.input_boxes.values():
+                    input_box.handle_event(event)
+                for button in self.buttons.values():
+                    button.handle_event(event)
+                for button in self.icon_buttons.values():
+                    button.handle_event(event)
 
     def create_buttons(self):
         self.buttons: dict[str, Button] = {}
+        self.icon_buttons: dict[str, IconButton] = {}
         self.input_boxes: dict[str, InputBox] = {}
         self.rects = []
         x = self.screen.get_width() / 5
@@ -111,9 +129,10 @@ class ManageTasksView:
             for task in self.tasks[self.page]:
                 task_x, task_y = x + column * column_spacing, y + row * row_spacing
                 button_color = self.primary_color if isinstance(task, Task) else self.group_button_color
-                active_color = pygame.Color(button_color.r + 10, button_color.g + 10, button_color.b + 10)
+                active_color = pygame.Color(min(button_color.r + 10, 255), min(button_color.g + 10, 255),
+                                                 min(button_color.b + 10, 255)) if isinstance(task, TaskGroup) else None
                 button = Button(
-                    task_x + 25,
+                    task_x,
                     task_y,
                     200,
                     40,
@@ -122,16 +141,33 @@ class ManageTasksView:
                     color=button_color,
                     active_button_color=active_color
                 )
+                icon_active_color = pygame.Color(min(self.danger_color.r + 10, 255), min(self.danger_color.g + 10, 255),
+                                                 min(self.danger_color.b + 10, 255))
 
-                input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(task.position),
+                icon_button = IconButton(
+                    task_x + 130,
+                    task_y,
+                    40,
+                    40,
+                    30,
+                    30,
+                    'img/dark_trash.png' if sum([self.primary_color.g, self.primary_color.r,
+                                                 self.primary_color.b]) > 382 else 'img/light_trash.png',
+                    lambda t=task: self.delete_task(t),
+                    color=self.danger_color,
+                    active_button_color=icon_active_color
+                )
+
+                input_box = InputBox(task_x - 130, task_y, 40, 40, '', initial_text=str(task.position),
                                      is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
                                      on_deselect=lambda pos=task.position, t=task.id, r=row: self.rearrange(str(pos),
-                                                                                                            t + str(
-                                                                                                                r),
-                                                                                                            t))
+                                                                                                              t + str(
+                                                                                                                  r),
+                                                                                                              t))
                 rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
 
                 self.buttons[task.id + str(row)] = button
+                self.icon_buttons[task.id + str(row)] = icon_button
                 self.input_boxes[task.id + str(row)] = input_box
                 self.rects.append(rect)
 
@@ -248,4 +284,15 @@ class ManageTasksView:
                                     task_command=task_command,
                                     task_url=task_url, position=task_position, group=self.active_group)
         add_task_view.add(False, self.suite)
+        self.refresh = True
+
+    def delete_task(self, task: Task):
+        self.deleting_task = task
+        self.delete_dialog.info = self.translate_service.get_translation('task') + ': ' + task.name
+        self.delete_dialog.is_open = True
+
+    def delete_action(self):
+        self.psy_test_pro_config.delete_task(self.suite, self.deleting_task.id, self.active_group)
+        self.deleting_task = None
+        self.delete_dialog.is_open = False
         self.refresh = True

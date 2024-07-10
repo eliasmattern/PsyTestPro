@@ -118,20 +118,27 @@ class PsyTestProConfig:
                      task_detail['position'], task_detail['state']))
         return tasks
 
-    def delete_task(self, suite: str, task_id: str):
+    def delete_task(self, suite: str, task_id: str, group_id: str):
         if suite == 'hab_variable_variable':
             suite = 'hab_variable'
 
         with open(get_resource_path('json/taskConfig.json'), 'r') as file:
             data = json.load(file)
-        print(suite)
-        deleted_position = data[suite]['tasks'][task_id]['position']
-        del data[suite]['tasks'][task_id]
 
-        for key in data[suite]['tasks'].keys():
-            position = data[suite]['tasks'][key]['position']
-            if position > deleted_position:
-                data[suite]['tasks'][key]['position'] = position - 1
+        deleted_position = data[suite]['tasks'][task_id]['position']
+        if group_id is None:
+            del data[suite]['tasks'][task_id]
+            for key in data[suite]['tasks'].keys():
+                position = data[suite]['tasks'][key]['position']
+                if position > deleted_position:
+                    data[suite]['tasks'][key]['position'] = position - 1
+        else:
+            del data[suite]['tasks'][group_id]['tasks'][task_id]
+            for key in data[suite]['tasks'][group_id]['tasks'].keys():
+                position = data[suite]['tasks'][group_id]['tasks'][key]['position']
+                if position > deleted_position:
+                    data[suite]['tasks'][group_id]['tasks'][key]['position'] = position - 1
+
         # Save the updated array back to the file
         with open(get_resource_path('json/taskConfig.json'), 'w') as file:
             json.dump(data, file, indent=4)
@@ -252,8 +259,22 @@ class PsyTestProConfig:
             data = json.load(file)
         new_tasks = {}
         for task in tasks:
-            new_tasks[task.id] = {'name': task.name, 'time': task.duration, 'state': task.state, 'type': task.task_type,
-                                  'value': task.value, 'position': task.position}
+            if isinstance(task, Task):
+                new_tasks[task.id] = {'is_group': False, 'name': task.name, 'time': task.duration, 'state': task.state,
+                                      'type': task.task_type, 'value': task.value, 'position': task.position}
+            elif isinstance(task, TaskGroup):
+                group_tasks = {}
+                for t in task.tasks:
+                    group_tasks[t.id] = {'is_group': False, 'name': t.name, 'time': t.duration,
+                                         'state': t.state, 'type': t.task_type, 'value': t.value,
+                                         'position': t.position}
+                new_tasks[task.id] = {"is_group": True,
+                                      "name": task.name,
+                                      "pause": str(task.pause_inbetween),
+                                      "loops": task.loops,
+                                      "tasks": group_tasks,
+                                      "position": task.position}
+        print(new_tasks)
         data[suite]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)

@@ -171,11 +171,11 @@ class ImportTasksService:
                 if not isinstance(row['command'], float) or not isinstance(row['url'], float):
                     task_type = 'command' if not isinstance(row['command'], float) else 'url'
                     value = row['command'] if not isinstance(row['command'], float) else row['url']
-                    data[suite_name]['tasks'][task_id] = {'name': task_name, 'time': time, 'state': 'todo',
+                    data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time, 'state': 'todo',
                                                             'type': task_type, 'value': value, 'position': position}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
-                    data[suite_name]['tasks'][task_id] = {'name': task_name, 'time': time, 'state': 'todo',
+                    data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time, 'state': 'todo',
                                                             'type': 'text', 'value': {'title': row['title'],
                                                                                       'description': description},
                                                             'position': position}
