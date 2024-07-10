@@ -162,7 +162,8 @@ class ImportTasksService:
             position = len(data[suite_name]['tasks']) + 1
             for _, row in df.iterrows():
                 keys = data[suite_name]['tasks'].keys()
-                task_id = len(keys)
+                numeric_keys = [eval(i) for i in keys]
+                task_id = max(numeric_keys) + 1
                 task_name = str(row["task_name"])
                 minutes = row['duration in minutes']
                 hours = minutes // 60

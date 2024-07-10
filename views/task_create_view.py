@@ -144,7 +144,7 @@ class AddTaskView:
             value = url
         psy_test_pro_config = PsyTestProConfig()
         if not self.editing:
-            psy_test_pro_config.save_task(suite, name, time, task_type, value)
+            psy_test_pro_config.save_task(suite, name, time, task_type, value, self.group)
         else:
             psy_test_pro_config.edit_task(self.task_id, suite, name, time, task_type, value, self.group)
         if create_continously:

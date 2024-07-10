@@ -39,7 +39,6 @@ class ManageTasksView:
         self.delete_dialog.is_open = False
         self.deleting_task = None
 
-
     def display(self, suite_name: str):
         self.suite = suite_name
         self.formatted_suite = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
@@ -195,7 +194,7 @@ class ManageTasksView:
             border_radius=90
         )
         back_button = Button(
-            self.screen.get_width() / 2,
+            self.screen.get_width() / 2 - 75,
             self.screen.get_height() - 60,
             150,
             40,
@@ -203,7 +202,18 @@ class ManageTasksView:
             self.back,
             self.translate_service
         )
+
+        create_task_button = Button(
+            self.screen.get_width() / 2 + 75,
+            self.screen.get_height() - 60,
+            150,
+            40,
+            'createTask',
+            lambda: self.add_task(),
+            self.translate_service,
+        )
         self.buttons['back_button'] = back_button
+        self.buttons['add_task'] = create_task_button
         if len(self.tasks) > 1:
             self.buttons['left_button'] = left_button
             self.buttons['right_button'] = right_button
@@ -295,4 +305,9 @@ class ManageTasksView:
         self.psy_test_pro_config.delete_task(self.suite, self.deleting_task.id, self.active_group)
         self.deleting_task = None
         self.delete_dialog.is_open = False
+        self.refresh = True
+
+    def add_task(self):
+        add_task_view = AddTaskView(self.translate_service, group=self.active_group)
+        add_task_view.add(False, self.suite)
         self.refresh = True

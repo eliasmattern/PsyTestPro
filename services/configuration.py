@@ -125,14 +125,15 @@ class PsyTestProConfig:
         with open(get_resource_path('json/taskConfig.json'), 'r') as file:
             data = json.load(file)
 
-        deleted_position = data[suite]['tasks'][task_id]['position']
         if group_id is None:
+            deleted_position = data[suite]['tasks'][task_id]['position']
             del data[suite]['tasks'][task_id]
             for key in data[suite]['tasks'].keys():
                 position = data[suite]['tasks'][key]['position']
                 if position > deleted_position:
                     data[suite]['tasks'][key]['position'] = position - 1
         else:
+            deleted_position = data[suite]['tasks'][group_id]['tasks'][task_id]['position']
             del data[suite]['tasks'][group_id]['tasks'][task_id]
             for key in data[suite]['tasks'][group_id]['tasks'].keys():
                 position = data[suite]['tasks'][group_id]['tasks'][key]['position']
@@ -143,16 +144,19 @@ class PsyTestProConfig:
         with open(get_resource_path('json/taskConfig.json'), 'w') as file:
             json.dump(data, file, indent=4)
 
-    def save_task(self, suite: str, name: str, time: str, type: str, value: str):
+    def save_task(self, suite: str, name: str, time: str, type: str, value: str, group_id: Union[str, None]):
 
         # Load the JSON data from a file
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             json_data = json.load(file)
 
         # Function to add a new task to a specific object
-        def add_task_to_object(json_data: dict, object_name: str, task_id: str, task_name: str, time: str, type: str,
-                               value: str):
-            tasks = json_data[object_name]['tasks']
+        def add_task_to_object(json_data: dict, suite: str, task_id: str, task_name: str, time: str, type: str,
+                               value: str, group: Union[str, None]):
+            if group is None:
+                tasks = json_data[suite]['tasks']
+            else:
+                tasks = json_data[suite]['tasks'][group]['tasks']
             new_task = {
                 'is_group': False,
                 'name': task_name,
@@ -162,12 +166,17 @@ class PsyTestProConfig:
                 'type': type,
                 'value': value
             }
-            json_data[object_name]['tasks'][task_id] = new_task
+            if group is None:
+                json_data[suite]['tasks'][task_id] = new_task
+            else:
+                json_data[suite]['tasks'][group]['tasks'][task_id] = new_task
 
-        keys = json_data[suite]['tasks'].keys()
-        task_id = len(keys)
+        keys = json_data[suite]['tasks'].keys() if group_id is None \
+            else json_data[suite]['tasks'][group_id]['tasks'].keys()
+        numeric_keys = [eval(i) for i in keys]
+        task_id = max(numeric_keys) + 1
 
-        add_task_to_object(json_data, suite, str(task_id), name, time, type, value)
+        add_task_to_object(json_data, suite, str(task_id), name, time, type, value, group_id)
 
         # Save the updated JSON data back to the file
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
