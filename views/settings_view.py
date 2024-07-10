@@ -28,6 +28,7 @@ class SettingsView:
             'buttonColor': input_boxes['buttonColor'].text,
             'activeButtonColor': input_boxes['activeButtonColor'].text,
             'inactiveButtonColor': input_boxes['inactiveButtonColor'].text,
+            'groupButtonColor': input_boxes['groupButtonColor'].text,
             'successColor': input_boxes['successColor'].text,
             'dangerColor': input_boxes['dangerColor'].text,
             'warningColor': input_boxes['warningColor'].text,
@@ -37,6 +38,7 @@ class SettingsView:
         button_text_color_group = {
             'buttonColor': input_boxes['buttonColor'].text,
             'activeButtonColor': input_boxes['activeButtonColor'].text,
+            'groupButtonColor': input_boxes['groupButtonColor'].text,
             'inactiveButtonColor': input_boxes['inactiveButtonColor'].text,
         }
 
@@ -75,6 +77,7 @@ class SettingsView:
                                                  input_boxes['buttonTextColor'].text,
                                                  input_boxes['activeButtonColor'].text,
                                                  input_boxes['inactiveButtonColor'].text,
+                                                 input_boxes['groupButtonColor'].text,
                                                  input_boxes['successColor'].text,
                                                  input_boxes['dangerColor'].text,
                                                  input_boxes['warningColor'].text,
@@ -109,6 +112,7 @@ class SettingsView:
             input_boxes['activeButtonColor'].text = '#DADDDC'
             input_boxes['inactiveButtonColor'].text = '#646464'
             input_boxes['gridColor'].text = '#C0C0C0'
+            input_boxes['groupButtonColor'].text = '#087F8C'
         elif theme == 'lightMode':
             input_boxes['backgroundColor'].text = '#faf9f9'
             input_boxes['primaryColor'].text = '#000000'
@@ -120,6 +124,7 @@ class SettingsView:
             input_boxes['activeButtonColor'].text = '#232B38'
             input_boxes['inactiveButtonColor'].text = '#646464'
             input_boxes['gridColor'].text = '#232B38'
+            input_boxes['groupButtonColor'].text = '#087F8C'
         for box in input_boxes.values():
             box.is_touched = True
 
@@ -131,7 +136,7 @@ class SettingsView:
         input_boxes = {}
         buttons = {}
         labels = ['backgroundColor', 'primaryColor', 'buttonColor', 'buttonTextColor', 'activeButtonColor',
-                  'inactiveButtonColor', 'successColor', 'dangerColor', 'warningColor', 'gridColor']
+                  'inactiveButtonColor', 'groupButtonColor', 'successColor', 'dangerColor', 'warningColor', 'gridColor']
         spacing = 60
         width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
         x = width // 2
@@ -272,8 +277,8 @@ class SettingsView:
 
         initial_texts = [settings['backgroundColor'], settings['primaryColor'], settings['buttonColor'],
                          settings['buttonTextColor'], settings['activeButtonColor'], settings['inactiveButtonColor'],
-                         settings['successColor'], settings['dangerColor'], settings['warningColor'],
-                         settings['gridColor']]
+                         settings['groupButtonColor'], settings['successColor'], settings['dangerColor'],
+                         settings['warningColor'], settings['gridColor']]
         show_next_task_initial_value = settings['showNextTask']
         show_play_taks_initial_value = settings['showPlayTaskButton']
 

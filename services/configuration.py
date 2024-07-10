@@ -107,6 +107,17 @@ class PsyTestProConfig:
                          task_detail['position'], task_detail['state']))
         return tasks
 
+    def load_task_of_group(self, suite: str, group_id) -> list[Union[Task, TaskGroup]]:
+
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        tasks = []
+        for task_id, task_detail in data[suite]['tasks'][group_id]['tasks'].items():
+            tasks.append(
+                Task(task_id, task_detail['name'], task_detail['time'], task_detail['type'], task_detail['value'],
+                     task_detail['position'], task_detail['state']))
+        return tasks
+
     def delete_task(self, suite: str, task_id: str):
         if suite == 'hab_variable_variable':
             suite = 'hab_variable'
@@ -155,16 +166,22 @@ class PsyTestProConfig:
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
 
-    def edit_task(self, task_id: str, variable, name: str, time: str, type: str, value: str):
+    def edit_task(self, task_id: str, variable, name: str, time: str, type: str, value: str,
+                  group: Union[str, None] = None):
 
         # Load the JSON data from a file
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             json_data = json.load(file)
-
-        json_data[variable]['tasks'][task_id]['time'] = time
-        json_data[variable]['tasks'][task_id]['type'] = type
-        json_data[variable]['tasks'][task_id]['value'] = value
-        json_data[variable]['tasks'][task_id]['name'] = name
+        if not group:
+            json_data[variable]['tasks'][task_id]['time'] = time
+            json_data[variable]['tasks'][task_id]['type'] = type
+            json_data[variable]['tasks'][task_id]['value'] = value
+            json_data[variable]['tasks'][task_id]['name'] = name
+        else:
+            json_data[variable]['tasks'][group]['tasks'][task_id]['time'] = time
+            json_data[variable]['tasks'][group]['tasks'][task_id]['type'] = type
+            json_data[variable]['tasks'][group]['tasks'][task_id]['value'] = value
+            json_data[variable]['tasks'][group]['tasks'][task_id]['name'] = name
         # Save the updated JSON data back to the file
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4)
@@ -203,6 +220,7 @@ class PsyTestProConfig:
                     button_text_color: str,
                     active_button_color: str,
                     inactive_button_color: str,
+                    group_button_color: str,
                     success_color: str,
                     danger_color: str,
                     warning_color: str,
@@ -218,6 +236,7 @@ class PsyTestProConfig:
         settings["buttonTextColor"] = button_text_color
         settings["activeButtonColor"] = active_button_color
         settings["inactiveButtonColor"] = inactive_button_color
+        settings["groupButtonColor"] = group_button_color
         settings["successColor"] = success_color
         settings["dangerColor"] = danger_color
         settings["warningColor"] = warning_color
@@ -236,5 +255,16 @@ class PsyTestProConfig:
             new_tasks[task.id] = {'name': task.name, 'time': task.duration, 'state': task.state, 'type': task.task_type,
                                   'value': task.value, 'position': task.position}
         data[suite]['tasks'] = new_tasks
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
+            json.dump(data, file, indent=4)
+
+    def save_group_task_list(self, suite: str, group_id, tasks: list[Task]):
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        new_tasks = {}
+        for task in tasks:
+            new_tasks[task.id] = {'name': task.name, 'time': task.duration, 'state': task.state, 'type': task.task_type,
+                                  'value': task.value, 'position': task.position}
+        data[suite]['tasks'][group_id]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)

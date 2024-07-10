@@ -1,6 +1,7 @@
 import re
 import sys
 import webbrowser
+from typing import Union
 
 import pygame
 from components import InputBox, Button, TimePicker, CheckBox
@@ -11,8 +12,9 @@ from services import TranslateService, execute_command
 
 
 class AddTaskView:
-    def __init__(self, translate_service: TranslateService, editing=False, task_id: str=None, task_name=None, task_time=None,
-                 task_title=None, task_desc=None, task_command=None, task_url=None, position=None) -> None:
+    def __init__(self, translate_service: TranslateService, editing=False, task_id: str = None, task_name=None,
+                 task_time=None, task_title=None, task_desc=None, task_command=None, task_url=None, position=None,
+                 group: Union[str, None] = None) -> None:
         self.editing = editing
         self.task_id = task_id
         self.task_name = task_name
@@ -21,6 +23,7 @@ class AddTaskView:
         self.task_desc = task_desc
         self.task_command = task_command
         self.task_url = task_url
+        self.group = group
         self.task_position = position
         self.translate_service = translate_service
         self.adding = True
@@ -53,7 +56,8 @@ class AddTaskView:
     def open_time_picker(self):
         self.show_time_picker = True
 
-    def preview(self, command: bool, is_url: bool, command_inputs: list[InputBox], text_screen_inputs: list[InputBox], url_inputs: list[InputBox]):
+    def preview(self, command: bool, is_url: bool, command_inputs: list[InputBox], text_screen_inputs: list[InputBox],
+                url_inputs: list[InputBox]):
         custom_variables = PsyTestProConfig().load_custom_variables()
         participant_info = {
             'participant_id': 'VARIABLE_ID',
@@ -80,11 +84,11 @@ class AddTaskView:
         elif is_url:
             try:
                 url = url_inputs[0].text.format(id=participant_info['participant_id'],
-                                                          suite=participant_info['suite'],
-                                                          startTime=participant_info['start_time'],
-                                                          timestamp=participant_info['timestamp'],
-                                                          scriptCount='',
-                                                          **variables)
+                                                suite=participant_info['suite'],
+                                                startTime=participant_info['start_time'],
+                                                timestamp=participant_info['timestamp'],
+                                                scriptCount='',
+                                                **variables)
                 webbrowser.open(url)
                 self.error = ''
                 self.is_task_working = True
@@ -142,7 +146,7 @@ class AddTaskView:
         if not self.editing:
             psy_test_pro_config.save_task(suite, name, time, task_type, value)
         else:
-            psy_test_pro_config.edit_task(self.task_id, suite, name, time, task_type, value)
+            psy_test_pro_config.edit_task(self.task_id, suite, name, time, task_type, value, self.group)
         if create_continously:
             self.is_task_working = False
             self.error = ''
@@ -292,7 +296,8 @@ class AddTaskView:
             100,
             40,
             'preview',
-            lambda: self.preview(command_check_box.active, url_check_box.active, command_inputs, text_screen_inputs, url_inputs),
+            lambda: self.preview(command_check_box.active, url_check_box.active, command_inputs, text_screen_inputs,
+                                 url_inputs),
             self.translate_service,
         )
 
@@ -331,7 +336,8 @@ class AddTaskView:
                                          self.translate_service)
         url_check_box = CheckBox('url', screen_width / 2, y + 180, url, self.translate_service)
 
-        create_continuously_check_box = CheckBox('createMultipleTasks', x + 320, y + 420, create_continuously, self.translate_service)
+        create_continuously_check_box = CheckBox('createMultipleTasks', x + 320, y + 420, create_continuously,
+                                                 self.translate_service)
         var_font = pygame.font.Font(None, int(20))
 
         variables = ['id', 'suite', 'startTime', 'timestamp', 'scriptCount']

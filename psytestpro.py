@@ -331,9 +331,10 @@ class PsyTestPro:
             elif isinstance(task, TaskGroup):
                 time_delta = task.pause_inbetween
                 time_format = "%H:%M:%S"
+                sorted_group_tasks = sorted(task.tasks, key=lambda task: task.position)
 
                 for i in range(task.loops):
-                    for task_of_group in task.tasks:
+                    for task_of_group in sorted_group_tasks:
                         new_id = task.id + ':' + task_of_group.id + ':' + str(i)
                         tasks.append(new_id)
                         times.append(task_of_group.duration)

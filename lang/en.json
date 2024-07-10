@@ -88,6 +88,7 @@
   "primaryColor": "Primary Color",
   "buttonColor": "Button Color",
   "buttonTextColor": "Button Text Color",
+  "groupButtonColor": "Group Button Color",
   "successColor": "Success Color",
   "dangerColor": "Danger Color",
   "warningColor": "Warning Color",
@@ -142,5 +143,6 @@
   "timestampDescription": "Current time stamp. Format: YYYY.mm.dd hh:mm:ss",
   "scriptCountDescription": "A counter that increments with each execution of the command within a task. (Commands and URL's only)",
   "customVariables": "Custom Variables",
-  "createTaskGroup": "Create Task Group"
+  "createTaskGroup": "Create Task Group",
+  "manageTasksForGroup": "Manage tasks for group: "
 }

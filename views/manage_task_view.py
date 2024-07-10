@@ -18,6 +18,7 @@ class ManageTasksView:
         self.settings = self.psy_test_pro_config.get_settings()
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         self.background_color = pygame.Color(self.settings["backgroundColor"])
+        self.group_button_color = pygame.Color(self.settings["groupButtonColor"])
         self.tasks: list[list[Task]] = []
         self.rects = []
         self.buttons: dict[str, Button] = {}
@@ -29,10 +30,13 @@ class ManageTasksView:
         self.font = pygame.font.Font(None, 24)
         self.title_font = pygame.font.Font(None, 30)
         self.task_length = 0
+        self.active_group = None
+        self.title = ''
 
     def display(self, suite_name: str):
         self.suite = suite_name
         self.formatted_suite = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
+        self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
         tasks: list[Task] = self.psy_test_pro_config.load_task_of_suite(suite_name)
         sorted_tasks = sorted(tasks, key=lambda task: task.position)
         self.task_length = len(sorted_tasks)
@@ -40,7 +44,7 @@ class ManageTasksView:
         self.tasks = current_tasks
         self.create_buttons()
         while self.is_running:
-            if self.refresh:
+            if self.refresh and self.active_group is None:
                 self.refresh = False
                 tasks = self.psy_test_pro_config.load_task_of_suite(suite_name)
                 sorted_tasks = sorted(tasks, key=lambda task: task.position)
@@ -48,6 +52,15 @@ class ManageTasksView:
                 current_tasks = list(self.split_list(sorted_tasks, 24))
                 self.tasks = current_tasks
                 self.create_buttons()
+            elif self.refresh and self.active_group is not None:
+                self.refresh = False
+                tasks = self.psy_test_pro_config.load_task_of_group(suite_name, self.active_group)
+                sorted_tasks = sorted(tasks, key=lambda task: task.position)
+                self.task_length = len(sorted_tasks)
+                current_tasks = list(self.split_list(sorted_tasks, 24))
+                self.tasks = current_tasks
+                self.create_buttons()
+                pass
             self.draw()
             self.handle_events()
         self.is_running = True
@@ -67,8 +80,7 @@ class ManageTasksView:
             page_rect.center = (self.screen.get_width() / 2, self.screen.get_height() / 8 + 8 * 80 + 12.5)
             self.screen.blit(page_surface, page_rect)
 
-        title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
-        title_surface = self.title_font.render(title, True, self.primary_color)
+        title_surface = self.title_font.render(self.title, True, self.primary_color)
         title_rect = title_surface.get_rect()
         title_rect.center = (
             self.screen.get_width() / 2, self.screen.get_height() / 8 - (self.title_font.get_height() * 3))
@@ -98,20 +110,25 @@ class ManageTasksView:
         if not len(self.tasks) == 0:
             for task in self.tasks[self.page]:
                 task_x, task_y = x + column * column_spacing, y + row * row_spacing
+                button_color = self.primary_color if isinstance(task, Task) else self.group_button_color
+                active_color = pygame.Color(button_color.r + 10, button_color.g + 10, button_color.b + 10)
                 button = Button(
                     task_x + 25,
                     task_y,
                     200,
                     40,
                     task.name,
-                    lambda t=task: self.edit_task(t)
+                    lambda t=task: self.edit_task(t),
+                    color=button_color,
+                    active_button_color=active_color
                 )
+
                 input_box = InputBox(task_x - 125, task_y, 40, 40, '', initial_text=str(task.position),
                                      is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
                                      on_deselect=lambda pos=task.position, t=task.id, r=row: self.rearrange(str(pos),
-                                                                                                               t + str(
-                                                                                                                   r),
-                                                                                                               t))
+                                                                                                            t + str(
+                                                                                                                r),
+                                                                                                            t))
                 rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
 
                 self.buttons[task.id + str(row)] = button
@@ -176,12 +193,19 @@ class ManageTasksView:
                         task.position += 1
             else:
                 task.position = new_pos
-
-        self.psy_test_pro_config.save_task_list(self.suite, tasks)
+        if self.active_group is None:
+            self.psy_test_pro_config.save_task_list(self.suite, tasks)
+        else:
+            self.psy_test_pro_config.save_group_task_list(self.suite, self.active_group, tasks)
         self.refresh = True
 
     def back(self):
-        self.is_running = False
+        if self.active_group is None:
+            self.is_running = False
+        else:
+            self.active_group = None
+            self.refresh = True
+            self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
 
     def split_list(self, input_list: list, chunk_size: int):
         for i in range(0, len(input_list), chunk_size):
@@ -196,6 +220,9 @@ class ManageTasksView:
 
     def edit_task(self, task: Union[Task, TaskGroup]):
         if isinstance(task, TaskGroup):
+            self.active_group = task.id
+            self.refresh = True
+            self.title = self.translate_service.get_translation('manageTasksForGroup') + task.name
             return
         task_name = task.name
         task_time = task.duration
@@ -217,7 +244,8 @@ class ManageTasksView:
             task_url = None
 
         add_task_view = AddTaskView(self.translate_service, editing=True, task_name=task_name, task_time=task_time,
-                                    task_id=task.id, task_title=task_title, task_desc=task_desc, task_command=task_command,
-                                    task_url=task_url, position=task_position)
+                                    task_id=task.id, task_title=task_title, task_desc=task_desc,
+                                    task_command=task_command,
+                                    task_url=task_url, position=task_position, group=self.active_group)
         add_task_view.add(False, self.suite)
         self.refresh = True
