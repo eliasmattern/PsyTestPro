@@ -135,7 +135,7 @@ class ImportTasksService:
     def __init__(self, translate_service: TranslateService):
         self.translate_service = translate_service
 
-    def save_tasks(self, df, suite_name, show_preview):
+    def save_tasks(self, df, suite_name, show_preview, group_id):
         error = ''
         if show_preview:
             for _, row in df.iterrows():
@@ -159,11 +159,16 @@ class ImportTasksService:
         with open(get_resource_path('./json/taskConfig.json'), 'r') as file:
             data = json.load(file)
         if suite_name in data.keys():
-            position = len(data[suite_name]['tasks']) + 1
             for _, row in df.iterrows():
-                keys = data[suite_name]['tasks'].keys()
+                if group_id is None:
+                    keys = data[suite_name]['tasks'].keys()
+                    position = len(data[suite_name]['tasks']) + 1
+                else:
+                    keys = data[suite_name]['tasks'][group_id]['tasks'].keys()
+                    position = len(data[suite_name]['tasks'][group_id]['tasks']) + 1
+
                 numeric_keys = [eval(i) for i in keys]
-                task_id = max(numeric_keys) + 1
+                task_id = str(max(numeric_keys) + 1)
                 task_name = str(row["task_name"])
                 minutes = row['duration in minutes']
                 hours = minutes // 60
@@ -172,14 +177,32 @@ class ImportTasksService:
                 if not isinstance(row['command'], float) or not isinstance(row['url'], float):
                     task_type = 'command' if not isinstance(row['command'], float) else 'url'
                     value = row['command'] if not isinstance(row['command'], float) else row['url']
-                    data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time, 'state': 'todo',
-                                                            'type': task_type, 'value': value, 'position': position}
+                    if group_id is None:
+                        data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time,
+                                                              'state': 'todo', 'type': task_type, 'value': value,
+                                                              'position': position}
+                    else:
+                        data[suite_name]['tasks'][group_id]['tasks'][task_id] = {'is_group': False, 'name': task_name,
+                                                                                 'time': time,
+                                                                                 'state': 'todo', 'type': task_type,
+                                                                                 'value': value,
+                                                                                 'position': position}
                 elif not isinstance(row['title'], float):
                     description = row['description'] if not isinstance(row['description'], float) else ''
-                    data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time, 'state': 'todo',
-                                                            'type': 'text', 'value': {'title': row['title'],
-                                                                                      'description': description},
-                                                            'position': position}
+                    if group_id is None:
+                        data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time,
+                                                              'state': 'todo',
+                                                              'type': 'text', 'value': {'title': row['title'],
+                                                                                        'description': description},
+                                                              'position': position}
+                    else:
+                        data[suite_name]['tasks'][group_id]['tasks'][task_id] = {'is_group': False, 'name': task_name,
+                                                                                 'time': time,
+                                                                                 'state': 'todo',
+                                                                                 'type': 'text',
+                                                                                 'value': {'title': row['title'],
+                                                                                           'description': description},
+                                                                                 'position': position}
                 position += 1
         else:
             return False, 'importTasksFailed'
@@ -251,17 +274,16 @@ class ImportTasksService:
                 print(e)
                 return False
 
-    def import_tasks(self, suite_name: str, file_path: str, show_preview: bool):
+    def import_tasks(self, suite_name: str, file_path: str, show_preview: bool, group_id=None):
         try:
             file_name, file_extension = os.path.splitext(file_path)
-            print(file_path)
             if file_extension == '.csv':
                 df = pd.read_csv(file_path)
-                result = self.save_tasks(df, suite_name, show_preview)
+                result = self.save_tasks(df, suite_name, show_preview, group_id)
                 return result
             elif file_extension == '.xlsx':
                 df = pd.read_excel(file_path)
-                result = self.save_tasks(df, suite_name, show_preview)
+                result = self.save_tasks(df, suite_name, show_preview, group_id)
                 return result
             else:
                 print('Wrong file format. Only .csv and .xlsx files are supported.')

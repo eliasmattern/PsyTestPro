@@ -1,11 +1,14 @@
 import sys
+import tkinter as tk
+import tkinter.filedialog
+import webbrowser
 from typing import Union
 
 import pygame
 
 from app_types import Task, TaskTypeEnum, TaskGroup
 from components import Button, InputBox, IconButton, QuestionDialog
-from services import PsyTestProConfig, TranslateService
+from services import PsyTestProConfig, TranslateService, ImportTasksService, get_resource_path
 from .task_create_view import AddTaskView
 
 
@@ -129,7 +132,7 @@ class ManageTasksView:
                 task_x, task_y = x + column * column_spacing, y + row * row_spacing
                 button_color = self.primary_color if isinstance(task, Task) else self.group_button_color
                 active_color = pygame.Color(min(button_color.r + 10, 255), min(button_color.g + 10, 255),
-                                                 min(button_color.b + 10, 255)) if isinstance(task, TaskGroup) else None
+                                            min(button_color.b + 10, 255)) if isinstance(task, TaskGroup) else None
                 button = Button(
                     task_x,
                     task_y,
@@ -160,9 +163,9 @@ class ManageTasksView:
                 input_box = InputBox(task_x - 130, task_y, 40, 40, '', initial_text=str(task.position),
                                      is_numeric=True, icon=False, minVal=1, maxVal=self.task_length,
                                      on_deselect=lambda pos=task.position, t=task.id, r=row: self.rearrange(str(pos),
-                                                                                                              t + str(
-                                                                                                                  r),
-                                                                                                              t))
+                                                                                                            t + str(
+                                                                                                                r),
+                                                                                                            t))
                 rect = pygame.Rect(task_x - 165, task_y - 10, 330, 60)
 
                 self.buttons[task.id + str(row)] = button
@@ -194,7 +197,7 @@ class ManageTasksView:
             border_radius=90
         )
         back_button = Button(
-            self.screen.get_width() / 2 - 75,
+            self.screen.get_width() / 2 - 200,
             self.screen.get_height() - 60,
             150,
             40,
@@ -204,7 +207,7 @@ class ManageTasksView:
         )
 
         create_task_button = Button(
-            self.screen.get_width() / 2 + 75,
+            self.screen.get_width() / 2,
             self.screen.get_height() - 60,
             150,
             40,
@@ -212,8 +215,31 @@ class ManageTasksView:
             lambda: self.add_task(),
             self.translate_service,
         )
+
+        import_task_button = Button(
+            self.screen.get_width() / 2 + 200,
+            self.screen.get_height() - 60,
+            150,
+            40,
+            'importTasks',
+            lambda: self.import_task(self.suite, True),
+            self.translate_service,
+        )
+
+        get_template_button = Button(
+            self.screen.get_width() - 150,
+            self.screen.get_height() / 8 - (self.title_font.get_height() * 3) -20,
+            250,
+            40,
+            'getImportTemplate',
+            lambda: self.download_template(),
+            self.translate_service,
+        )
+
         self.buttons['back_button'] = back_button
         self.buttons['add_task'] = create_task_button
+        self.buttons['import_tasks'] = import_task_button
+        self.buttons['download_template'] = get_template_button
         if len(self.tasks) > 1:
             self.buttons['left_button'] = left_button
             self.buttons['right_button'] = right_button
@@ -251,6 +277,7 @@ class ManageTasksView:
         else:
             self.active_group = None
             self.refresh = True
+            self.page = 0
             self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
 
     def split_list(self, input_list: list, chunk_size: int):
@@ -311,3 +338,34 @@ class ManageTasksView:
         add_task_view = AddTaskView(self.translate_service, group=self.active_group)
         add_task_view.add(False, self.suite)
         self.refresh = True
+
+    def import_task(self, suite_name: str, show_preview: bool):
+        try:
+            if sys.platform == "darwin":
+                filepath = tk.filedialog.askopenfilename(initialdir=get_resource_path('./'),
+                                                         title=self.translate_service.get_translation('selectFile'))
+            else:
+                filepath = tk.filedialog.askopenfilename(
+                    initialdir=get_resource_path('./'),
+                    title=self.translate_service.get_translation('selectFile'),
+                    filetypes=(('Excel files', '*.xlsx;*.xls'), ('CSV files', '*.csv'), ('All files', '*.*'))
+                )
+            if filepath:
+                import_tasks_service = ImportTasksService(self.translate_service)
+                result = import_tasks_service.import_tasks(suite_name, filepath, show_preview, self.active_group)
+                self.success_msg = None
+                self.error_msg = None
+                if result[0]:
+                    self.success_msg = self.translate_service.get_translation(result[1])
+                else:
+                    self.error_msg = self.translate_service.get_translation(result[1])
+                    if len(result) == 3:
+                        self.error_msg = ' '.join((self.error_msg, result[2]))
+
+        except Exception as e:
+            print(f'An error occurred: {e}')
+
+        self.refresh = True
+
+    def download_template(self):
+        webbrowser.open('https://github.com/eliasmattern/PsyTestPro/raw/main/information/taskImportTemplate.xlsx')
