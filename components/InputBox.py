@@ -9,6 +9,7 @@ from services import PsyTestProConfig, get_resource_path
 import os
 import sys
 
+
 class InputBox:
     def __init__(self, x: float, y: float, width: int, height: int, translation_key: str, translate_service=None,
                  info='',
@@ -63,6 +64,7 @@ class InputBox:
         self.started_moving_r = False
         self.started_moving_l = False
         self.delay = None
+
         def resource_path(relative_path):
             """ Get absolute path to resource, works for dev and for PyInstaller """
             try:
@@ -73,7 +75,9 @@ class InputBox:
 
             return os.path.join(base_path, relative_path)
 
-        icon_path = resource_path(get_resource_path("./img/copyIcon.png"))
+        path = "./img/dark_copy_icon.png" if sum([self.color.g, self.color.r, self.color.b]) > 382 \
+            else "./img/light_copy_icon.png"
+        icon_path = resource_path(get_resource_path(path))
 
         self.image = pygame.image.load(icon_path)
         self.posX = x
