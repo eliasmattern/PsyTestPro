@@ -23,7 +23,6 @@ class ManageTasksView:
         self.primary_color = pygame.Color(self.settings["primaryColor"])
         self.background_color = pygame.Color(self.settings["backgroundColor"])
         self.group_button_color = pygame.Color(self.settings["groupButtonColor"])
-        self.danger_color = pygame.Color(self.settings["dangerColor"])
         self.tasks: list[list[Task]] = []
         self.rects = []
         self.buttons: dict[str, Button] = {}
@@ -144,8 +143,6 @@ class ManageTasksView:
                     color=button_color,
                     active_button_color=active_color
                 )
-                icon_active_color = pygame.Color(min(self.danger_color.r + 10, 255), min(self.danger_color.g + 10, 255),
-                                                 min(self.danger_color.b + 10, 255))
 
                 icon_button = IconButton(
                     task_x + 130,
@@ -157,8 +154,6 @@ class ManageTasksView:
                     'img/dark_trash.png' if sum([self.primary_color.g, self.primary_color.r,
                                                  self.primary_color.b]) > 382 else 'img/light_trash.png',
                     lambda t=task: self.delete_task(t),
-                    color=self.danger_color,
-                    active_button_color=icon_active_color
                 )
 
                 input_box = InputBox(task_x - 130, task_y, 40, 40, '', initial_text=str(task.position),
