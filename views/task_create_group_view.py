@@ -21,7 +21,7 @@ class CreateTaskGroupView:
         self.buttons: dict[str, Button] = {}
         self.input_boxes: dict[str, InputBox] = {}
         self.running = True
-        self.timepicker = TimePicker(300, 200, 'timeDuration', self.translate_service, action_key='save')
+        self.timepicker = TimePicker(300, 200, 'pauseBetweenLoops', self.translate_service, action_key='save')
         self.timepicker.is_open = False
         if group:
             time = str(group.pause_inbetween).split(':')
