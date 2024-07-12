@@ -168,7 +168,7 @@ class ImportTasksService:
                     position = len(data[suite_name]['tasks'][group_id]['tasks']) + 1
 
                 numeric_keys = [eval(i) for i in keys]
-                task_id = str(max(numeric_keys) + 1)
+                task_id = str(max(numeric_keys) + 1) if len(numeric_keys) > 0 else '0'
                 task_name = str(row["task_name"])
                 minutes = row['duration in minutes']
                 hours = minutes // 60
