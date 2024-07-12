@@ -9,7 +9,7 @@ class TaskTypeEnum(Enum):
 
 
 class Task:
-    def __init__(self, id, name: str, duration: str, task_type: TaskTypeEnum, value: Union[dict[str, str], str], position: int,
+    def __init__(self, id: str, name: str, duration: str, task_type: TaskTypeEnum, value: Union[dict[str, str], str], position: int,
                  state: str = 'todo'):
         self.__id = id
         self.__name = name

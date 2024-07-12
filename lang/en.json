@@ -39,6 +39,7 @@
   "suiteName": "Suite name",
   "deleteSuiteMsg": "Do you want to delete this suite?",
   "deleteTaskMsg": "Do you want to delete this task?: ",
+  "deleteGroupMsg": "Do you want to delete this group?: ",
   "delete": "Delete",
   "deleteMultipleExperimentMsg": "This suite has different tasks for different times of day!\nDo you want to delete them all? ",
   "createMultipleSuites": "Create Multiple Suites",
@@ -144,5 +145,16 @@
   "scriptCountDescription": "A counter that increments with each execution of the command within a task. (Commands and URL's only)",
   "customVariables": "Custom Variables",
   "createTaskGroup": "Create Task Group",
-  "manageTasksForGroup": "Manage tasks for group: "
+  "manageTasksForGroup": "Manage tasks for group: ",
+  "group_name": "Group name",
+  "loops": "Loops",
+  "pauseBetweenLoops": "Pause between loops",
+  "unsavedChanges": "You have unsaved changes!",
+  "askForSave": "Are you sure you want to leave?",
+  "warning": "Warning",
+  "doNotSave": "Don't save",
+  "cancel": "Cancel",
+  "addGroup": "Add group",
+  "editGroup": "Edit group",
+  "group": "Group"
 }

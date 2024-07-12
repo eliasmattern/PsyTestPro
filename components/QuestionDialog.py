@@ -6,7 +6,7 @@ from services import PsyTestProConfig, TranslateService
 
 class QuestionDialog:
     def __init__(self, width: int, height: int, window_key: str, title_key: str, desc_key: str,
-                 translate_service: TranslateService, action=None, action_key='', info=''):
+                 translate_service: TranslateService, action=None, action_key='', info='', cancel_key='back'):
         screen_width, screen_height = pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()
         self.window_key, self.title_key, self.desc_key, self.info = window_key, title_key, desc_key, info
         self.translate_service = translate_service
@@ -31,7 +31,7 @@ class QuestionDialog:
                                     self.action_key, lambda: self.execute_action(),
                                     translate_service=self.translate_service)
         self.close_button = Button(self.window.x + self.width - 170, self.window.y + self.height - 35, 100, 25,
-                                   'back', lambda: self.close(),
+                                   cancel_key, lambda: self.close(),
                                    translate_service=self.translate_service)
 
     def open(self):

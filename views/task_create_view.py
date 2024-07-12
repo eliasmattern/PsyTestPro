@@ -4,8 +4,8 @@ import webbrowser
 from typing import Union
 
 import pygame
+
 from components import InputBox, Button, TimePicker, CheckBox
-from events import LANGUAGE_EVENT
 from lib import text_screen
 from services import PsyTestProConfig
 from services import TranslateService, execute_command
@@ -14,7 +14,7 @@ from services import TranslateService, execute_command
 class AddTaskView:
     def __init__(self, translate_service: TranslateService, editing=False, task_id: str = None, task_name=None,
                  task_time=None, task_title=None, task_desc=None, task_command=None, task_url=None, position=None,
-                 group: Union[str, None] = None) -> None:
+                 group: Union[str, None] = None, new_group=False) -> None:
         self.editing = editing
         self.task_id = task_id
         self.task_name = task_name
@@ -37,6 +37,8 @@ class AddTaskView:
         if self.task_time:
             self.timepicker.set_time(self.task_time)
         self.show_time_picker = False
+        self.new_group = new_group
+        self.new_tasks = []
 
     def validate_task_inputs(self, input_boxes: list[InputBox], time_input: str, command_inputs: list[InputBox],
                              text_screen_inputs: list[InputBox], url_inputs: list[InputBox], is_command: bool,
@@ -143,7 +145,9 @@ class AddTaskView:
             task_type = 'url'
             value = url
         psy_test_pro_config = PsyTestProConfig()
-        if not self.editing:
+        if self.new_group:
+            self.new_tasks.append((name, time, task_type, value))
+        elif not self.editing:
             psy_test_pro_config.save_task(suite, name, time, task_type, value, self.group)
         else:
             psy_test_pro_config.edit_task(self.task_id, suite, name, time, task_type, value, self.group)
@@ -543,3 +547,6 @@ class AddTaskView:
                 self.timepicker.is_open = True
 
             pygame.display.flip()  # Flip the display to update the screen
+
+        if self.new_group:
+            return self.new_tasks

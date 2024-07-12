@@ -2,8 +2,8 @@ import sys
 import pygame
 from components import Button
 from services import PsyTestProConfig
+from .manage_task_view import ManageTasksView
 from .task_create_view import AddTaskView
-from .task_manual_import_view import TaskManualImportView
 from services import TranslateService
 
 
@@ -16,9 +16,10 @@ class TaskConfig:
         self.error = ''
         self.translate_service = translate_service
         self.add_task = AddTaskView(self.translate_service)
-        self.task_manual_import_view = TaskManualImportView(self.translate_service, self.add_task)
         self.psy_test_pro_config = PsyTestProConfig()
         self.settings = self.psy_test_pro_config.get_settings()
+        self.manage_tasks_view = ManageTasksView(translate_service)
+
 
     def backToConfig(self):
         self.running = False
@@ -76,10 +77,7 @@ class TaskConfig:
                         400,
                         40,
                         suite.split('_')[0],
-                        lambda exp=suite: self.task_manual_import_view.show(
-                            False,
-                            exp
-                        ),
+                        lambda suite_name=suite: self.manage_tasks_view.display(suite_name)
                     )
                     buttons.append(exp_button)
                     spacing += 60

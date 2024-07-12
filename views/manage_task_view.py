@@ -9,6 +9,7 @@ import pygame
 from app_types import Task, TaskTypeEnum, TaskGroup
 from components import Button, InputBox, IconButton, QuestionDialog
 from services import PsyTestProConfig, TranslateService, ImportTasksService, get_resource_path
+from .task_create_group_view import CreateTaskGroupView
 from .task_create_view import AddTaskView
 
 
@@ -197,7 +198,7 @@ class ManageTasksView:
             border_radius=90
         )
         back_button = Button(
-            self.screen.get_width() / 2 - 200,
+            self.screen.get_width() / 2 - 300,
             self.screen.get_height() - 60,
             150,
             40,
@@ -207,7 +208,7 @@ class ManageTasksView:
         )
 
         create_task_button = Button(
-            self.screen.get_width() / 2,
+            self.screen.get_width() / 2 -100,
             self.screen.get_height() - 60,
             150,
             40,
@@ -217,12 +218,22 @@ class ManageTasksView:
         )
 
         import_task_button = Button(
-            self.screen.get_width() / 2 + 200,
+            self.screen.get_width() / 2 + 300,
             self.screen.get_height() - 60,
             150,
             40,
             'importTasks',
             lambda: self.import_task(self.suite, True),
+            self.translate_service,
+        )
+
+        create_group_button = Button(
+            self.screen.get_width() / 2 + 100,
+            self.screen.get_height() - 60,
+            150,
+            40,
+            'addGroup' if self.active_group is None else 'editGroup',
+            lambda: self.open_creat_group_view(),
             self.translate_service,
         )
 
@@ -237,6 +248,7 @@ class ManageTasksView:
         )
 
         self.buttons['back_button'] = back_button
+        self.buttons['create_group_button'] = create_group_button
         self.buttons['add_task'] = create_task_button
         self.buttons['import_tasks'] = import_task_button
         self.buttons['download_template'] = get_template_button
@@ -369,3 +381,13 @@ class ManageTasksView:
 
     def download_template(self):
         webbrowser.open('https://github.com/eliasmattern/PsyTestPro/raw/main/information/taskImportTemplate.xlsx')
+
+    def open_creat_group_view(self):
+        if self.active_group is None:
+            CreateTaskGroupView(self.screen, self.suite, self.translate_service).show()
+        else:
+            group = self.psy_test_pro_config.load_group(self.suite, self.active_group)
+            deleted = CreateTaskGroupView(self.screen, self.suite, self.translate_service, edit=True, group=group).show()
+            if deleted:
+                self.active_group = None
+        self.refresh = True

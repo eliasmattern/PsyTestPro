@@ -11,7 +11,7 @@ from pygame.locals import *
 from datetime import datetime, timedelta
 from app_types import Task, TaskGroup
 from components import InputBox, Button
-from views import CreateScheduleDisplay, SuiteConfig, SettingsView, CreateTaskGroupView
+from views import CreateScheduleDisplay, SuiteConfig, SettingsView
 import re
 from services import TranslateService, LanguageConfiguration, PsyTestProConfig, get_resource_path
 import pandas as pd
@@ -252,7 +252,6 @@ class PsyTestPro:
 
         y = self.height // 2 - 200
         x = self.width // 2
-        # CreateTaskGroupView(self.screen, self.translateService).show('group_schedule')
 
         font = pygame.font.Font(None, int(64))
         text_surface = font.render(self.translateService.get_translation('psytestpro'), True, self.primary_color)

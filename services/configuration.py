@@ -118,7 +118,7 @@ class PsyTestProConfig:
                      task_detail['position'], task_detail['state']))
         return tasks
 
-    def delete_task(self, suite: str, task_id: str, group_id: str):
+    def delete_task(self, suite: str, task_id: str, group_id: str = None):
         if suite == 'hab_variable_variable':
             suite = 'hab_variable'
 
@@ -174,7 +174,7 @@ class PsyTestProConfig:
         keys = json_data[suite]['tasks'].keys() if group_id is None \
             else json_data[suite]['tasks'][group_id]['tasks'].keys()
         numeric_keys = [eval(i) for i in keys]
-        task_id = max(numeric_keys) + 1
+        task_id = max(numeric_keys) + 1 if len(numeric_keys) > 0 else 0
 
         add_task_to_object(json_data, suite, str(task_id), name, time, type, value, group_id)
 
@@ -283,7 +283,6 @@ class PsyTestProConfig:
                                       "loops": task.loops,
                                       "tasks": group_tasks,
                                       "position": task.position}
-        print(new_tasks)
         data[suite]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)
@@ -298,3 +297,64 @@ class PsyTestProConfig:
         data[suite]['tasks'][group_id]['tasks'] = new_tasks
         with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)
+
+    def create_group(self, suite: str, group_name: str, loops: int, pause_between_loops: str, tasks: list[Task]):
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
+            json_data = json.load(file)
+
+        # Function to add a new task to a specific object
+        def add_task_to_object(json_data: dict, suite: str, group_id: str, group_name: str, loops: int,
+                               pause_between_loops: str, task_list: list[Task]):
+            tasks = json_data[suite]['tasks']
+            new_task_list = {}
+            for i, task in enumerate(task_list):
+                new_task_list[str(i)] = {'is_group': False, 'name': task.name, 'time': task.duration,
+                                         'state': task.state, 'type': task.task_type, 'value': task.value,
+                                         'position': task.position}
+            new_task = {
+                "is_group": True,
+                "name": group_name,
+                "pause": pause_between_loops,
+                "loops": loops,
+                "tasks": new_task_list,
+                "position": len(tasks) + 1
+            }
+            json_data[suite]['tasks'][group_id] = new_task
+
+        keys = json_data[suite]['tasks'].keys()
+        numeric_keys = [eval(i) for i in keys]
+        task_id = max(numeric_keys) + 1 if len(numeric_keys) > 0 else 0
+
+        add_task_to_object(json_data, suite, str(task_id), group_name, loops, pause_between_loops, tasks)
+
+        # Save the updated JSON data back to the file
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
+            json.dump(json_data, file, indent=4)
+
+    def edit_group(self, suite: str, group_id: str, group_name: str, loops: int, pause: str, tasks: list[Task]):
+
+        # Load the JSON data from a file
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
+            json_data = json.load(file)
+
+        new_task_list = {}
+        for task in tasks:
+            new_task_list[task.id] = {'is_group': False, 'name': task.name, 'time': task.duration,
+                                      'state': task.state, 'type': task.task_type, 'value': task.value,
+                                      'position': task.position}
+
+        json_data[suite]['tasks'][group_id]['name'] = group_name
+        json_data[suite]['tasks'][group_id]['pause'] = pause
+        json_data[suite]['tasks'][group_id]['loops'] = loops
+        json_data[suite]['tasks'][group_id]['tasks'] = new_task_list
+
+        # Save the updated JSON data back to the file
+        with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
+            json.dump(json_data, file, indent=4)
+
+    def load_group(self, suite, active_group) -> TaskGroup:
+        with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
+            json_data = json.load(file)
+        task = json_data[suite]['tasks'][active_group]
+        return TaskGroup(active_group, task['name'], task['pause'], task['loops'],
+                  task['tasks'], task['position'])
