@@ -179,7 +179,6 @@ class AddExistingTaskView:
         self.refresh = True
 
     def add_task(self):
-        print(self.suite)
         if isinstance(self.current_task, Task):
             name, time, task_type, value = (
                 self.current_task.name, self.current_task.duration, self.current_task.task_type,
