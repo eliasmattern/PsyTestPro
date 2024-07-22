@@ -9,6 +9,7 @@ from components import Button
 from services import CSVToJSONConverter, JSONToCSVConverter, get_resource_path
 from services import PsyTestProConfig
 from services import TranslateService
+from .manage_task_view import ManageTasksView
 from .suite_create_view import CreateSuiteView
 from .suite_delete_view import DeleteSuiteView
 from .task_config_view import TaskConfig
@@ -24,6 +25,8 @@ class SuiteConfig:
         self.settings = self.psy_test_pro_config.get_settings()
         self.running = True
         self.config_button_running = True
+        self.manage_tasks_view = ManageTasksView(translate_service)
+
 
     def back_to_psy_test_pro(self):
         self.running = False
@@ -241,7 +244,7 @@ class SuiteConfig:
             400,
             40,
             'configureTasks',
-            lambda: print('create function to create general tasks'),
+            lambda: self.manage_tasks_view.display('globalTasks'),
             self.translate_service,
         )
         y += spacing

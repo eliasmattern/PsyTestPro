@@ -45,7 +45,9 @@ class ManageTasksView:
     def display(self, suite_name: str):
         self.suite = suite_name
         self.formatted_suite = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
-        self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
+        self.title = self.translate_service.get_translation(
+            'manageTasksFor') + self.formatted_suite if self.formatted_suite != 'globalTasks' else self.translate_service.get_translation(
+            'manageTasks')
         tasks: list[Task] = self.psy_test_pro_config.load_task_of_suite(suite_name)
         sorted_tasks = sorted(tasks, key=lambda task: task.position)
         self.task_length = len(sorted_tasks)
@@ -203,7 +205,7 @@ class ManageTasksView:
         )
 
         create_task_button = Button(
-            self.screen.get_width() / 2 -100,
+            self.screen.get_width() / 2 - 100,
             self.screen.get_height() - 60,
             150,
             40,
@@ -234,7 +236,7 @@ class ManageTasksView:
 
         get_template_button = Button(
             self.screen.get_width() - 150,
-            self.screen.get_height() / 8 - (self.title_font.get_height() * 3) -20,
+            self.screen.get_height() / 8 - (self.title_font.get_height() * 3) - 20,
             250,
             40,
             'getImportTemplate',
@@ -285,7 +287,9 @@ class ManageTasksView:
             self.active_group = None
             self.refresh = True
             self.page = 0
-            self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
+            self.title = self.translate_service.get_translation(
+                'manageTasksFor') + self.formatted_suite if self.formatted_suite != 'globalTasks' else self.translate_service.get_translation(
+                'manageTasks')
 
     def split_list(self, input_list: list, chunk_size: int):
         for i in range(0, len(input_list), chunk_size):
@@ -382,7 +386,8 @@ class ManageTasksView:
             CreateTaskGroupView(self.screen, self.suite, self.translate_service).show()
         else:
             group = self.psy_test_pro_config.load_group(self.suite, self.active_group)
-            deleted = CreateTaskGroupView(self.screen, self.suite, self.translate_service, edit=True, group=group).show()
+            deleted = CreateTaskGroupView(self.screen, self.suite, self.translate_service, edit=True,
+                                          group=group).show()
             if deleted:
                 self.active_group = None
         self.refresh = True
