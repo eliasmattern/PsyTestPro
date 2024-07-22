@@ -156,5 +156,8 @@
   "cancel": "Cancel",
   "addGroup": "Add group",
   "editGroup": "Edit group",
-  "group": "Group"
+  "group": "Group",
+  "add": "Add",
+  "addTask": "Add task",
+  "addTaskMsg": "Add task to suite"
 }
