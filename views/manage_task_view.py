@@ -9,6 +9,7 @@ import pygame
 from app_types import Task, TaskTypeEnum, TaskGroup
 from components import Button, InputBox, IconButton, QuestionDialog
 from services import PsyTestProConfig, TranslateService, ImportTasksService, get_resource_path
+from .add_existing_task_view import AddExistingTaskView
 from .task_create_group_view import CreateTaskGroupView
 from .task_create_view import AddTaskView
 
@@ -41,11 +42,15 @@ class ManageTasksView:
                                             lambda: self.delete_action(), action_key='delete')
         self.delete_dialog.is_open = False
         self.deleting_task = None
+        self.add_existing_task_view = AddExistingTaskView(self.translate_service)
+
 
     def display(self, suite_name: str):
         self.suite = suite_name
         self.formatted_suite = suite_name.replace('_schedule', '').replace('_list', '').replace('_', ' ')
-        self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
+        self.title = self.translate_service.get_translation(
+            'manageTasksFor') + self.formatted_suite if self.formatted_suite != 'globalTasks' else self.translate_service.get_translation(
+            'manageTasks')
         tasks: list[Task] = self.psy_test_pro_config.load_task_of_suite(suite_name)
         sorted_tasks = sorted(tasks, key=lambda task: task.position)
         self.task_length = len(sorted_tasks)
@@ -193,8 +198,8 @@ class ManageTasksView:
             border_radius=90
         )
         back_button = Button(
-            self.screen.get_width() / 2 - 300,
-            self.screen.get_height() - 60,
+            self.screen.get_width() / 2,
+            self.screen.get_height() - 50,
             150,
             40,
             'back',
@@ -202,9 +207,19 @@ class ManageTasksView:
             self.translate_service
         )
 
+        add_existing_task = Button(
+            self.screen.get_width() / 2 - 300,
+            self.screen.get_height() - 105,
+            150,
+            40,
+            'addExistingTask',
+            lambda: self.open_add_existing_tasks_view(),
+            self.translate_service
+        )
+
         create_task_button = Button(
-            self.screen.get_width() / 2 -100,
-            self.screen.get_height() - 60,
+            self.screen.get_width() / 2 - 100,
+            self.screen.get_height() - 105,
             150,
             40,
             'createTask',
@@ -214,7 +229,7 @@ class ManageTasksView:
 
         import_task_button = Button(
             self.screen.get_width() / 2 + 300,
-            self.screen.get_height() - 60,
+            self.screen.get_height() - 105,
             150,
             40,
             'importTasks',
@@ -224,7 +239,7 @@ class ManageTasksView:
 
         create_group_button = Button(
             self.screen.get_width() / 2 + 100,
-            self.screen.get_height() - 60,
+            self.screen.get_height() - 105,
             150,
             40,
             'addGroup' if self.active_group is None else 'editGroup',
@@ -234,7 +249,7 @@ class ManageTasksView:
 
         get_template_button = Button(
             self.screen.get_width() - 150,
-            self.screen.get_height() / 8 - (self.title_font.get_height() * 3) -20,
+            self.screen.get_height() / 8 - (self.title_font.get_height() * 3) - 20,
             250,
             40,
             'getImportTemplate',
@@ -243,6 +258,7 @@ class ManageTasksView:
         )
 
         self.buttons['back_button'] = back_button
+        self.buttons['add_existing_task'] = add_existing_task
         self.buttons['create_group_button'] = create_group_button
         self.buttons['add_task'] = create_task_button
         self.buttons['import_tasks'] = import_task_button
@@ -285,7 +301,9 @@ class ManageTasksView:
             self.active_group = None
             self.refresh = True
             self.page = 0
-            self.title = self.translate_service.get_translation('manageTasksFor') + self.formatted_suite
+            self.title = self.translate_service.get_translation(
+                'manageTasksFor') + self.formatted_suite if self.formatted_suite != 'globalTasks' else self.translate_service.get_translation(
+                'manageTasks')
 
     def split_list(self, input_list: list, chunk_size: int):
         for i in range(0, len(input_list), chunk_size):
@@ -382,7 +400,12 @@ class ManageTasksView:
             CreateTaskGroupView(self.screen, self.suite, self.translate_service).show()
         else:
             group = self.psy_test_pro_config.load_group(self.suite, self.active_group)
-            deleted = CreateTaskGroupView(self.screen, self.suite, self.translate_service, edit=True, group=group).show()
+            deleted = CreateTaskGroupView(self.screen, self.suite, self.translate_service, edit=True,
+                                          group=group).show()
             if deleted:
                 self.active_group = None
+        self.refresh = True
+
+    def open_add_existing_tasks_view(self):
+        self.add_existing_task_view.display(self.suite)
         self.refresh = True

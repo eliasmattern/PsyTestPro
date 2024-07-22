@@ -151,5 +151,10 @@
   "cancel": "Abbrechen",
   "addGroup": "Gruppe hinzufügen",
   "editGroup": "Gruppe editieren",
-  "group": "Gruppe"
+  "group": "Gruppe",
+  "add": "Hinzufügen",
+  "addTask": "Task hinzufügen",
+  "search": "Suchen",
+  "addTaskMsg": "Task zur Suite hinzufügen",
+  "addExistingTask": "Vorhandene Aufgabe hinzufügen"
 }

@@ -9,6 +9,7 @@ from components import Button
 from services import CSVToJSONConverter, JSONToCSVConverter, get_resource_path
 from services import PsyTestProConfig
 from services import TranslateService
+from .manage_task_view import ManageTasksView
 from .suite_create_view import CreateSuiteView
 from .suite_delete_view import DeleteSuiteView
 from .task_config_view import TaskConfig
@@ -24,6 +25,8 @@ class SuiteConfig:
         self.settings = self.psy_test_pro_config.get_settings()
         self.running = True
         self.config_button_running = True
+        self.manage_tasks_view = ManageTasksView(translate_service)
+
 
     def back_to_psy_test_pro(self):
         self.running = False
@@ -130,24 +133,25 @@ class SuiteConfig:
             ),
             self.translate_service,
         )
-        delete_button = Button(
+        configure_suite_task_button = Button(
             x,
             y + spacing * 2,
+            400,
+            40,
+            'configureTasks',
+            lambda: task_config.add_task_config_display(psy_test_pro),
+            self.translate_service,
+        )
+
+        delete_button = Button(
+            x,
+            y + spacing * 3,
             400,
             40,
             'deleteSuite',
             lambda: delete_suite_config.delete_suite_config_display(
                 psy_test_pro
             ),
-            self.translate_service,
-        )
-        create_task_button = Button(
-            x,
-            y + spacing,
-            400,
-            40,
-            'createTask',
-            lambda: task_config.add_task_config_display(psy_test_pro),
             self.translate_service,
         )
 
@@ -212,6 +216,7 @@ class SuiteConfig:
         )
 
         suite_buttons.append(create_suite_button)
+        suite_buttons.append(configure_suite_task_button)
         suite_buttons.append(delete_button)
         suite_buttons.append(back_to_config_button)
         import_export_buttons.append(import_button)
@@ -239,7 +244,7 @@ class SuiteConfig:
             400,
             40,
             'configureTasks',
-            lambda: task_config.add_task_config_display(psy_test_pro),
+            lambda: self.manage_tasks_view.display('globalTasks'),
             self.translate_service,
         )
         y += spacing

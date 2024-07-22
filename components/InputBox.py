@@ -12,10 +12,9 @@ import sys
 
 class InputBox:
     def __init__(self, x: float, y: float, width: int, height: int, translation_key: str, translate_service=None,
-                 info='',
-                 initial_text='', desc='', allow_new_line=False, not_allowed_characters=[], is_active=True, color=None,
-                 active_color=None, text_color=None, label_color=None, active_text_color=None, inactive_color=None,
-                 hidden=False, icon=True, is_numeric=False, minVal: int = None, maxVal: int = None,
+                 info='', initial_text='', desc='', allow_new_line=False, not_allowed_characters=[], is_active=True,
+                 color=None, active_color=None, text_color=None, label_color=None, active_text_color=None,
+                 inactive_color=None, hidden=False, icon=True, is_numeric=False, minVal: int = None, maxVal: int = None,
                  on_deselect: callable = None):
         self.translate_service = translate_service
         self.rect = pygame.Rect(x - width // 2, y, width, height)

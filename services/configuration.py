@@ -84,6 +84,7 @@ class PsyTestProConfig:
     def get_suites(self):
         with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
             data = json.load(file)
+        del data['globalTasks']
         variable_names = data.keys()
         result = []
         for variable in variable_names:
