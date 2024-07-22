@@ -130,24 +130,25 @@ class SuiteConfig:
             ),
             self.translate_service,
         )
-        delete_button = Button(
+        configure_suite_task_button = Button(
             x,
             y + spacing * 2,
+            400,
+            40,
+            'configureTasks',
+            lambda: task_config.add_task_config_display(psy_test_pro),
+            self.translate_service,
+        )
+
+        delete_button = Button(
+            x,
+            y + spacing * 3,
             400,
             40,
             'deleteSuite',
             lambda: delete_suite_config.delete_suite_config_display(
                 psy_test_pro
             ),
-            self.translate_service,
-        )
-        create_task_button = Button(
-            x,
-            y + spacing,
-            400,
-            40,
-            'createTask',
-            lambda: task_config.add_task_config_display(psy_test_pro),
             self.translate_service,
         )
 
@@ -212,6 +213,7 @@ class SuiteConfig:
         )
 
         suite_buttons.append(create_suite_button)
+        suite_buttons.append(configure_suite_task_button)
         suite_buttons.append(delete_button)
         suite_buttons.append(back_to_config_button)
         import_export_buttons.append(import_button)
@@ -239,7 +241,7 @@ class SuiteConfig:
             400,
             40,
             'configureTasks',
-            lambda: task_config.add_task_config_display(psy_test_pro),
+            lambda: print('create function to create general tasks'),
             self.translate_service,
         )
         y += spacing
