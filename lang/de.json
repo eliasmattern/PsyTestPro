@@ -154,5 +154,7 @@
   "group": "Gruppe",
   "add": "Hinzufügen",
   "addTask": "Task hinzufügen",
-  "addTaskMsg": "Task zur Suite hinzufügen"
+  "search": "Suchen",
+  "addTaskMsg": "Task zur Suite hinzufügen",
+  "addExistingTask": "Vorhandene Aufgabe hinzufügen"
 }

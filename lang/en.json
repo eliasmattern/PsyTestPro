@@ -159,5 +159,7 @@
   "group": "Group",
   "add": "Add",
   "addTask": "Add task",
-  "addTaskMsg": "Add task to suite"
+  "addTaskMsg": "Add task to suite",
+  "search": "Search",
+  "addExistingTask": "Add existing task"
 }

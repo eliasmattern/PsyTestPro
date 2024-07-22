@@ -9,6 +9,7 @@ import pygame
 from app_types import Task, TaskTypeEnum, TaskGroup
 from components import Button, InputBox, IconButton, QuestionDialog
 from services import PsyTestProConfig, TranslateService, ImportTasksService, get_resource_path
+from .add_existing_task_view import AddExistingTaskView
 from .task_create_group_view import CreateTaskGroupView
 from .task_create_view import AddTaskView
 
@@ -41,6 +42,8 @@ class ManageTasksView:
                                             lambda: self.delete_action(), action_key='delete')
         self.delete_dialog.is_open = False
         self.deleting_task = None
+        self.add_existing_task_view = AddExistingTaskView(self.translate_service)
+
 
     def display(self, suite_name: str):
         self.suite = suite_name
@@ -195,8 +198,8 @@ class ManageTasksView:
             border_radius=90
         )
         back_button = Button(
-            self.screen.get_width() / 2 - 300,
-            self.screen.get_height() - 60,
+            self.screen.get_width() / 2,
+            self.screen.get_height() - 50,
             150,
             40,
             'back',
@@ -204,9 +207,19 @@ class ManageTasksView:
             self.translate_service
         )
 
+        add_existing_task = Button(
+            self.screen.get_width() / 2 - 300,
+            self.screen.get_height() - 105,
+            150,
+            40,
+            'addExistingTask',
+            lambda: self.open_add_existing_tasks_view(),
+            self.translate_service
+        )
+
         create_task_button = Button(
             self.screen.get_width() / 2 - 100,
-            self.screen.get_height() - 60,
+            self.screen.get_height() - 105,
             150,
             40,
             'createTask',
@@ -216,7 +229,7 @@ class ManageTasksView:
 
         import_task_button = Button(
             self.screen.get_width() / 2 + 300,
-            self.screen.get_height() - 60,
+            self.screen.get_height() - 105,
             150,
             40,
             'importTasks',
@@ -226,7 +239,7 @@ class ManageTasksView:
 
         create_group_button = Button(
             self.screen.get_width() / 2 + 100,
-            self.screen.get_height() - 60,
+            self.screen.get_height() - 105,
             150,
             40,
             'addGroup' if self.active_group is None else 'editGroup',
@@ -245,6 +258,7 @@ class ManageTasksView:
         )
 
         self.buttons['back_button'] = back_button
+        self.buttons['add_existing_task'] = add_existing_task
         self.buttons['create_group_button'] = create_group_button
         self.buttons['add_task'] = create_task_button
         self.buttons['import_tasks'] = import_task_button
@@ -390,4 +404,8 @@ class ManageTasksView:
                                           group=group).show()
             if deleted:
                 self.active_group = None
+        self.refresh = True
+
+    def open_add_existing_tasks_view(self):
+        self.add_existing_task_view.display(self.suite)
         self.refresh = True
