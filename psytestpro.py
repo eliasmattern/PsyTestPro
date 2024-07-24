@@ -333,16 +333,19 @@ class PsyTestPro:
                 sorted_group_tasks = sorted(task.tasks, key=lambda task: task.position)
 
                 for i in range(task.loops):
-                    for task_of_group in sorted_group_tasks:
+                    for j, task_of_group in enumerate(sorted_group_tasks):
                         new_id = task.id + ':' + task_of_group.id + ':' + str(i)
                         tasks.append(new_id)
                         times.append(task_of_group.duration)
-                        names[new_id] = task_of_group.name + str(i)
+                        names[new_id] = task_of_group.name +' loop: ' + str(i)
                         states[new_id] = task_of_group.state
-                        positions[new_id] = float(str(task.id) + '.' + str(i) + str(task_of_group.position + i).zfill(
-                            len(str(len(task.tasks)))))
+                        positions[new_id] = float(str(task.id) + '.' + str(i).zfill(
+                            len(str(len(task.tasks) * task.loops))) + str(j).zfill(len(str(len(task.tasks)))))
                         types[new_id] = task_of_group.task_type
                         values[new_id] = task_of_group.value
+                        print((float(str(task.id) + '.' + str(i).zfill(
+                            len(str(len(task.tasks) * task.loops))) + str(j).zfill(len(str(len(task.tasks))))))
+)
                     time_str = times[-1]
 
                     time_obj = datetime.strptime(time_str, time_format)
