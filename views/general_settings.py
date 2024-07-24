@@ -119,5 +119,4 @@ class GeneralSettings:
     def save_data(self, settings: Settings):
         settings.show_next_task = self.checkboxes.get('show_task_and_time')['checkbox'].active
         settings.show_play_task_button = self.checkboxes.get('show_play_button')['checkbox'].active
-        print(settings.show_next_task)
         return settings

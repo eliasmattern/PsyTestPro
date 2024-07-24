@@ -78,7 +78,6 @@ class AudioSettings:
 
     def save_data(self, settings: Settings):
         settings.audio_path = self.button.translation_key
-        print(self.button.translation_key + 'hi')
         return settings
 
     def create_button_text(self):
