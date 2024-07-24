@@ -343,9 +343,7 @@ class PsyTestPro:
                             len(str(len(task.tasks) * task.loops))) + str(j).zfill(len(str(len(task.tasks)))))
                         types[new_id] = task_of_group.task_type
                         values[new_id] = task_of_group.value
-                        print((float(str(task.id) + '.' + str(i).zfill(
-                            len(str(len(task.tasks) * task.loops))) + str(j).zfill(len(str(len(task.tasks))))))
-)
+
                     time_str = times[-1]
 
                     time_obj = datetime.strptime(time_str, time_format)
