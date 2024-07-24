@@ -327,10 +327,13 @@ class CreateScheduleDisplay:
 
             # update the display
             pygame.display.flip()
+            path = get_resource_path(
+                self.settings['audioPath'] if self.settings['audioPath'].startswith('.') else self.settings[
+                    'audioPath'], )
             if self.play_next_task:
                 check_for_old_tasks = True
                 upcoming_event = next_event[1]
-                beep_sound = pygame.mixer.Sound(get_resource_path('./lib/beep.wav'))
+                beep_sound = pygame.mixer.Sound(path)
                 beep_sound.play()
                 state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                    self.translate_service,
@@ -348,7 +351,7 @@ class CreateScheduleDisplay:
                     check_for_old_tasks = True
                     upcoming_event = next_event[1]
                     pythonTime.sleep(1.1)
-                    beep_sound = pygame.mixer.Sound(get_resource_path('./lib/beep.wav'))
+                    beep_sound = pygame.mixer.Sound(path)
                     beep_sound.play()
                     state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                        self.translate_service,
