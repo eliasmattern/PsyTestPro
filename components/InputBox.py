@@ -11,7 +11,7 @@ import sys
 
 
 class InputBox:
-    def __init__(self, x: float, y: float, width: int, height: int, translation_key: str, translate_service=None,
+    def __init__(self, x: float, y: float, width: float, height: float, translation_key: str, translate_service=None,
                  info='', initial_text='', desc='', allow_new_line=False, not_allowed_characters=[], is_active=True,
                  color=None, active_color=None, text_color=None, label_color=None, active_text_color=None,
                  inactive_color=None, hidden=False, icon=True, is_numeric=False, minVal: int = None, maxVal: int = None,
@@ -437,9 +437,10 @@ class InputBox:
                                      (posX, self.rect.y + 5),
                                      (posX, self.rect.y + self.rect.height - 5))
             if self.icon:
-                self.imagePos = pygame.Rect(self.posX + (self.rect.width // 2) // 100 * 80, self.posY,
+                self.imagePos = pygame.Rect(self.posX + (self.rect.width / 2) - self.image.get_width() - 10, self.posY,
                                             self.image.get_rect().width, self.image.get_rect().height)
-                screen.blit(self.image, (self.posX + (self.rect.width // 2) // 100 * 80, self.posY + 5))
+                screen.blit(self.image,
+                            (self.posX + (self.rect.width / 2) - self.image.get_width() - 10, self.posY + 5))
             if self.is_selected:
                 if ((pygame.time.get_ticks() // 500) % 2) == 0 or self.started_moving_r or self.started_moving_l:
                     self.cursor_blink = True

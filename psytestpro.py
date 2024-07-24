@@ -56,7 +56,7 @@ class PsyTestPro:
         self.create_input_boxes()
         self.is_running = True
         self.start_time = None
-        self.settings_view = SettingsView()
+        self.settings_view = SettingsView(self.screen, self.translateService)
         self.settings = self.psyTestProConfig.get_settings()
         self.background_color = pygame.Color(self.settings['backgroundColor'])
         self.primary_color = pygame.Color(self.settings['primaryColor'])
@@ -437,9 +437,8 @@ class PsyTestPro:
         for value in custom_variables:
             variables[value] = self.input_boxes[value].text
 
-        self.settings_view.display(PsyTestPro, self.translateService,
-                                   self.language_config, participant_id, suite,
-                                   start_time, variables)
+        self.settings_view.display()
+        PsyTestPro(participant_id, suite, start_time, variables)
 
     def configure_test_battery(self):
         old_custom_variables = self.psyTestProConfig.load_custom_variables()

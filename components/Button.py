@@ -82,6 +82,8 @@ class Button:
                         self.translate_service.get_translation(self.translation_key) if self.translate_service
                         else self.translation_key, True, self.button_text_color)
                     count += 1
+                    if self.font_size - count < 8:
+                        break
                     label_width, label_height = self.label.get_size()
 
             if self.is_active:

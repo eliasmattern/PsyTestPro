@@ -231,35 +231,24 @@ class PsyTestProConfig:
 
         return settings
 
-    def save_colors(self, background_color: str,
-                    primary_color: str,
-                    button_color: str,
-                    button_text_color: str,
-                    active_button_color: str,
-                    inactive_button_color: str,
-                    group_button_color: str,
-                    success_color: str,
-                    danger_color: str,
-                    warning_color: str,
-                    grid_color: str,
-                    show_next_task_and_time: bool,
-                    show_play_task: bool):
+    def save_settings(self, new_settings):
         with open(get_resource_path('json/settings.json'), 'r', encoding='utf-8') as file:
             settings = json.load(file)
 
-        settings["backgroundColor"] = background_color
-        settings["primaryColor"] = primary_color
-        settings["buttonColor"] = button_color
-        settings["buttonTextColor"] = button_text_color
-        settings["activeButtonColor"] = active_button_color
-        settings["inactiveButtonColor"] = inactive_button_color
-        settings["groupButtonColor"] = group_button_color
-        settings["successColor"] = success_color
-        settings["dangerColor"] = danger_color
-        settings["warningColor"] = warning_color
-        settings["gridColor"] = grid_color
-        settings["showNextTask"] = show_next_task_and_time
-        settings["showPlayTaskButton"] = show_play_task
+        settings["backgroundColor"] = new_settings.background_color
+        settings["primaryColor"] = new_settings.primary_color
+        settings["buttonColor"] = new_settings.button_color
+        settings["buttonTextColor"] = new_settings.button_text_color
+        settings["activeButtonColor"] = new_settings.active_button_color
+        settings["inactiveButtonColor"] = new_settings.inactive_button_color
+        settings["groupButtonColor"] = new_settings.group_button_color
+        settings["successColor"] = new_settings.success_color
+        settings["dangerColor"] = new_settings.danger_color
+        settings["warningColor"] = new_settings.warning_color
+        settings["gridColor"] = new_settings.grid_color
+        settings["showNextTask"] = new_settings.show_next_task
+        settings["showPlayTaskButton"] = new_settings.show_play_task_button
+        settings["audioPath"] = new_settings.audio_path
 
         with open(get_resource_path('json/settings.json'), 'w', encoding='utf-8') as file:
             json.dump(settings, file)
@@ -358,4 +347,4 @@ class PsyTestProConfig:
             json_data = json.load(file)
         task = json_data[suite]['tasks'][active_group]
         return TaskGroup(active_group, task['name'], task['pause'], task['loops'],
-                  task['tasks'], task['position'])
+                         task['tasks'], task['position'])

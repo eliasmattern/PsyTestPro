@@ -161,5 +161,8 @@
   "addTask": "Add task",
   "addTaskMsg": "Add task to suite",
   "search": "Search",
-  "addExistingTask": "Add existing task"
+  "addExistingTask": "Add existing task",
+  "displaySettings": "Display Settings",
+  "audio": "Audio",
+  "beepSound": "Beep Sound"
 }

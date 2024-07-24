@@ -156,5 +156,8 @@
   "addTask": "Task hinzufügen",
   "search": "Suchen",
   "addTaskMsg": "Task zur Suite hinzufügen",
-  "addExistingTask": "Vorhandene Aufgabe hinzufügen"
+  "addExistingTask": "Vorhandene Aufgabe hinzufügen",
+  "displaySettings": "Anzeigeeinstellungen",
+  "audio": "Audio",
+  "beepSound": "Beep Sound"
 }
