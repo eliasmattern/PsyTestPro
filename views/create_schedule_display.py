@@ -253,6 +253,10 @@ class CreateScheduleDisplay:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            audio_path = get_resource_path(
+                self.settings['audioPath'] if self.settings['audioPath'].startswith('.') else self.settings[
+                    'audioPath'], )
+
             if check_for_old_tasks:
                 filtered_list = [
                     task for task in self.schedule
@@ -261,6 +265,11 @@ class CreateScheduleDisplay:
                 ]
                 for item in filtered_list:
                     upcoming_event = item
+                    try:
+                        beep_sound = pygame.mixer.Sound(audio_path)
+                        beep_sound.play()
+                    except Exception as e:
+                        print(e)
 
                     state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                        self.translate_service,
@@ -327,14 +336,14 @@ class CreateScheduleDisplay:
 
             # update the display
             pygame.display.flip()
-            path = get_resource_path(
-                self.settings['audioPath'] if self.settings['audioPath'].startswith('.') else self.settings[
-                    'audioPath'], )
             if self.play_next_task:
                 check_for_old_tasks = True
                 upcoming_event = next_event[1]
-                beep_sound = pygame.mixer.Sound(path)
-                beep_sound.play()
+                try:
+                    beep_sound = pygame.mixer.Sound(audio_path)
+                    beep_sound.play()
+                except Exception as e:
+                    print(e)
                 state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                    self.translate_service,
                                    self.custom_variables)
@@ -351,8 +360,11 @@ class CreateScheduleDisplay:
                     check_for_old_tasks = True
                     upcoming_event = next_event[1]
                     pythonTime.sleep(1.1)
-                    beep_sound = pygame.mixer.Sound(path)
-                    beep_sound.play()
+                    try:
+                        beep_sound = pygame.mixer.Sound(audio_path)
+                        beep_sound.play()
+                    except Exception as e:
+                        print(e)
                     state = play_tasks(self.file_name, self.participant_info, upcoming_event, self.schedule,
                                        self.translate_service,
                                        self.custom_variables)
