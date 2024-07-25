@@ -69,6 +69,11 @@ class DatePickerComponent():
                 self.move = False
             if self.quit_rect and self.quit_rect.collidepoint(event.pos):
                 self.is_open = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.close()
+            elif event.key == pygame.K_RETURN:
+                self.execute_action()
 
     def draw(self, screen: pygame.Surface):
         left, top = pygame.mouse.get_pos()

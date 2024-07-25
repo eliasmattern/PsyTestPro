@@ -184,7 +184,8 @@ class TimePicker:
         elif event.type == KEYUP:
             if event.key == pygame.K_TAB:
                 self.next_input()
-
+            elif event.key == pygame.K_ESCAPE:
+                self.close()
             elif event.key == pygame.K_RETURN:
                 self.execute_action()
 
