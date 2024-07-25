@@ -168,12 +168,15 @@ class PsyTestProConfig:
                 'value': value
             }
             if group is None:
-                if suite != 'globalTasks':
-                    keys = json_data['globalTasks']['tasks'].keys()
-                    numeric_keys = [eval(i) for i in keys]
-                    global_task_id = max(numeric_keys) + 1 if len(numeric_keys) > 0 else 0
-                    json_data['globalTasks']['tasks'][global_task_id] = new_task
                 json_data[suite]['tasks'][task_id] = new_task
+                if suite != 'globalTasks':
+                    global_task = new_task.copy()
+                    global_keys = json_data['globalTasks']['tasks'].keys()
+                    global_numeric_keys = [eval(i) for i in global_keys]
+                    global_task_id = max(global_numeric_keys) + 1 if len(global_numeric_keys) > 0 else 0
+                    position = len(json_data['globalTasks']['tasks']) + 1
+                    global_task['position'] = position
+                    json_data['globalTasks']['tasks'][global_task_id] = global_task
             else:
                 json_data[suite]['tasks'][group]['tasks'][task_id] = new_task
 
@@ -320,7 +323,6 @@ class PsyTestProConfig:
                 numeric_keys = [eval(i) for i in keys]
                 global_id = max(numeric_keys) + 1 if len(numeric_keys) > 0 else 0
                 json_data['globalTasks']['tasks'][global_id] = new_task
-
 
         keys = json_data[suite]['tasks'].keys()
         numeric_keys = [eval(i) for i in keys]

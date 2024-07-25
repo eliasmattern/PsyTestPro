@@ -181,6 +181,14 @@ class ImportTasksService:
                         data[suite_name]['tasks'][task_id] = {'is_group': False, 'name': task_name, 'time': time,
                                                               'state': 'todo', 'type': task_type, 'value': value,
                                                               'position': position}
+                        keys = data['globalTasks']['tasks'].keys()
+                        position = len(data['globalTasks']['tasks']) + 1
+                        numeric_keys = [eval(i) for i in keys]
+                        global_id = str(max(numeric_keys) + 1) if len(numeric_keys) > 0 else '0'
+                        print(global_id)
+                        data['globalTasks']['tasks'][global_id] = {'is_group': False, 'name': task_name, 'time': time,
+                                                                   'state': 'todo', 'type': task_type, 'value': value,
+                                                                   'position': position}
                     else:
                         data[suite_name]['tasks'][group_id]['tasks'][task_id] = {'is_group': False, 'name': task_name,
                                                                                  'time': time,
@@ -195,6 +203,15 @@ class ImportTasksService:
                                                               'type': 'text', 'value': {'title': row['title'],
                                                                                         'description': description},
                                                               'position': position}
+                        keys = data['globalTasks']['tasks'].keys()
+                        position = len(data['globalTasks']['tasks']) + 1
+                        numeric_keys = [eval(i) for i in keys]
+                        global_id = str(max(numeric_keys) + 1) if len(numeric_keys) > 0 else '0'
+                        data['globalTasks']['tasks'][global_id] = {'is_group': False, 'name': task_name, 'time': time,
+                                                                   'state': 'todo',
+                                                                   'type': 'text', 'value': {'title': row['title'],
+                                                                                             'description': description},
+                                                                   'position': position}
                     else:
                         data[suite_name]['tasks'][group_id]['tasks'][task_id] = {'is_group': False, 'name': task_name,
                                                                                  'time': time,

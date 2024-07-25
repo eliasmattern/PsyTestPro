@@ -337,7 +337,7 @@ class PsyTestPro:
                         new_id = task.id + ':' + task_of_group.id + ':' + str(i)
                         tasks.append(new_id)
                         times.append(task_of_group.duration)
-                        names[new_id] = task_of_group.name +' loop: ' + str(i)
+                        names[new_id] = task_of_group.name
                         states[new_id] = task_of_group.state
                         positions[new_id] = float(str(task.id) + '.' + str(i).zfill(
                             len(str(len(task.tasks) * task.loops))) + str(j).zfill(len(str(len(task.tasks)))))
