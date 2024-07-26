@@ -1,4 +1,6 @@
+import copy
 import sys
+from datetime import datetime, timedelta
 from enum import Enum
 
 import pygame.event
@@ -34,6 +36,7 @@ class SettingsView:
         self.font = pygame.font.Font(None, 30)
         self.tabs, self.active_tabs, self.rects, self.divider = self.create_tabs()
         self.back_button, self.save_button = self.create_buttons()
+        self.saving = None
 
     def display(self):
         self.current_settings_type = SettingsTypes.GENERAL
@@ -97,6 +100,19 @@ class SettingsView:
             self.save_button.set_active(False)
         else:
             self.save_button.set_active(True)
+        if self.saving is not None:
+            if self.saving + timedelta(seconds=2) > datetime.now():
+                self.save_button.color = pygame.Color('#00B371')
+                self.save_button.active_button_color = pygame.Color('#00B371')
+                self.save_button.translation_key = 'savedSettings'
+                self.save_button.update_text()
+            else:
+                self.save_button.color = pygame.Color('#C0C0C0')
+                self.save_button.active_button_color = pygame.Color('#ACACAC')
+                self.save_button.translation_key = 'save'
+                self.save_button.update_text()
+                self.saving = None
+
         self.save_button.draw(self.screen)
 
         pygame.display.flip()
@@ -141,7 +157,13 @@ class SettingsView:
         self.running = False
 
     def save(self):
+        self.saving = datetime.now()
         self.settings = self.general_settings.save_data(self.settings)
         self.settings = self.video_settings.save_data(self.settings)
         self.settings = self.audio_settings.save_data(self.settings)
-        self.psy_test_pro_config.save_settings(self.settings)
+        if self.settings != self.old_settings:
+            self.psy_test_pro_config.save_settings(self.settings)
+            self.old_settings = copy.deepcopy(self.settings)
+            self.general_settings.old_settings = copy.deepcopy(self.settings)
+            self.video_settings.old_settings = copy.deepcopy(self.settings)
+            self.audio_settings.old_settings = copy.deepcopy(self.settings)

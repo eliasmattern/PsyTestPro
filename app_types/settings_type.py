@@ -238,3 +238,25 @@ class Settings:
         snake_case_name = self.camel_to_snake(color_name)
         property_name = f'_{self.__class__.__name__}__{snake_case_name}'
         setattr(self, property_name, new_value)
+
+    def __eq__(self, other):
+        if not isinstance(other, Settings):
+            # don't attempt to compare against unrelated types
+            return NotImplemented
+        print('hi')
+        return (
+            self.__background_color == other.__background_color and
+            self.__primary_color == other.__primary_color and
+            self.__button_color == other.__button_color and
+            self.__button_text_color == other.__button_text_color and
+            self.__success_color == other.__success_color and
+            self.__danger_color == other.__danger_color and
+            self.__warning_color == other.__warning_color and
+            self.__active_button_color == other.__active_button_color and
+            self.__inactive_button_color == other.__inactive_button_color and
+            self.__group_button_color == other.__group_button_color and
+            self.__grid_color == other.__grid_color and
+            self.__show_next_task == other.__show_next_task and
+            self.__show_play_task_button == other.__show_play_task_button and
+            self.__audio_path == other.__audio_path
+        )
