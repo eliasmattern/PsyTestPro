@@ -243,7 +243,6 @@ class Settings:
         if not isinstance(other, Settings):
             # don't attempt to compare against unrelated types
             return NotImplemented
-        print('hi')
         return (
             self.__background_color == other.__background_color and
             self.__primary_color == other.__primary_color and
