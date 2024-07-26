@@ -160,5 +160,7 @@
   "displaySettings": "Anzeigeeinstellungen",
   "audio": "Audio",
   "beepSound": "Beep Sound",
-  "manageTasksForSuite": "Aufgaben von Suites verwalten"
+  "manageTasksForSuite": "Aufgaben von Suites verwalten",
+  "general": "Allgemein",
+  "video": "Video"
 }
