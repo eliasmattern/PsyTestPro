@@ -118,10 +118,10 @@ class PsyTestPro:
 
         exit_button = Button(x - 75, y + 60, 100, 40, 'exit', self.exit, self.translateService)
         submit_button = Button(x + 75, y + 60, 100, 40, 'submit', self.save_details, self.translateService)
-        settings_button = Button(self.width - 175, 100, 250, 40, 'settings',
+        settings_button = Button(self.width - 175, 50, 250, 40, 'settings',
                                  lambda: self.show_settings_screen(),
                                  self.translateService)
-        create_suite_button = Button(self.width - 175, 150, 250, 40, 'configureTestBattery',
+        create_suite_button = Button(self.width - 175, 100, 250, 40, 'configureTestBattery',
                                      lambda: self.configure_test_battery(),
                                      self.translateService)
 
