@@ -165,5 +165,7 @@
   "displaySettings": "Display Settings",
   "audio": "Audio",
   "beepSound": "Beep Sound",
-  "manageTasksForSuite": "Manage tasks for a suite"
+  "manageTasksForSuite": "Manage tasks for a suite",
+  "general": "General",
+  "video": "Video"
 }

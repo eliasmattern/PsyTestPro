@@ -110,7 +110,7 @@ class SettingsView:
                    'end_pos': (self.width_percentage * 80, self.height_percentage * 10)}
 
         for i, tab in enumerate(SettingsTypes):
-            text = self.font.render(tab.value, True, pygame.Color('white'))
+            text = self.font.render(self.translate_service.get_translation(tab.value), True, pygame.Color('white'))
             text_rect = text.get_rect()
 
             text_rect.center = (
