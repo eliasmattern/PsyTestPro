@@ -164,5 +164,6 @@
   "addExistingTask": "Add existing task",
   "displaySettings": "Display Settings",
   "audio": "Audio",
-  "beepSound": "Beep Sound"
+  "beepSound": "Beep Sound",
+  "manageTasksForSuite": "Manage tasks for a suite"
 }

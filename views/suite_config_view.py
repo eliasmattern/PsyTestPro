@@ -138,7 +138,7 @@ class SuiteConfig:
             y + spacing * 2,
             400,
             40,
-            'configureTasks',
+            'manageTasksForSuite',
             lambda: task_config.add_task_config_display(psy_test_pro),
             self.translate_service,
         )

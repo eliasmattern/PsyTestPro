@@ -159,5 +159,6 @@
   "addExistingTask": "Vorhandene Aufgabe hinzufügen",
   "displaySettings": "Anzeigeeinstellungen",
   "audio": "Audio",
-  "beepSound": "Beep Sound"
+  "beepSound": "Beep Sound",
+  "manageTasksForSuite": "Aufgaben von Suites verwalten"
 }
