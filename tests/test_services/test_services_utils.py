@@ -23,13 +23,13 @@ TASK_CONFIG_JSON = {
 				"tasks": {
 					"0": {
 						"is_group": False,
-						"name": "TASKOFGROUP",
-						"time": "00:10:00",
+						"name": "TESTTASK",
+						"time": "00:05:00",
 						"state": "todo",
 						"type": "text",
 						"value": {
-							"title": "TITLE",
-							"description": "DESCRIPTION"
+							"title": "Title",
+							"description": "Description"
 						},
 						"position": 1
 					}
@@ -62,13 +62,13 @@ TASK_CONFIG_JSON = {
 				"tasks": {
 					"0": {
 						"is_group": False,
-						"name": "TASKOFGROUP",
-						"time": "00:10:00",
+						"name": "TESTTASK",
+						"time": "00:05:00",
 						"state": "todo",
 						"type": "text",
 						"value": {
-							"title": "TITLE",
-							"description": "DESCRIPTION"
+							"title": "Title",
+							"description": "Description"
 						},
 						"position": 1
 					}

@@ -85,6 +85,25 @@ class ConfigurationTests(unittest.TestCase):
 
 		self.assertEqual(len(task_group.tasks), len(GROUP_FROM_CONFIG.tasks))
 
+	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	def test_load_task_of_group(self, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
+
+		result = self.psy_test_pro_config.load_task_of_group('suite_schedule', '1')
+
+		mock_get_resource_path.assert_called_once_with('json/taskConfig.json')
+		mock_open.assert_called_once_with('mock.json/taskConfig.json', 'r',
+										  encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+
+		self.assertEqual(len(result), 1)
+		task = result[0]
+		self.assertEqual([task.id, task.name, task.task_type, task.duration, task.value],
+						 [TASK_FROM_CONFIG.id, TASK_FROM_CONFIG.name, TASK_FROM_CONFIG.task_type,
+						  TASK_FROM_CONFIG.duration, TASK_FROM_CONFIG.value])
+
 
 	if __name__ == '__main__':
 		unittest.main()
