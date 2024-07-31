@@ -14,7 +14,29 @@ TASK_CONFIG_JSON = {
 					"title": "Title",
 					"description": "Description"
 				}
+			},
+			"1": {
+				"is_group": True,
+				"name": "GROUP",
+				"pause": "00:02:00",
+				"loops": 2,
+				"tasks": {
+					"0": {
+						"is_group": False,
+						"name": "TASKOFGROUP",
+						"time": "00:10:00",
+						"state": "todo",
+						"type": "text",
+						"value": {
+							"title": "TITLE",
+							"description": "DESCRIPTION"
+						},
+						"position": 1
+					}
+				},
+				"position": 2
 			}
+
 		}
 	},
 	"suite_schedule": {
@@ -29,6 +51,27 @@ TASK_CONFIG_JSON = {
 				"value": {
 					"title": "Title",
 					"description": "Description"
+				},
+				"1": {
+					"is_group": True,
+					"name": "GROUP",
+					"pause": "00:02:00",
+					"loops": 2,
+					"tasks": {
+						"0": {
+							"is_group": False,
+							"name": "TASKOFGROUP",
+							"time": "00:10:00",
+							"state": "todo",
+							"type": "text",
+							"value": {
+								"title": "TITLE",
+								"description": "DESCRIPTION"
+							},
+							"position": 1
+						}
+					},
+					"position": 2
 				}
 			}
 		}

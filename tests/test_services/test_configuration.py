@@ -48,11 +48,13 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	def test_get_suites(self, mock_json_load, mock_open, mock_get_resource_path):
+		tasks = TASK_CONFIG_JSON.copy()
+		del tasks['globalTasks']
 		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
 
 		result = self.psy_test_pro_config.get_suites()
 
-		self.assertEqual(result, list(TASK_CONFIG_JSON.keys()))
+		self.assertEqual(result, list(tasks.keys()))
 
 
 	if __name__ == '__main__':
