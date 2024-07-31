@@ -29,7 +29,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	def test_load_suite_tasks(self, mock_json_load, mock_open, mock_get_resource_path):
-		mock_json_load.return_value = TASK_CONFIG_JSON
+		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
 		self.psy_test_pro_config.load_suite_tasks('suite')
 
 		mock_get_resource_path.assert_called_once_with('json/taskConfig.json')
@@ -43,6 +43,17 @@ class ConfigurationTests(unittest.TestCase):
 		self.assertEqual([task.id, task.name, task.task_type, task.duration, task.value],
 						 [TASK_FROM_CONFIG.id, TASK_FROM_CONFIG.name, TASK_FROM_CONFIG.task_type,
 						  TASK_FROM_CONFIG.duration, TASK_FROM_CONFIG.value])
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	def test_get_suites(self, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
+
+		result = self.psy_test_pro_config.get_suites()
+
+		self.assertEqual(result, list(TASK_CONFIG_JSON.keys()))
+
 
 	if __name__ == '__main__':
 		unittest.main()
