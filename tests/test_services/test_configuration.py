@@ -1,9 +1,11 @@
+import copy
 import unittest
 from unittest.mock import patch, mock_open
 
 from app_types import Task, TaskGroup
 from services import PsyTestProConfig
-from tests.test_services.test_services_utils import TASK_CONFIG_JSON, TASK_FROM_CONFIG, GROUP_FROM_CONFIG
+from tests.test_services.test_services_utils import TASK_CONFIG_JSON, TASK_FROM_CONFIG, GROUP_FROM_CONFIG, \
+	TASK_CONFIG_JSON_WITH_DELETED_TASK
 
 
 class ConfigurationTests(unittest.TestCase):
@@ -69,7 +71,7 @@ class ConfigurationTests(unittest.TestCase):
 		mock_open.assert_called_once_with('mock.json/taskConfig.json', 'r',
 										  encoding='utf-8')
 		mock_json_load.assert_called_once_with(mock_open())
-
+		print(result)
 		self.assertEqual(len(result), 2)
 		self.assertIsInstance(result[0], Task)
 		self.assertIsInstance(result[1], TaskGroup)
@@ -104,6 +106,19 @@ class ConfigurationTests(unittest.TestCase):
 						 [TASK_FROM_CONFIG.id, TASK_FROM_CONFIG.name, TASK_FROM_CONFIG.task_type,
 						  TASK_FROM_CONFIG.duration, TASK_FROM_CONFIG.value])
 
+	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_delete_task(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
+
+		self.psy_test_pro_config.delete_task('suite_schedule', '0')
+
+		mock_get_resource_path.assert_any_call('json/taskConfig.json')
+		mock_open.assert_any_call('mock.json/taskConfig.json', 'r')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(TASK_CONFIG_JSON_WITH_DELETED_TASK, mock_open(), indent=4)
 
 	if __name__ == '__main__':
 		unittest.main()

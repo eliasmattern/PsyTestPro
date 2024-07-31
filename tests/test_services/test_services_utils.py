@@ -79,6 +79,72 @@ TASK_CONFIG_JSON = {
 	}
 }
 
+TASK_CONFIG_JSON_WITH_DELETED_TASK = {
+	"globalTasks": {
+		"tasks": {
+			"0": {
+				"is_group": False,
+				"name": "TESTTASK",
+				"position": 1,
+				"time": "00:05:00",
+				"state": "todo",
+				"type": "text",
+				"value": {
+					"title": "Title",
+					"description": "Description"
+				}
+			},
+			"1": {
+				"is_group": True,
+				"name": "GROUP",
+				"pause": "00:02:00",
+				"loops": 2,
+				"tasks": {
+					"0": {
+						"is_group": False,
+						"name": "TESTTASK",
+						"time": "00:05:00",
+						"state": "todo",
+						"type": "text",
+						"value": {
+							"title": "Title",
+							"description": "Description"
+						},
+						"position": 1
+					}
+				},
+				"position": 2
+			}
+
+		}
+	},
+	"suite_schedule": {
+		"tasks": {
+			"1": {
+				"is_group": True,
+				"name": "GROUP",
+				"pause": "00:02:00",
+				"loops": 2,
+				"tasks": {
+					"0": {
+						"is_group": False,
+						"name": "TESTTASK",
+						"time": "00:05:00",
+						"state": "todo",
+						"type": "text",
+						"value": {
+							"title": "Title",
+							"description": "Description"
+						},
+						"position": 1
+					}
+				},
+				"position": 1
+			}
+		}
+	}
+}
+
 TASK_FROM_CONFIG = Task('0', 'TESTTASK', '00:05:00', 'text', {"title": "Title", "description": "Description"}, 1)
 
 GROUP_FROM_CONFIG = TaskGroup('1', 'GROUP', '00:02:00', 2, {
