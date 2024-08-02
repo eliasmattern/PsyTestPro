@@ -235,5 +235,20 @@ class ConfigurationTests(unittest.TestCase):
 
 		self.assertFalse(result)
 
+	@patch('services.configuration.get_resource_path', return_value='mock.json/customVariables.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_delete_var(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		vars = ['var1']
+		mock_json_load.return_value = copy.deepcopy(CUSTOM_VARIABLES)
+
+		self.psy_test_pro_config.delete_var('var2')
+
+		mock_get_resource_path.assert_any_call('json/customVariables.json')
+		mock_open.assert_any_call('mock.json/customVariables.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(vars, mock_open())
+
 	if __name__ == '__main__':
 		unittest.main()
