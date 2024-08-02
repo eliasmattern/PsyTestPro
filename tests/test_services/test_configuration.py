@@ -71,7 +71,6 @@ class ConfigurationTests(unittest.TestCase):
 		mock_open.assert_called_once_with('mock.json/taskConfig.json', 'r',
 										  encoding='utf-8')
 		mock_json_load.assert_called_once_with(mock_open())
-		print(result)
 		self.assertEqual(len(result), 2)
 		self.assertIsInstance(result[0], Task)
 		self.assertIsInstance(result[1], TaskGroup)
@@ -202,6 +201,39 @@ class ConfigurationTests(unittest.TestCase):
 		mock_open.assert_any_call('mock.json/customVariables.json', 'r', encoding='utf-8')
 		mock_json_load.assert_called_once_with(mock_open())
 		self.assertEqual(result, CUSTOM_VARIABLES)
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/customVariables.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_save_var(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		vars = copy.deepcopy(CUSTOM_VARIABLES)
+		vars.append('var3')
+		mock_json_load.return_value = copy.deepcopy(CUSTOM_VARIABLES)
+
+		result = self.psy_test_pro_config.save_var('var3')
+
+		mock_get_resource_path.assert_any_call('json/customVariables.json')
+		mock_open.assert_any_call('mock.json/customVariables.json', 'r')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(vars, mock_open())
+
+		self.assertTrue(result)
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/customVariables.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_do_not_save_var_if_length_3(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = ['var1', 'var2', 'var3']
+
+		result = self.psy_test_pro_config.save_var('var3')
+
+		mock_get_resource_path.assert_called_once_with('json/customVariables.json')
+		mock_open.assert_called_once_with('mock.json/customVariables.json', 'r')
+		mock_json_load.assert_called_once_with(mock_open())
+
+		self.assertFalse(result)
 
 	if __name__ == '__main__':
 		unittest.main()
