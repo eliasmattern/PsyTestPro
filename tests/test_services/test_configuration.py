@@ -329,5 +329,39 @@ class ConfigurationTests(unittest.TestCase):
 		mock_json_load.assert_called_once_with(mock_open())
 		mock_json_dump.assert_called_once_with(tasks, mock_open(), indent=4)
 
-	if __name__ == '__main__':
-		unittest.main()
+	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_edit_group(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		tasks = copy.deepcopy(TASK_CONFIG_JSON)
+		new_group_name = 'new group name'
+		new_loops = 4
+		new_pause = '10:00:00'
+		task = {
+			"is_group": False,
+			"name": "TESTTASK",
+			"time": "00:05:00",
+			"state": "todo",
+			"type": "text",
+			"value": {"title": "Title", "description": "Description"},
+			"position": 2
+		}
+		tasks['suite_schedule']['tasks']['1']['name'] = new_group_name
+		tasks['suite_schedule']['tasks']['1']['pause'] = new_pause
+		tasks['suite_schedule']['tasks']['1']['loops'] = new_loops
+		tasks['suite_schedule']['tasks']['1']['tasks']['1'] = task
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
+
+		new_task = Task('1', 'TESTTASK', '00:05:00', 'text', {"title": "Title", "description": "Description"}, 2)
+
+		self.psy_test_pro_config.edit_group('suite_schedule', '1', new_group_name, new_loops, new_pause, [TASK_FROM_CONFIG, new_task])
+
+		mock_get_resource_path.assert_any_call('json/taskConfig.json')
+		mock_open.assert_any_call('mock.json/taskConfig.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(tasks, mock_open(), indent=4)
+
+
+if __name__ == '__main__':
+	unittest.main()
