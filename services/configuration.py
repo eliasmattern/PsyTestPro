@@ -191,22 +191,22 @@ class PsyTestProConfig:
 		with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
 			json.dump(json_data, file, indent=4)
 
-	def edit_task(self, task_id: str, variable, name: str, time: str, type: str, value: str,
+	def edit_task(self, task_id: str, suite, name: str, time: str, type: str, value: str,
 				  group: Union[str, None] = None):
 
 		# Load the JSON data from a file
 		with open(get_resource_path('json/taskConfig.json'), 'r', encoding='utf-8') as file:
 			json_data = json.load(file)
 		if not group:
-			json_data[variable]['tasks'][task_id]['time'] = time
-			json_data[variable]['tasks'][task_id]['type'] = type
-			json_data[variable]['tasks'][task_id]['value'] = value
-			json_data[variable]['tasks'][task_id]['name'] = name
+			json_data[suite]['tasks'][task_id]['time'] = time
+			json_data[suite]['tasks'][task_id]['type'] = type
+			json_data[suite]['tasks'][task_id]['value'] = value
+			json_data[suite]['tasks'][task_id]['name'] = name
 		else:
-			json_data[variable]['tasks'][group]['tasks'][task_id]['time'] = time
-			json_data[variable]['tasks'][group]['tasks'][task_id]['type'] = type
-			json_data[variable]['tasks'][group]['tasks'][task_id]['value'] = value
-			json_data[variable]['tasks'][group]['tasks'][task_id]['name'] = name
+			json_data[suite]['tasks'][group]['tasks'][task_id]['time'] = time
+			json_data[suite]['tasks'][group]['tasks'][task_id]['type'] = type
+			json_data[suite]['tasks'][group]['tasks'][task_id]['value'] = value
+			json_data[suite]['tasks'][group]['tasks'][task_id]['name'] = name
 		# Save the updated JSON data back to the file
 		with open(get_resource_path('json/taskConfig.json'), 'w', encoding='utf-8') as file:
 			json.dump(json_data, file, indent=4)
