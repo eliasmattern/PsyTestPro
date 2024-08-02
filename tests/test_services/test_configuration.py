@@ -5,7 +5,7 @@ from unittest.mock import patch, mock_open
 from app_types import Task, TaskGroup
 from services import PsyTestProConfig
 from tests.test_services.test_services_utils import TASK_CONFIG_JSON, TASK_FROM_CONFIG, GROUP_FROM_CONFIG, \
-	TASK_CONFIG_JSON_WITH_DELETED_TASK
+	TASK_CONFIG_JSON_WITH_DELETED_TASK, CUSTOM_VARIABLES
 
 
 class ConfigurationTests(unittest.TestCase):
@@ -189,6 +189,19 @@ class ConfigurationTests(unittest.TestCase):
 		mock_open.assert_any_call('mock.json/taskConfig.json', 'r', encoding='utf-8')
 		mock_json_load.assert_called_once_with(mock_open())
 		mock_json_dump.assert_called_once_with(tasks, mock_open(), indent=4)
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/customVariables.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	def test_load_custom_variables(self, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = copy.deepcopy(CUSTOM_VARIABLES)
+
+		result = self.psy_test_pro_config.load_custom_variables()
+
+		mock_get_resource_path.assert_any_call('json/customVariables.json')
+		mock_open.assert_any_call('mock.json/customVariables.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		self.assertEqual(result, CUSTOM_VARIABLES)
 
 	if __name__ == '__main__':
 		unittest.main()

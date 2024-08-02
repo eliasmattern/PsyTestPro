@@ -150,3 +150,5 @@ TASK_FROM_CONFIG = Task('0', 'TESTTASK', '00:05:00', 'text', {"title": "Title", 
 GROUP_FROM_CONFIG = TaskGroup('1', 'GROUP', '00:02:00', 2, {
 	'0': {'name': 'TESTTASK', 'time': '00:05:00', 'type': 'text',
 		  'value': {"title": "Title", "description": "Description"}, 'state': 'todo', 'position': 1}}, 2)
+
+CUSTOM_VARIABLES = ['var1', 'var2']
