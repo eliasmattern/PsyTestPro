@@ -322,7 +322,7 @@ class PsyTestProConfig:
 				keys = json_data['globalTasks']['tasks'].keys()
 				numeric_keys = [eval(i) for i in keys]
 				global_id = max(numeric_keys) + 1 if len(numeric_keys) > 0 else 0
-				json_data['globalTasks']['tasks'][global_id] = new_task
+				json_data['globalTasks']['tasks'][str(global_id)] = new_task
 
 		keys = json_data[suite]['tasks'].keys()
 		numeric_keys = [eval(i) for i in keys]

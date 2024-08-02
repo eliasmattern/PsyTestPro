@@ -294,5 +294,40 @@ class ConfigurationTests(unittest.TestCase):
 		mock_json_load.assert_called_once_with(mock_open())
 		mock_json_dump.assert_called_once_with(new_settings_json, mock_open())
 
+	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_create_group(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		tasks = copy.deepcopy(TASK_CONFIG_JSON)
+		task = {
+			"is_group": True,
+			"name": "new group",
+			"pause": "00:05:00",
+			"loops": 2,
+			"tasks": {
+				"0": {
+					"is_group": False,
+					"name": "TESTTASK",
+					"time": "00:05:00",
+					"state": "todo",
+					"type": "text",
+					"value": {"title": "Title", "description": "Description"},
+					"position": 1
+				}
+			},
+			'position': 3
+		}
+		tasks['globalTasks']['tasks']['2'] = task
+		tasks['suite_schedule']['tasks']['2'] = task
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
+
+		self.psy_test_pro_config.create_group('suite_schedule', 'new group', 2, '00:05:00', [TASK_FROM_CONFIG])
+
+		mock_get_resource_path.assert_any_call('json/taskConfig.json')
+		mock_open.assert_any_call('mock.json/taskConfig.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(tasks, mock_open(), indent=4)
+
 	if __name__ == '__main__':
 		unittest.main()
