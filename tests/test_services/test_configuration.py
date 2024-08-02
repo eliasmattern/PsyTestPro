@@ -5,7 +5,7 @@ from unittest.mock import patch, mock_open
 from app_types import Task, TaskGroup
 from services import PsyTestProConfig
 from tests.test_services.test_services_utils import TASK_CONFIG_JSON, TASK_FROM_CONFIG, GROUP_FROM_CONFIG, \
-	TASK_CONFIG_JSON_WITH_DELETED_TASK, CUSTOM_VARIABLES
+	TASK_CONFIG_JSON_WITH_DELETED_TASK, CUSTOM_VARIABLES, SETTINGS_JSON, NEW_SETTINGS
 
 
 class ConfigurationTests(unittest.TestCase):
@@ -249,6 +249,50 @@ class ConfigurationTests(unittest.TestCase):
 		mock_open.assert_any_call('mock.json/customVariables.json', 'r', encoding='utf-8')
 		mock_json_load.assert_called_once_with(mock_open())
 		mock_json_dump.assert_called_once_with(vars, mock_open())
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/settings.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	def test_get_settings(self, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = copy.deepcopy(SETTINGS_JSON)
+
+		result = self.psy_test_pro_config.get_settings()
+
+		mock_get_resource_path.assert_any_call('json/settings.json')
+		mock_open.assert_any_call('mock.json/settings.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		self.assertEqual(result, SETTINGS_JSON)
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/settings.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_save_settings(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		mock_json_load.return_value = copy.deepcopy(SETTINGS_JSON)
+		new_settings_json = {
+			"language": "en",
+			"backgroundColor": NEW_SETTINGS.background_color,
+			"primaryColor": NEW_SETTINGS.primary_color,
+			"buttonColor": NEW_SETTINGS.button_color,
+			"buttonTextColor": NEW_SETTINGS.button_text_color,
+			"successColor": NEW_SETTINGS.success_color,
+			"dangerColor": NEW_SETTINGS.danger_color,
+			"warningColor": NEW_SETTINGS.warning_color,
+			"activeButtonColor": NEW_SETTINGS.active_button_color,
+			"inactiveButtonColor": NEW_SETTINGS.inactive_button_color,
+			"groupButtonColor": NEW_SETTINGS.group_button_color,
+			"gridColor": NEW_SETTINGS.grid_color,
+			"showNextTask": NEW_SETTINGS.show_next_task,
+			"showPlayTaskButton": NEW_SETTINGS.show_play_task_button,
+			"audioPath": NEW_SETTINGS.audio_path,
+		}
+
+		self.psy_test_pro_config.save_settings(NEW_SETTINGS)
+
+		mock_get_resource_path.assert_any_call('json/settings.json')
+		mock_open.assert_any_call('mock.json/settings.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(new_settings_json, mock_open())
 
 	if __name__ == '__main__':
 		unittest.main()
