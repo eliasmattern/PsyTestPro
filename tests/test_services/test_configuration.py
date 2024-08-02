@@ -32,7 +32,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	def test_load_suite_tasks(self, mock_json_load, mock_open, mock_get_resource_path):
-		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 		self.psy_test_pro_config.load_suite_tasks('suite')
 
 		mock_get_resource_path.assert_called_once_with('json/taskConfig.json')
@@ -51,9 +51,9 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	def test_get_suites(self, mock_json_load, mock_open, mock_get_resource_path):
-		tasks = TASK_CONFIG_JSON.copy()
+		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		del tasks['globalTasks']
-		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 
 		result = self.psy_test_pro_config.get_suites()
 
@@ -64,7 +64,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	def test_load_task_of_suite(self, mock_json_load, mock_open, mock_get_resource_path):
-		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 		result = self.psy_test_pro_config.load_task_of_suite('suite_schedule')
 
 		mock_get_resource_path.assert_called_once_with('json/taskConfig.json')
@@ -91,13 +91,12 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	def test_load_task_of_group(self, mock_json_load, mock_open, mock_get_resource_path):
-		mock_json_load.return_value = TASK_CONFIG_JSON.copy()
+		mock_json_load.return_value = copy.deepcopy(copy.deepcopy(TASK_CONFIG_JSON))
 
 		result = self.psy_test_pro_config.load_task_of_group('suite_schedule', '1')
 
 		mock_get_resource_path.assert_called_once_with('json/taskConfig.json')
-		mock_open.assert_called_once_with('mock.json/taskConfig.json', 'r',
-										  encoding='utf-8')
+		mock_open.assert_called_once_with('mock.json/taskConfig.json', 'r', encoding='utf-8')
 		mock_json_load.assert_called_once_with(mock_open())
 
 		self.assertEqual(len(result), 1)
@@ -119,6 +118,32 @@ class ConfigurationTests(unittest.TestCase):
 		mock_open.assert_any_call('mock.json/taskConfig.json', 'r')
 		mock_json_load.assert_called_once_with(mock_open())
 		mock_json_dump.assert_called_once_with(TASK_CONFIG_JSON_WITH_DELETED_TASK, mock_open(), indent=4)
+
+	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
+	@patch('builtins.open', new_callable=mock_open, read_data='file')
+	@patch('json.load')
+	@patch('json.dump')
+	def test_save_task(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+		tasks = copy.deepcopy(TASK_CONFIG_JSON)
+		task = {
+			"is_group": False,
+			"name": "new_task",
+			"position": 3,
+			"time": "00:05:00",
+			"state": "todo",
+			"type": "command",
+			"value": "print hello"
+		}
+		tasks['globalTasks']['tasks']['2'] = task
+		tasks['suite_schedule']['tasks']['2'] = task
+		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
+
+		self.psy_test_pro_config.save_task('suite_schedule', 'new_task', '00:05:00', 'command', 'print hello', None)
+
+		mock_get_resource_path.assert_any_call('json/taskConfig.json')
+		mock_open.assert_any_call('mock.json/taskConfig.json', 'r', encoding='utf-8')
+		mock_json_load.assert_called_once_with(mock_open())
+		mock_json_dump.assert_called_once_with(tasks, mock_open(), indent=4)
 
 	if __name__ == '__main__':
 		unittest.main()

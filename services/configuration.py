@@ -176,7 +176,7 @@ class PsyTestProConfig:
 					global_task_id = max(global_numeric_keys) + 1 if len(global_numeric_keys) > 0 else 0
 					position = len(json_data['globalTasks']['tasks']) + 1
 					global_task['position'] = position
-					json_data['globalTasks']['tasks'][global_task_id] = global_task
+					json_data['globalTasks']['tasks'][str(global_task_id)] = global_task
 			else:
 				json_data[suite]['tasks'][group]['tasks'][task_id] = new_task
 
