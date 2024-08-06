@@ -4,7 +4,7 @@ from unittest.mock import patch, mock_open
 
 from app_types import Task, TaskGroup
 from services import PsyTestProConfig
-from tests.test_services.test_services_utils import TASK_CONFIG_JSON, TASK_FROM_CONFIG, GROUP_FROM_CONFIG, \
+from tests.test_services.configuration_testing_utils import TASK_CONFIG_JSON, TASK_FROM_CONFIG, GROUP_FROM_CONFIG, \
 	TASK_CONFIG_JSON_WITH_DELETED_TASK, CUSTOM_VARIABLES, SETTINGS_JSON, NEW_SETTINGS
 
 
