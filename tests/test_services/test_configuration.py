@@ -1,6 +1,6 @@
 import copy
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, Mock
 
 from app_types import Task, TaskGroup
 from services import PsyTestProConfig
@@ -16,7 +16,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='json/suiteConfig.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_load_suites(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_load_suites(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = ['suite']
 
 		self.psy_test_pro_config.load_suites()
@@ -31,7 +31,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_load_suite_tasks(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_load_suite_tasks(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 		self.psy_test_pro_config.load_suite_tasks('suite')
 
@@ -50,7 +50,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_get_suites(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_get_suites(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		del tasks['globalTasks']
 		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
@@ -63,7 +63,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_load_task_of_suite(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_load_task_of_suite(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 		result = self.psy_test_pro_config.load_task_of_suite('suite_schedule')
 
@@ -89,7 +89,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_load_task_of_group(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_load_task_of_group(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(copy.deepcopy(TASK_CONFIG_JSON))
 
 		result = self.psy_test_pro_config.load_task_of_group('suite_schedule', '1')
@@ -108,7 +108,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_delete_task(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_delete_task(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+						 mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 
 		self.psy_test_pro_config.delete_task('suite_schedule', '0')
@@ -122,7 +123,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_delete_task_from_group(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_delete_task_from_group(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+									mock_get_resource_path: Mock):
 		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		del tasks['suite_schedule']['tasks']['1']['tasks']['0']
 		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
@@ -138,7 +140,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_save_task(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_save_task(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		task = {
 			"is_group": False,
@@ -164,7 +166,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_edit_task(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_edit_task(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		new_name = 'new name'
 		new_time = '10:00:00'
@@ -192,7 +194,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/customVariables.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_load_custom_variables(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_load_custom_variables(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(CUSTOM_VARIABLES)
 
 		result = self.psy_test_pro_config.load_custom_variables()
@@ -206,7 +208,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_save_var(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_save_var(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		vars = copy.deepcopy(CUSTOM_VARIABLES)
 		vars.append('var3')
 		mock_json_load.return_value = copy.deepcopy(CUSTOM_VARIABLES)
@@ -224,7 +226,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_do_not_save_var_if_length_3(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_do_not_save_var_if_length_3(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+										 mock_get_resource_path: Mock):
 		mock_json_load.return_value = ['var1', 'var2', 'var3']
 
 		result = self.psy_test_pro_config.save_var('var3')
@@ -239,7 +242,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_delete_var(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_delete_var(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+						mock_get_resource_path: Mock):
 		vars = ['var1']
 		mock_json_load.return_value = copy.deepcopy(CUSTOM_VARIABLES)
 
@@ -253,7 +257,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/settings.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_get_settings(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_get_settings(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(SETTINGS_JSON)
 
 		result = self.psy_test_pro_config.get_settings()
@@ -267,7 +271,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_save_settings(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_save_settings(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+						   mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(SETTINGS_JSON)
 		new_settings_json = {
 			"language": "en",
@@ -298,7 +303,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_create_group(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_create_group(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+						  mock_get_resource_path: Mock):
 		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		task = {
 			"is_group": True,
@@ -333,7 +339,8 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
 	@patch('json.dump')
-	def test_edit_group(self, mock_json_dump, mock_json_load, mock_open, mock_get_resource_path):
+	def test_edit_group(self, mock_json_dump: Mock, mock_json_load: Mock, mock_open: Mock,
+						mock_get_resource_path: Mock):
 		tasks = copy.deepcopy(TASK_CONFIG_JSON)
 		new_group_name = 'new group name'
 		new_loops = 4
@@ -366,7 +373,7 @@ class ConfigurationTests(unittest.TestCase):
 	@patch('services.configuration.get_resource_path', return_value='mock.json/taskConfig.json')
 	@patch('builtins.open', new_callable=mock_open, read_data='file')
 	@patch('json.load')
-	def test_load_group(self, mock_json_load, mock_open, mock_get_resource_path):
+	def test_load_group(self, mock_json_load: Mock, mock_open: Mock, mock_get_resource_path: Mock):
 		mock_json_load.return_value = copy.deepcopy(TASK_CONFIG_JSON)
 
 		result = self.psy_test_pro_config.load_group('suite_schedule', '1')
