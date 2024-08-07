@@ -1,1 +1,2 @@
 from .test_configuration import ConfigurationTests
+from .test_execute_command_service import ExecuteCommandTests
