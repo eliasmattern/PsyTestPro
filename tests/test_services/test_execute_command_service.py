@@ -23,7 +23,7 @@ class ExecuteCommandTests(unittest.TestCase):
 	@patch('shlex.split')
 	@patch('subprocess.Popen')
 	@patch('pygame.event.get', return_value=[])
-	def test_load_suites(self, mock_event_get: Mock, mock_subprocesses_popen: Mock, mock_shlex_split: Mock):
+	def test_execute_command(self, mock_event_get: Mock, mock_subprocesses_popen: Mock, mock_shlex_split: Mock):
 		command = 'command {id}, {suite}, {startTime}, {timestamp}, {scriptCount}, {custom}'
 		formatted_command = 'command VARIABLE_ID, VARIABLE_SUITE, VARIABLE_STARTTIME, VARIABLE_TIMESTAMP, 0, VARIABLE_CUSTOM'
 		mock_shlex_split.return_value = formatted_command
