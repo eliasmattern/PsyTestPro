@@ -15,8 +15,10 @@ CUSTOM_VARIABLE = {
 	'custom': 'VARIABLE_CUSTOM'
 }
 
+
 def poll():
 	return True
+
 
 class ExecuteCommandTests(unittest.TestCase):
 
