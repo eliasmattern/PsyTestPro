@@ -288,8 +288,9 @@ class Teststarter:
         table['value'] = values
 
         datetime_string = str(participant_info['start_time'])
+        datetime_now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
 
-        filename = participant_info['participant_id'] + '_' + participant_info[
+        filename = datetime_now + '_' + participant_info['participant_id'] + '_' + participant_info[
             'experiment'] + '_' + datetime_string + '_log' + '.xlsx'
         filename = filename.replace(' ', '_')
         filename = filename.replace('-', '_')
